@@ -5,6 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>layout 后台大布局 - Layui</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .favorites {
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .favorites li {
+            position: relative;
+            float: left;
+            width: 80px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .favorites li:hover {
+            background-color: #f2f2f2;
+        }
+
+        .favorites li:hover .add-favorites {
+            background-color: #e5e7e8;
+        }
+
+        .favorites li img {
+            width: 100%;
+            border-radius: 50%
+        }
+
+        .favorites li p {
+            text-align: center;
+            margin-top: 10px
+        }
+
+        .favorites li .action-icon {
+            position: absolute;
+            top: 4px;
+            right: 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #666;
+            display: none;
+        }
+
+        .favorites li:hover .action-icon {
+            display: block;
+        }
+
+        .favorites .add-favorites {
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+            border-radius: 50%;
+            background-color: #f1f3f4;
+            font-size: 40px;
+            color: #666;
+        }
+    </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -71,12 +127,17 @@
         <div style="padding: 15px;">
             <fieldset class="layui-elem-field">
                 <legend>按钮主题</legend>
-                <ul>
-                    <li>
-                        <div class="layui-anim layui-anim-scale"
-                             style="width: 300px;height: 300px;line-height:300px;text-align: center;vertical-align: center;border: 1px solid">
-                            平滑放大
-                        </div>
+                <ul class="favorites">
+                    <li class="layui-anim layui-anim-scale">
+                        <a href="https://www.wiz.cn/" target="_blank">
+                            <img src="https://www.wiz.cn/favicon.ico" alt="https://github.com/">
+                            <p>为知笔记</p>
+                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>
+                        </a>
+                    </li>
+                    <li class="layui-anim layui-anim-scale">
+                        <div class="add-favorites">+</div>
+                        <p>添加地址</p>
                     </li>
                 </ul>
             </fieldset>
@@ -89,12 +150,68 @@
         © layui.com - 底部固定区域
     </div>
 </div>
+<form class="layui-form" action="" id="add-favorites" style="display: none;padding: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="url" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+        </div>
+    </div>
+</form>
+<form class="layui-form" action="" id="update-favorites" style="display: none;padding: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="url" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-danger">删除</button>
+        </div>
+    </div>
+</form>
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use('element', function () {
+    layui.use(['element', 'jquery', 'layer', 'form'], function () {
         var element = layui.element;
+        var $ = layui.$;
+        var layer = layui.layer;
+        var form = layui.form;
 
+        $(document).on('click', '.add-favorites', function () {
+            alert("这里写自己的功能...");
+            layer.open({
+                type: 1,
+                content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        });
+        $(document).on('click', '.action-icon', function () {
+            alert("这里写自己的功能...");
+            layer.open({
+                type: 1,
+                content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        });
     });
 </script>
 </body>
