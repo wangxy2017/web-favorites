@@ -115,6 +115,9 @@
                     </li>
                 </ul>
             </fieldset>
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>
+            </div>
         </div>
     </div>
 </div>
@@ -203,6 +206,24 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 新增分类
+        window.addCategory = function (obj) {
+            layer.prompt({"title": "添加分类"}, function (value, index, elem) {
+                $.ajax({
+                    type: "POST",
+                    url: "/category",
+                    data: JSON.stringify({"name": value}),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            // 新增分类
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        };
         // 修改密码
         window.changePwd = function () {
             layer.open({
@@ -234,14 +255,14 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (index, item) {
-                            html += '<li class="layui-anim layui-anim-scale">\n' +
-                                '                        <a href="' + item.url + '" target="_blank">\n' +
-                                '                            <div class="favorites-bg">\n' +
-                                '                                <img src="' + item.icon + '" alt="' + item.name + '">\n' +
-                                '                            </div>\n' +
-                                '                            <p>' + item.name + '</p>\n' +
-                                '                            <i data-id="' + item.id + '" class="action-icon layui-icon layui-icon-more-vertical"></i>\n' +
-                                '                        </a>\n' +
+                            html += '<li class="layui-anim layui-anim-scale">' +
+                                '                        <a href="' + item.url + '" target="_blank">' +
+                                '                            <div class="favorites-bg">' +
+                                '                                <img src="' + item.icon + '" alt="' + item.name + '">' +
+                                '                            </div>' +
+                                '                            <p>' + item.name + '</p>' +
+                                '                            <i data-id="' + item.id + '" class="action-icon layui-icon layui-icon-more-vertical"></i>' +
+                                '                        </a>' +
                                 '                    </li>'
                         });
                         // 移除并保留添加按钮
