@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
+    <title>网络收藏夹|首页</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
         .favorites {
@@ -14,22 +14,31 @@
         .favorites li {
             position: relative;
             float: left;
-            width: 80px;
             padding: 10px 20px;
             cursor: pointer;
+        }
+
+        .favorites li .favorites-bg {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f1f3f4;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .favorites li .favorites-bg img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
         }
 
         .favorites li:hover {
             background-color: #f2f2f2;
         }
 
-        .favorites li:hover .add-favorites {
+        .favorites li:hover .favorites-bg {
             background-color: #e5e7e8;
-        }
-
-        .favorites li img {
-            width: 100%;
-            border-radius: 50%
         }
 
         .favorites li p {
@@ -52,11 +61,6 @@
         }
 
         .favorites .add-favorites {
-            height: 80px;
-            text-align: center;
-            line-height: 80px;
-            border-radius: 50%;
-            background-color: #f1f3f4;
             font-size: 40px;
             color: #666;
         }
@@ -65,33 +69,19 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">商品管理</a></li>
-            <li class="layui-nav-item"><a href="">用户</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">邮件管理</a></dd>
-                    <dd><a href="">消息管理</a></dd>
-                    <dd><a href="">授权管理</a></dd>
-                </dl>
-            </li>
-        </ul>
+        <div class="layui-logo">网络收藏夹</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
+                    用户
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="/login.html">退了</a></li>
+            <li class="layui-nav-item"><a href="/login.html">安全退出</a></li>
         </ul>
     </div>
 
@@ -99,25 +89,8 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="javascript:;">列表三</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">解决方案</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item"><a href="">云市场</a></li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>
+                <li class="layui-nav-item"><a href=""><i class="layui-icon layui-icon-website"
+                                                         style="margin-right: 10px"></i>我的收藏夹</a></li>
             </ul>
         </div>
     </div>
@@ -126,28 +99,24 @@
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
             <fieldset class="layui-elem-field">
-                <legend>按钮主题</legend>
+                <legend>默认分类</legend>
                 <ul class="favorites">
+                    <!--                    <li class="layui-anim layui-anim-scale">-->
+                    <!--                        <a href="https://www.wiz.cn/" target="_blank">-->
+                    <!--                            <div class="favorites-bg">-->
+                    <!--                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">-->
+                    <!--                            </div>-->
+                    <!--                            <p>为知笔记</p>-->
+                    <!--                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>-->
+                    <!--                        </a>-->
+                    <!--                    </li>-->
                     <li class="layui-anim layui-anim-scale">
-                        <a href="https://www.wiz.cn/" target="_blank">
-                            <img src="https://www.wiz.cn/favicon.ico" alt="https://github.com/">
-                            <p>为知笔记</p>
-                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>
-                        </a>
-                    </li>
-                    <li class="layui-anim layui-anim-scale">
-                        <div class="add-favorites">+</div>
+                        <div class="favorites-bg"><span class="add-favorites">+</span></div>
                         <p>添加地址</p>
                     </li>
                 </ul>
             </fieldset>
-
         </div>
-    </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © layui.com - 底部固定区域
     </div>
 </div>
 <form class="layui-form" action="" id="add-favorites" style="display: none;padding: 10px">
@@ -218,7 +187,21 @@
                 url: "/favorites/list",
                 dataType: "json",
                 success: function (result) {
-
+                    if (result.code == 0) {
+                        var html = '';
+                        $.each(result.data, function (index, item) {
+                            html += '<li class="layui-anim layui-anim-scale">\n' +
+                                '                        <a href="' + item.url + '" target="_blank">\n' +
+                                '                            <div class="favorites-bg">\n' +
+                                '                                <img src="https://www.wiz.cn/favicon.ico" alt="' + item.name + '">\n' +
+                                '                            </div>\n' +
+                                '                            <p>' + item.name + '</p>\n' +
+                                '                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>\n' +
+                                '                        </a>\n' +
+                                '                    </li>'
+                        });
+                        $(".favorites").prepend(html);
+                    }
                 }
             });
         };
@@ -262,7 +245,10 @@
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
-                    console.log(result);
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        loadList();
+                    }
                 }
             });
             return false;
