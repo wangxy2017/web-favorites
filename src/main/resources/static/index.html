@@ -74,14 +74,14 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    用户
+                    <span id="username">默认用户</span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="/login.html">安全退出</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" onclick="logout()">安全退出</a></li>
         </ul>
     </div>
 
@@ -182,6 +182,19 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 登出
+        window.logout = function () {
+            $.ajax({
+                type: "GET",
+                url: "/user/logout",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        window.location.href = "/login.html";
+                    }
+                }
+            });
+        };
         // 加载数据
         window.loadList = function () {
             $.ajax({
@@ -236,7 +249,7 @@
             var data = form.val("update-favorites");
             $.ajax({
                 type: "GET",
-                url: "/favorites/delete/"+data.id,
+                url: "/favorites/delete/" + data.id,
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -309,6 +322,18 @@
         // 加载数据
         $(function () {
             loadList();
+            // 加载用户信息
+            $.ajax({
+                type: "GET",
+                url: "/user/info",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        let username = result.data.username;
+                        $("#username").text(username.substring(0,8));
+                    }
+                }
+            });
         });
     });
 </script>
