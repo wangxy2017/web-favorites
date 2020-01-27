@@ -212,13 +212,13 @@
         var form = layui.form;
 
         // 加载数据
-        window.loadList = function(){
+        window.loadList = function () {
             $.ajax({
                 type: "GET",
                 url: "/favorites/list",
                 dataType: "json",
                 success: function (result) {
-                    console.log(result);
+
                 }
             });
         };
@@ -269,7 +269,7 @@
         });
         // 加载数据
         $(function () {
-           loadList();
+            loadList();
         });
     });
 </script>
