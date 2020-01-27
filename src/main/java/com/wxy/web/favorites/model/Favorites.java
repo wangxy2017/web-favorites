@@ -22,6 +22,9 @@ public class Favorites {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(100) comment '名称'")
     private String name;
 
+    @Column(name = "icon", columnDefinition = "varchar(1000) comment '图标'")
+    private String icon;
+
     @Column(name = "url", nullable = false, columnDefinition = "varchar(1000) comment '地址'")
     private String url;
 

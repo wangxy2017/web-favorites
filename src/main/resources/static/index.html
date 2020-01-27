@@ -140,7 +140,9 @@
         </div>
     </div>
 </form>
-<form class="layui-form" action="" id="update-favorites" style="display: none;padding: 10px">
+<form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
+      style="display: none;padding: 10px">
+    <input type="hidden" name="id">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-block">
@@ -166,8 +168,8 @@
     <!--    </div>-->
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-            <button type="button" class="layui-btn layui-btn-danger">删除</button>
+            <button class="layui-btn" lay-submit lay-filter="updateFavorites">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-danger" id="deleteFavorites">删除</button>
         </div>
     </div>
 </form>
@@ -193,13 +195,15 @@
                             html += '<li class="layui-anim layui-anim-scale">\n' +
                                 '                        <a href="' + item.url + '" target="_blank">\n' +
                                 '                            <div class="favorites-bg">\n' +
-                                '                                <img src="https://www.wiz.cn/favicon.ico" alt="' + item.name + '">\n' +
+                                '                                <img src="' + item.icon + '" alt="' + item.name + '">\n' +
                                 '                            </div>\n' +
                                 '                            <p>' + item.name + '</p>\n' +
-                                '                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>\n' +
+                                '                            <i data-id="' + item.id + '" class="action-icon layui-icon layui-icon-more-vertical"></i>\n' +
                                 '                        </a>\n' +
                                 '                    </li>'
                         });
+                        // 移除并保留添加按钮
+                        $(".favorites li:not(:last)").remove();
                         $(".favorites").prepend(html);
                     }
                 }
@@ -227,17 +231,66 @@
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
         });
+        // 删除
+        $(document).on('click', '#deleteFavorites', function () {
+            var data = form.val("update-favorites");
+            $.ajax({
+                type: "GET",
+                url: "/favorites/delete/"+data.id,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        loadList();
+                    }
+                }
+            });
+        });
         // 编辑地址
         $(document).on('click', '.action-icon', function (e) {
             layer.open({
                 type: 1,
                 content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
+            // 表单赋值
+            $.ajax({
+                type: "GET",
+                url: "/favorites/" + $(this).attr("data-id"),
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        let data = result.data;
+                        //给表单赋值
+                        form.val("update-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                            "id": data.id // "name": "value"
+                            , "name": data.name
+                            , "url": data.url
+                        });
+                    }
+                }
+            });
             stopBubbleAndDefault(e);
         });
 
         //监听提交
         form.on('submit(addFavorites)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/favorites/save",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        loadList();
+                    }
+                }
+            });
+            return false;
+        });
+        //监听提交
+        form.on('submit(updateFavorites)', function (data) {
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
