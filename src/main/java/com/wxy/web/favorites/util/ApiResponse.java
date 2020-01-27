@@ -23,6 +23,6 @@ public class ApiResponse {
     }
 
     public static ApiResponse error(String msg) {
-        return new ApiResponse(0, msg, null);
+        return new ApiResponse(-1, msg, null);
     }
 }

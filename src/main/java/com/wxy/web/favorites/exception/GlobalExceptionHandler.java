@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 @Slf4j
-public class MyExceptionHandler {
-
+public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ApiResponse exceptionHandler(Exception e) {
+    public ApiResponse exceptionHandle(Exception e) {
         log.error("系统异常：[{}]", e.getMessage());
         return ApiResponse.error(e.getMessage());
     }

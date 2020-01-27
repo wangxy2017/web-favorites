@@ -16,8 +16,8 @@ public class LoginController {
 
     @PostMapping
     public ApiResponse login(@RequestBody User user) {
-        User user1 = userRepository.findByUserName(user.getUsername());
-        if (user1.getPassword().equals(user.getPassword())) {
+        User user1 = userRepository.findByUsername(user.getUsername());
+        if (user1 != null && user1.getPassword().equals(user.getPassword())) {
             SpringUtils.getRequest().getSession().setAttribute("user", user1);
             return ApiResponse.success();
         } else {
