@@ -211,11 +211,19 @@
         var layer = layui.layer;
         var form = layui.form;
 
-        /**
-         * 阻止冒泡事件和默认事件
-         * @param e
-         * @returns {boolean}
-         */
+        // 加载数据
+        window.loadList = function(){
+            $.ajax({
+                type: "GET",
+                url: "/favorites/list",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                }
+            });
+        };
+
+        // 阻止冒泡事件和默认事件
         window.stopBubbleAndDefault = function (e) {
             // 阻止冒泡
             if (e && e.stopPropagation)
@@ -261,14 +269,7 @@
         });
         // 加载数据
         $(function () {
-            $.ajax({
-                type: "GET",
-                url: "/favorites/list",
-                dataType: "json",
-                success: function (result) {
-                    console.log(result);
-                }
-            });
+           loadList();
         });
     });
 </script>

@@ -27,4 +27,10 @@ public class FavoritesController {
         List<Favorites> list = favoritesRepository.findAll();
         return ApiResponse.success(list);
     }
+
+    @GetMapping("/delete/{id}")
+    public ApiResponse delete(@PathVariable Integer id) {
+        favoritesRepository.deleteById(id);
+        return ApiResponse.success();
+    }
 }
