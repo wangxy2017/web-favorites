@@ -77,8 +77,7 @@
                     <span id="username">默认用户</span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
+                    <dd><a href="javascript:;" onclick="changePwd()">修改密码</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item"><a href="javascript:;" onclick="logout()">安全退出</a></li>
@@ -173,6 +172,28 @@
         </div>
     </div>
 </form>
+<form class="layui-form" action="" id="password" style="display: none;padding: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">旧密码</label>
+        <div class="layui-input-inline">
+            <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入密码"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">新密码</label>
+        <div class="layui-input-inline">
+            <input type="password" name="newPassword" required lay-verify="required" placeholder="请输入密码"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="updatePassword">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
@@ -182,6 +203,14 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 修改密码
+        window.changePwd = function () {
+            layer.open({
+                type: 1,
+                title: "修改密码",
+                content: $('#password') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        };
         // 登出
         window.logout = function () {
             $.ajax({
@@ -241,6 +270,7 @@
         $(document).on('click', '.add-favorites', function () {
             layer.open({
                 type: 1,
+                title: "添加",
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
         });
@@ -263,6 +293,7 @@
         $(document).on('click', '.action-icon', function (e) {
             layer.open({
                 type: 1,
+                title: "修改",
                 content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
             // 表单赋值
@@ -319,6 +350,24 @@
             });
             return false;
         });
+        //监听提交
+        form.on('submit(updatePassword)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/user/password",
+                data: data.field,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        layer.msg('修改成功', {icon: 6});
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                }
+            });
+            return false;
+        });
         // 加载数据
         $(function () {
             loadList();
@@ -330,7 +379,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         let username = result.data.username;
-                        $("#username").text(username.substring(0,8));
+                        $("#username").text(username.substring(0, 8));
                     }
                 }
             });
