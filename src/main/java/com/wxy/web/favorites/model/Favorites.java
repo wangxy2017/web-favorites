@@ -15,7 +15,8 @@ import javax.persistence.*;
 public class Favorites {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) auto_increment comment '主键ID(自增)'")
+    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @GeneratedValue
     private Integer id;
 
     @Column(name = "name", nullable = false, columnDefinition = "varchar(100) comment '名称'")

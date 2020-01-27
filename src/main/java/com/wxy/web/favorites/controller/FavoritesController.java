@@ -17,6 +17,7 @@ public class FavoritesController {
 
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) {
+        favorites.setUserId(1);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }

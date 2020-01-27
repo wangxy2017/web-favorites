@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
+public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
 }

@@ -18,7 +18,7 @@ public class UserRepositoryTest {
     @Test
     public void testSave() {
         for (int i = 0; i < 5; i++) {
-            userRepository.save(new User(i, "zhangsan" + i, "123" + i));
+            userRepository.save(new User(null, "zhangsan" + i, "123" + i));
         }
         Assert.assertEquals(5, userRepository.findAll().size());
     }
