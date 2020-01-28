@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<dependencies>
@@ -51,6 +52,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
