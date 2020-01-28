@@ -10,6 +10,11 @@
             cursor: pointer;
         }
 
+        .add-icon {
+            color: #666;
+            font-size: 30px;
+        }
+
         .favorites {
             overflow: hidden;
             padding: 10px;
@@ -25,11 +30,10 @@
         .favorites li .favorites-bg {
             width: 80px;
             height: 80px;
+            line-height: 80px;
+            text-align: center;
             border-radius: 50%;
             background-color: #f1f3f4;
-            text-align: center;
-            line-height: 80px;
-            font-size: 40px;
         }
 
         .favorites li .favorites-bg img {
@@ -97,24 +101,6 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-            <!--            <fieldset class="layui-elem-field">-->
-            <!--                <legend onclick="editCategory()">默认分类</legend>-->
-            <!--                <ul class="favorites">-->
-            <!--                    <li class="layui-anim layui-anim-scale">-->
-            <!--                        <a href="https://www.wiz.cn/" target="_blank">-->
-            <!--                            <div class="favorites-bg">-->
-            <!--                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">-->
-            <!--                            </div>-->
-            <!--                            <p>为知笔记</p>-->
-            <!--                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>-->
-            <!--                        </a>-->
-            <!--                    </li>-->
-            <!--                    <li class="layui-anim layui-anim-scale" onclick="addFavorites()">-->
-            <!--                        <div class="favorites-bg">+</div>-->
-            <!--                        <p>添加地址</p>-->
-            <!--                    </li>-->
-            <!--                </ul>-->
-            <!--            </fieldset>-->
             <div class="layui-btn-container">
                 <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>
             </div>
@@ -163,15 +149,6 @@
                    class="layui-input">
         </div>
     </div>
-    <!--    <div class="layui-form-item">-->
-    <!--        <label class="layui-form-label">分类</label>-->
-    <!--        <div class="layui-input-block">-->
-    <!--            <select name="city" lay-verify="required">-->
-    <!--                <option value=""></option>-->
-    <!--                <option value="0">默认分类</option>-->
-    <!--            </select>-->
-    <!--        </div>-->
-    <!--    </div>-->
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="updateFavorites">立即提交</button>
@@ -308,7 +285,7 @@
                             html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                             html += '       <ul class="favorites">';
                             $.each(c.favorites, function (i, f) {
-                                html += '           <li class="layui-anim layui-anim-scale">';
+                                html += '           <li class="layui-anim layui-anim-scale" style="height: 200px">';
                                 html += '               <a href="' + f.url + '" target="_blank">';
                                 html += '                   <div class="favorites-bg">';
                                 html += '                       <img src="' + f.icon + '" alt="' + f.name + '">';
@@ -319,11 +296,11 @@
                                 html += '           </li>';
                             });
                             html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
-                            html += '               <div class="favorites-bg">+</div>';
+                            html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
                             html += '               <p>添加地址</p>';
                             html += '           </li>';
                             html += '       </ul>';
-                            html += '   </fieldset>';
+                            html += '</fieldset>';
                         });
                         // 移除所有<filedSet>
                         $(".layui-btn-container").parent().find("fieldset").remove();
