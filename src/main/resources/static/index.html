@@ -6,6 +6,10 @@
     <title>网络收藏夹|首页</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        legend {
+            cursor: pointer;
+        }
+
         .favorites {
             overflow: hidden;
             padding: 10px;
@@ -93,24 +97,24 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-            <fieldset class="layui-elem-field">
-                <legend onclick="editCategory()">默认分类</legend>
-                <ul class="favorites">
-                    <li class="layui-anim layui-anim-scale">
-                        <a href="https://www.wiz.cn/" target="_blank">
-                            <div class="favorites-bg">
-                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">
-                            </div>
-                            <p>为知笔记</p>
-                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>
-                        </a>
-                    </li>
-                    <li class="layui-anim layui-anim-scale" onclick="addFavorites()">
-                        <div class="favorites-bg">+</div>
-                        <p>添加地址</p>
-                    </li>
-                </ul>
-            </fieldset>
+            <!--            <fieldset class="layui-elem-field">-->
+            <!--                <legend onclick="editCategory()">默认分类</legend>-->
+            <!--                <ul class="favorites">-->
+            <!--                    <li class="layui-anim layui-anim-scale">-->
+            <!--                        <a href="https://www.wiz.cn/" target="_blank">-->
+            <!--                            <div class="favorites-bg">-->
+            <!--                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">-->
+            <!--                            </div>-->
+            <!--                            <p>为知笔记</p>-->
+            <!--                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>-->
+            <!--                        </a>-->
+            <!--                    </li>-->
+            <!--                    <li class="layui-anim layui-anim-scale" onclick="addFavorites()">-->
+            <!--                        <div class="favorites-bg">+</div>-->
+            <!--                        <p>添加地址</p>-->
+            <!--                    </li>-->
+            <!--                </ul>-->
+            <!--            </fieldset>-->
             <div class="layui-btn-container">
                 <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>
             </div>
@@ -118,7 +122,8 @@
     </div>
 </div>
 <!-- 添加收藏表单 -->
-<form class="layui-form" action="" id="add-favorites" style="display: none;padding: 10px">
+<form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
+    <input type="hidden" name="categoryId">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-block">
@@ -143,6 +148,7 @@
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px">
     <input type="hidden" name="id">
+    <input type="hidden" name="categoryId">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-block">
@@ -224,7 +230,7 @@
         var form = layui.form;
 
         // 编辑分类
-        window.editCategory = function () {
+        window.editCategory = function (obj) {
             layer.open({
                 type: 1,
                 title: "修改分类",
@@ -233,7 +239,7 @@
             // 表单赋值
             $.ajax({
                 type: "GET",
-                url: "/category/0",
+                url: "/category/" + $(obj).parent().attr("data-id"),
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -259,6 +265,7 @@
                     success: function (result) {
                         if (result.code == 0) {
                             // 新增分类
+                            loadList();
                         }
                     }
                 });
@@ -295,6 +302,32 @@
                 success: function (result) {
                     if (result.code == 0) {
                         // 加载数据
+                        var html = '';
+                        $.each(result.data, function (i, c) {
+                            html += '<fieldset class="layui-elem-field" data-id="' + c.id + '">';
+                            html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
+                            html += '       <ul class="favorites">';
+                            $.each(c.favorites, function (i, f) {
+                                html += '           <li class="layui-anim layui-anim-scale">';
+                                html += '               <a href="' + f.url + '" target="_blank">';
+                                html += '                   <div class="favorites-bg">';
+                                html += '                       <img src="' + f.icon + '" alt="' + f.name + '">';
+                                html += '                   </div>';
+                                html += '                   <p>' + f.name + '</p>';
+                                html += '                   <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                html += '               </a>';
+                                html += '           </li>';
+                            });
+                            html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
+                            html += '               <div class="favorites-bg">+</div>';
+                            html += '               <p>添加地址</p>';
+                            html += '           </li>';
+                            html += '       </ul>';
+                            html += '   </fieldset>';
+                        });
+                        // 移除所有<filedSet>
+                        $(".layui-btn-container").parent().find("fieldset").remove();
+                        $(".layui-btn-container").prepend(html);
                     }
                 }
             });
@@ -315,11 +348,15 @@
             return false;
         };
         // 添加收藏
-        window.addFavorites = function () {
+        window.addFavorites = function (categoryId) {
             layer.open({
                 type: 1,
                 title: "添加",
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+            // 表单赋值
+            form.val("add-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                "categoryId": categoryId // "name": "value"
             });
         };
         // 删除收藏
@@ -348,6 +385,7 @@
                     if (result.code == 0) {
                         layer.closeAll();
                         // 删除分类
+                        $("fieldset[data-id='" + data.id + "']").remove();
                     }
                 }
             });
@@ -370,6 +408,7 @@
                         //给表单赋值
                         form.val("update-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
                             "id": data.id // "name": "value"
+                            , "categoryId": data.categoryId
                             , "name": data.name
                             , "url": data.url
                         });
@@ -401,6 +440,23 @@
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        loadList();
+                    }
+                }
+            });
+            return false;
+        });
+        //监听提交
+        form.on('submit(updateCategory)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/category",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",

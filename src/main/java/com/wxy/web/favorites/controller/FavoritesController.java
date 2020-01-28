@@ -26,12 +26,17 @@ public class FavoritesController {
     private CategoryRepository categoryRepository;
 
     @PostMapping("/save")
-    public ApiResponse save(@RequestBody Favorites favorites) throws MalformedURLException {
+    public ApiResponse save(@RequestBody Favorites favorites) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         //https://www.baidu.com/
-        URL url = new URL(favorites.getUrl());
-        String iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";// 保证从域名根路径搜索
+        String iconUrl = "";
+        try {
+            URL url = new URL(favorites.getUrl());
+            iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";// 保证从域名根路径搜索
+        } catch (MalformedURLException e) {
+            iconUrl = "";
+        }
         favorites.setIcon(iconUrl);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
