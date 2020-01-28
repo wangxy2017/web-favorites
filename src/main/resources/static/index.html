@@ -98,7 +98,7 @@
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
             <fieldset class="layui-elem-field">
-                <legend>默认分类</legend>
+                <legend onclick="editCategory()">默认分类</legend>
                 <ul class="favorites">
                     <!--                    <li class="layui-anim layui-anim-scale">-->
                     <!--                        <a href="https://www.wiz.cn/" target="_blank">-->
@@ -121,6 +121,7 @@
         </div>
     </div>
 </div>
+<!-- 添加收藏 -->
 <form class="layui-form" action="" id="add-favorites" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
@@ -142,6 +143,7 @@
         </div>
     </div>
 </form>
+<!-- 修改收藏 -->
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px">
     <input type="hidden" name="id">
@@ -175,6 +177,7 @@
         </div>
     </div>
 </form>
+<!-- 修改密码 -->
 <form class="layui-form" action="" id="password" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">旧密码</label>
@@ -197,6 +200,24 @@
         </div>
     </div>
 </form>
+<!-- 修改分类 -->
+<form class="layui-form" action="" id="update-category" lay-filter="update-category"
+      style="display: none;padding: 10px">
+    <input type="hidden" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="updateCategory">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-danger" id="deleteCategory">删除</button>
+        </div>
+    </div>
+</form>
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
@@ -206,6 +227,30 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 编辑分类
+        window.editCategory = function () {
+            layer.open({
+                type: 1,
+                title: "修改分类",
+                content: $('#update-category') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+            // 表单赋值
+            $.ajax({
+                type: "GET",
+                url: "/category/0",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        let data = result.data;
+                        //给表单赋值
+                        form.val("update-category", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                            "id": data.id // "name": "value"
+                            , "name": data.name
+                        });
+                    }
+                }
+            });
+        };
         // 新增分类
         window.addCategory = function (obj) {
             layer.prompt({"title": "添加分类"}, function (value, index, elem) {
@@ -306,6 +351,21 @@
                     if (result.code == 0) {
                         layer.closeAll();
                         loadList();
+                    }
+                }
+            });
+        });
+        // 删除
+        $(document).on('click', '#deleteCategory', function () {
+            var data = form.val("update-category");
+            $.ajax({
+                type: "GET",
+                url: "/category/delete/" + data.id,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        // 删除分类
                     }
                 }
             });
