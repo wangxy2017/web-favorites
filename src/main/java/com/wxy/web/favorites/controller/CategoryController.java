@@ -26,10 +26,8 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ApiResponse query(@PathVariable Integer id) {
-        Category category = categoryRepository.getOne(id);
-        Category category1 = new Category();
-        BeanUtils.copyProperties(category, category1);
-        return ApiResponse.success(category1);
+        Category category = categoryRepository.findById(id).orElse(null);
+        return ApiResponse.success(category);
     }
 
     @GetMapping("/delete/{id}")

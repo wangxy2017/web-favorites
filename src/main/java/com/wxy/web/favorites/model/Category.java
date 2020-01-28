@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,4 +26,7 @@ public class Category {
 
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
+
+    @Transient
+    private List<Favorites> favorites;
 }

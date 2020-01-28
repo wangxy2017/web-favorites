@@ -28,7 +28,7 @@ public class Favorites {
     @Column(name = "url", nullable = false, columnDefinition = "varchar(1000) comment '地址'")
     private String url;
 
-    @Column(name = "category_id", columnDefinition = "int(10) comment '分类ID'")
+    @Column(name = "category_id", nullable = false, columnDefinition = "int(10) comment '分类ID'")
     private Integer categoryId;
 
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")

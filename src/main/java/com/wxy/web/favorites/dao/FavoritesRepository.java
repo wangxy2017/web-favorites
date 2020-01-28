@@ -12,4 +12,6 @@ import java.util.List;
 public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
 
     List<Favorites> findByUserId(Integer userId);
+
+    List<Favorites> findByCategoryId(Integer categoryId);
 }

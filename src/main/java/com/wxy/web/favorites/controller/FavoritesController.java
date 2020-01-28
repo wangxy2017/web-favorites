@@ -1,6 +1,8 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
+import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
@@ -20,6 +22,9 @@ public class FavoritesController {
     @Autowired
     private FavoritesRepository favoritesRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) throws MalformedURLException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
@@ -35,8 +40,12 @@ public class FavoritesController {
     @GetMapping("/list")
     public ApiResponse list() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Favorites> list = favoritesRepository.findByUserId(user.getId());
-        return ApiResponse.success(list);
+        // 查询用户分类
+        List<Category> categories = categoryRepository.findByUserId(user.getId());
+        for (Category c : categories) {
+            c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
+        }
+        return ApiResponse.success(categories);
     }
 
     @GetMapping("/delete/{id}")
@@ -47,9 +56,7 @@ public class FavoritesController {
 
     @GetMapping("/{id}")
     public ApiResponse query(@PathVariable Integer id) {
-        Favorites favorites = favoritesRepository.getOne(id);
-        Favorites favorites1 = new Favorites();
-        BeanUtils.copyProperties(favorites, favorites1);
-        return ApiResponse.success(favorites1);
+        Favorites favorites = favoritesRepository.findById(id).orElse(null);
+        return ApiResponse.success(favorites);
     }
 }

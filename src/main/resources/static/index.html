@@ -25,6 +25,7 @@
             background-color: #f1f3f4;
             text-align: center;
             line-height: 80px;
+            font-size: 40px;
         }
 
         .favorites li .favorites-bg img {
@@ -58,11 +59,6 @@
 
         .favorites li:hover .action-icon {
             display: block;
-        }
-
-        .favorites .add-favorites {
-            font-size: 40px;
-            color: #666;
         }
     </style>
 </head>
@@ -100,17 +96,17 @@
             <fieldset class="layui-elem-field">
                 <legend onclick="editCategory()">默认分类</legend>
                 <ul class="favorites">
-                    <!--                    <li class="layui-anim layui-anim-scale">-->
-                    <!--                        <a href="https://www.wiz.cn/" target="_blank">-->
-                    <!--                            <div class="favorites-bg">-->
-                    <!--                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">-->
-                    <!--                            </div>-->
-                    <!--                            <p>为知笔记</p>-->
-                    <!--                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>-->
-                    <!--                        </a>-->
-                    <!--                    </li>-->
                     <li class="layui-anim layui-anim-scale">
-                        <div class="favorites-bg"><span class="add-favorites">+</span></div>
+                        <a href="https://www.wiz.cn/" target="_blank">
+                            <div class="favorites-bg">
+                                <img src="https://www.wiz.cn/favicon.ico" alt="为知笔记">
+                            </div>
+                            <p>为知笔记</p>
+                            <i class="action-icon layui-icon layui-icon-more-vertical"></i>
+                        </a>
+                    </li>
+                    <li class="layui-anim layui-anim-scale" onclick="addFavorites()">
+                        <div class="favorites-bg"><i class="layui-icon layui-icon-add-1"></i></div>
                         <p>添加地址</p>
                     </li>
                 </ul>
@@ -121,7 +117,7 @@
         </div>
     </div>
 </div>
-<!-- 添加收藏 -->
+<!-- 添加收藏表单 -->
 <form class="layui-form" action="" id="add-favorites" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
@@ -143,7 +139,7 @@
         </div>
     </div>
 </form>
-<!-- 修改收藏 -->
+<!-- 编辑收藏表单 -->
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px">
     <input type="hidden" name="id">
@@ -177,7 +173,7 @@
         </div>
     </div>
 </form>
-<!-- 修改密码 -->
+<!-- 修改密码表单 -->
 <form class="layui-form" action="" id="password" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">旧密码</label>
@@ -200,7 +196,7 @@
         </div>
     </div>
 </form>
-<!-- 修改分类 -->
+<!-- 编辑分类表单 -->
 <form class="layui-form" action="" id="update-category" lay-filter="update-category"
       style="display: none;padding: 10px">
     <input type="hidden" name="id">
@@ -298,21 +294,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        var html = '';
-                        $.each(result.data, function (index, item) {
-                            html += '<li class="layui-anim layui-anim-scale">' +
-                                '                        <a href="' + item.url + '" target="_blank">' +
-                                '                            <div class="favorites-bg">' +
-                                '                                <img src="' + item.icon + '" alt="' + item.name + '">' +
-                                '                            </div>' +
-                                '                            <p>' + item.name + '</p>' +
-                                '                            <i data-id="' + item.id + '" class="action-icon layui-icon layui-icon-more-vertical"></i>' +
-                                '                        </a>' +
-                                '                    </li>'
-                        });
-                        // 移除并保留添加按钮
-                        $(".favorites li:not(:last)").remove();
-                        $(".favorites").prepend(html);
+                        // 加载数据
                     }
                 }
             });
@@ -332,15 +314,15 @@
                 window.event.returnValue = false;
             return false;
         };
-        // 添加地址
-        $(document).on('click', '.add-favorites', function () {
+        // 添加收藏
+        window.addFavorites = function () {
             layer.open({
                 type: 1,
                 title: "添加",
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
-        });
-        // 删除
+        };
+        // 删除收藏
         $(document).on('click', '#deleteFavorites', function () {
             var data = form.val("update-favorites");
             $.ajax({
@@ -355,7 +337,7 @@
                 }
             });
         });
-        // 删除
+        // 删除分类
         $(document).on('click', '#deleteCategory', function () {
             var data = form.val("update-category");
             $.ajax({
@@ -370,7 +352,7 @@
                 }
             });
         });
-        // 编辑地址
+        // 编辑收藏
         $(document).on('click', '.action-icon', function (e) {
             layer.open({
                 type: 1,
@@ -449,8 +431,9 @@
             });
             return false;
         });
-        // 加载数据
+
         $(function () {
+            // 加载数据
             loadList();
             // 加载用户信息
             $.ajax({
