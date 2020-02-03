@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|首页</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
         legend {
@@ -294,7 +295,7 @@
                                 html += '           <li class="layui-anim layui-anim-scale">';
                                 html += '               <a href="' + f.url + '" target="_blank">';
                                 html += '                   <div class="favorites-bg">';
-                                html += '                       <img src="' + f.icon + '" alt="' + f.name + '">';
+                                html += '                       <img src="' + imgExists(f.icon) + '"/>';
                                 html += '                   </div>';
                                 html += '                   <p title="' + f.name + '">' + f.name + '</p>';
                                 html += '                   <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -329,6 +330,17 @@
             else
                 window.event.returnValue = false;
             return false;
+        };
+        // 判断图片是否存在
+        window.imgExists = function (url) {
+            var img = new Image();
+            img.src = url;
+            //判断图片大小是否大于0 或者 图片高度与宽度都大于0
+            if (img.sizes > 0 || (img.width > 0 && img.height > 0)) {
+                return img.src;
+            } else {
+                return "/images/default.png";
+            }
         };
         // 添加收藏
         window.addFavorites = function (categoryId) {
