@@ -7,17 +7,32 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
-        #search_name {
+        .search-div {
+            z-index: 999;
             position: absolute;
             top: 16px;
             left: 200px;
-            width: 200px;
+            width: 180px;
             height: 30px;
-            padding-left: 12px;
             background-color: rgba(255, 255, 255, .05);
-            border: none 0;
-            color: rgba(255, 255, 255, .5);
+        }
+
+        .search-div input {
+            height: 100%;
             font-size: 12px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, .5);
+        }
+
+        .search-div i {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 20px;
+            color: #666;
+            display: none;
+            cursor: pointer;
         }
 
         legend {
@@ -91,8 +106,11 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">网络收藏夹</div>
-        <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
-               class="layui-input">
+        <div class="search-div">
+            <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
+                   class="layui-input">
+            <i id="search_close" class="layui-icon layui-icon-close-fill"></i>
+        </div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -223,8 +241,15 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 关闭搜索
+        $(document).on('click', '#search_close', function () {
+            $("#search_name").val("");
+            $(this).hide();
+            loadList();
+        });
         // 监听键盘
         $("#search_name").keydown(function (event) {
+            $("#search_close").show();
             if (event.key === "Enter") {
                 var name = $(this).val();
                 if (name == "") {
