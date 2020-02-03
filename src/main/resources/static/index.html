@@ -215,7 +215,7 @@
             layer.open({
                 type: 1,
                 title: "修改分类",
-                area:'400px',
+                area: '400px',
                 content: $('#update-category') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
             // 表单赋值
@@ -259,7 +259,7 @@
             layer.open({
                 type: 1,
                 title: "修改密码",
-                area:'400px',
+                area: '400px',
                 content: $('#password') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
         };
@@ -296,14 +296,14 @@
                                 html += '                   <div class="favorites-bg">';
                                 html += '                       <img src="' + f.icon + '" alt="' + f.name + '">';
                                 html += '                   </div>';
-                                html += '                   <p>' + f.name + '</p>';
+                                html += '                   <p title="' + f.name + '">' + f.name + '</p>';
                                 html += '                   <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
                                 html += '               </a>';
                                 html += '           </li>';
                             });
                             html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
                             html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
-                            html += '               <p>添加地址</p>';
+                            html += '               <p title="添加地址">添加地址</p>';
                             html += '           </li>';
                             html += '       </ul>';
                             html += '</fieldset>';
@@ -335,7 +335,7 @@
             layer.open({
                 type: 1,
                 title: "添加",
-                area:'400px',
+                area: '400px',
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
             // 表单赋值
@@ -379,7 +379,7 @@
             layer.open({
                 type: 1,
                 title: "修改",
-                area:'400px',
+                area: '400px',
                 content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
             // 表单赋值
