@@ -295,7 +295,7 @@
                                 html += '           <li class="layui-anim layui-anim-scale">';
                                 html += '               <a href="' + f.url + '" target="_blank">';
                                 html += '                   <div class="favorites-bg">';
-                                html += '                       <img src="' + imgExists(f.icon) + '"/>';
+                                html += '                       <img src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
                                 html += '                   </div>';
                                 html += '                   <p title="' + f.name + '">' + f.name + '</p>';
                                 html += '                   <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -331,17 +331,7 @@
                 window.event.returnValue = false;
             return false;
         };
-        // 判断图片是否存在
-        window.imgExists = function (url) {
-            var img = new Image();
-            img.src = url;
-            //判断图片大小是否大于0 或者 图片高度与宽度都大于0
-            if (img.sizes > 0 || (img.width > 0 && img.height > 0)) {
-                return img.src;
-            } else {
-                return "/images/default.png";
-            }
-        };
+
         // 添加收藏
         window.addFavorites = function (categoryId) {
             layer.open({
