@@ -243,13 +243,14 @@
 
         // 关闭搜索
         $(document).on('click', '#search_close', function () {
-            $("#search_name").val("");
             $(this).hide();
-            loadList();
+            if ($("#search_name").val() != "") {
+                $("#search_name").val("");
+                loadList();
+            }
         });
-        // 监听键盘
+        // 监听输入框
         $("#search_name").keydown(function (event) {
-            $("#search_close").show();
             if (event.key === "Enter") {
                 var name = $(this).val();
                 if (name == "") {
@@ -281,6 +282,12 @@
                         }
                     });
                 }
+            }
+        }).on("input", function () {
+            if ($(this).val() != "") {
+                $("#search_close").show();
+            } else {
+                $("#search_close").hide();
             }
         });
         // 编辑分类
