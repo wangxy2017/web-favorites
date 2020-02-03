@@ -7,6 +7,19 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        #search_name {
+            position: absolute;
+            top: 16px;
+            left: 200px;
+            width: 200px;
+            height: 30px;
+            padding-left: 12px;
+            background-color: rgba(255, 255, 255, .05);
+            border: none 0;
+            color: rgba(255, 255, 255, .5);
+            font-size: 12px;
+        }
+
         legend {
             cursor: pointer;
         }
@@ -78,6 +91,8 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">网络收藏夹</div>
+        <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
+               class="layui-input">
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -105,9 +120,6 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;" id="main">
-            <div class="layui-btn-container">
-                <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>
-            </div>
         </div>
     </div>
 </div>
@@ -211,6 +223,41 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 监听键盘
+        $("#search_name").keydown(function (event) {
+            if (event.key === "Enter") {
+                var name = $(this).val();
+                if (name == "") {
+                    loadList();
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/favorites/search",
+                        data: {"name": name},
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code == 0) {
+                                var html = '';
+                                html += '<ul class="favorites">';
+                                $.each(result.data, function (i, f) {
+                                    html += '<li class="layui-anim layui-anim-scale">';
+                                    html += '    <a href="' + f.url + '" target="_blank">';
+                                    html += '        <div class="favorites-bg">';
+                                    html += '            <img src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
+                                    html += '        </div>';
+                                    html += '        <p title="' + f.name + '">' + f.name + '</p>';
+                                    html += '        <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                    html += '    </a>';
+                                    html += '</li>';
+                                });
+                                html += '</ul>';
+                                $("#main").empty().append(html);
+                            }
+                        }
+                    });
+                }
+            }
+        });
         // 编辑分类
         window.editCategory = function (obj) {
             layer.open({
@@ -309,9 +356,10 @@
                             html += '       </ul>';
                             html += '</fieldset>';
                         });
-                        // 移除子元素
-                        $("#main").children().filter("fieldset").remove();
-                        $("#main").prepend(html)
+                        html += '<div class="layui-btn-container">';
+                        html += '   <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>';
+                        html += '</div>';
+                        $("#main").empty().append(html);
                     }
                 }
             });

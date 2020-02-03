@@ -64,4 +64,11 @@ public class FavoritesController {
         Favorites favorites = favoritesRepository.findById(id).orElse(null);
         return ApiResponse.success(favorites);
     }
+
+    @GetMapping("/search")
+    public ApiResponse search(@RequestParam String name) {
+        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        List<Favorites> list = favoritesRepository.findByNameLike(user.getId(), name);
+        return ApiResponse.success(list);
+    }
 }
