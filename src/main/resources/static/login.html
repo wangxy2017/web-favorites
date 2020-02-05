@@ -44,7 +44,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" required lay-verify="required|checkUsername"
+                        <input type="text" name="username" required lay-verify="required|username"
                                placeholder="请输入用户名"
                                autocomplete="off"
                                class="layui-input">
@@ -125,6 +125,21 @@
                 if (value !== $("#password").val()) {
                     return "两次密码不一致";
                 }
+            },
+            username: function (value, item) {
+                var msg;
+                $.ajax({
+                    type: "GET",
+                    url: '/register/' + value,
+                    async: false, // 使用同步的方法
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code != 0) {
+                            msg = "用户已注册";//return写在最后面，之前我在这里直接return，无法实现验证
+                        }
+                    }
+                });
+                return msg;
             }
         });
     });
