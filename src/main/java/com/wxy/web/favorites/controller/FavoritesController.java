@@ -29,15 +29,17 @@ public class FavoritesController {
     public ApiResponse save(@RequestBody Favorites favorites) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
-        //https://www.baidu.com/
-        String iconUrl = "";
-        try {
-            URL url = new URL(favorites.getUrl());
-            iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";// 保证从域名根路径搜索
-        } catch (MalformedURLException e) {
-            iconUrl = "";
-        }
-        favorites.setIcon(iconUrl);
+        favoritesRepository.save(favorites);
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/smartAdd")
+    public ApiResponse smartAdd(@RequestBody Favorites favorites) {
+        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        favorites.setUserId(user.getId());
+        // 设置分类
+        Category category = categoryRepository.findDefaultCategory(user.getId());
+        favorites.setCategoryId(category.getId());
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }

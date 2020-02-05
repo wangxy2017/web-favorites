@@ -27,6 +27,9 @@ public class Category {
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
+    @Column(name = "is_system", columnDefinition = "int(1) comment '是否系统分类'")
+    private Integer isSystem;
+
     @Transient
     private List<Favorites> favorites;
 }

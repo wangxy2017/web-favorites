@@ -35,8 +35,12 @@ public class CategoryController {
 
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
-        categoryRepository.deleteById(id);
-        favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
-        return ApiResponse.success();
+        Category category = categoryRepository.findById(id).get();
+        if (category != null && category.getIsSystem() == null) {
+            categoryRepository.deleteById(id);
+            favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
     }
 }

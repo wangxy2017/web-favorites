@@ -7,10 +7,7 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
@@ -36,10 +33,19 @@ public class RegisterController {
     public ApiResponse register(@RequestBody User user) {
         User user1 = userRepository.save(user);
         // 创建默认分类
-        Category category = new Category(null, "默认分类", user1.getId(), null);
+        Category category = new Category(null, "默认分类", user1.getId(), 1, null);
         categoryRepository.save(category);
         HttpSession session = SpringUtils.getRequest().getSession();
         session.setAttribute("user", user1);
         return ApiResponse.success();
+    }
+
+    @GetMapping("/{username}")
+    public ApiResponse checkUsername(@PathVariable String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
     }
 }

@@ -129,8 +129,12 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item"><a href=""><i class="layui-icon layui-icon-website"
-                                                         style="margin-right: 10px"></i>我的收藏夹</a></li>
+                <li class="layui-nav-item">
+                    <a href=""><i class="layui-icon layui-icon-website" style="margin-right: 10px"></i>我的收藏夹</a>
+                </li>
+                <li class="layui-nav-item" id="smartBtn">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-headset" style="margin-right: 10px"></i>智能收藏</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -241,6 +245,27 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        // 智能按钮
+        $(document).on('click', '#smartBtn', function () {
+            $(this).removeClass("layui-this");
+            layer.prompt({"title": "添加收藏(url)"}, function (value, index, elem) {
+                var data = {"name": value, "url": value, "icon": getIcon(value)};
+                $.ajax({
+                    type: "POST",
+                    url: "/favorites/smartAdd",
+                    data: JSON.stringify(data),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            // 新增分类
+                            loadList();
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        });
         // 关闭搜索
         $(document).on('click', '#search_close', function () {
             $(this).hide();
@@ -396,7 +421,17 @@
                 }
             });
         };
-
+        // 获取图标
+        window.getIcon = function (url) {
+            var iconUrl = "";
+            try {
+                var u = new URL(url);
+                iconUrl = u.protocol + "//" + u.host + "/favicon.ico";// 保证从域名根路径搜索
+            } catch (err) {
+                iconUrl = "/images/default.png";
+            }
+            return iconUrl;
+        };
         // 阻止冒泡事件和默认事件
         window.stopBubbleAndDefault = function (e) {
             // 阻止冒泡
@@ -487,6 +522,7 @@
 
         //监听提交
         form.on('submit(addFavorites)', function (data) {
+            data.field.icon = getIcon(data.field.url);
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
@@ -504,6 +540,7 @@
         });
         //监听提交
         form.on('submit(updateFavorites)', function (data) {
+            data.field.icon = getIcon(data.field.url);
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",

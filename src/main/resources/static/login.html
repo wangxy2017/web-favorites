@@ -44,7 +44,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" required lay-verify="required" placeholder="请输入用户名"
+                        <input type="text" name="username" required lay-verify="required|checkUsername"
+                               placeholder="请输入用户名"
                                autocomplete="off"
                                class="layui-input">
                     </div>
@@ -52,7 +53,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">设置密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
+                        <input type="password" name="password" id="password" required lay-verify="required"
+                               placeholder="请输入密码"
                                autocomplete="off"
                                class="layui-input">
                     </div>
@@ -60,7 +62,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">确认密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="confirm_password" required lay-verify="required"
+                        <input type="password" name="confirm_password" required lay-verify="required|confirmPwd"
                                placeholder="请再次输入密码" autocomplete="off"
                                class="layui-input">
                     </div>
@@ -117,6 +119,13 @@
                 }
             });
             return false;
+        });
+        form.verify({
+            confirmPwd: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (value !== $("#password").val()) {
+                    return "两次密码不一致";
+                }
+            }
         });
     });
 </script>
