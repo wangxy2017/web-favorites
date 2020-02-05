@@ -225,7 +225,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="categoryName" required lay-verify="required" placeholder="请输入名称"
+                   autocomplete="off"
                    class="layui-input">
         </div>
     </div>
@@ -336,6 +337,12 @@
                             "id": data.id // "name": "value"
                             , "name": data.name
                         });
+                        //禁用系统分类
+                        if (data.isSystem == 1) {
+                            $("#categoryName").attr("disabled", true);
+                        } else {
+                            $("#categoryName").removeAttr("disabled");
+                        }
                     }
                 }
             });
@@ -408,7 +415,7 @@
                             });
                             html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
                             html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
-                            html += '               <p title="添加地址">添加地址</p>';
+                            html += '               <p title="添加收藏">添加收藏</p>';
                             html += '           </li>';
                             html += '       </ul>';
                             html += '</fieldset>';
@@ -451,7 +458,7 @@
         window.addFavorites = function (categoryId) {
             layer.open({
                 type: 1,
-                title: "添加",
+                title: "添加收藏",
                 area: '400px',
                 content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
@@ -495,7 +502,7 @@
         $(document).on('click', '.action-icon', function (e) {
             layer.open({
                 type: 1,
-                title: "修改",
+                title: "修改收藏",
                 area: '400px',
                 content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });

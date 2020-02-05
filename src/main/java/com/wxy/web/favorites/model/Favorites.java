@@ -19,13 +19,13 @@ public class Favorites {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(100) comment '名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(500) comment '名称'")
     private String name;
 
-    @Column(name = "icon", columnDefinition = "varchar(1000) comment '图标'")
+    @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")
     private String icon;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(1000) comment '地址'")
+    @Column(name = "url", nullable = false, columnDefinition = "varchar(500) comment '地址'")
     private String url;
 
     @Column(name = "category_id", nullable = false, columnDefinition = "int(10) comment '分类ID'")
