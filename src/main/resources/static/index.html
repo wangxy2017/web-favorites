@@ -118,10 +118,10 @@
                     <span id="username">默认用户</span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" onclick="changePwd()">修改密码</a></dd>
+                    <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="javascript:;" onclick="logout()">安全退出</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" id="logout">安全退出</a></li>
         </ul>
     </div>
 
@@ -247,7 +247,7 @@
         var form = layui.form;
 
         // 智能按钮
-        $(document).on('click', '#smartBtn', function () {
+        $("#smartBtn").click(function () {
             $(this).removeClass("layui-this");
             layer.prompt({"title": "添加收藏(url)"}, function (value, index, elem) {
                 var data = {"name": value, "url": value, "icon": getIcon(value)};
@@ -268,7 +268,7 @@
             });
         });
         // 关闭搜索
-        $(document).on('click', '#search_close', function () {
+        $("#search_close").click(function () {
             $(this).hide();
             if ($("#search_name").val() != "") {
                 $("#search_name").val("");
@@ -297,7 +297,7 @@
                                     html += '       <img src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
                                     html += '   </div>';
                                     html += '   <p title="' + f.name + '">' + f.name + '</p>';
-                                    html += '   <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                    html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
                                     html += '</li>';
                                 });
                                 html += '</ul>';
@@ -320,7 +320,7 @@
                 var u = new URL(url);
                 window.open(u.href);
             } catch (err) {
-                layer.msg('无效超链接');
+                layer.msg('此链接无效', {icon: 7});
             }
         };
         // 编辑分类
@@ -374,16 +374,16 @@
             });
         };
         // 修改密码
-        window.changePwd = function () {
+        $("#changePwd").click(function () {
             layer.open({
                 type: 1,
                 title: "修改密码",
                 area: '400px',
                 content: $('#password') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
-        };
+        });
         // 登出
-        window.logout = function () {
+        $("#logout").click(function () {
             $.ajax({
                 type: "GET",
                 url: "/user/logout",
@@ -394,7 +394,7 @@
                     }
                 }
             });
-        };
+        });
         // 加载数据
         window.loadList = function () {
             $.ajax({
@@ -415,7 +415,7 @@
                                 html += '                   <img src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
                                 html += '               </div>';
                                 html += '               <p title="' + f.name + '">' + f.name + '</p>';
-                                html += '               <i class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                html += '               <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
                                 html += '           </li>';
                             });
                             html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
@@ -473,7 +473,7 @@
             });
         };
         // 删除收藏
-        $(document).on('click', '#deleteFavorites', function () {
+        $("#deleteFavorites").click(function () {
             var data = form.val("update-favorites");
             $.ajax({
                 type: "GET",
@@ -488,7 +488,7 @@
             });
         });
         // 删除分类
-        $(document).on('click', '#deleteCategory', function () {
+        $("#deleteCategory").click(function () {
             var data = form.val("update-category");
             $.ajax({
                 type: "GET",
@@ -504,7 +504,8 @@
             });
         });
         // 编辑收藏
-        $(document).on('click', '.action-icon', function (e) {
+        window.editFavorites = function (obj, e) {
+            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
             layer.open({
                 type: 1,
                 title: "修改收藏",
@@ -514,7 +515,7 @@
             // 表单赋值
             $.ajax({
                 type: "GET",
-                url: "/favorites/" + $(this).attr("data-id"),
+                url: "/favorites/" + $(obj).attr("data-id"),
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -529,9 +530,7 @@
                     }
                 }
             });
-            stopBubbleAndDefault(e);
-        });
-
+        };
         //监听提交
         form.on('submit(addFavorites)', function (data) {
             data.field.icon = getIcon(data.field.url);
