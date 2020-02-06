@@ -595,6 +595,10 @@
                     if (result.code == 0) {
                         layer.closeAll();
                         layer.msg('修改成功', {icon: 6});
+                        // 退出
+                        setTimeout(function () {
+                            $("#logout").trigger("click");
+                        }, 1000);
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }

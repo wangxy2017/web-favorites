@@ -12,9 +12,11 @@
     <ul class="layui-tab-title">
         <li class="layui-this">登录</li>
         <li>注册</li>
+        <li>忘记密码</li>
     </ul>
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
+            <!-- 登录表单 -->
             <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
@@ -40,6 +42,7 @@
             </form>
         </div>
         <div class="layui-tab-item">
+            <!-- 注册表单 -->
             <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
@@ -60,16 +63,35 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">确认密码</label>
+                    <label class="layui-form-label">邮箱</label>
                     <div class="layui-input-block">
-                        <input type="password" name="confirm_password" required lay-verify="required|confirmPwd"
-                               placeholder="请再次输入密码" autocomplete="off"
+                        <input type="email" name="email" required lay-verify="required|email|exitEmail"
+                               placeholder="请输入邮箱" autocomplete="off"
                                class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="register">注册</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <!-- 忘记密码 -->
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">注册邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="email" name="email" required lay-verify="required|email"
+                               placeholder="请输入注册时的邮箱"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="forgotPwd">提交</button>
                     </div>
                 </div>
             </form>
@@ -103,6 +125,21 @@
             });
             return false;
         });
+        form.on('submit(forgotPwd)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/login/forgot",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg("新密码已发送至您的邮箱...", {icon: 6});
+                    }
+                }
+            });
+            return false;
+        });
         form.on('submit(register)', function (data) {
             $.ajax({
                 type: "POST",
@@ -121,11 +158,6 @@
             return false;
         });
         form.verify({
-            confirmPwd: function (value, item) { //value：表单的值、item：表单的DOM对象
-                if (value !== $("#password").val()) {
-                    return "两次密码不一致";
-                }
-            },
             username: function (value, item) {
                 var msg;
                 $.ajax({
@@ -136,6 +168,21 @@
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "用户已注册";//return写在最后面，之前我在这里直接return，无法实现验证
+                        }
+                    }
+                });
+                return msg;
+            },
+            exitEmail: function (value, item) {
+                var msg;
+                $.ajax({
+                    type: "GET",
+                    url: '/register/email/' + value,
+                    async: false, // 使用同步的方法
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code != 0) {
+                            msg = "邮箱已被使用";//return写在最后面，之前我在这里直接return，无法实现验证
                         }
                     }
                 });

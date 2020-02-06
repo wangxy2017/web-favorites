@@ -24,4 +24,7 @@ public class User {
 
     @Column(name = "password", nullable = false, columnDefinition = "varchar(100) comment '密码'")
     private String password;
+
+    @Column(name = "email", nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
+    private String email;
 }
