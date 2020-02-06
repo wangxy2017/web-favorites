@@ -38,7 +38,7 @@ public class LoginController {
 
     @PostMapping("/forgot")
     public ApiResponse forgot(@RequestBody User user) {
-        User u = userRepository.findByEmail(user.getEmail());
+        User u = userRepository.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (u != null) {
             String tempPwd = PasswordUtils.randomPassword(8);
             // 重置用户密码
