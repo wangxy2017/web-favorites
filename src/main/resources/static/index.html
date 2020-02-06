@@ -165,7 +165,7 @@
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="addFavorites">立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancelAddFavorites">取消</button>
         </div>
     </div>
 </form>
@@ -214,7 +214,7 @@
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="updatePassword">立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancelPwd">取消</button>
         </div>
     </div>
 </form>
@@ -246,6 +246,12 @@
         var layer = layui.layer;
         var form = layui.form;
 
+        $("#cancelPwd").click(function () {
+            layer.closeAll();
+        });
+        $("#cancelAddFavorites").click(function () {
+            layer.closeAll();
+        });
         // 智能按钮
         $("#smartBtn").click(function () {
             $(this).removeClass("layui-this");
@@ -469,7 +475,9 @@
             });
             // 表单赋值
             form.val("add-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
-                "categoryId": categoryId // "name": "value"
+                "name": "" // "name": "value"
+                , "url": ""
+                , "categoryId": categoryId
             });
         };
         // 删除收藏
@@ -499,6 +507,8 @@
                         layer.closeAll();
                         // 删除分类
                         $("fieldset[data-id='" + data.id + "']").remove();
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
                     }
                 }
             });

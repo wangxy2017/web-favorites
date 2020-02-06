@@ -53,7 +53,7 @@ public class LoginController {
             javaMailSender.send(message);
             return ApiResponse.success();
         } else {
-            return ApiResponse.error();
+            return ApiResponse.error("账号或邮箱不存在");
         }
     }
 }
