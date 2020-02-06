@@ -8,13 +8,11 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.HtmlUtils;
 import com.wxy.web.favorites.util.SpringUtils;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -37,7 +35,7 @@ public class FavoritesController {
             icon = HtmlUtils.getIcon(favorites.getUrl());
         } catch (IOException e) {
         }
-        favorites.setIcon("".equals(icon) ? "/images/default.png" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/default.png" : icon);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
@@ -55,13 +53,13 @@ public class FavoritesController {
             icon = HtmlUtils.getIcon(favorites.getUrl());
         } catch (IOException e) {
         }
-        favorites.setIcon("".equals(icon) ? "/images/default.png" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/default.png" : icon);
         String title = "";
         try {
             title = HtmlUtils.getTitle(favorites.getUrl());
         } catch (IOException e) {
         }
-        favorites.setName("".equals(title) ? favorites.getUrl() : title);
+        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }

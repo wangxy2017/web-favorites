@@ -1,8 +1,8 @@
 package com.wxy.web.favorites.util;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -10,10 +10,14 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public class HtmlUtils {
 
-    private static OkHttpClient client = new OkHttpClient();
+    private static OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(500, TimeUnit.MILLISECONDS)
+            .readTimeout(500, TimeUnit.MILLISECONDS)
+            .build();
 
     /**
      * 获取重定向后的地址
@@ -91,23 +95,25 @@ public class HtmlUtils {
         return title;
     }
 
+    /**
+     * 获取图标绝对路径
+     *
+     * @param iconUrl
+     * @param urlString
+     * @return
+     * @throws MalformedURLException
+     */
     private static String getAbsoluteIconUrl(String iconUrl, String urlString) throws MalformedURLException {
         if (iconUrl.contains("http")) {
             return iconUrl;
         }
         if (iconUrl.charAt(0) == '/') {//判断是否为相对路径或根路径
             URL url = new URL(urlString);
-            iconUrl = url.getProtocol() + "://" + url.getHost() + iconUrl;
+            iconUrl = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + iconUrl;
         } else {
-            if (urlString.indexOf("?") > 0) {
-                urlString = urlString.substring(0, urlString.indexOf("?"));
-            } else if (urlString.indexOf("#") > 0) {
-                urlString = urlString.substring(0, urlString.indexOf("#"));
-            }
-            if (!urlString.endsWith("/")) {
-                urlString = urlString + "/";
-            }
-            iconUrl = urlString + iconUrl;
+            URL url = new URL(urlString);
+            iconUrl = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "")
+                    + url.getPath() + (url.getPath().endsWith("/") ? "" : "/") + iconUrl;
         }
         return iconUrl;
     }
@@ -124,5 +130,14 @@ public class HtmlUtils {
 
     public static String getTitle(String url) throws IOException {
         return getTitleByHtml(getFinalUrl(url));
+    }
+
+    public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
+//        String url = "https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp/3.14.2";
+        String url = "https://disp-wfw.xiaopankeji.com/dd-admin/#/login";
+        System.out.println(getIcon(url));
+        System.out.println(getTitle(url));
+        System.out.printf("耗时：[%s ms]", System.currentTimeMillis() - start);
     }
 }
