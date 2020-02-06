@@ -256,11 +256,10 @@
         $("#smartBtn").click(function () {
             $(this).removeClass("layui-this");
             layer.prompt({"title": "添加收藏(url)"}, function (value, index, elem) {
-                var data = {"name": value, "url": value, "icon": getIcon(value)};
                 $.ajax({
                     type: "POST",
                     url: "/favorites/smartAdd",
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({"url": value}),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     success: function (result) {
@@ -439,32 +438,6 @@
                 }
             });
         };
-        // 获取图标
-        window.getIcon = function (url) {
-            var iconUrl = "";
-            try {
-                var u = new URL(url);
-                iconUrl = u.protocol + "//" + u.host + "/favicon.ico";// 保证从域名根路径搜索
-            } catch (err) {
-                iconUrl = "/images/default.png";
-            }
-            return iconUrl;
-        };
-        // 阻止冒泡事件和默认事件
-        window.stopBubbleAndDefault = function (e) {
-            // 阻止冒泡
-            if (e && e.stopPropagation)
-                e.stopPropagation();
-            else
-                window.event.cancelBubble = true;
-            // 阻止默认事件
-            if (e && e.preventDefault)
-                e.preventDefault();
-            else
-                window.event.returnValue = false;
-            return false;
-        };
-
         // 添加收藏
         window.addFavorites = function (categoryId) {
             layer.open({
@@ -543,7 +516,6 @@
         };
         //监听提交
         form.on('submit(addFavorites)', function (data) {
-            data.field.icon = getIcon(data.field.url);
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
@@ -561,7 +533,6 @@
         });
         //监听提交
         form.on('submit(updateFavorites)', function (data) {
-            data.field.icon = getIcon(data.field.url);
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",

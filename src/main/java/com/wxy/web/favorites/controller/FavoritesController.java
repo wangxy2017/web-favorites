@@ -6,11 +6,13 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.util.HtmlUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -29,6 +31,13 @@ public class FavoritesController {
     public ApiResponse save(@RequestBody Favorites favorites) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
+        // 处理图标
+        String icon = "";
+        try {
+            icon = HtmlUtils.getIcon(favorites.getUrl());
+        } catch (IOException e) {
+        }
+        favorites.setIcon("".equals(icon) ? "/images/default.png" : icon);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
@@ -40,6 +49,19 @@ public class FavoritesController {
         // 设置分类
         Category category = categoryRepository.findDefaultCategory(user.getId());
         favorites.setCategoryId(category.getId());
+        // 处理图标和title
+        String icon = "";
+        try {
+            icon = HtmlUtils.getIcon(favorites.getUrl());
+        } catch (IOException e) {
+        }
+        favorites.setIcon("".equals(icon) ? "/images/default.png" : icon);
+        String title = "";
+        try {
+            title = HtmlUtils.getTitle(favorites.getUrl());
+        } catch (IOException e) {
+        }
+        favorites.setName("".equals(title) ? favorites.getUrl() : title);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
