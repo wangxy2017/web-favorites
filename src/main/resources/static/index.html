@@ -7,6 +7,13 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        #userImg {
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
         .search-div {
             z-index: 999;
             position: absolute;
@@ -113,14 +120,14 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="/images/default_user.jpg" class="layui-nav-img">
+                    <i class="layui-icon layui-icon-user" id="userImg"></i>
                     <span id="username">默认用户</span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
+                    <dd><a href="javascript:;" id="logout">安全退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="javascript:;" id="logout">安全退出</a></li>
         </ul>
     </div>
 
