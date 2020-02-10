@@ -379,6 +379,7 @@
         };
         // 修改密码
         $("#changePwd").click(function () {
+            $(this).parent().removeClass("layui-this");
             layer.open({
                 type: 1,
                 title: "修改密码",
@@ -598,7 +599,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         let username = result.data.username;
-                        $("#username").text(username.substring(0, 8));
+                        $("#username").text(username.substring(0, 4));
                     }
                 }
             });

@@ -131,13 +131,4 @@ public class HtmlUtils {
     public static String getTitle(String url) throws IOException {
         return getTitleByHtml(getFinalUrl(url));
     }
-
-    public static void main(String[] args) throws IOException {
-        long start = System.currentTimeMillis();
-//        String url = "https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp/3.14.2";
-        String url = "https://disp-wfw.xiaopankeji.com/dd-admin/#/login";
-        System.out.println(getIcon(url));
-        System.out.println(getTitle(url));
-        System.out.printf("耗时：[%s ms]", System.currentTimeMillis() - start);
-    }
 }
