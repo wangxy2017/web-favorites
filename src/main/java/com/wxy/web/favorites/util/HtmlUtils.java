@@ -25,7 +25,7 @@ public class HtmlUtils {
      * @return
      * @throws IOException
      */
-    public static String getIcon(String url) throws IOException {
+    public static String getIcon(String url) throws Exception {
         URL u = new URL(url);
         String iconUrl = u.getProtocol() + "://" + u.getHost() + (u.getPort() > 0 ? ":" + u.getPort() : "") + "/favicon.ico";
         Response response = client.newCall(new Request.Builder().url(iconUrl).build()).execute();
@@ -43,7 +43,7 @@ public class HtmlUtils {
      * @return
      * @throws IOException
      */
-    public static String getTitle(String url) throws IOException {
+    public static String getTitle(String url) throws Exception {
         Response response = client.newCall(new Request.Builder().url(url).build()).execute();
         if (response.isSuccessful()) {
             String body = response.body().string();

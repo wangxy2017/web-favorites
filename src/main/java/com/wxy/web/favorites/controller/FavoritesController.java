@@ -33,7 +33,7 @@ public class FavoritesController {
         String icon = "/images/default.png";
         try {
             icon = HtmlUtils.getIcon(favorites.getUrl());
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
         }
         favorites.setIcon(icon);
         favoritesRepository.save(favorites);
@@ -51,13 +51,13 @@ public class FavoritesController {
         String icon = "/images/default.png";
         try {
             icon = HtmlUtils.getIcon(favorites.getUrl());
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
         }
         favorites.setIcon(icon);
         String name = favorites.getUrl();
         try {
             name = HtmlUtils.getTitle(favorites.getUrl());
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
         }
         favorites.setName(name);
         favoritesRepository.save(favorites);
