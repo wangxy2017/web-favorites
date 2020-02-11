@@ -42,8 +42,8 @@ public class LoginController {
             u.setPassword(tempPwd);
             userRepository.save(u);
             // 将临时密码发送至用户邮箱
-            emailUtils.send(u.getEmail(), "网络收藏夹|忘记密码",
-                    String.format("密码已重置，为了您的账户安全，登录后请即时修改密码。临时密码：【%s】", tempPwd));
+            emailUtils.send(u.getEmail(), "网络收藏夹|重置密码",
+                    String.format("您的新密码：%s，请牢记。", tempPwd));
             return ApiResponse.success();
         } else {
             return ApiResponse.error("账号或邮箱不存在");

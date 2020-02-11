@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class PasswordUtils {
 
-    private static final String SCOPE = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890!@#$%^&*";
+    private static final String SCOPE = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890";
 
     private static final Random R = new Random();
 
