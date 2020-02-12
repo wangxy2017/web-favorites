@@ -9,6 +9,8 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -42,5 +44,12 @@ public class CategoryController {
             return ApiResponse.success();
         }
         return ApiResponse.error("无法删除");
+    }
+
+    @GetMapping("/list")
+    public ApiResponse list() {
+        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        List<Category> list = categoryRepository.findByUserId(user.getId());
+        return ApiResponse.success(list);
     }
 }

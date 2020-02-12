@@ -7,6 +7,11 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        /* 解决弹出框中select显示难看 */
+        body .to-fix-select .layui-layer-content {
+            overflow: visible;
+        }
+
         #userImg {
             font-size: 18px;
             font-weight: bold;
@@ -179,7 +184,6 @@
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px">
     <input type="hidden" name="id">
-    <input type="hidden" name="categoryId">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
@@ -192,6 +196,14 @@
         <div class="layui-input-inline">
             <input type="text" name="url" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
                    class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择分类</label>
+        <div class="layui-input-inline">
+            <select name="categoryId" id="categoryId" lay-verify="required">
+                <option value=""></option>
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
@@ -497,6 +509,7 @@
             layer.open({
                 type: 1,
                 title: "修改收藏",
+                skin: 'to-fix-select',
                 area: '400px',
                 content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
@@ -605,6 +618,21 @@
                     if (result.code == 0) {
                         let username = result.data.username;
                         $("#username").text(username.substring(0, 4));
+                    }
+                }
+            });
+            // 加载分类
+            $.ajax({
+                type: "GET",
+                url: "/category/list",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        var html = '';
+                        $.each(result.data, function (i, c) {
+                            html += '<option value="' + c.id + '">' + c.name + '</option>';
+                        });
+                        $("#categoryId").empty().append(html);
                     }
                 }
             });
