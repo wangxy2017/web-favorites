@@ -7,7 +7,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -23,17 +22,16 @@ public class HtmlUtils {
      *
      * @param url
      * @return
-     * @throws IOException
+     * @throws Exception
      */
     public static String getIcon(String url) throws Exception {
         URL u = new URL(url);
         String iconUrl = u.getProtocol() + "://" + u.getHost() + (u.getPort() > 0 ? ":" + u.getPort() : "") + "/favicon.ico";
         Response response = client.newCall(new Request.Builder().url(iconUrl).build()).execute();
-        if (response.code() == 200) {
+        if (response.isSuccessful()) {
             return iconUrl;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -41,10 +39,12 @@ public class HtmlUtils {
      *
      * @param url
      * @return
-     * @throws IOException
+     * @throws Exception
      */
     public static String getTitle(String url) throws Exception {
-        Response response = client.newCall(new Request.Builder().url(url).build()).execute();
+        URL u = new URL(url);
+        String rootPath = u.getProtocol() + "://" + u.getHost() + (u.getPort() > 0 ? ":" + u.getPort() : "") + "/";
+        Response response = client.newCall(new Request.Builder().url(rootPath).build()).execute();
         if (response.isSuccessful()) {
             String body = response.body().string();
             Document document = Jsoup.parse(body);

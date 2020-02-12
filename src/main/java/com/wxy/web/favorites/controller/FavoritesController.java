@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,12 +29,12 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         // 处理图标
-        String icon = "/images/default.png";
+        String icon = "";
         try {
             icon = HtmlUtils.getIcon(favorites.getUrl());
         } catch (Exception ignored) {
         }
-        favorites.setIcon(icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/default.png" : icon);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
@@ -47,19 +46,19 @@ public class FavoritesController {
         // 设置分类
         Category category = categoryRepository.findDefaultCategory(user.getId());
         favorites.setCategoryId(category.getId());
-        // 处理icon和name
-        String icon = "/images/default.png";
+        // 处理icon和title
+        String icon = "";
         try {
             icon = HtmlUtils.getIcon(favorites.getUrl());
         } catch (Exception ignored) {
         }
-        favorites.setIcon(icon);
-        String name = favorites.getUrl();
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/default.png" : icon);
+        String title = "";
         try {
-            name = HtmlUtils.getTitle(favorites.getUrl());
+            title = HtmlUtils.getTitle(favorites.getUrl());
         } catch (Exception ignored) {
         }
-        favorites.setName(name);
+        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
