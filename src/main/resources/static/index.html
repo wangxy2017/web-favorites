@@ -165,7 +165,7 @@
 </div>
 <!-- 导入/导出 -->
 <div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
-    <button type="button" class="layui-btn">导入收藏</button>
+    <button type="button" class="layui-btn" id="import">导入收藏</button>
     <button type="button" class="layui-btn">导出收藏</button>
 </div>
 <!-- 添加收藏表单 -->
@@ -270,11 +270,31 @@
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use(['element', 'jquery', 'layer', 'form'], function () {
+    layui.use(['element', 'jquery', 'layer', 'form', 'upload'], function () {
         var element = layui.element;
         var $ = layui.$;
         var layer = layui.layer;
         var form = layui.form;
+        var upload = layui.upload;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#import' //绑定元素
+            , accept: 'file'
+            , acceptMime: 'file/xml'
+            , exts: 'xml'
+            , url: '/favorites/upload' //上传接口
+            , done: function (result) {
+                //上传完毕回调
+                if (result.code == 0) {
+                    layer.closeAll();
+                    loadList();
+                }
+            }
+            , error: function () {
+                layer.msg('上传失败', {icon: 5});
+            }
+        });
 
         $("#cancelPwd").click(function () {
             layer.closeAll();
@@ -286,7 +306,7 @@
             layer.open({
                 type: 1,
                 title: "导入收藏夹",
-                area:'350px',
+                area: '350px',
                 content: $('#importOrExport') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
         });
