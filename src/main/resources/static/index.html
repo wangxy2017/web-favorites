@@ -7,6 +7,11 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        /* 解决手机端宽度太小导致样式错乱 */
+        body {
+            min-width: 400px !important;
+        }
+
         /* 解决弹出框中select显示难看 */
         body .to-fix-select .layui-layer-content {
             overflow: visible;
