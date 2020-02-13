@@ -152,15 +152,21 @@
                 <li class="layui-nav-item" id="smartBtn">
                     <a href="javascript:;"><i class="layui-icon layui-icon-headset" style="margin-right: 10px"></i>智能收藏</a>
                 </li>
+                <li class="layui-nav-item" id="importOrExportBtn">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-export" style="margin-right: 10px"></i>导入收藏夹</a>
+                </li>
             </ul>
         </div>
     </div>
 
-    <div class="layui-body">
+    <div class="layui-body" style="padding: 15px" id="main">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;" id="main">
-        </div>
     </div>
+</div>
+<!-- 导入/导出 -->
+<div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
+    <button type="button" class="layui-btn">导入收藏</button>
+    <button type="button" class="layui-btn">导出收藏</button>
 </div>
 <!-- 添加收藏表单 -->
 <form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
@@ -275,6 +281,14 @@
         });
         $("#cancelAddFavorites").click(function () {
             layer.closeAll();
+        });
+        $("#importOrExportBtn").click(function () {
+            layer.open({
+                type: 1,
+                title: "导入收藏夹",
+                area:'350px',
+                content: $('#importOrExport') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
         });
         // 智能按钮
         $("#smartBtn").click(function () {
