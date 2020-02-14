@@ -22,11 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,21 +111,26 @@ public class FavoritesController {
         return ApiResponse.success(list);
     }
 
+    private List<Category> parseXML(InputStream in) throws DocumentException {
+        ArrayList<Category> list = new ArrayList<>();
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(in);
+        Element root = document.getRootElement();
+        root.elements("CATEGORY").forEach(c -> {
+            ArrayList<Favorites> list1 = new ArrayList<>();
+            c.element("LIST").elements("FAVORITES").forEach(f -> {
+                list1.add(new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null));
+            });
+            list.add(new Category(null, c.elementText("NAME"), null, null, list1));
+        });
+        return list;
+    }
+
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(file.getInputStream());
-            Element root = document.getRootElement();
-            root.elements("CATEGORY").forEach(c -> {
-                Category category = new Category(null, c.elementText("NAME"), user.getId(), null, null);
-                categoryRepository.save(category);
-                c.elements("FAVORITES").forEach(f -> {
-                    Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), category.getId(), user.getId());
-                    favoritesRepository.save(favorites);
-                });
-            });
+            List<Category> list = parseXML(file.getInputStream());
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -137,29 +144,34 @@ public class FavoritesController {
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
+        // 写入输出流
+        writeXML(response.getOutputStream(), categories);
+        // 下载
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/x-download");
+        response.addHeader("Content-Disposition", "attachment;filename=export.xml");
+    }
+
+    private void writeXML(OutputStream out, List<Category> categories) throws IOException {
         Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("DATA");
-        root.addAttribute("version", "1.0");
+        Element data = document.addElement("DATA");
+        data.addAttribute("version", "1.0");
         categories.forEach(c -> {
-            Element element = root.addElement("CATEGORY");
-            element.addElement("NAME").setText(c.getName());
+            Element category = data.addElement("CATEGORY");
+            category.addElement("NAME").setText(c.getName());
+            Element list = category.addElement("LIST");
             c.getFavorites().forEach(f -> {
-                Element element1 = element.addElement("FAVORITES");
-                element1.addElement("NAME").setText(f.getName());
-                element1.addElement("URL").setText(f.getUrl());
-                element1.addElement("ICON").setText(f.getIcon());
+                Element favorites = list.addElement("FAVORITES");
+                favorites.addElement("NAME").setText(f.getName());
+                favorites.addElement("URL").setText(f.getUrl());
+                favorites.addElement("ICON").setText(f.getIcon());
             });
         });
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
-        OutputStream outputStream = response.getOutputStream();
-        XMLWriter writer = new XMLWriter(outputStream, format);
+        XMLWriter writer = new XMLWriter(out, format);
         writer.setEscapeText(false);
         writer.write(document);
         writer.close();
-        response.setContentType("application/force-download");// 设置强制下载不打开
-        response.addHeader("Content-Disposition", "attachment;fileName="
-                + URLEncoder.encode("favorites_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd"))
-                + ".xml", StandardCharsets.UTF_8.name()));// 设置文件名
     }
 }
