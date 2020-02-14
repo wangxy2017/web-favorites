@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -184,11 +185,10 @@ public class FavoritesController {
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
+        response.setContentType("application/force-download");// 设置强制下载不打开
+        response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流
         writeXML(response.getOutputStream(), categories);
-        // 下载
-        response.setContentType("application/force-download");// 设置强制下载不打开
-        response.addHeader("Content-Disposition", "attachment;fileName=export.xml");// 设置文件名
     }
 
     private void writeXML(OutputStream out, List<Category> categories) throws IOException {

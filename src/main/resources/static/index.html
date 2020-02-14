@@ -136,6 +136,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
+                    <dd><a href="javascript:;" id="importOrExportBtn">导入/导出</a></dd>
                     <dd><a href="javascript:;" id="logout">安全退出</a></dd>
                 </dl>
             </li>
@@ -151,9 +152,6 @@
                 </li>
                 <li class="layui-nav-item" id="smartBtn">
                     <a href="javascript:;"><i class="layui-icon layui-icon-headset" style="margin-right: 10px"></i>智能收藏</a>
-                </li>
-                <li class="layui-nav-item" id="importOrExportBtn">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-export" style="margin-right: 10px"></i>导入收藏夹</a>
                 </li>
             </ul>
         </div>
@@ -289,7 +287,7 @@
                 if (result.code == 0) {
                     layer.closeAll();
                     loadList();
-                }else{
+                } else {
                     layer.msg('导入失败', {icon: 5});
                 }
             }
@@ -299,7 +297,7 @@
         });
 
         $("#export").click(function () {
-            window.location.href="/favorites/export";
+            window.location.href = "/favorites/export";
         });
         $("#cancelPwd").click(function () {
             layer.closeAll();
@@ -311,7 +309,7 @@
             layer.open({
                 type: 1,
                 title: "导入收藏夹",
-                area: '350px',
+                area: '400px',
                 content: $('#importOrExport') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
             });
         });
