@@ -24,13 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/favorites")
@@ -131,9 +126,51 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
+            // 查询用户分类
+            List<Category> categories = categoryRepository.findByUserId(user.getId());
+            for (Category c : categories) {
+                c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
+            }
+            list.forEach(c -> {
+                Category category = existCategory(c.getName(), categories);
+                if (category == null) {
+                    c.setUserId(user.getId());
+                    categoryRepository.save(c);
+                } else {
+                    c.setId(category.getId());
+                    c.getFavorites().forEach(f -> {
+                        Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
+                        if (favorites == null) {
+                            f.setCategoryId(c.getId());
+                            f.setUserId(user.getId());
+                        } else {
+                            f = null;
+                        }
+                    });
+                }
+                favoritesRepository.saveAll(c.getFavorites());
+            });
             return ApiResponse.success();
         }
         return ApiResponse.error();
+    }
+
+    private Category existCategory(String name, List<Category> categories) {
+        for (Category c : categories) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    private Favorites existFavorites(String url, List<Favorites> favorites) {
+        for (Favorites f : favorites) {
+            if (f.getUrl().equals(url)) {
+                return f;
+            }
+        }
+        return null;
     }
 
     @GetMapping("/export")
@@ -147,9 +184,8 @@ public class FavoritesController {
         // 写入输出流
         writeXML(response.getOutputStream(), categories);
         // 下载
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/x-download");
-        response.addHeader("Content-Disposition", "attachment;filename=export.xml");
+        response.setContentType("application/force-download");// 设置强制下载不打开
+        response.addHeader("Content-Disposition", "attachment;fileName=export.xml");// 设置文件名
     }
 
     private void writeXML(OutputStream out, List<Category> categories) throws IOException {

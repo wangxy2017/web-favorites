@@ -166,7 +166,7 @@
 <!-- 导入/导出 -->
 <div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
     <button type="button" class="layui-btn" id="import">导入收藏</button>
-    <button type="button" class="layui-btn">导出收藏</button>
+    <button type="button" class="layui-btn" id="export">导出收藏</button>
 </div>
 <!-- 添加收藏表单 -->
 <form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
@@ -296,6 +296,9 @@
             }
         });
 
+        $("#export").click(function () {
+            window.location.href="/favorites/export";
+        });
         $("#cancelPwd").click(function () {
             layer.closeAll();
         });
