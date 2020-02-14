@@ -289,10 +289,12 @@
                 if (result.code == 0) {
                     layer.closeAll();
                     loadList();
+                }else{
+                    layer.msg('导入失败', {icon: 5});
                 }
             }
             , error: function () {
-                layer.msg('上传失败', {icon: 5});
+                layer.msg('导入失败', {icon: 5});
             }
         });
 

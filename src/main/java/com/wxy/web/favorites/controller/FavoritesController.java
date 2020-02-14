@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -131,25 +132,27 @@ public class FavoritesController {
             for (Category c : categories) {
                 c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
             }
-            list.forEach(c -> {
+            for (Category c : list) {
                 Category category = existCategory(c.getName(), categories);
                 if (category == null) {
                     c.setUserId(user.getId());
                     categoryRepository.save(c);
                 } else {
                     c.setId(category.getId());
-                    c.getFavorites().forEach(f -> {
-                        Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
+                    Iterator<Favorites> iterator = c.getFavorites().iterator();
+                    while (iterator.hasNext()) {
+                        Favorites next = iterator.next();
+                        Favorites favorites = existFavorites(next.getUrl(), category.getFavorites());
                         if (favorites == null) {
-                            f.setCategoryId(c.getId());
-                            f.setUserId(user.getId());
+                            next.setCategoryId(c.getId());
+                            next.setUserId(user.getId());
                         } else {
-                            f = null;
+                            iterator.remove();
                         }
-                    });
+                    }
                 }
                 favoritesRepository.saveAll(c.getFavorites());
-            });
+            }
             return ApiResponse.success();
         }
         return ApiResponse.error();
