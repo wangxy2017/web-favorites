@@ -209,7 +209,7 @@ public class FavoritesController {
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
         XMLWriter writer = new XMLWriter(out, format);
-        writer.setEscapeText(false);
+        writer.setEscapeText(true);
         writer.write(document);
         writer.close();
     }
