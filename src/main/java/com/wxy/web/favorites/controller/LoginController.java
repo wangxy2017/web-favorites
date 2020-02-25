@@ -7,10 +7,11 @@ import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/login")
@@ -23,10 +24,21 @@ public class LoginController {
     private EmailUtils emailUtils;
 
     @PostMapping
-    public ApiResponse login(@RequestBody User user) {
+    public ApiResponse login(@RequestBody User user, @RequestParam String remember, HttpServletResponse response) {
         User user1 = userRepository.findByUsername(user.getUsername());
         if (user1 != null && user1.getPassword().equals(user.getPassword())) {
-            SpringUtils.getRequest().getSession().setAttribute("user", user1);
+            HttpServletRequest request = SpringUtils.getRequest();
+            request.getSession().setAttribute("user", user1);
+            if ("1".equals(remember)) {
+                Cookie username = new Cookie("username", user1.getUsername());
+                username.setPath("/");
+                username.setMaxAge(60 * 60 * 24 * 14);
+                response.addCookie(username);
+                Cookie password = new Cookie("password", user1.getPassword());
+                username.setPath("/");
+                username.setMaxAge(60 * 60 * 24 * 14);
+                response.addCookie(password);
+            }
             return ApiResponse.success();
         } else {
             return ApiResponse.error("用户名或密码错误");

@@ -36,6 +36,11 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
+                        <input type="checkbox" name="remember" value="1" title="两周内自动登录" lay-skin="primary" checked>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="login">登录</button>
                     </div>
                 </div>
@@ -120,7 +125,7 @@
         form.on('submit(login)', function (data) {
             $.ajax({
                 type: "POST",
-                url: "/login",
+                url: "/login?remember=" + data.field.remember,
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
