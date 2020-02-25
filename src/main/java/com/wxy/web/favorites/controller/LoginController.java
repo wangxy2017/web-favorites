@@ -35,8 +35,8 @@ public class LoginController {
                 username.setMaxAge(60 * 60 * 24 * 14);
                 response.addCookie(username);
                 Cookie password = new Cookie("password", user1.getPassword());
-                username.setPath("/");
-                username.setMaxAge(60 * 60 * 24 * 14);
+                password.setPath("/");
+                password.setMaxAge(60 * 60 * 24 * 14);
                 response.addCookie(password);
             }
             return ApiResponse.success();
