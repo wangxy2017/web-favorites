@@ -13,7 +13,7 @@
         }
 
         /* 解决弹出框中select显示难看 */
-        body .to-fix-select .layui-layer-content {
+        .to-fix-select .layui-layer-content {
             overflow: visible;
         }
 
@@ -133,7 +133,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">网络收藏夹</div>
+        <div class="layui-logo" style="cursor: pointer;" onclick="window.location.reload();">网络收藏夹</div>
         <div class="search-div">
             <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
                    class="layui-input">
@@ -154,24 +154,15 @@
         </ul>
     </div>
 
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item">
-                    <a href=""><i class="layui-icon layui-icon-website" style="margin-right: 10px"></i>我的收藏夹</a>
-                </li>
-                <li class="layui-nav-item" id="smartBtn">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-headset" style="margin-right: 10px"></i>智能收藏</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="layui-body" style="padding: 15px" id="main">
+    <div class="layui-body" style="padding: 15px;left: 0;">
         <!-- 内容主体区域 -->
+        <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 0;">
+            <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="smartBtn">智能收藏</button>
+        </div>
+        <div id="main"></div>
     </div>
-    <div class="layui-footer">
+    <div class="layui-footer" style="left: 0;">
         <p class="open-source">本项目已开源，开源地址：<a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git"
                                               target="_blank">https://gitee.com/wangxiaoyuan_2019/web-favorites.git<i
                 class="layui-icon layui-icon-praise star"></i></a></p>
@@ -436,7 +427,7 @@
             });
         };
         // 新增分类
-        window.addCategory = function (obj) {
+        $("#addCategoryBtn").click(function () {
             layer.prompt({"title": "添加分类"}, function (value, index, elem) {
                 $.ajax({
                     type: "POST",
@@ -453,7 +444,7 @@
                 });
                 layer.close(index);
             });
-        };
+        });
         // 修改密码
         $("#changePwd").click(function () {
             layer.open({
@@ -506,9 +497,6 @@
                             html += '       </ul>';
                             html += '</fieldset>';
                         });
-                        html += '<div class="layui-btn-container">';
-                        html += '   <button type="button" class="layui-btn" onclick="addCategory(this)">添加分类</button>';
-                        html += '</div>';
                         $("#main").empty().append(html);
                     }
                 }
