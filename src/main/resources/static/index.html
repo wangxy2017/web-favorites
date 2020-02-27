@@ -117,6 +117,17 @@
         .favorites li:hover .action-icon {
             display: block;
         }
+
+        /** 开源信息 **/
+        .open-source {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .open-source .star {
+            margin-left: 8px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -159,6 +170,11 @@
 
     <div class="layui-body" style="padding: 15px" id="main">
         <!-- 内容主体区域 -->
+    </div>
+    <div class="layui-footer">
+        <p class="open-source">本项目已开源，开源地址：<a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git"
+                                              target="_blank">https://gitee.com/wangxiaoyuan_2019/web-favorites.git<i
+                class="layui-icon layui-icon-praise star"></i></a></p>
     </div>
 </div>
 <!-- 导入/导出 -->
