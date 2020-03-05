@@ -27,4 +27,7 @@ public class User {
 
     @Column(name = "email", nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
     private String email;
+
+    @Column(name = "random_key", nullable = false, columnDefinition = "varchar(10) comment '随机key'")
+    private String randomKey;
 }

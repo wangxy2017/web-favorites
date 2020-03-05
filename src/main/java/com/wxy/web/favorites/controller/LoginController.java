@@ -7,6 +7,7 @@ import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -45,18 +46,35 @@ public class LoginController {
 
     @PostMapping("/forgot")
     public ApiResponse forgot(@RequestBody User user) {
-        User u = userRepository.findByUsernameAndEmail(user.getUsername(), user.getEmail());
-        if (u != null) {
+        User user1 = userRepository.findByUsernameAndEmail(user.getUsername(), user.getEmail());
+        if (user1 != null) {
             String tempPwd = PasswordUtils.randomPassword(8);
             // 重置用户密码
-            u.setPassword(tempPwd);
-            userRepository.save(u);
+            user.setRandomKey(PasswordUtils.randomPassword(10));
+            user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + user.getRandomKey()).getBytes()));
+            userRepository.save(user1);
             // 将临时密码发送至用户邮箱
-            emailUtils.send(u.getEmail(), "网络收藏夹|重置密码",
+            emailUtils.send(user1.getEmail(), "网络收藏夹|重置密码",
                     String.format("您的新密码：%s，请牢记。", tempPwd));
             return ApiResponse.success();
         } else {
             return ApiResponse.error("账号或邮箱不存在");
         }
+    }
+
+    @GetMapping("/out")
+    public ApiResponse logout() {
+        HttpServletRequest request = SpringUtils.getRequest();
+        request.getSession().removeAttribute("user");
+        // 清除cookie
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                Cookie cookie = new Cookie(c.getName(), null);
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                SpringUtils.getResponse().addCookie(cookie);
+            }
+        }
+        return ApiResponse.success();
     }
 }

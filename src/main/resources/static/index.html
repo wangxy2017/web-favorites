@@ -457,7 +457,7 @@
         $("#logout").click(function () {
             $.ajax({
                 type: "GET",
-                url: "/user/logout",
+                url: "/login/out",
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {

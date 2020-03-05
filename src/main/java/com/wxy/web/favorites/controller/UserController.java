@@ -4,15 +4,14 @@ import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -24,22 +23,6 @@ public class UserController {
     @Autowired
     private EmailUtils emailUtils;
 
-    @GetMapping("/logout")
-    public ApiResponse logout() {
-        HttpServletRequest request = SpringUtils.getRequest();
-        request.getSession().removeAttribute("user");
-        // 清除cookie
-        if (request.getCookies() != null) {
-            for (Cookie c : request.getCookies()) {
-                Cookie cookie = new Cookie(c.getName(), null);
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                SpringUtils.getResponse().addCookie(cookie);
-            }
-        }
-        return ApiResponse.success();
-    }
-
     @GetMapping("/info")
     public ApiResponse info() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
@@ -49,8 +32,9 @@ public class UserController {
     @PostMapping("/password")
     public ApiResponse password(String oldPassword, String newPassword) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        if (user.getPassword().equals(oldPassword)) {
-            user.setPassword(newPassword);
+        if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + user.getRandomKey()).getBytes()))) {
+            user.setRandomKey(PasswordUtils.randomPassword(10));
+            user.setPassword(DigestUtils.md5DigestAsHex((newPassword + user.getRandomKey()).getBytes()));
             userRepository.save(user);
             // 发送邮件
             emailUtils.send(user.getEmail(), "网络收藏夹|修改密码",
