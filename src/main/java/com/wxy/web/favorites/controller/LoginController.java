@@ -29,7 +29,7 @@ public class LoginController {
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userRepository.findByUsername(user.getUsername());
-        if (user1 != null && user1.getPassword().equals(user.getPassword())) {
+        if (user1 != null && user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + user1.getRandomKey()).getBytes()))) {
             HttpServletRequest request = SpringUtils.getRequest();
             request.getSession().setAttribute("user", user1);
             if ("1".equals(remember)) {
