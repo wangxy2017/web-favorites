@@ -161,18 +161,22 @@ public class FavoritesController {
     }
 
     private Category existCategory(String name, List<Category> categories) {
-        for (Category c : categories) {
-            if (c.getName().equals(name)) {
-                return c;
+        if (categories != null && categories.size() > 0) {
+            for (Category c : categories) {
+                if (c.getName().equals(name)) {
+                    return c;
+                }
             }
         }
         return null;
     }
 
     private Favorites existFavorites(String url, List<Favorites> favorites) {
-        for (Favorites f : favorites) {
-            if (f.getUrl().equals(url)) {
-                return f;
+        if (favorites != null && favorites.size() > 0) {
+            for (Favorites f : favorites) {
+                if (f.getUrl().equals(url)) {
+                    return f;
+                }
             }
         }
         return null;
