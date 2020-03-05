@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/user")
@@ -26,7 +25,7 @@ public class UserController {
     private EmailUtils emailUtils;
 
     @GetMapping("/logout")
-    public ApiResponse logout(HttpServletResponse response) {
+    public ApiResponse logout() {
         HttpServletRequest request = SpringUtils.getRequest();
         request.getSession().removeAttribute("user");
         // 清除cookie
@@ -35,7 +34,7 @@ public class UserController {
                 Cookie cookie = new Cookie(c.getName(), null);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
-                response.addCookie(cookie);
+                SpringUtils.getResponse().addCookie(cookie);
             }
         }
         return ApiResponse.success();

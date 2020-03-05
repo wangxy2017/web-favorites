@@ -11,6 +11,6 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ApiResponse exceptionHandle(Exception e) {
         e.printStackTrace();
-        return ApiResponse.error(e.getMessage());
+        return new ApiResponse(500, "系统错误", e.getMessage());
     }
 }

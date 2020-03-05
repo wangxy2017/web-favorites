@@ -178,13 +178,14 @@ public class FavoritesController {
     }
 
     @GetMapping("/export")
-    public void export(HttpServletResponse response) throws IOException {
+    public void export() throws IOException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
         List<Category> categories = categoryRepository.findByUserId(user.getId());
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
+        HttpServletResponse response = SpringUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流

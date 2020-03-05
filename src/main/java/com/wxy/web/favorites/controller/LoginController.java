@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/login")
 public class LoginController {
+
+    private Base64.Encoder encoder = Base64.getEncoder();
 
     @Autowired
     private UserRepository userRepository;
@@ -24,20 +26,16 @@ public class LoginController {
     private EmailUtils emailUtils;
 
     @PostMapping
-    public ApiResponse login(@RequestBody User user, @RequestParam String remember, HttpServletResponse response) {
+    public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userRepository.findByUsername(user.getUsername());
         if (user1 != null && user1.getPassword().equals(user.getPassword())) {
             HttpServletRequest request = SpringUtils.getRequest();
             request.getSession().setAttribute("user", user1);
             if ("1".equals(remember)) {
-                Cookie username = new Cookie("username", user1.getUsername());
-                username.setPath("/");
-                username.setMaxAge(60 * 60 * 24 * 14);
-                response.addCookie(username);
-                Cookie password = new Cookie("password", user1.getPassword());
-                password.setPath("/");
-                password.setMaxAge(60 * 60 * 24 * 14);
-                response.addCookie(password);
+                Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
+                token.setPath("/");
+                token.setMaxAge(60 * 60 * 24 * 14);
+                SpringUtils.getResponse().addCookie(token);
             }
             return ApiResponse.success();
         } else {
