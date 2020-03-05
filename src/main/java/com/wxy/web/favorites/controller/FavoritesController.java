@@ -123,7 +123,7 @@ public class FavoritesController {
         return list;
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/import")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
@@ -133,23 +133,24 @@ public class FavoritesController {
             for (Category c : categories) {
                 c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
             }
+            // 遍历导入数据
             for (Category c : list) {
+                // 如果分类不存在则新增
                 Category category = existCategory(c.getName(), categories);
                 if (category == null) {
                     c.setUserId(user.getId());
                     categoryRepository.save(c);
-                } else {
-                    c.setId(category.getId());
-                    Iterator<Favorites> iterator = c.getFavorites().iterator();
-                    while (iterator.hasNext()) {
-                        Favorites next = iterator.next();
-                        Favorites favorites = existFavorites(next.getUrl(), category.getFavorites());
-                        if (favorites == null) {
-                            next.setCategoryId(c.getId());
-                            next.setUserId(user.getId());
-                        } else {
-                            iterator.remove();
-                        }
+                }
+                // 遍历书签，去掉存在的，剩下的保存
+                Iterator<Favorites> iterator = c.getFavorites().iterator();
+                while (iterator.hasNext()) {
+                    Favorites next = iterator.next();
+                    Favorites favorites = existFavorites(next.getUrl(), category.getFavorites());
+                    if (favorites == null) {
+                        next.setCategoryId(category.getId());
+                        next.setUserId(user.getId());
+                    } else {
+                        iterator.remove();
                     }
                 }
                 favoritesRepository.saveAll(c.getFavorites());
