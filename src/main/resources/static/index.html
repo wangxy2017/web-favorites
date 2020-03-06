@@ -258,7 +258,7 @@
     <input type="hidden" name="id">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-inline" style="width: 234px;">
             <input type="text" name="name" id="categoryName" required lay-verify="required" placeholder="请输入名称"
                    autocomplete="off"
                    class="layui-input">
@@ -266,8 +266,9 @@
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="updateCategory">立即提交</button>
-            <button type="button" class="layui-btn layui-btn-danger" id="deleteCategory">删除</button>
+            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateCategory">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="deleteCategory">删除分类</button>
+            <button type="button" class="layui-btn layui-btn-warm layui-btn-sm" id="clean">清空书签</button>
         </div>
     </div>
 </form>
@@ -527,6 +528,25 @@
                     if (result.code == 0) {
                         layer.closeAll();
                         loadList();
+                    }
+                }
+            });
+        });
+        // 清空书签
+        $("#clean").click(function () {
+            var data = form.val("update-category");
+            $.ajax({
+                type: "POST",
+                url: "/category/clean",
+                data: {"id": data.id},
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.closeAll();
+                        // 清空分类下的书签
+                        $("fieldset[data-id='" + data.id + "']").find(".favorites").children(":not(:last)").remove();
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
                     }
                 }
             });

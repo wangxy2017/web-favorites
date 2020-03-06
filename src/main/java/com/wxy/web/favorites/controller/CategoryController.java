@@ -38,12 +38,18 @@ public class CategoryController {
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryRepository.findById(id).get();
-        if (category != null && !Integer.valueOf(1).equals(category.getIsSystem())) {
+        if (!Integer.valueOf(1).equals(category.getIsSystem())) {
             categoryRepository.deleteById(id);
             favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
             return ApiResponse.success();
         }
         return ApiResponse.error("无法删除");
+    }
+
+    @PostMapping("/clean")
+    public ApiResponse clean(@RequestParam Integer id) {
+        favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
+        return ApiResponse.success();
     }
 
     @GetMapping("/list")
