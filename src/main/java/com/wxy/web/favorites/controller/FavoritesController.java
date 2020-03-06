@@ -140,20 +140,24 @@ public class FavoritesController {
                 if (category == null) {
                     c.setUserId(user.getId());
                     categoryRepository.save(c);
-                }
-                // 遍历书签，去掉存在的，剩下的保存
-                Iterator<Favorites> iterator = c.getFavorites().iterator();
-                while (iterator.hasNext()) {
-                    Favorites next = iterator.next();
-                    Favorites favorites = existFavorites(next.getUrl(), category.getFavorites());
-                    if (favorites == null) {
-                        next.setCategoryId(category.getId());
-                        next.setUserId(user.getId());
-                    } else {
-                        iterator.remove();
+                    // 保存所有书签
+                    List<Favorites> favorites = c.getFavorites();
+                    favorites.forEach(f -> {
+                        f.setCategoryId(c.getId());
+                        f.setUserId(user.getId());
+                    });
+                    favoritesRepository.saveAll(favorites);
+                } else {
+                    // 遍历书签，不存在则保存
+                    for (Favorites f : c.getFavorites()) {
+                        Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
+                        if (favorites == null) {
+                            f.setCategoryId(category.getId());
+                            f.setUserId(user.getId());
+                            favoritesRepository.save(f);
+                        }
                     }
                 }
-                favoritesRepository.saveAll(c.getFavorites());
             }
             return ApiResponse.success();
         }
