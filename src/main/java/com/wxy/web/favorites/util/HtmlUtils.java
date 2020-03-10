@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.util;
 
+import lombok.Data;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -54,5 +55,15 @@ public class HtmlUtils {
             }
         }
         return null;
+    }
+
+    public static Html parseUrl(String urlString) {
+        return new Html();
+    }
+
+    @Data
+    public static class Html {
+        String icon;
+        String title;
     }
 }

@@ -322,7 +322,7 @@
         });
         // 智能按钮
         $("#smartBtn").click(function () {
-            layer.prompt({"title": "添加收藏(url)"}, function (value, index, elem) {
+            layer.prompt({"title": "智能收藏(url)"}, function (value, index, elem) {
                 $.ajax({
                     type: "POST",
                     url: "/favorites/smartAdd",
