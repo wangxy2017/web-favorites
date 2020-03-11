@@ -25,13 +25,6 @@ public class HtmlUtils {
         String iconUrl = "";
         String title = "";
         try {
-            // 获取根icon
-            URL url = new URL(urlString);
-            String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-            Response response = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
-            if (response.isSuccessful()) {
-                iconUrl = rootIcon;
-            }
             // 获取title
             Response response1 = client.newCall(new Request.Builder().url(urlString).build()).execute();
             if (response1.isSuccessful()) {
@@ -41,20 +34,27 @@ public class HtmlUtils {
                 if (elements.size() > 0) {
                     title = elements.get(0).text();
                 }
-                if (StringUtils.isBlank(iconUrl)) {
-                    Elements elements1 = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
-                    if (elements1.size() > 0) {
-                        iconUrl = elements1.get(0).attr("href");
-                        // 判断是否相对路径
-                        if (!iconUrl.startsWith("http")) {
-                            URL url1 = new URL(urlString);
-                            if (iconUrl.startsWith("/")) {
-                                iconUrl = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + iconUrl;
-                            } else {
-                                String path = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + url1.getPath();
-                                iconUrl = path.substring(path.lastIndexOf("/")) + "/" + iconUrl;
-                            }
+                Elements elements1 = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
+                if (elements1.size() > 0) {
+                    iconUrl = elements1.get(0).attr("href");
+                    // 判断是否相对路径
+                    if (!iconUrl.startsWith("http")) {
+                        URL url1 = new URL(urlString);
+                        if (iconUrl.startsWith("/")) {
+                            iconUrl = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + iconUrl;
+                        } else {
+                            String path = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + url1.getPath();
+                            iconUrl = path.substring(path.lastIndexOf("/")) + "/" + iconUrl;
                         }
+                    }
+                }
+                if (StringUtils.isBlank(iconUrl)) {
+                    // 获取根icon
+                    URL url = new URL(urlString);
+                    String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
+                    Response response = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
+                    if (response.isSuccessful()) {
+                        iconUrl = rootIcon;
                     }
                 }
             }
