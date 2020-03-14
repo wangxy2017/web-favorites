@@ -599,7 +599,6 @@
         };
         //添加收藏保存
         form.on('submit(addFavorites)', function (data) {
-            layer.closeAll();
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
@@ -608,6 +607,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
+                        layer.closeAll();
                         loadList();
                     } else {
                         layer.msg("添加失败", {icon: 5});
@@ -618,7 +618,6 @@
         });
         //监听提交
         form.on('submit(updateFavorites)', function (data) {
-            layer.closeAll();
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
@@ -627,6 +626,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
+                        layer.closeAll();
                         loadList();
                     } else {
                         layer.msg("修改失败", {icon: 5});
