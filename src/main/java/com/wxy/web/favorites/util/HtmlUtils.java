@@ -38,7 +38,7 @@ public class HtmlUtils {
                 if (elements1.size() > 0) {
                     iconUrl = elements1.get(0).attr("href");
                     // 判断是否相对路径
-                    if (!iconUrl.startsWith("http")) {
+                    if (!iconUrl.startsWith("http") && !iconUrl.startsWith("//")) {
                         URL url1 = new URL(urlString);
                         if (iconUrl.startsWith("/")) {
                             iconUrl = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + iconUrl;
@@ -69,5 +69,11 @@ public class HtmlUtils {
     public static class Html {
         String icon;
         String title;
+    }
+
+    public static void main(String[] args) {
+        Html html = HtmlUtils.parseUrl("https://www.taobao.com");
+        System.out.println(html.icon);
+        System.out.println(html.title);
     }
 }
