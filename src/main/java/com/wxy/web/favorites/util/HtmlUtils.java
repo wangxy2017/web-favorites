@@ -44,7 +44,7 @@ public class HtmlUtils {
                             iconUrl = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + iconUrl;
                         } else {
                             String path = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + url1.getPath();
-                            iconUrl = path.substring(path.lastIndexOf("/")) + "/" + iconUrl;
+                            iconUrl = path.substring(0, path.lastIndexOf("/")) + "/" + iconUrl;
                         }
                     }
                 }

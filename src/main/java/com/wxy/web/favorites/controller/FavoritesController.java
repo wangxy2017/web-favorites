@@ -46,13 +46,8 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         // 处理图标
-        try {
-            URL url = new URL(favorites.getUrl());
-            String iconUrl = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-            favorites.setIcon(iconUrl);
-        } catch (MalformedURLException e) {
-            favorites.setIcon("/images/default.png");
-        }
+        HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
+        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
