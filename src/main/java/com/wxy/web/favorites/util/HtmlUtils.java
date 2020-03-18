@@ -2,6 +2,7 @@ package com.wxy.web.favorites.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class HtmlUtils {
 
     private static OkHttpClient client = new OkHttpClient.Builder()
@@ -36,20 +38,25 @@ public class HtmlUtils {
                 }
                 Elements elements1 = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
                 if (elements1.size() > 0) {
-                    iconUrl = elements1.get(0).attr("href");
-                    // 判断是否相对路径
-                    if (!iconUrl.startsWith("http") && !iconUrl.startsWith("//")) {
+                    String htmlIcon = elements1.get(0).attr("href");
+                    // 相对路径自动补全
+                    if (!htmlIcon.startsWith("http") && !htmlIcon.startsWith("//")) {
                         URL url1 = new URL(urlString);
-                        if (iconUrl.startsWith("/")) {
-                            iconUrl = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + iconUrl;
+                        if (htmlIcon.startsWith("/")) {
+                            htmlIcon = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + htmlIcon;
                         } else {
                             String path = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + url1.getPath();
-                            iconUrl = path.substring(0, path.lastIndexOf("/")) + "/" + iconUrl;
+                            htmlIcon = path.substring(0, path.lastIndexOf("/")) + "/" + htmlIcon;
                         }
                     }
+                    // 验证是否有效
+                    Response response = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
+                    if (response.isSuccessful()) {
+                        iconUrl = htmlIcon;
+                    }
                 }
+                // 如果html中没有icon，则从网站根目录获取
                 if (StringUtils.isBlank(iconUrl)) {
-                    // 获取根icon
                     URL url = new URL(urlString);
                     String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
                     Response response = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
@@ -60,6 +67,8 @@ public class HtmlUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            log.info("获取iconUrl：[{}],获取title：[{}]", iconUrl, title);
         }
         return new Html(iconUrl, title);
     }
@@ -69,11 +78,5 @@ public class HtmlUtils {
     public static class Html {
         String icon;
         String title;
-    }
-
-    public static void main(String[] args) {
-        Html html = HtmlUtils.parseUrl("https://www.taobao.com");
-        System.out.println(html.icon);
-        System.out.println(html.title);
     }
 }
