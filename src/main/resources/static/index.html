@@ -289,15 +289,16 @@
             , exts: 'xml'
             , url: '/favorites/import' //上传接口
             , done: function (result) {
+                layer.closeAll();
                 //上传完毕回调
                 if (result.code == 0) {
-                    layer.closeAll();
                     loadList();
                 } else {
                     layer.msg('导入失败', {icon: 5});
                 }
             }
             , error: function () {
+                layer.closeAll();
                 layer.msg('导入失败', {icon: 5});
             }
         });
@@ -329,13 +330,17 @@
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     success: function (result) {
+                        layer.closeAll('loading');
                         if (result.code == 0) {
                             // 新增分类
                             loadList();
+                        } else {
+                            layer.msg('添加失败', {icon: 5});
                         }
                     }
                 });
                 layer.close(index);
+                layer.load();
             });
         });
         // 关闭搜索
@@ -524,9 +529,11 @@
                 url: "/favorites/delete/" + data.id,
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll();
                     if (result.code == 0) {
-                        layer.closeAll();
                         loadList();
+                    } else {
+                        layer.msg("删除失败", {icon: 5});
                     }
                 }
             });
@@ -540,8 +547,8 @@
                 data: {"id": data.id},
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll();
                     if (result.code == 0) {
-                        layer.closeAll();
                         // 清空分类下的书签
                         $("fieldset[data-id='" + data.id + "']").find(".favorites").children(":not(:last)").remove();
                     } else {
@@ -558,8 +565,8 @@
                 url: "/category/delete/" + data.id,
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll();
                     if (result.code == 0) {
-                        layer.closeAll();
                         // 删除分类
                         $("fieldset[data-id='" + data.id + "']").remove();
                     } else {
@@ -606,14 +613,16 @@
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
-                        layer.closeAll();
                         loadList();
                     } else {
                         layer.msg("添加失败", {icon: 5});
                     }
                 }
             });
+            layer.closeAll();
+            layer.load();
             return false;
         });
         //监听提交
@@ -625,14 +634,16 @@
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
-                        layer.closeAll();
                         loadList();
                     } else {
                         layer.msg("修改失败", {icon: 5});
                     }
                 }
             });
+            layer.closeAll();
+            layer.load();
             return false;
         });
         //监听提交
@@ -645,11 +656,13 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        layer.closeAll();
                         loadList();
+                    } else {
+                        layer.msg("修改失败", {icon: 5});
                     }
                 }
             });
+            layer.closeAll();
             return false;
         });
         //监听提交
@@ -661,7 +674,6 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        layer.closeAll();
                         layer.msg('修改成功', {icon: 6});
                         // 退出
                         setTimeout(function () {
@@ -672,6 +684,7 @@
                     }
                 }
             });
+            layer.closeAll();
             return false;
         });
 
