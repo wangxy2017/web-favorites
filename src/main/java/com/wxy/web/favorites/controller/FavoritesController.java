@@ -24,11 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -71,7 +68,7 @@ public class FavoritesController {
     public ApiResponse list() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Category> categories = categoryRepository.findByUserId(user.getId());
+        List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
@@ -107,7 +104,7 @@ public class FavoritesController {
             c.element("LIST").elements("FAVORITES").forEach(f -> {
                 list1.add(new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null));
             });
-            list.add(new Category(null, c.elementText("NAME"), null, null, list1));
+            list.add(new Category(null, c.elementText("NAME"), null, null, null, list1));
         });
         return list;
     }
@@ -118,7 +115,7 @@ public class FavoritesController {
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户分类
-            List<Category> categories = categoryRepository.findByUserId(user.getId());
+            List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
             for (Category c : categories) {
                 c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
             }
@@ -179,7 +176,7 @@ public class FavoritesController {
     public void export() throws IOException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Category> categories = categoryRepository.findByUserId(user.getId());
+        List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
@@ -193,7 +190,6 @@ public class FavoritesController {
     private void writeXML(OutputStream out, List<Category> categories) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element data = document.addElement("DATA");
-        data.addAttribute("version", "1.0");
         categories.forEach(c -> {
             Element category = data.addElement("CATEGORY");
             category.addElement("NAME").setText(c.getName());

@@ -23,10 +23,13 @@ public class CategoryController {
 
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        category.setUserId(user.getId());
-        categoryRepository.save(category);
-        return ApiResponse.success();
+        if (!"默认分类".equals(category.getName())) {
+            User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+            category.setUserId(user.getId());
+            categoryRepository.save(category);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
     }
 
     @GetMapping("/{id}")
@@ -55,7 +58,7 @@ public class CategoryController {
     @GetMapping("/list")
     public ApiResponse list() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Category> list = categoryRepository.findByUserId(user.getId());
+        List<Category> list = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
         return ApiResponse.success(list);
     }
 }

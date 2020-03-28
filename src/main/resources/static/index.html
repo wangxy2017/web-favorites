@@ -264,6 +264,15 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline" style="width: 120px;">
+            <input type="text" name="sort" id="categorySort" lay-verify="number|sortNum" placeholder="请输入数值"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux">数值越大越靠前</div>
+    </div>
+    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateCategory">立即提交</button>
             <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="deleteCategory">删除分类</button>
@@ -419,12 +428,15 @@
                         form.val("update-category", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
                             "id": data.id // "name": "value"
                             , "name": data.name
+                            , "sort": data.sort
                         });
                         //禁用系统分类
                         if (data.isSystem == 1) {
                             $("#categoryName").attr("disabled", true);
+                            $("#categorySort").attr("disabled", true);
                         } else {
                             $("#categoryName").removeAttr("disabled");
+                            $("#categorySort").removeAttr("disabled");
                         }
                     }
                 }
@@ -604,6 +616,13 @@
                 }
             });
         };
+        form.verify({
+            sortNum: function (value, item) {
+                if(value > 9999){
+                    return "请输入小于 9999 的值";
+                }
+            }
+        });
         //添加收藏保存
         form.on('submit(addFavorites)', function (data) {
             $.ajax({

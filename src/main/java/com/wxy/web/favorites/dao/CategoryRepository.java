@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    List<Category> findByUserId(Integer userId);
+    List<Category> findByUserIdOrderBySortDesc(Integer userId);
 
     @Query("select c from  Category c where c.userId = :userId and c.isSystem = 1 ")
     Category findDefaultCategory(Integer userId);

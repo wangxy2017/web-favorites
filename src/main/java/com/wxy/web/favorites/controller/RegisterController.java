@@ -43,7 +43,7 @@ public class RegisterController {
             user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + user.getRandomKey()).getBytes()));
             User user1 = userRepository.save(user);
             // 创建默认分类
-            Category category = new Category(null, "默认分类", user1.getId(), 1, null);
+            Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
             categoryRepository.save(category);
             HttpSession session = SpringUtils.getRequest().getSession();
             session.setAttribute("user", user1);
