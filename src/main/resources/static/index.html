@@ -126,6 +126,7 @@
             margin-left: 8px;
             vertical-align: middle;
         }
+
     </style>
 </head>
 <body class="layui-layout-body">
@@ -370,12 +371,14 @@
                 if (name == "") {
                     loadList();
                 } else {
+                    layer.load();
                     $.ajax({
                         type: "GET",
                         url: "/favorites/search",
                         data: {"name": name},
                         dataType: "json",
                         success: function (result) {
+                            layer.closeAll('loading');
                             if (result.code == 0) {
                                 var html = '';
                                 html += '<ul class="favorites">';
@@ -391,6 +394,10 @@
                                 html += '</ul>';
                                 $("#main").empty().append(html);
                             }
+                        },
+                        error: function(){
+                            layer.closeAll('loading');
+                            layer.msg('服务器异常', {icon: 2});
                         }
                     });
                 }
@@ -488,11 +495,13 @@
         });
         // 加载数据
         window.loadList = function () {
+            layer.load();
             $.ajax({
                 type: "GET",
                 url: "/favorites/list",
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
                         // 加载数据
                         var html = '';
@@ -518,6 +527,10 @@
                         });
                         $("#main").empty().append(html);
                     }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg("服务器异常", {icon: 2});
                 }
             });
         };
@@ -747,6 +760,7 @@
             });
         });
     });
+
 </script>
 </body>
 </html>
