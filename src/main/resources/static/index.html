@@ -266,7 +266,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-inline" style="width: 120px;">
-            <input type="text" name="sort" id="categorySort" lay-verify="number|sortNum" placeholder="请输入数值"
+            <input type="text" name="sort" id="categorySort" lay-verify="sortNum" placeholder="请输入数值"
                    autocomplete="off"
                    class="layui-input">
         </div>
@@ -621,8 +621,13 @@
         };
         form.verify({
             sortNum: function (value, item) {
-                if(value > 9999){
-                    return "请输入小于 9999 的值";
+                if(value != ""){
+                    if(isNaN(value)){
+                        return "只能填写数字";
+                    }
+                    if(value > 9999){
+                        return "请输入小于 9999 的值";
+                    }
                 }
             }
         });
