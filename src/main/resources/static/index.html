@@ -297,9 +297,12 @@
             , acceptMime: 'file/xml'
             , exts: 'xml'
             , url: '/favorites/import' //上传接口
+            , before: function(obj){
+                layer.closeAll(); //关闭弹层
+                layer.load(); //上传loading
+            }
             , done: function (result) {
-                layer.closeAll();
-                //上传完毕回调
+                layer.closeAll('loading'); //关闭loading
                 if (result.code == 0) {
                     loadList();
                 } else {
@@ -307,7 +310,7 @@
                 }
             }
             , error: function () {
-                layer.closeAll();
+                layer.closeAll('loading'); //关闭loading
                 layer.msg('导入失败', {icon: 5});
             }
         });
