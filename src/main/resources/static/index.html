@@ -551,56 +551,65 @@
         };
         // 删除收藏
         $("#deleteFavorites").click(function () {
-            var data = form.val("update-favorites");
-            $.ajax({
-                type: "GET",
-                url: "/favorites/delete/" + data.id,
-                dataType: "json",
-                success: function (result) {
-                    layer.closeAll();
-                    if (result.code == 0) {
-                        loadList();
-                    } else {
-                        layer.msg("删除失败", {icon: 5});
+            layer.confirm('确认删除收藏吗?', function(index){
+                layer.close(index);
+                var data = form.val("update-favorites");
+                $.ajax({
+                    type: "GET",
+                    url: "/favorites/delete/" + data.id,
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll();
+                        if (result.code == 0) {
+                            loadList();
+                        } else {
+                            layer.msg("删除失败", {icon: 5});
+                        }
                     }
-                }
+                });
             });
         });
         // 清空书签
         $("#clean").click(function () {
-            var data = form.val("update-category");
-            $.ajax({
-                type: "POST",
-                url: "/category/clean",
-                data: {"id": data.id},
-                dataType: "json",
-                success: function (result) {
-                    layer.closeAll();
-                    if (result.code == 0) {
-                        // 清空分类下的书签
-                        $("fieldset[data-id='" + data.id + "']").find(".favorites").children(":not(:last)").remove();
-                    } else {
-                        layer.msg(result.msg, {icon: 2});
+            layer.confirm('确认清空分类下所有书签吗?', function(index){
+                layer.close(index);
+                var data = form.val("update-category");
+                $.ajax({
+                    type: "POST",
+                    url: "/category/clean",
+                    data: {"id": data.id},
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll();
+                        if (result.code == 0) {
+                            // 清空分类下的书签
+                            $("fieldset[data-id='" + data.id + "']").find(".favorites").children(":not(:last)").remove();
+                        } else {
+                            layer.msg(result.msg, {icon: 2});
+                        }
                     }
-                }
+                });
             });
         });
         // 删除分类
         $("#deleteCategory").click(function () {
-            var data = form.val("update-category");
-            $.ajax({
-                type: "GET",
-                url: "/category/delete/" + data.id,
-                dataType: "json",
-                success: function (result) {
-                    layer.closeAll();
-                    if (result.code == 0) {
-                        // 删除分类
-                        $("fieldset[data-id='" + data.id + "']").remove();
-                    } else {
-                        layer.msg(result.msg, {icon: 2});
+            layer.confirm('确认删除分类吗?', function(index){
+                layer.close(index);
+                var data = form.val("update-category");
+                $.ajax({
+                    type: "GET",
+                    url: "/category/delete/" + data.id,
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll();
+                        if (result.code == 0) {
+                            // 删除分类
+                            $("fieldset[data-id='" + data.id + "']").remove();
+                        } else {
+                            layer.msg(result.msg, {icon: 2});
+                        }
                     }
-                }
+                });
             });
         });
         // 编辑收藏
