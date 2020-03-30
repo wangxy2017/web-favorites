@@ -19,13 +19,13 @@ public class User {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "username", nullable = false, columnDefinition = "varchar(100) comment '用户名'")
+    @Column(name = "username", unique = true, nullable = false, columnDefinition = "varchar(100) comment '用户名'")
     private String username;
 
     @Column(name = "password", nullable = false, columnDefinition = "varchar(100) comment '密码'")
     private String password;
 
-    @Column(name = "email", nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
+    @Column(name = "email", unique = true, nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
     private String email;
 
     @Column(name = "random_key", nullable = false, columnDefinition = "varchar(10) comment '随机key'")
