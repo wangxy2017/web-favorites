@@ -7,6 +7,7 @@ import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.HtmlUtils;
+import com.wxy.web.favorites.util.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -17,6 +18,10 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,15 +69,34 @@ public class FavoritesController {
         return ApiResponse.success();
     }
 
+    /**
+     * 用户收藏列表(分页查询)
+     *
+     * @param pageNum
+     * @return
+     */
     @GetMapping("/list")
-    public ApiResponse list() {
+    public ApiResponse list(@RequestParam Integer pageNum) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
-        for (Category c : categories) {
-            c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
+        Pageable pageable = PageRequest.of(pageNum - 1, 10, Sort.Direction.DESC, "sort");
+        Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
+        for (Category c : page.getContent()) {
+            c.setFavorites(favoritesRepository.findTop30ByCategoryId(c.getId()));
         }
-        return ApiResponse.success(categories);
+        return ApiResponse.success(new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements()));
+    }
+
+    /**
+     * 显示更多
+     *
+     * @param categoryId
+     * @return
+     */
+    @GetMapping("/more")
+    public ApiResponse more(@RequestParam Integer categoryId) {
+        List<Favorites> favorites = favoritesRepository.findByCategoryId(categoryId);
+        return ApiResponse.success(favorites);
     }
 
     @GetMapping("/delete/{id}")

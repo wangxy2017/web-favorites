@@ -16,6 +16,14 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
 
     List<Favorites> findByCategoryId(Integer categoryId);
 
+    /**
+     * 查询分类下前30条数据
+     *
+     * @param categoryId
+     * @return
+     */
+    List<Favorites> findTop30ByCategoryId(Integer categoryId);
+
     @Query("select f from  Favorites f where f.userId = ?1 and f.name like CONCAT('%',?2,'%')")
     List<Favorites> findByNameLike(Integer userId, String name);
 }

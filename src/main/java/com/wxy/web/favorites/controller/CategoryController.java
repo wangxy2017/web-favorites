@@ -58,7 +58,7 @@ public class CategoryController {
     @GetMapping("/list")
     public ApiResponse list() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Category> list = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
+        List<Category> list = categoryRepository.findByUserId(user.getId());
         return ApiResponse.success(list);
     }
 }
