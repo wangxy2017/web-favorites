@@ -6,6 +6,10 @@
     <title>网络收藏夹|首页</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <style>
+        /* 解决没有src属性时出现的边框 */
+        img[src=""], img:not([src]){
+            opacity:0;
+        }
         /* 解决手机端宽度太小导致样式错乱 */
         body {
             min-width: 536px !important;
@@ -82,6 +86,7 @@
         .favorites li .favorites-bg img {
             width: 50%;
             height: 50%;
+            border: 0;
         }
 
         .favorites li:hover {
@@ -153,7 +158,7 @@
         </ul>
     </div>
 
-    <div class="layui-body" style="padding: 15px 15px 50px 15px;left: 0;">
+    <div class="layui-body" id="layuiBody" style="padding: 15px;left: 0;">
         <!-- 内容主体区域 -->
         <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
@@ -365,7 +370,7 @@
                 loadList();
             }
         });
-        // 监听输入框
+        // 搜索
         $("#search_name").keydown(function (event) {
             if (event.key === "Enter") {
                 var name = $(this).val();
@@ -496,10 +501,9 @@
         });
         // 加载数据
         window.loadList = function () {
-            layer.load();
             flow.load({
                 elem: '#main' //指定列表容器
-                , isAuto: true
+                , scrollElem: '#layuiBody'
                 , isLazyimg: true
                 , done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
                     var lis = [];
@@ -511,28 +515,34 @@
                         dataType: "json",
                         success: function (result) {
                             //假设你的列表返回在data集合中
-                            layer.closeAll('loading');
                             if (result.code == 0) {
                                 // 加载数据
                                 var html = '';
                                 $.each(result.data.list, function (i, c) {
                                     html += '<fieldset class="layui-elem-field" data-id="' + c.id + '">';
                                     html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
-                                    html += '       <ul class="favorites">';
-                                    $.each(c.favorites, function (i, f) {
-                                        html += '           <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
-                                        html += '               <div class="favorites-bg">';
-                                        html += '                   <img lay-src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
-                                        html += '               </div>';
-                                        html += '               <p title="' + f.name + '">' + f.name + '</p>';
-                                        html += '               <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
-                                        html += '           </li>';
+                                    html += '   <ul class="favorites">';
+                                    $.each(c.favorites, function (j, f) {
+                                        html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                                        html += '           <div class="favorites-bg">';
+                                        html += '               <img lay-src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
+                                        html += '           </div>';
+                                        html += '           <p title="' + f.name + '">' + f.name + '</p>';
+                                        html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                        html += '       </li>';
+                                        if(j == 29){
+                                            html += '       <li class="layui-anim layui-anim-scale" onclick="moreFavorites(' + c.id + ')">';
+                                            html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-more"></i></div>';
+                                            html += '           <p title="显示更多">显示更多</p>';
+                                            html += '       </li>';
+                                            return false;
+                                        }
                                     });
-                                    html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
-                                    html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
-                                    html += '               <p title="添加收藏">添加收藏</p>';
-                                    html += '           </li>';
-                                    html += '       </ul>';
+                                    html += '       <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
+                                    html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
+                                    html += '           <p title="添加收藏">添加收藏</p>';
+                                    html += '       </li>';
+                                    html += '   </ul>';
                                     html += '</fieldset>';
                                 });
                                 lis.push(html);
@@ -542,10 +552,44 @@
                             }
                         },
                         error: function(){
-                            layer.closeAll('loading');
                             layer.msg("服务器异常", {icon: 2});
                         }
                     });
+                }
+            });
+        };
+        window.moreFavorites = function (categoryId) {
+            layer.load();
+            $.ajax({
+                type: "GET",
+                url: "/favorites/more",
+                data: {"categoryId": categoryId},
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        var html = '';
+                        $.each(result.data, function (i, f) {
+                            html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                            html += '           <div class="favorites-bg">';
+                            html += '               <img lay-src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
+                            html += '           </div>';
+                            html += '           <p title="' + f.name + '">' + f.name + '</p>';
+                            html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                            html += '       </li>';
+                        });
+                        html += '       <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + categoryId + ')">';
+                        html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
+                        html += '           <p title="添加收藏">添加收藏</p>';
+                        html += '       </li>';
+                        $("fieldset[data-id='" + categoryId + "']").find(".favorites").empty().append(html);
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg('服务器异常', {icon: 2});
                 }
             });
         };
