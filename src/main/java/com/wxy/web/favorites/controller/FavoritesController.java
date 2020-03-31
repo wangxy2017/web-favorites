@@ -114,7 +114,7 @@ public class FavoritesController {
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Favorites> list = favoritesRepository.findTop100ByUserIdAndNameLike(user.getId(), name);
+        List<Favorites> list = favoritesRepository.findTop100ByUserIdAndNameLike(user.getId(), "%" + name + "%");
         return ApiResponse.success(list);
     }
 
