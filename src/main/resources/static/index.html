@@ -461,6 +461,8 @@
         // 新增分类
         $("#addCategoryBtn").click(function () {
             layer.prompt({"title": "添加分类"}, function (value, index, elem) {
+                layer.close(index);
+                layer.load();
                 $.ajax({
                     type: "POST",
                     url: "/category",
@@ -468,13 +470,13 @@
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     success: function (result) {
+                        layer.closeAll('loading');
                         if (result.code == 0) {
                             // 新增分类
                             loadList();
                         }
                     }
                 });
-                layer.close(index);
             });
         });
         // 修改密码
@@ -612,6 +614,7 @@
         $("#deleteFavorites").click(function () {
             layer.confirm('确认删除收藏吗?', function(index){
                 layer.close(index);
+                layer.load();
                 var data = form.val("update-favorites");
                 $.ajax({
                     type: "GET",
@@ -632,6 +635,7 @@
         $("#clean").click(function () {
             layer.confirm('确认清空分类下所有书签吗?', function(index){
                 layer.close(index);
+                layer.load();
                 var data = form.val("update-category");
                 $.ajax({
                     type: "POST",
@@ -654,6 +658,7 @@
         $("#deleteCategory").click(function () {
             layer.confirm('确认删除分类吗?', function(index){
                 layer.close(index);
+                layer.load();
                 var data = form.val("update-category");
                 $.ajax({
                     type: "GET",
@@ -735,6 +740,8 @@
         });
         //监听提交
         form.on('submit(updateFavorites)', function (data) {
+            layer.closeAll();
+            layer.load();
             $.ajax({
                 type: "POST",
                 url: "/favorites/save",
@@ -750,12 +757,12 @@
                     }
                 }
             });
-            layer.closeAll();
-            layer.load();
             return false;
         });
         //监听提交
         form.on('submit(updateCategory)', function (data) {
+            layer.closeAll();
+            layer.load();
             $.ajax({
                 type: "POST",
                 url: "/category",
@@ -763,6 +770,7 @@
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
                         loadList();
                     } else {
@@ -770,17 +778,19 @@
                     }
                 }
             });
-            layer.closeAll();
             return false;
         });
         //监听提交
         form.on('submit(updatePassword)', function (data) {
+            layer.closeAll();
+            layer.load();
             $.ajax({
                 type: "POST",
                 url: "/user/password",
                 data: data.field,
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
                         layer.msg('修改成功', {icon: 6});
                         // 退出
@@ -792,7 +802,6 @@
                     }
                 }
             });
-            layer.closeAll();
             return false;
         });
 
