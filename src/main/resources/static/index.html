@@ -284,12 +284,13 @@
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use(['element', 'jquery', 'layer', 'form', 'upload'], function () {
+    layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow'], function () {
         var element = layui.element;
         var $ = layui.$;
         var layer = layui.layer;
         var form = layui.form;
         var upload = layui.upload;
+        var flow = layui.flow;
 
         //执行实例
         var uploadInst = upload.render({
@@ -496,41 +497,55 @@
         // 加载数据
         window.loadList = function () {
             layer.load();
-            $.ajax({
-                type: "GET",
-                url: "/favorites/list",
-                dataType: "json",
-                success: function (result) {
-                    layer.closeAll('loading');
-                    if (result.code == 0) {
-                        // 加载数据
-                        var html = '';
-                        $.each(result.data, function (i, c) {
-                            html += '<fieldset class="layui-elem-field" data-id="' + c.id + '">';
-                            html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
-                            html += '       <ul class="favorites">';
-                            $.each(c.favorites, function (i, f) {
-                                html += '           <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
-                                html += '               <div class="favorites-bg">';
-                                html += '                   <img src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
-                                html += '               </div>';
-                                html += '               <p title="' + f.name + '">' + f.name + '</p>';
-                                html += '               <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
-                                html += '           </li>';
-                            });
-                            html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
-                            html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
-                            html += '               <p title="添加收藏">添加收藏</p>';
-                            html += '           </li>';
-                            html += '       </ul>';
-                            html += '</fieldset>';
-                        });
-                        $("#main").empty().append(html);
-                    }
-                },
-                error: function(){
-                    layer.closeAll('loading');
-                    layer.msg("服务器异常", {icon: 2});
+            flow.load({
+                elem: '#main' //指定列表容器
+                , isAuto: true
+                , isLazyimg: true
+                , done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                    var lis = [];
+                    //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                    $.ajax({
+                        type: "GET",
+                        url: "/favorites/list",
+                        data: {"pageNum":page},
+                        dataType: "json",
+                        success: function (result) {
+                            //假设你的列表返回在data集合中
+                            layer.closeAll('loading');
+                            if (result.code == 0) {
+                                // 加载数据
+                                var html = '';
+                                $.each(result.data.list, function (i, c) {
+                                    html += '<fieldset class="layui-elem-field" data-id="' + c.id + '">';
+                                    html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
+                                    html += '       <ul class="favorites">';
+                                    $.each(c.favorites, function (i, f) {
+                                        html += '           <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                                        html += '               <div class="favorites-bg">';
+                                        html += '                   <img lay-src="' + f.icon + '" onerror="this.src=\'/images/default.png\'" />';
+                                        html += '               </div>';
+                                        html += '               <p title="' + f.name + '">' + f.name + '</p>';
+                                        html += '               <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                        html += '           </li>';
+                                    });
+                                    html += '           <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
+                                    html += '               <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
+                                    html += '               <p title="添加收藏">添加收藏</p>';
+                                    html += '           </li>';
+                                    html += '       </ul>';
+                                    html += '</fieldset>';
+                                });
+                                lis.push(html);
+                                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                                next(lis.join(''), page < result.data.pages);
+                            }
+                        },
+                        error: function(){
+                            layer.closeAll('loading');
+                            layer.msg("服务器异常", {icon: 2});
+                        }
+                    });
                 }
             });
         };

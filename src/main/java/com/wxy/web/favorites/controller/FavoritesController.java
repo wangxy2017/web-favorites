@@ -79,7 +79,7 @@ public class FavoritesController {
     public ApiResponse list(@RequestParam Integer pageNum) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        Pageable pageable = PageRequest.of(pageNum - 1, 10, Sort.Direction.DESC, "sort");
+        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.Direction.DESC, "sort");
         Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
         for (Category c : page.getContent()) {
             c.setFavorites(favoritesRepository.findTop30ByCategoryId(c.getId()));
@@ -139,7 +139,7 @@ public class FavoritesController {
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户分类
-            List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
+            List<Category> categories = categoryRepository.findByUserId(user.getId());
             for (Category c : categories) {
                 c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
             }
@@ -200,7 +200,7 @@ public class FavoritesController {
     public void export() throws IOException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Category> categories = categoryRepository.findByUserIdOrderBySortDesc(user.getId());
+        List<Category> categories = categoryRepository.findByUserId(user.getId());
         for (Category c : categories) {
             c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
         }
