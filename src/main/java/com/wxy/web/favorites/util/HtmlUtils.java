@@ -28,9 +28,9 @@ public class HtmlUtils {
         String title = "";
         try {
             // 获取title
-            Response response1 = client.newCall(new Request.Builder().url(urlString).build()).execute();
-            if (response1.isSuccessful()) {
-                String body = response1.body().string();
+            Response response = client.newCall(new Request.Builder().url(urlString).build()).execute();
+            if (response.isSuccessful()) {
+                String body = response.body().string();
                 Document document = Jsoup.parse(body);
                 Elements elements = document.getElementsByTag("title");
                 if (elements.size() > 0) {
@@ -40,18 +40,20 @@ public class HtmlUtils {
                 if (elements1.size() > 0) {
                     String htmlIcon = elements1.get(0).attr("href");
                     // 相对路径自动补全
-                    if (!htmlIcon.startsWith("http") && !htmlIcon.startsWith("//")) {
-                        URL url1 = new URL(urlString);
-                        if (htmlIcon.startsWith("/")) {
-                            htmlIcon = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + htmlIcon;
+                    if (!htmlIcon.startsWith("http")) {
+                        URL url = new URL(urlString);
+                        if (htmlIcon.startsWith("//")) {
+                            htmlIcon = url.getProtocol() + ":" + htmlIcon;
+                        } else if (htmlIcon.startsWith("/")) {
+                            htmlIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + htmlIcon;
                         } else {
-                            String path = url1.getProtocol() + "://" + url1.getHost() + (url1.getPort() > 0 ? ":" + url1.getPort() : "") + url1.getPath();
+                            String path = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + url.getPath();
                             htmlIcon = path.substring(0, path.lastIndexOf("/")) + "/" + htmlIcon;
                         }
                     }
                     // 验证是否有效
-                    Response response = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
-                    if (response.isSuccessful()) {
+                    Response response1 = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
+                    if (response1.isSuccessful()) {
                         iconUrl = htmlIcon;
                     }
                 }
@@ -59,14 +61,14 @@ public class HtmlUtils {
                 if (StringUtils.isBlank(iconUrl)) {
                     URL url = new URL(urlString);
                     String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-                    Response response = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
-                    if (response.isSuccessful()) {
+                    Response response2 = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
+                    if (response2.isSuccessful()) {
                         iconUrl = rootIcon;
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("解析异常", e);
         } finally {
             log.info("获取iconUrl：[{}],获取title：[{}]", iconUrl, title);
         }
