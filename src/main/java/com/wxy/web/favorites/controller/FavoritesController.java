@@ -18,6 +18,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,9 @@ public class FavoritesController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Value("${index.page.size:10}")
+    private Integer indexPageSize;
 
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) {
@@ -83,7 +87,7 @@ public class FavoritesController {
         List<Order> orders = new ArrayList<>();
         orders.add(new Order(Sort.Direction.DESC, "sort"));
         orders.add(new Order(Sort.Direction.ASC, "id"));
-        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.by(orders));
+        Pageable pageable = PageRequest.of(pageNum - 1, indexPageSize, Sort.by(orders));
         Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
         for (Category c : page.getContent()) {
             c.setFavorites(favoritesRepository.findTop30ByCategoryId(c.getId()));
