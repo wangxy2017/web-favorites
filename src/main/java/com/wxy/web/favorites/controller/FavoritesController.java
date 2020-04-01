@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,7 +80,10 @@ public class FavoritesController {
     public ApiResponse list(@RequestParam Integer pageNum) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.Direction.DESC, "sort");
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(Sort.Direction.DESC, "sort"));
+        orders.add(new Order(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.by(orders));
         Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
         for (Category c : page.getContent()) {
             c.setFavorites(favoritesRepository.findTop30ByCategoryId(c.getId()));
