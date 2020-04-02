@@ -11,9 +11,6 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-
-import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/register")
@@ -45,8 +42,10 @@ public class RegisterController {
             // 创建默认分类
             Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
             categoryRepository.save(category);
-            HttpSession session = SpringUtils.getRequest().getSession();
-            session.setAttribute("user", user1);
+            // 推荐收藏
+
+            // 设置session
+            SpringUtils.getRequest().getSession().setAttribute("user", user1);
             // 发送邮件
             emailUtils.send(user1.getEmail(), "网络收藏夹|注册成功",
                     String.format("恭喜您，注册成功！您的登录账号：%s，密码：%s，注册邮箱：%s，请牢记。",
