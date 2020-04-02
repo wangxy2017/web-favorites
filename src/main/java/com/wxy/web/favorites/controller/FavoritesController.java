@@ -90,7 +90,7 @@ public class FavoritesController {
         Pageable pageable = PageRequest.of(pageNum - 1, indexPageSize, Sort.by(orders));
         Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
         for (Category c : page.getContent()) {
-            c.setFavorites(favoritesRepository.findTop30ByCategoryId(c.getId()));
+            c.setFavorites(favoritesRepository.findTop40ByCategoryId(c.getId()));
         }
         return ApiResponse.success(new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements()));
     }

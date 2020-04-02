@@ -17,12 +17,12 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
     List<Favorites> findByCategoryId(Integer categoryId);
 
     /**
-     * 查询分类下前30条数据
+     * 查询分类下前40条数据
      *
      * @param categoryId
      * @return
      */
-    List<Favorites> findTop30ByCategoryId(Integer categoryId);
+    List<Favorites> findTop40ByCategoryId(Integer categoryId);
 
     /**
      * 模糊搜索
