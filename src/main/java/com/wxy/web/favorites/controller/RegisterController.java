@@ -1,8 +1,10 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.dao.CategoryRepository;
+import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
@@ -11,6 +13,9 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/register")
@@ -21,6 +26,9 @@ public class RegisterController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private FavoritesRepository favoritesRepository;
 
     @Autowired
     private EmailUtils emailUtils;
@@ -43,7 +51,10 @@ public class RegisterController {
             Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
             categoryRepository.save(category);
             // 推荐收藏
-
+            List<Favorites> recommends = new ArrayList<>();
+            recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId()));
+            recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId()));
+            favoritesRepository.saveAll(recommends);
             // 设置session
             SpringUtils.getRequest().getSession().setAttribute("user", user1);
             // 发送邮件
