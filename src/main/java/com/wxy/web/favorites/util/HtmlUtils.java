@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -58,12 +60,15 @@ public class HtmlUtils {
                     }
                 }
                 // 如果html中没有icon，则从网站根目录获取
-                if (StringUtils.isBlank(iconUrl)) {
-                    URL url = new URL(urlString);
-                    String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-                    Response response2 = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
-                    if (response2.isSuccessful()) {
-                        iconUrl = rootIcon;
+                List<String> icons = Arrays.asList("favicon.ico", "favicon.svg", "favicon.png");
+                for (String icon : icons) {
+                    if (StringUtils.isBlank(iconUrl)) {
+                        URL url = new URL(urlString);
+                        String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + icon;
+                        Response response2 = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
+                        if (response2.isSuccessful()) {
+                            iconUrl = rootIcon;
+                        }
                     }
                 }
             }
