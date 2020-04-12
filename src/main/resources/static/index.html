@@ -132,12 +132,14 @@
             vertical-align: middle;
         }
 
+
+
     </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="cursor: pointer;" onclick="window.location.reload();">网络收藏夹</div>
+        <div class="layui-logo">网络收藏夹</div>
         <div class="search-div">
             <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
                    class="layui-input">
@@ -289,14 +291,30 @@
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow'], function () {
+    layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow','util'], function () {
         var element = layui.element;
         var $ = layui.$;
         var layer = layui.layer;
         var form = layui.form;
         var upload = layui.upload;
         var flow = layui.flow;
+        var util = layui.util;
 
+        // 固定块
+        util.fixbar({
+            bar1: '&#xe669;'
+            , bar2: '&#xe604;'
+            , bgcolor: '#393D49'
+            , css: {right: 30, bottom: 50}
+            , click: function(type){
+                if(type === 'bar1'){
+                    window.location.reload();
+                }else if(type === 'bar2'){
+                    // 回到顶部
+                    $('#layuiBody').animate({scrollTop: 0},300);
+                }
+            }
+        });
         //执行实例
         var uploadInst = upload.render({
             elem: '#import' //绑定元素
@@ -839,6 +857,8 @@
             });
         });
     });
+
+
 
 </script>
 </body>
