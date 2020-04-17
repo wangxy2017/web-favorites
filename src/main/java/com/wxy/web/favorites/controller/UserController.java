@@ -3,7 +3,6 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private EmailUtils emailUtils;
-
     @GetMapping("/info")
     public ApiResponse info() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
@@ -36,9 +32,6 @@ public class UserController {
             user.setRandomKey(PasswordUtils.randomPassword(10));
             user.setPassword(DigestUtils.md5DigestAsHex((newPassword + user.getRandomKey()).getBytes()));
             userRepository.save(user);
-            // 发送邮件
-            emailUtils.send(user.getEmail(), "网络收藏夹|修改密码",
-                    String.format("您的新密码：%s，请牢记。", newPassword));
             return ApiResponse.success();
         } else {
             return ApiResponse.error("身份验证错误");

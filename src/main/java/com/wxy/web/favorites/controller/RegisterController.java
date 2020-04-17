@@ -7,7 +7,6 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,6 @@ public class RegisterController {
 
     @Autowired
     private FavoritesRepository favoritesRepository;
-
-    @Autowired
-    private EmailUtils emailUtils;
-
 
     /**
      * 注册
@@ -57,10 +52,6 @@ public class RegisterController {
             favoritesRepository.saveAll(recommends);
             // 设置session
             SpringUtils.getRequest().getSession().setAttribute("user", user1);
-            // 发送邮件
-            emailUtils.send(user1.getEmail(), "网络收藏夹|注册成功",
-                    String.format("恭喜您，注册成功！您的登录账号：%s，密码：%s，注册邮箱：%s，请牢记。",
-                            user.getUsername(), password, user.getEmail()));
             return ApiResponse.success();
         }
         return ApiResponse.error("用户名或邮箱已存在");
