@@ -309,6 +309,7 @@
             , css: {right: 30, bottom: 50}
             , click: function(type){
                 if(type === 'bar1'){
+                    layer.load();
                     window.location.reload();
                 }
             }
@@ -357,7 +358,11 @@
         });
         // 智能按钮
         $("#smartBtn").click(function () {
-            layer.prompt({"title": "智能收藏(url)"}, function (value, index, elem) {
+            layer.prompt({title: "智能收藏(url)", value: 'http://'}, function (value, index, elem) {
+                if(!value.startsWith("http://") || !value.startsWith("https://")){
+                    layer.tips('链接格式不正确', elem, {tips: 1});
+                    return false;
+                }
                 $.ajax({
                     type: "POST",
                     url: "/favorites/smartAdd",
@@ -367,7 +372,6 @@
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0) {
-                            // 新增分类
                             loadList();
                         } else {
                             layer.msg('添加失败', {icon: 5});
@@ -476,7 +480,7 @@
         };
         // 新增分类
         $("#addCategoryBtn").click(function () {
-            layer.prompt({"title": "添加分类"}, function (value, index, elem) {
+            layer.prompt({title: "添加分类", maxlength: 10}, function (value, index, elem) {
                 layer.close(index);
                 layer.load();
                 $.ajax({
@@ -488,7 +492,6 @@
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0) {
-                            // 新增分类
                             loadList();
                         }
                     }
