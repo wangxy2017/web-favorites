@@ -303,15 +303,13 @@
         // 固定块
         util.fixbar({
             bar1: '&#xe669;'
-            , bar2: '&#xe604;'
+            , top: 'true'
+            , scrollElem: '#layuiBody'
             , bgcolor: '#393D49'
             , css: {right: 30, bottom: 50}
             , click: function(type){
                 if(type === 'bar1'){
                     window.location.reload();
-                }else if(type === 'bar2'){
-                    // 回到顶部
-                    $('#layuiBody').animate({scrollTop: 0},300);
                 }
             }
         });
