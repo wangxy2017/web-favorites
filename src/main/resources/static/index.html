@@ -493,6 +493,7 @@
                         layer.closeAll('loading');
                         if (result.code == 0) {
                             loadList();
+                            loadCategoryList();
                         }
                     }
                 });
@@ -578,6 +579,24 @@
                             layer.msg("服务器异常", {icon: 2});
                         }
                     });
+                }
+            });
+        };
+        // 加载分类
+        window.loadCategoryList = function () {
+            $.ajax({
+                type: "GET",
+                url: "/category/list",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        var html = '';
+                        $.each(result.data, function (i, c) {
+                            html += '<option value="' + c.id + '">' + c.name + '</option>';
+                        });
+                        $("#categoryId").empty().append(html);
+                        form.render('select','add-favorites');
+                    }
                 }
             });
         };
@@ -842,20 +861,7 @@
                 }
             });
             // 加载分类
-            $.ajax({
-                type: "GET",
-                url: "/category/list",
-                dataType: "json",
-                success: function (result) {
-                    if (result.code == 0) {
-                        var html = '';
-                        $.each(result.data, function (i, c) {
-                            html += '<option value="' + c.id + '">' + c.name + '</option>';
-                        });
-                        $("#categoryId").empty().append(html);
-                    }
-                }
-            });
+            loadCategoryList();
         });
     });
 
