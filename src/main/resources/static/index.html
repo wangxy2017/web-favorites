@@ -600,6 +600,7 @@
                 }
             });
         };
+        // 显示更多
         window.moreFavorites = function (categoryId) {
             layer.load();
             $.ajax({
@@ -709,6 +710,7 @@
                         if (result.code == 0) {
                             // 删除分类
                             $("fieldset[data-id='" + data.id + "']").remove();
+                            loadCategoryList();
                         } else {
                             layer.msg(result.msg, {icon: 2});
                         }
@@ -757,7 +759,7 @@
                 }
             }
         });
-        //添加收藏保存
+        // 新增收藏
         form.on('submit(addFavorites)', function (data) {
             $.ajax({
                 type: "POST",
@@ -778,7 +780,7 @@
             layer.load();
             return false;
         });
-        //监听提交
+        // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
             layer.closeAll();
             layer.load();
@@ -799,7 +801,7 @@
             });
             return false;
         });
-        //监听提交
+        // 修改分类
         form.on('submit(updateCategory)', function (data) {
             layer.closeAll();
             layer.load();
@@ -813,6 +815,7 @@
                     layer.closeAll('loading');
                     if (result.code == 0) {
                         loadList();
+                        loadCategoryList();
                     } else {
                         layer.msg("修改失败", {icon: 5});
                     }
@@ -820,7 +823,7 @@
             });
             return false;
         });
-        //监听提交
+        // 修改密码
         form.on('submit(updatePassword)', function (data) {
             layer.closeAll();
             layer.load();
@@ -845,6 +848,7 @@
             return false;
         });
 
+        // 页面加载完成执行
         $(function () {
             // 加载数据
             loadList();
@@ -855,7 +859,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        let username = result.data.username;
+                        var username = result.data.username;
                         $("#username").text(username.substring(0, 4));
                     }
                 }
