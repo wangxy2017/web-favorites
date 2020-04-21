@@ -31,5 +31,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
      * @param name
      * @return
      */
-    List<Favorites> findTop100ByUserIdAndNameLike(Integer userId, String name);
+    List<Favorites> findTop100ByUserIdAndNameLikeOrPinyinLike(Integer userId, String name,String pinyin);
 }

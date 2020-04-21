@@ -19,7 +19,7 @@ public class Favorites {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(500) comment '名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(100) comment '名称'")
     private String name;
 
     @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")
@@ -33,4 +33,7 @@ public class Favorites {
 
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
+
+    @Column(name = "pinyin", nullable = false, columnDefinition = "varchar(500) comment '拼音'")
+    private String pinyin;
 }

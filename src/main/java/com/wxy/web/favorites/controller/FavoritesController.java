@@ -5,10 +5,7 @@ import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.HtmlUtils;
-import com.wxy.web.favorites.util.PageInfo;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -55,6 +52,8 @@ public class FavoritesController {
         // 处理图标
         HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
         favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
+        // 拼音
+        favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
@@ -70,6 +69,8 @@ public class FavoritesController {
         HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
         favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
         favorites.setName(StringUtils.isBlank(html.getTitle()) ? favorites.getUrl() : html.getTitle());
+        // 拼音
+        favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesRepository.save(favorites);
         return ApiResponse.success();
     }
@@ -122,7 +123,7 @@ public class FavoritesController {
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Favorites> list = favoritesRepository.findTop100ByUserIdAndNameLike(user.getId(), "%" + name + "%");
+        List<Favorites> list = favoritesRepository.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(), "%" + name + "%", "%" + name + "%");
         return ApiResponse.success(list);
     }
 
@@ -134,7 +135,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             ArrayList<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                list1.add(new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null));
+                list1.add(new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME"))));
             });
             list.add(new Category(null, c.elementText("NAME"), null, null, null, list1));
         });
