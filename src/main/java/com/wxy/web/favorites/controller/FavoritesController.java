@@ -5,6 +5,8 @@ import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.CategoryService;
+import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -37,10 +39,10 @@ import java.util.List;
 public class FavoritesController {
 
     @Autowired
-    private FavoritesRepository favoritesRepository;
+    private FavoritesService favoritesService;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     @Value("${index.page.size:10}")
     private Integer indexPageSize;
@@ -54,7 +56,7 @@ public class FavoritesController {
         favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
-        favoritesRepository.save(favorites);
+        favoritesService.save(favorites);
         return ApiResponse.success();
     }
 
@@ -63,7 +65,7 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         // 设置分类
-        Category category = categoryRepository.findDefaultCategory(user.getId());
+        Category category = categoryService.findDefaultCategory(user.getId());
         favorites.setCategoryId(category.getId());
         // 处理icon和title
         HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
@@ -71,7 +73,7 @@ public class FavoritesController {
         favorites.setName(StringUtils.isBlank(html.getTitle()) ? favorites.getUrl() : html.getTitle());
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
-        favoritesRepository.save(favorites);
+        favoritesService.save(favorites);
         return ApiResponse.success();
     }
 
@@ -85,15 +87,11 @@ public class FavoritesController {
     public ApiResponse list(@RequestParam Integer pageNum) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order(Sort.Direction.DESC, "sort"));
-        orders.add(new Order(Sort.Direction.ASC, "id"));
-        Pageable pageable = PageRequest.of(pageNum - 1, indexPageSize, Sort.by(orders));
-        Page<Category> page = categoryRepository.findByUserId(user.getId(), pageable);
-        for (Category c : page.getContent()) {
-            c.setFavorites(favoritesRepository.findTop40ByCategoryId(c.getId()));
+        PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, indexPageSize);
+        for (Category c : page.getList()) {
+            c.setFavorites(favoritesService.findTop40ByCategoryId(c.getId()));
         }
-        return ApiResponse.success(new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements()));
+        return ApiResponse.success(page);
     }
 
     /**
@@ -104,26 +102,26 @@ public class FavoritesController {
      */
     @GetMapping("/more")
     public ApiResponse more(@RequestParam Integer categoryId) {
-        List<Favorites> favorites = favoritesRepository.findByCategoryId(categoryId);
+        List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
         return ApiResponse.success(favorites);
     }
 
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
-        favoritesRepository.deleteById(id);
+        favoritesService.deleteById(id);
         return ApiResponse.success();
     }
 
     @GetMapping("/{id}")
     public ApiResponse query(@PathVariable Integer id) {
-        Favorites favorites = favoritesRepository.findById(id).orElse(null);
+        Favorites favorites = favoritesService.findById(id);
         return ApiResponse.success(favorites);
     }
 
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Favorites> list = favoritesRepository.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(), "%" + name + "%", "%" + name + "%");
+        List<Favorites> list = favoritesService.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(), "%" + name + "%", "%" + name + "%");
         return ApiResponse.success(list);
     }
 
@@ -148,9 +146,9 @@ public class FavoritesController {
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户分类
-            List<Category> categories = categoryRepository.findByUserId(user.getId());
+            List<Category> categories = categoryService.findByUserId(user.getId());
             for (Category c : categories) {
-                c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
+                c.setFavorites(favoritesService.findByCategoryId(c.getId()));
             }
             // 遍历导入数据
             for (Category c : list) {
@@ -158,14 +156,14 @@ public class FavoritesController {
                 Category category = existCategory(c.getName(), categories);
                 if (category == null) {
                     c.setUserId(user.getId());
-                    categoryRepository.save(c);
+                    categoryService.save(c);
                     // 保存所有书签
                     List<Favorites> favorites = c.getFavorites();
                     favorites.forEach(f -> {
                         f.setCategoryId(c.getId());
                         f.setUserId(user.getId());
                     });
-                    favoritesRepository.saveAll(favorites);
+                    favoritesService.saveAll(favorites);
                 } else {
                     // 遍历书签，不存在则保存
                     for (Favorites f : c.getFavorites()) {
@@ -173,7 +171,7 @@ public class FavoritesController {
                         if (favorites == null) {
                             f.setCategoryId(category.getId());
                             f.setUserId(user.getId());
-                            favoritesRepository.save(f);
+                            favoritesService.save(f);
                         }
                     }
                 }
@@ -209,9 +207,9 @@ public class FavoritesController {
     public void export() throws IOException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
-        List<Category> categories = categoryRepository.findByUserId(user.getId());
+        List<Category> categories = categoryService.findByUserId(user.getId());
         for (Category c : categories) {
-            c.setFavorites(favoritesRepository.findByCategoryId(c.getId()));
+            c.setFavorites(favoritesService.findByCategoryId(c.getId()));
         }
         HttpServletResponse response = SpringUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开

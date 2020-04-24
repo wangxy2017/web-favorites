@@ -1,7 +1,7 @@
 package com.wxy.web.favorites.controller;
 
-import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/info")
     public ApiResponse info() {
@@ -31,7 +31,7 @@ public class UserController {
         if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + user.getRandomKey()).getBytes()))) {
             user.setRandomKey(PasswordUtils.randomPassword(10));
             user.setPassword(DigestUtils.md5DigestAsHex((newPassword + user.getRandomKey()).getBytes()));
-            userRepository.save(user);
+            userService.save(user);
             return ApiResponse.success();
         } else {
             return ApiResponse.error("身份验证错误");

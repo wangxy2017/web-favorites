@@ -1,9 +1,9 @@
 package com.wxy.web.favorites.controller;
 
-import com.wxy.web.favorites.dao.CategoryRepository;
-import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.CategoryService;
+import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,17 @@ import java.util.List;
 public class CategoryController {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     @Autowired
-    private FavoritesRepository favoritesRepository;
+    private FavoritesService favoritesService;
 
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
         if (!"默认分类".equals(category.getName())) {
             User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
             category.setUserId(user.getId());
-            categoryRepository.save(category);
+            categoryService.save(category);
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -34,16 +34,16 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ApiResponse query(@PathVariable Integer id) {
-        Category category = categoryRepository.findById(id).orElse(null);
+        Category category = categoryService.findById(id);
         return ApiResponse.success(category);
     }
 
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
-        Category category = categoryRepository.findById(id).get();
+        Category category = categoryService.findById(id);
         if (!Integer.valueOf(1).equals(category.getIsSystem())) {
-            categoryRepository.deleteById(id);
-            favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
+            categoryService.deleteById(id);
+            favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();
         }
         return ApiResponse.error("无法删除");
@@ -51,14 +51,14 @@ public class CategoryController {
 
     @PostMapping("/clean")
     public ApiResponse clean(@RequestParam Integer id) {
-        favoritesRepository.deleteAll(favoritesRepository.findByCategoryId(id));
+        favoritesService.deleteAll(favoritesService.findByCategoryId(id));
         return ApiResponse.success();
     }
 
     @GetMapping("/list")
     public ApiResponse list() {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Category> list = categoryRepository.findByUserId(user.getId());
+        List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }
 }

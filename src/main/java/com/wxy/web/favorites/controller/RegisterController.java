@@ -6,6 +6,9 @@ import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.CategoryService;
+import com.wxy.web.favorites.service.FavoritesService;
+import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
@@ -22,13 +25,13 @@ import java.util.List;
 public class RegisterController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     @Autowired
-    private FavoritesRepository favoritesRepository;
+    private FavoritesService favoritesService;
 
     /**
      * 注册
@@ -39,18 +42,18 @@ public class RegisterController {
     @PostMapping
     public ApiResponse register(@RequestBody User user) {
         String password = user.getPassword();
-        if (userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
+        if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
             user.setRandomKey(PasswordUtils.randomPassword(10));
             user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + user.getRandomKey()).getBytes()));
-            User user1 = userRepository.save(user);
+            User user1 = userService.save(user);
             // 创建默认分类
             Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
-            categoryRepository.save(category);
+            categoryService.save(category);
             // 推荐收藏
             List<Favorites> recommends = new ArrayList<>();
             recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId(), PinYinUtils.toPinyin("百度搜索")));
             recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译")));
-            favoritesRepository.saveAll(recommends);
+            favoritesService.saveAll(recommends);
             // 设置session
             SpringUtils.getRequest().getSession().setAttribute("user", user1);
             return ApiResponse.success();
@@ -60,7 +63,7 @@ public class RegisterController {
 
     @GetMapping("/{username}")
     public ApiResponse checkUsername(@PathVariable String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userService.findByUsername(username);
         if (user == null) {
             return ApiResponse.success();
         }
@@ -69,7 +72,7 @@ public class RegisterController {
 
     @GetMapping("/email/{email}")
     public ApiResponse checkEmail(@PathVariable String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userService.findByEmail(email);
         if (user == null) {
             return ApiResponse.success();
         }
