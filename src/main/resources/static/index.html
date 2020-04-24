@@ -401,7 +401,7 @@
                     $.ajax({
                         type: "GET",
                         url: "/favorites/search",
-                        data: {"name": name},
+                        data: {"name": name.trim()},
                         dataType: "json",
                         success: function (result) {
                             layer.closeAll('loading');
