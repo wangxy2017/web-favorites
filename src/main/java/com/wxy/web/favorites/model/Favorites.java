@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @org.hibernate.annotations.Table(appliesTo = "t_favorites", comment = "收藏表")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
 public class Favorites {
 
     @Id
