@@ -31,12 +31,12 @@ public class PinYinUtils {
                 if (pinyinStringArray != null && pinyinStringArray.length >= 1) {
                     pinyinStr.append(pinyinStringArray[0]);
                 } else {
-                    pinyinStr.append(Character.toLowerCase(c));
+                    pinyinStr.append(c);
                 }
             } catch (BadHanyuPinyinOutputFormatCombination e) {
                 e.printStackTrace();
             }
         }
-        return pinyinStr.toString();
+        return pinyinStr.toString().toLowerCase();
     }
 }

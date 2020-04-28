@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/favorites")
@@ -53,7 +54,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
+        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/book.svg" : html.getIcon());
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
@@ -69,7 +70,7 @@ public class FavoritesController {
         favorites.setCategoryId(category.getId());
         // 处理icon和title
         HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/default.png" : html.getIcon());
+        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/book.svg" : html.getIcon());
         favorites.setName(StringUtils.isBlank(html.getTitle()) ? favorites.getUrl() : html.getTitle());
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
@@ -121,7 +122,9 @@ public class FavoritesController {
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        List<Favorites> list = favoritesService.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(), "%" + name + "%", "%" + name + "%");
+        name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
+        List<Favorites> list = favoritesService.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(),
+                "%" + name + "%", "%" + name + "%");
         return ApiResponse.success(list);
     }
 

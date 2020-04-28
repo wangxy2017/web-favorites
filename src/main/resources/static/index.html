@@ -134,12 +134,16 @@
 
 
 
+
+
     </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">网络收藏夹</div>
+        <div class="layui-logo" style="cursor: pointer;" onclick="window.location.href='/'">
+            <img src="/images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
+        </div>
         <div class="search-div">
             <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
                    class="layui-input">
@@ -411,7 +415,7 @@
                                 $.each(result.data, function (i, f) {
                                     html += '<li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                                     html += '   <div class="favorites-bg">';
-                                    html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'/images/default.png\'"/>';
+                                    html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'/images/book.svg\'"/>';
                                     html += '   </div>';
                                     html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                     html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -549,7 +553,7 @@
                                     $.each(c.favorites, function (j, f) {
                                         html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                                         html += '           <div class="favorites-bg">';
-                                        html += '               <img src="/images/default.png" lay-src="' + f.icon + '"/>';
+                                        html += '               <img src="/images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '           </div>';
                                         html += '           <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -615,7 +619,7 @@
                         $.each(result.data, function (i, f) {
                             html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                             html += '           <div class="favorites-bg">';
-                            html += '               <img src="/images/default.png" lay-src="' + f.icon + '"/>';
+                            html += '               <img src="/images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '           </div>';
                             html += '           <p title="' + f.name + '">' + f.name + '</p>';
                             html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -868,6 +872,8 @@
             loadCategoryList();
         });
     });
+
+
 
 
 
