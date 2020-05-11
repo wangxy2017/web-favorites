@@ -53,8 +53,13 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         // 处理图标
-        HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/book.svg" : html.getIcon());
+        String icon = null;
+        try {
+            icon = HtmlUtils.getIcon(favorites.getUrl());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
@@ -69,9 +74,16 @@ public class FavoritesController {
         Category category = categoryService.findDefaultCategory(user.getId());
         favorites.setCategoryId(category.getId());
         // 处理icon和title
-        HtmlUtils.Html html = HtmlUtils.parseUrl(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(html.getIcon()) ? "/images/book.svg" : html.getIcon());
-        favorites.setName(StringUtils.isBlank(html.getTitle()) ? favorites.getUrl() : html.getTitle());
+        String icon = null;
+        String title = null;
+        try {
+            icon = HtmlUtils.getIcon(favorites.getUrl());
+            title = HtmlUtils.getTitle(favorites.getUrl());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : title);
+        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);

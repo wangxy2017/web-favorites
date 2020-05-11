@@ -169,7 +169,7 @@
         <!-- 内容主体区域 -->
         <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
-            <button type="button" class="layui-btn layui-btn-sm" id="smartBtn">智能收藏</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="smartBtn">一键收藏</button>
         </div>
         <div id="main"></div>
     </div>
@@ -356,7 +356,7 @@
         });
         // 智能按钮
         $("#smartBtn").click(function () {
-            layer.prompt({title: "智能收藏(url)", placeholder: 'https://', maxlength: 500}, function (value, index, elem) {
+            layer.prompt({title: "一键收藏(url)", placeholder: 'https://', maxlength: 500}, function (value, index, elem) {
                 if(!value.startsWith("https://") && !value.startsWith("http://")){
                     layer.tips('链接格式不正确', elem, {tips: 1});
                     return false;
