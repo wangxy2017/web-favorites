@@ -595,8 +595,8 @@
                         $.each(result.data, function (i, c) {
                             html += '<option value="' + c.id + '">' + c.name + '</option>';
                         });
-                        $("#categoryId").empty().append(html);
-                        form.render('select','add-favorites');
+                        $("#categoryId").append(html);
+                        form.render('select','update-favorites');
                     }
                 }
             });
