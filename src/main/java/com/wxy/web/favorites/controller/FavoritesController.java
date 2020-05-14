@@ -82,8 +82,8 @@ public class FavoritesController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : title);
-        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
+        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
