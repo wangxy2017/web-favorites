@@ -231,7 +231,6 @@
         <label class="layui-form-label">选择分类</label>
         <div class="layui-input-inline">
             <select name="categoryId" id="categorySelect" lay-verify="required">
-                <option value=""></option>
             </select>
         </div>
     </div>
@@ -592,7 +591,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        var html = '<option value=""></option>';
+                        var html = '';
                         $.each(result.data, function (i, c) {
                             html += '<option value="' + c.id + '">' + c.name + '</option>';
                         });
