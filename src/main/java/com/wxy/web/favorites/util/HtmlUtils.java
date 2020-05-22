@@ -1,8 +1,7 @@
 package com.wxy.web.favorites.util;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,7 +9,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author HL
@@ -19,16 +17,11 @@ import java.util.concurrent.TimeUnit;
  **/
 public class HtmlUtils {
 
-    private static OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(500, TimeUnit.MILLISECONDS)
-            .readTimeout(500, TimeUnit.MILLISECONDS)
-            .build();
-
     public static String getTitle(String urlString) throws IOException {
         // 获取title
-        Response response = client.newCall(new Request.Builder().url(urlString).build()).execute();
-        if (response.isSuccessful()) {
-            String body = response.body().string();
+        HttpResponse response = HttpRequest.get(urlString).timeout(500).execute();
+        if (response.isOk()) {
+            String body = response.body();
             Document document = Jsoup.parse(body);
             Elements elements = document.getElementsByTag("title");
             if (elements.size() > 0) {
@@ -40,9 +33,9 @@ public class HtmlUtils {
 
     public static String getIcon(String urlString) throws IOException {
         String iconUrl = "";
-        Response response = client.newCall(new Request.Builder().url(urlString).build()).execute();
-        if (response.isSuccessful()) {// 页面响应成功，解析页面
-            String body = response.body().string();
+        HttpResponse response = HttpRequest.get(urlString).timeout(500).execute();
+        if (response.isOk()) {// 页面响应成功，解析页面
+            String body = response.body();
             Document document = Jsoup.parse(body);
             Elements elements = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
             if (elements.size() > 0) {
@@ -58,8 +51,8 @@ public class HtmlUtils {
                         htmlIcon = path.substring(0, path.lastIndexOf("/")) + "/" + htmlIcon;
                     }
                     // 验证是否有效
-                    Response response1 = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
-                    if (response1.isSuccessful()) {
+                    HttpResponse response1 = HttpRequest.get(urlString).timeout(500).execute();
+                    if (response1.isOk()) {
                         iconUrl = htmlIcon;
                     }
                 }
@@ -69,8 +62,8 @@ public class HtmlUtils {
             // 如果html中没有icon，则从网站根目录获取
             URL url = new URL(urlString);
             String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-            Response response2 = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
-            if (response2.isSuccessful()) {
+            HttpResponse response2 = HttpRequest.get(urlString).timeout(500).execute();
+            if (response2.isOk()) {
                 iconUrl = rootIcon;
             }
         }
