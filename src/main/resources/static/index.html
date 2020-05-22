@@ -356,7 +356,7 @@
         });
         // 智能按钮
         $("#smartBtn").click(function () {
-            layer.prompt({title: "一键收藏(url)", placeholder: 'https://', maxlength: 500}, function (value, index, elem) {
+            layer.prompt({title: "一键收藏（默认分类）", placeholder: 'https://', maxlength: 500}, function (value, index, elem) {
                 if(!value.startsWith("https://") && !value.startsWith("http://")){
                     layer.tips('链接格式不正确', elem, {tips: 1});
                     return false;

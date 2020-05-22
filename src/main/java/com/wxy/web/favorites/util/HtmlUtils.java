@@ -3,6 +3,7 @@ package com.wxy.web.favorites.util;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -38,39 +39,41 @@ public class HtmlUtils {
     }
 
     public static String getIcon(String urlString) throws IOException {
+        String iconUrl = "";
         Response response = client.newCall(new Request.Builder().url(urlString).build()).execute();
-        if (response.isSuccessful()) {
+        if (response.isSuccessful()) {// 页面响应成功，解析页面
             String body = response.body().string();
             Document document = Jsoup.parse(body);
             Elements elements = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
             if (elements.size() > 0) {
                 String htmlIcon = elements.get(0).attr("href");
-                // 相对路径自动补全
-                if (!htmlIcon.startsWith("http")) {
+                if (StringUtils.isNotBlank(htmlIcon)) {
                     URL url = new URL(urlString);
                     if (htmlIcon.startsWith("//")) {
                         htmlIcon = url.getProtocol() + ":" + htmlIcon;
                     } else if (htmlIcon.startsWith("/")) {
                         htmlIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + htmlIcon;
-                    } else {
+                    } else if (!htmlIcon.startsWith("http")) {// 相对路径开头
                         String path = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + url.getPath();
                         htmlIcon = path.substring(0, path.lastIndexOf("/")) + "/" + htmlIcon;
                     }
-                }
-                // 验证是否有效
-                Response response1 = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
-                if (response1.isSuccessful()) {
-                    return htmlIcon;
+                    // 验证是否有效
+                    Response response1 = client.newCall(new Request.Builder().url(htmlIcon).build()).execute();
+                    if (response1.isSuccessful()) {
+                        iconUrl = htmlIcon;
+                    }
                 }
             }
+        }
+        if (StringUtils.isBlank(iconUrl)) {
             // 如果html中没有icon，则从网站根目录获取
             URL url = new URL(urlString);
             String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
             Response response2 = client.newCall(new Request.Builder().url(rootIcon).build()).execute();
             if (response2.isSuccessful()) {
-                return rootIcon;
+                iconUrl = rootIcon;
             }
         }
-        return "";
+        return iconUrl;
     }
 }
