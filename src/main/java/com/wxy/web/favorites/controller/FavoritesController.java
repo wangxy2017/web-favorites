@@ -1,7 +1,5 @@
 package com.wxy.web.favorites.controller;
 
-import com.wxy.web.favorites.dao.CategoryRepository;
-import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
@@ -18,11 +16,6 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,12 +46,7 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         favorites.setUserId(user.getId());
         // 处理图标
-        String icon = null;
-        try {
-            icon = HtmlUtils.getIcon(favorites.getUrl());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String icon = HtmlUtils.getIcon(favorites.getUrl());
         favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
@@ -74,14 +62,8 @@ public class FavoritesController {
         Category category = categoryService.findDefaultCategory(user.getId());
         favorites.setCategoryId(category.getId());
         // 处理icon和title
-        String icon = null;
-        String title = null;
-        try {
-            icon = HtmlUtils.getIcon(favorites.getUrl());
-            title = HtmlUtils.getTitle(favorites.getUrl());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String icon = HtmlUtils.getIcon(favorites.getUrl());
+        String title =HtmlUtils.getTitle(favorites.getUrl());
         favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
         favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         // 拼音
