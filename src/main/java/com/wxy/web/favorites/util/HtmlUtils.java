@@ -1,14 +1,13 @@
 package com.wxy.web.favorites.util;
 
-import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -16,6 +15,7 @@ import java.net.URL;
  * @Date 2020/3/18 13:45
  * @Description 网页工具类
  **/
+@Slf4j
 public class HtmlUtils {
 
     public static String getTitle(String urlString) {
@@ -30,13 +30,13 @@ public class HtmlUtils {
                     title = elements.get(0).text();
                 }
             }
-        } catch (HttpException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("解析异常: url:{}, error:{}", urlString, e.getMessage());
         }
         return title;
     }
 
-    public static String getIcon(String urlString){
+    public static String getIcon(String urlString) {
         String iconUrl = "";
         try {
             HttpResponse response = HttpRequest.get(urlString).timeout(500).execute();
@@ -73,8 +73,8 @@ public class HtmlUtils {
                     iconUrl = rootIcon;
                 }
             }
-        } catch (HttpException | MalformedURLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("解析异常: url:{}, error:{}", urlString, e.getMessage());
         }
         return iconUrl;
     }
