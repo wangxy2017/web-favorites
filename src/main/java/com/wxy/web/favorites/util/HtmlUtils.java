@@ -52,12 +52,18 @@ public class HtmlUtils {
                             htmlIcon = url.getProtocol() + ":" + htmlIcon;
                         } else if (htmlIcon.startsWith("/")) {
                             htmlIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + htmlIcon;
-                        } else if (!htmlIcon.startsWith("http")) {// 相对路径开头
+                        } else if (htmlIcon.startsWith("http")) {
+                            // 不做处理
+                        } else if (htmlIcon.startsWith("data:image")) {
+                            htmlIcon = "";
+                        } else {// 相对路径开头
                             String path = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + url.getPath();
                             htmlIcon = path.substring(0, path.lastIndexOf("/")) + "/" + htmlIcon;
                         }
-                        // 验证是否有效
-                        HttpResponse response1 = HttpRequest.get(urlString).timeout(500).execute();
+                    }
+                    // 验证是否有效
+                    if (StringUtils.isNotBlank(htmlIcon)) {
+                        HttpResponse response1 = HttpRequest.get(htmlIcon).timeout(500).execute();
                         if (response1.isOk()) {
                             iconUrl = htmlIcon;
                         }
@@ -68,7 +74,7 @@ public class HtmlUtils {
                 // 如果html中没有icon，则从网站根目录获取
                 URL url = new URL(urlString);
                 String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
-                HttpResponse response2 = HttpRequest.get(urlString).timeout(500).execute();
+                HttpResponse response2 = HttpRequest.get(rootIcon).timeout(500).execute();
                 if (response2.isOk()) {
                     iconUrl = rootIcon;
                 }
