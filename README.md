@@ -9,3 +9,6 @@
 ##### 安装教程：
 1. 进入项目目录，使用maven命令进行打包：mvn clean package
 2. 服务器终端执行命令：nohup java -jar web-favorites.jar > console.log &
+##### docker启动：
+docker pull wangxiaoyuan2020/web-favorites:latest
+docker run -d -p 9020:9020 wangxiaoyuan2020/web-favorites
