@@ -154,7 +154,7 @@ public class FavoritesController {
                 if (category == null) {
                     c.setUserId(user.getId());
                     categoryService.save(c);
-                    // 保存所有书签
+                    // 保存所有收藏
                     List<Favorites> favorites = c.getFavorites();
                     favorites.forEach(f -> {
                         f.setCategoryId(c.getId());
@@ -162,7 +162,7 @@ public class FavoritesController {
                     });
                     favoritesService.saveAll(favorites);
                 } else {
-                    // 遍历书签，不存在则保存
+                    // 遍历收藏，不存在则保存
                     for (Favorites f : c.getFavorites()) {
                         Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
                         if (favorites == null) {

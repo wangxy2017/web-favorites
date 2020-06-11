@@ -289,7 +289,7 @@
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateCategory">立即提交</button>
             <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="deleteCategory">删除分类</button>
-            <button type="button" class="layui-btn layui-btn-warm layui-btn-sm" id="clean">清空书签</button>
+            <button type="button" class="layui-btn layui-btn-warm layui-btn-sm" id="clean">清空收藏</button>
         </div>
     </div>
 </form>
@@ -673,9 +673,9 @@
                 });
             });
         });
-        // 清空书签
+        // 清空收藏
         $("#clean").click(function () {
-            layer.confirm('确认清空分类下所有书签吗?', function(index){
+            layer.confirm('确认清空分类下所有收藏吗?', function(index){
                 layer.close(index);
                 layer.load();
                 var data = form.val("update-category");
@@ -687,7 +687,7 @@
                     success: function (result) {
                         layer.closeAll();
                         if (result.code == 0) {
-                            // 清空分类下的书签
+                            // 清空分类下的收藏
                             $("fieldset[data-id='" + data.id + "']").find(".favorites").children(":not(:last)").remove();
                         } else {
                             layer.msg(result.msg, {icon: 2});
