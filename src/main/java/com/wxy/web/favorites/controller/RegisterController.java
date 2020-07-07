@@ -1,13 +1,12 @@
 package com.wxy.web.favorites.controller;
 
-import com.wxy.web.favorites.dao.CategoryRepository;
-import com.wxy.web.favorites.dao.FavoritesRepository;
-import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
+import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
+import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.PasswordUtils;
@@ -28,6 +27,9 @@ public class RegisterController {
     private UserService userService;
 
     @Autowired
+    private SecretKeyService secretKeyService;
+
+    @Autowired
     private CategoryService categoryService;
 
     @Autowired
@@ -43,8 +45,9 @@ public class RegisterController {
     public ApiResponse register(@RequestBody User user) {
         String password = user.getPassword();
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
-            user.setRandomKey(PasswordUtils.randomPassword(10));
-            user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + user.getRandomKey()).getBytes()));
+            SecretKey secretKey = new SecretKey(null, user.getUsername(), PasswordUtils.randomStrongPassword(16));
+            secretKeyService.save(secretKey);
+            user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()));
             User user1 = userService.save(user);
             // 创建默认分类
             Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);

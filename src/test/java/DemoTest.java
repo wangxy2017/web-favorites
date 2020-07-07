@@ -4,7 +4,10 @@ import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
+import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.SecretKeyService;
+import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -33,15 +36,17 @@ public class DemoTest {
     @Autowired
     private FavoritesRepository favoritesRepository;
 
+    @Autowired
+    private SecretKeyService secretKeyService;
+
     /**
      * 批量插入测试数据
      */
     @Test
     public void test() {
         for (int k = 0; k < 100; k++) {
-            String password = "test" + k;
-            String randomKey = "test" + k;
-            User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex((password + randomKey).getBytes()), "test" + k + "@qq.com", randomKey));
+            SecretKey secretKey = secretKeyService.save(new SecretKey(null, "test" + k, PasswordUtils.randomStrongPassword(16)));
+            User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex(("test" + k + secretKey.getRandomKey()).getBytes()), "test" + k + "@qq.com"));
             for (int i = 0; i < 1000; i++) {
                 Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null));
                 for (int j = 0; j < 1000; j++) {

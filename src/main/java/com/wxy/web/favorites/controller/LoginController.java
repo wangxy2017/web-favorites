@@ -1,6 +1,8 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
@@ -24,12 +26,16 @@ public class LoginController {
     private UserService userService;
 
     @Autowired
+    private SecretKeyService secretKeyService;
+
+    @Autowired
     private EmailUtils emailUtils;
 
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
-        if (user1 != null && user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + user1.getRandomKey()).getBytes()))) {
+        SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
+        if (user1 != null && user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
             HttpServletRequest request = SpringUtils.getRequest();
             request.getSession().setAttribute("user", user1);
             if ("1".equals(remember)) {
@@ -49,9 +55,9 @@ public class LoginController {
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (user1 != null) {
             String tempPwd = PasswordUtils.randomPassword(8);
+            SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
             // 重置用户密码
-            user.setRandomKey(PasswordUtils.randomPassword(10));
-            user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + user.getRandomKey()).getBytes()));
+            user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
             emailUtils.send(user1.getEmail(), "网络收藏夹|重置密码",
