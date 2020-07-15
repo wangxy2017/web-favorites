@@ -75,6 +75,7 @@
             padding: 10px 20px;
             cursor: pointer;
             user-select: none;
+            border-radius: 4px;
         }
 
         .favorites li .favorites-bg {
@@ -416,7 +417,10 @@
                         });
                     } else {
                         form.val("setting-pwd", {
-                            "favoritesId": $("#favoritesId").val()
+                            "id": ""
+                            , "favoritesId": $("#favoritesId").val()
+                            , "account": ""
+                            , "password": ""
                         });
                     }
                 }
