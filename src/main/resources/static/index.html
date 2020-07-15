@@ -212,18 +212,18 @@
 <!-- 编辑收藏表单 -->
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px">
-    <input type="hidden" name="id">
+    <input type="hidden" name="id" id="favoritesId">
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入标题" autocomplete="off"
+            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
@@ -236,8 +236,35 @@
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="updateFavorites">立即提交</button>
-            <button type="button" class="layui-btn layui-btn-danger" id="deleteFavorites">删除</button>
+            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateFavorites">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteFavorites">删除</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="settingPwd">管理密码</button>
+        </div>
+    </div>
+</form>
+<!-- 管理密码表单 -->
+<form class="layui-form" action="" id="setting-pwd" lay-filter="setting-pwd"
+      style="display: none;padding: 10px">
+    <input type="hidden" name="id" id="pwdId">
+    <input type="hidden" name="favoritesId">
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="account" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="savePwd">保存</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="unsetPwd">清除密码</button>
         </div>
     </div>
 </form>
@@ -336,7 +363,65 @@
                 layer.msg('导入失败', {icon: 5});
             }
         });
-
+        // 清除密码
+        $("#unsetPwd").click(function(){
+            var passwordId = $("#pwdId").val();
+            if(passwordId == ""){
+                layer.msg('未设置密码');
+                return false;
+            }
+            layer.load();
+            $.ajax({
+                type: "DELETE",
+                url: "/password/" + passwordId,
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        layer.msg('操作成功', {icon: 6});
+                        // 重置表单
+                        form.val("setting-pwd", {
+                            "id": ""
+                            , "account": ""
+                            , "password": ""
+                        });
+                    } else {
+                       layer.msg('操作失败', {icon: 5});
+                    }
+                }
+            });
+        });
+        $("#settingPwd").click(function () {
+            layer.open({
+                type: 1,
+                title: "管理登录此网站的密码",
+                area: '360px',
+                shade: 0,
+                content: $('#setting-pwd')
+            });
+            // 表单赋值
+            $.ajax({
+                type: "GET",
+                url: "/password/fid/" + $("#favoritesId").val(),
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        let data = result.data;
+                        //给表单赋值
+                        form.val("setting-pwd", {
+                            "id": data.id
+                            , "favoritesId": data.favoritesId
+                            , "account": data.account
+                            , "password": data.password
+                        });
+                    } else {
+                        form.val("setting-pwd", {
+                            "favoritesId": $("#favoritesId").val()
+                        });
+                    }
+                }
+            });
+        });
         $("#export").click(function () {
             window.location.href = "/favorites/export";
         });
@@ -351,7 +436,7 @@
                 type: 1,
                 title: "导入收藏夹",
                 area: '400px',
-                content: $('#importOrExport') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                content: $('#importOrExport')
             });
         });
         // 智能按钮
@@ -451,7 +536,7 @@
                 type: 1,
                 title: "修改分类",
                 area: '400px',
-                content: $('#update-category') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                content: $('#update-category')
             });
             // 表单赋值
             $.ajax({
@@ -462,8 +547,8 @@
                     if (result.code == 0) {
                         let data = result.data;
                         //给表单赋值
-                        form.val("update-category", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
-                            "id": data.id // "name": "value"
+                        form.val("update-category", {
+                            "id": data.id
                             , "name": data.name
                             , "sort": data.sort
                         });
@@ -506,7 +591,7 @@
                 type: 1,
                 title: "修改密码",
                 area: '400px',
-                content: $('#password') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                content: $('#password')
             });
         });
         // 登出
@@ -526,20 +611,18 @@
         window.loadList = function () {
             $("#main").empty();
             flow.load({
-                elem: '#main' //指定列表容器
+                elem: '#main'
                 , scrollElem: '#layuiBody'
                 , isLazyimg: true
                 , end: ' '
-                , done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                , done: function(page, next){
                     var lis = [];
-                    //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
                     $.ajax({
                         type: "GET",
                         url: "/favorites/list",
                         data: {"pageNum":page},
                         dataType: "json",
                         success: function (result) {
-                            //假设你的列表返回在data集合中
                             if (result.code == 0) {
                                 // 加载数据
                                 var html = '';
@@ -571,8 +654,6 @@
                                     html += '</fieldset>';
                                 });
                                 lis.push(html);
-                                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
-                                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
                                 next(lis.join(''), page < result.data.pages);
                             }
                         },
@@ -643,11 +724,11 @@
                 type: 1,
                 title: "添加收藏",
                 area: '400px',
-                content: $('#add-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                content: $('#add-favorites')
             });
             // 表单赋值
-            form.val("add-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
-                "name": "" // "name": "value"
+            form.val("add-favorites", {
+                "name": ""
                 , "url": ""
                 , "categoryId": categoryId
             });
@@ -727,7 +808,7 @@
                 title: "修改收藏",
                 skin: 'to-fix-select',
                 area: '400px',
-                content: $('#update-favorites') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                content: $('#update-favorites')
             });
             // 表单赋值
             $.ajax({
@@ -738,8 +819,8 @@
                     if (result.code == 0) {
                         let data = result.data;
                         //给表单赋值
-                        form.val("update-favorites", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
-                            "id": data.id // "name": "value"
+                        form.val("update-favorites", {
+                            "id": data.id
                             , "categoryId": data.categoryId
                             , "name": data.name
                             , "url": data.url
@@ -779,6 +860,34 @@
             });
             layer.closeAll();
             layer.load();
+            return false;
+        });
+         // 保存密码
+        form.on('submit(savePwd)', function (data) {
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "/password",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        let data = result.data;
+                        //给表单赋值
+                        form.val("setting-pwd", {
+                            "id": data.id
+                            , "favoritesId": data.favoritesId
+                            , "account": data.account
+                            , "password": data.password
+                        });
+                        layer.msg("保存成功", {icon: 6});
+                    } else {
+                        layer.msg("保存失败", {icon: 5});
+                    }
+                }
+            });
             return false;
         });
         // 修改收藏

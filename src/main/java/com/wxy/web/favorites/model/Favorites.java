@@ -38,4 +38,7 @@ public class Favorites {
 
     @Column(name = "pinyin", nullable = false, columnDefinition = "varchar(500) comment '拼音'")
     private String pinyin;
+
+    @Transient
+    private Password password;
 }

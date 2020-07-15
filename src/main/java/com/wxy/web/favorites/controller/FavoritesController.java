@@ -2,9 +2,11 @@ package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
+import com.wxy.web.favorites.model.Password;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
+import com.wxy.web.favorites.service.PasswordService;
 import com.wxy.web.favorites.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -38,6 +40,9 @@ public class FavoritesController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private PasswordService passwordService;
+
     @Value("${index.page.size:10}")
     private Integer indexPageSize;
 
@@ -63,7 +68,7 @@ public class FavoritesController {
         favorites.setCategoryId(category.getId());
         // 处理icon和title
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        String title =HtmlUtils.getTitle(favorites.getUrl());
+        String title = HtmlUtils.getTitle(favorites.getUrl());
         favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
         favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         // 拼音
@@ -130,7 +135,13 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             ArrayList<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                list1.add(new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME"))));
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null);
+                Element pwd = f.element("PWD");
+                if (pwd != null) {
+                    Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
+                    favorites.setPassword(password);
+                }
+                list1.add(favorites);
             });
             list.add(new Category(null, c.elementText("NAME"), null, null, null, list1));
         });
@@ -142,16 +153,20 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
-            // 查询用户分类
+            // 查询用户已存在的数据，防止重复导入
             List<Category> categories = categoryService.findByUserId(user.getId());
             for (Category c : categories) {
-                c.setFavorites(favoritesService.findByCategoryId(c.getId()));
+                List<Favorites> favoritesList = favoritesService.findByCategoryId(c.getId());
+                for (Favorites f : favoritesList) {
+                    Password password = passwordService.findByFavoritesId(f.getId());
+                    f.setPassword(password);
+                }
+                c.setFavorites(favoritesList);
             }
             // 遍历导入数据
             for (Category c : list) {
-                // 如果分类不存在则新增
                 Category category = existCategory(c.getName(), categories);
-                if (category == null) {
+                if (category == null) {// 如果该分类不存在，则新增分类，并保存所有收藏
                     c.setUserId(user.getId());
                     categoryService.save(c);
                     // 保存所有收藏
@@ -161,14 +176,25 @@ public class FavoritesController {
                         f.setUserId(user.getId());
                     });
                     favoritesService.saveAll(favorites);
-                } else {
-                    // 遍历收藏，不存在则保存
+                } else {// 如果该分类存在，则跳过分类，直接遍历收藏
                     for (Favorites f : c.getFavorites()) {
                         Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
-                        if (favorites == null) {
+                        if (favorites == null) {// 如果收藏不存在，则保存收藏
                             f.setCategoryId(category.getId());
                             f.setUserId(user.getId());
-                            favoritesService.save(f);
+                            Favorites save = favoritesService.save(f);
+                            // 保存密码
+                            Password password = f.getPassword();
+                            if (password != null) {
+                                password.setFavoritesId(save.getId());
+                                passwordService.save(password);
+                            }
+                        } else {// 如果收藏存在，则跳过收藏，看是否有密码需要新增
+                            Password password = f.getPassword();
+                            if (password != null && favorites.getPassword() == null) {
+                                password.setFavoritesId(favorites.getId());
+                                passwordService.save(password);
+                            }
                         }
                     }
                 }
@@ -206,7 +232,12 @@ public class FavoritesController {
         // 查询用户分类
         List<Category> categories = categoryService.findByUserId(user.getId());
         for (Category c : categories) {
-            c.setFavorites(favoritesService.findByCategoryId(c.getId()));
+            List<Favorites> favoritesList = favoritesService.findByCategoryId(c.getId());
+            for (Favorites f : favoritesList) {
+                Password password = passwordService.findByFavoritesId(f.getId());
+                f.setPassword(password);
+            }
+            c.setFavorites(favoritesList);
         }
         HttpServletResponse response = SpringUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
@@ -227,6 +258,12 @@ public class FavoritesController {
                 favorites.addElement("NAME").setText(f.getName());
                 favorites.addElement("URL").setText(f.getUrl());
                 favorites.addElement("ICON").setText(f.getIcon());
+                if (f.getPassword() != null) {
+                    Password password = f.getPassword();
+                    Element pwd = favorites.addElement("PWD");
+                    pwd.addElement("ACCOUNT").setText(password.getAccount());
+                    pwd.addElement("PASSWORD").setText(password.getPassword());
+                }
             });
         });
         OutputFormat format = OutputFormat.createPrettyPrint();
