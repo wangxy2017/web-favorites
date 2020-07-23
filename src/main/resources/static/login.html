@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|登录</title>
-    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
 </head>
 <body>
 <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
@@ -111,7 +111,7 @@
         </div>
     </div>
 </div>
-<script src="/layui/layui.js"></script>
+<script src="layui/layui.js"></script>
 <script>
     //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
     layui.use(['element', 'form', 'jquery', 'layer'], function () {
@@ -125,14 +125,14 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/login?remember=" + data.field.remember,
+                url: "login?remember=" + data.field.remember,
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        window.location.href = "/index.html";
+                        window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }
@@ -148,7 +148,7 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/login/forgot",
+                url: "login/forgot",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
@@ -171,14 +171,14 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/register",
+                url: "register",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        window.location.href = "/index.html";
+                        window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }
@@ -195,12 +195,12 @@
                 var msg;
                 $.ajax({
                     type: "GET",
-                    url: '/register/' + value,
+                    url: 'register/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
                     success: function (result) {
                         if (result.code != 0) {
-                            msg = "用户已注册";//return写在最后面，之前我在这里直接return，无法实现验证
+                            msg = "用户已注册";
                         }
                     }
                 });
@@ -210,12 +210,12 @@
                 var msg;
                 $.ajax({
                     type: "GET",
-                    url: '/register/email/' + value,
+                    url: 'register/email/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
                     success: function (result) {
                         if (result.code != 0) {
-                            msg = "邮箱已被使用";//return写在最后面，之前我在这里直接return，无法实现验证
+                            msg = "邮箱已被使用";
                         }
                     }
                 });

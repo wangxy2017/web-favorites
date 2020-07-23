@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|首页</title>
-    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
     <style>
         /* 解决没有src属性时出现的边框 */
         img[src=""], img:not([src]){
@@ -144,8 +144,8 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="cursor: pointer;" onclick="window.location.href='/'">
-            <img src="/images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
+        <div class="layui-logo" style="cursor: pointer;" onclick="javascript:window.location.reload()">
+            <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-div">
             <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
@@ -321,7 +321,7 @@
         </div>
     </div>
 </form>
-<script src="/layui/layui.js"></script>
+<script src="layui/layui.js"></script>
 <script>
     //JavaScript代码区域
     layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow','util'], function () {
@@ -346,7 +346,7 @@
             , accept: 'file'
             , acceptMime: 'file/xml'
             , exts: 'xml'
-            , url: '/favorites/import' //上传接口
+            , url: 'favorites/import' //上传接口
             , before: function(obj){
                 layer.closeAll(); //关闭弹层
                 layer.load(); //上传loading
@@ -374,7 +374,7 @@
             layer.load();
             $.ajax({
                 type: "DELETE",
-                url: "/password/" + passwordId,
+                url: "password/" + passwordId,
                 dataType: "json",
                 success: function (result) {
                     layer.closeAll('loading');
@@ -403,7 +403,7 @@
             // 表单赋值
             $.ajax({
                 type: "GET",
-                url: "/password/fid/" + $("#favoritesId").val(),
+                url: "password/fid/" + $("#favoritesId").val(),
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -427,7 +427,7 @@
             });
         });
         $("#export").click(function () {
-            window.location.href = "/favorites/export";
+            window.location.href = "favorites/export";
         });
         $("#cancelPwd").click(function () {
             layer.closeAll();
@@ -452,7 +452,7 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "/favorites/smartAdd",
+                    url: "favorites/smartAdd",
                     data: JSON.stringify({"url": value}),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
@@ -490,7 +490,7 @@
                     layer.load();
                     $.ajax({
                         type: "GET",
-                        url: "/favorites/search",
+                        url: "favorites/search",
                         data: {"name": name},
                         dataType: "json",
                         success: function (result) {
@@ -501,7 +501,7 @@
                                 $.each(result.data, function (i, f) {
                                     html += '<li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                                     html += '   <div class="favorites-bg">';
-                                    html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'/images/book.svg\'"/>';
+                                    html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                     html += '   </div>';
                                     html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                     html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -527,10 +527,9 @@
         });
         // 打开新窗口
         window.openUrl = function (url) {
-            try {
-                var u = new URL(url);
-                window.open(u.href);
-            } catch (err) {
+            if(url.startsWith("https://") || url.startsWith("http://")){
+                window.open(url);
+            }else{
                 layer.msg('此链接无效', {icon: 7});
             }
         };
@@ -545,7 +544,7 @@
             // 表单赋值
             $.ajax({
                 type: "GET",
-                url: "/category/" + $(obj).parent().attr("data-id"),
+                url: "category/" + $(obj).parent().attr("data-id"),
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -575,7 +574,7 @@
                 layer.load();
                 $.ajax({
                     type: "POST",
-                    url: "/category",
+                    url: "category",
                     data: JSON.stringify({"name": value}),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
@@ -602,11 +601,11 @@
         $("#logout").click(function () {
             $.ajax({
                 type: "GET",
-                url: "/login/out",
+                url: "login/out",
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        window.location.href = "/login.html";
+                        window.location.href = "login.html";
                     }
                 }
             });
@@ -623,7 +622,7 @@
                     var lis = [];
                     $.ajax({
                         type: "GET",
-                        url: "/favorites/list",
+                        url: "favorites/list",
                         data: {"pageNum":page},
                         dataType: "json",
                         success: function (result) {
@@ -637,7 +636,7 @@
                                     $.each(c.favorites, function (j, f) {
                                         html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                                         html += '           <div class="favorites-bg">';
-                                        html += '               <img src="/images/book.svg" lay-src="' + f.icon + '"/>';
+                                        html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '           </div>';
                                         html += '           <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -672,7 +671,7 @@
         window.loadCategoryList = function () {
             $.ajax({
                 type: "GET",
-                url: "/category/list",
+                url: "category/list",
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -691,7 +690,7 @@
             layer.load();
             $.ajax({
                 type: "GET",
-                url: "/favorites/more",
+                url: "favorites/more",
                 data: {"categoryId": categoryId},
                 dataType: "json",
                 success: function (result) {
@@ -745,7 +744,7 @@
                 var data = form.val("update-favorites");
                 $.ajax({
                     type: "GET",
-                    url: "/favorites/delete/" + data.id,
+                    url: "favorites/delete/" + data.id,
                     dataType: "json",
                     success: function (result) {
                         layer.closeAll();
@@ -766,7 +765,7 @@
                 var data = form.val("update-category");
                 $.ajax({
                     type: "POST",
-                    url: "/category/clean",
+                    url: "category/clean",
                     data: {"id": data.id},
                     dataType: "json",
                     success: function (result) {
@@ -789,7 +788,7 @@
                 var data = form.val("update-category");
                 $.ajax({
                     type: "GET",
-                    url: "/category/delete/" + data.id,
+                    url: "category/delete/" + data.id,
                     dataType: "json",
                     success: function (result) {
                         layer.closeAll();
@@ -817,7 +816,7 @@
             // 表单赋值
             $.ajax({
                 type: "GET",
-                url: "/favorites/" + $(obj).attr("data-id"),
+                url: "favorites/" + $(obj).attr("data-id"),
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -849,7 +848,7 @@
         form.on('submit(addFavorites)', function (data) {
             $.ajax({
                 type: "POST",
-                url: "/favorites/save",
+                url: "favorites/save",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
@@ -871,7 +870,7 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/password",
+                url: "password",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
@@ -900,7 +899,7 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/favorites/save",
+                url: "favorites/save",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
@@ -921,7 +920,7 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/category",
+                url: "category",
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
@@ -943,7 +942,7 @@
             layer.load();
             $.ajax({
                 type: "POST",
-                url: "/user/password",
+                url: "user/password",
                 data: data.field,
                 dataType: "json",
                 success: function (result) {
@@ -969,7 +968,7 @@
             // 加载用户信息
             $.ajax({
                 type: "GET",
-                url: "/user/info",
+                url: "user/info",
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
@@ -982,11 +981,6 @@
             loadCategoryList();
         });
     });
-
-
-
-
-
 </script>
 </body>
 </html>

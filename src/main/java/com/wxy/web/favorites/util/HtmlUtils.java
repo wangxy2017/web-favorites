@@ -21,7 +21,7 @@ public class HtmlUtils {
     public static String getTitle(String urlString) {
         String title = "";
         try {
-            HttpResponse response = HttpRequest.get(urlString).timeout(500).execute();
+            HttpResponse response = HttpRequest.get(urlString).setConnectionTimeout(100).execute();
             if (response.isOk()) {
                 String body = response.body();
                 Document document = Jsoup.parse(body);
@@ -39,7 +39,7 @@ public class HtmlUtils {
     public static String getIcon(String urlString) {
         String iconUrl = "";
         try {
-            HttpResponse response = HttpRequest.get(urlString).timeout(500).execute();
+            HttpResponse response = HttpRequest.get(urlString).setConnectionTimeout(100).execute();
             if (response.isOk()) {// 页面响应成功，解析页面
                 String body = response.body();
                 Document document = Jsoup.parse(body);
