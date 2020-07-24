@@ -12,3 +12,5 @@
 ##### docker启动：
 1. docker pull wangxiaoyuan2020/web-favorites:latest
 2. docker run -d -p 9020:9020 wangxiaoyuan2020/web-favorites
+##### 访问：
+1. http://ip:9020/web-favorites/index.html，也可以配置nginx转发
