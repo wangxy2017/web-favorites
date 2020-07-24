@@ -52,7 +52,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
@@ -69,7 +69,7 @@ public class FavoritesController {
         // 处理icon和title
         String icon = HtmlUtils.getIcon(favorites.getUrl());
         String title = HtmlUtils.getTitle(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "/images/book.svg" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
         favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
@@ -136,7 +136,7 @@ public class FavoritesController {
             ArrayList<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
                 Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null);
-                Element pwd = f.element("PWD");
+                Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
                     favorites.setPassword(password);
@@ -260,7 +260,7 @@ public class FavoritesController {
                 favorites.addElement("ICON").setText(f.getIcon());
                 if (f.getPassword() != null) {
                     Password password = f.getPassword();
-                    Element pwd = favorites.addElement("PWD");
+                    Element pwd = favorites.addElement("USER");
                     pwd.addElement("ACCOUNT").setText(password.getAccount());
                     pwd.addElement("PASSWORD").setText(password.getPassword());
                 }

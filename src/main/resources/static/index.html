@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|首页</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
     <style>
         /* 解决没有src属性时出现的边框 */
@@ -249,17 +251,23 @@
     <input type="hidden" name="id" id="pwdId">
     <input type="hidden" name="favoritesId">
     <div class="layui-form-item">
-        <label class="layui-form-label">账号</label>
+        <label class="layui-form-label" style="width:50px">账号</label>
         <div class="layui-input-inline">
-            <input type="text" name="account" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
+            <input type="text" name="account" id="account" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
                    class="layui-input">
+        </div>
+        <div class="layui-inline">
+            <button type="button" id="accountCopy" class="layui-btn layui-btn-primary layui-btn-xs" style="margin-top:8px" data-clipboard-target="#account">复制</button>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">密码</label>
+        <label class="layui-form-label" style="width:50px">密码</label>
         <div class="layui-input-inline">
-            <input type="text" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+            <input type="text" name="password" id="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
                    class="layui-input">
+        </div>
+        <div class="layui-inline">
+            <button type="button" id="passwordCopy" class="layui-btn layui-btn-primary layui-btn-xs" style="margin-top:8px" data-clipboard-target="#password">复制</button>
         </div>
     </div>
     <div class="layui-form-item">
@@ -270,7 +278,7 @@
     </div>
 </form>
 <!-- 修改密码表单 -->
-<form class="layui-form" action="" id="password" style="display: none;padding: 10px">
+<form class="layui-form" action="" id="passwordForm" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">旧密码</label>
         <div class="layui-input-inline">
@@ -322,6 +330,7 @@
     </div>
 </form>
 <script src="layui/layui.js"></script>
+<script src="layui/clipboard.min.js"></script>
 <script>
     //JavaScript代码区域
     layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow','util'], function () {
@@ -594,7 +603,7 @@
                 type: 1,
                 title: "修改密码",
                 area: '400px',
-                content: $('#password')
+                content: $('#passwordForm')
             });
         });
         // 登出
@@ -700,7 +709,7 @@
                         $.each(result.data, function (i, f) {
                             html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
                             html += '           <div class="favorites-bg">';
-                            html += '               <img src="/images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '           </div>';
                             html += '           <p title="' + f.name + '">' + f.name + '</p>';
                             html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
@@ -979,6 +988,13 @@
             });
             // 加载分类
             loadCategoryList();
+            // 初始化剪贴板插件
+            var clipboard = new ClipboardJS('#accountCopy');
+            clipboard.on('success', function(e) {layer.msg("复制成功");});
+            clipboard.on('error', function(e) {layer.msg("复制失败");});
+            var clipboard1 = new ClipboardJS('#passwordCopy');
+            clipboard1.on('success', function(e) {layer.msg("复制成功");});
+            clipboard1.on('error', function(e) {layer.msg("复制失败");});
         });
     });
 </script>
