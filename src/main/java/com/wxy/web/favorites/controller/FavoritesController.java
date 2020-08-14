@@ -89,7 +89,7 @@ public class FavoritesController {
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, indexPageSize);
         for (Category c : page.getList()) {
-            c.setFavorites(favoritesService.findTop40ByCategoryId(c.getId()));
+            c.setFavorites(favoritesService.findTop40ByCategoryIdOrderBySortDescIdAsc(c.getId()));
         }
         return ApiResponse.success(page);
     }
@@ -135,7 +135,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             ArrayList<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

@@ -34,8 +34,8 @@ public class FavoritesService {
         return favoritesRepository.saveAll(list);
     }
 
-    public List<Favorites> findTop40ByCategoryId(Integer categoryId) {
-        return favoritesRepository.findTop40ByCategoryId(categoryId);
+    public List<Favorites> findTop40ByCategoryIdOrderBySortDescIdAsc(Integer categoryId) {
+        return favoritesRepository.findTop40ByCategoryIdOrderBySortDescIdAsc(categoryId);
     }
 
     public void deleteById(Integer id) {

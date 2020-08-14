@@ -22,7 +22,7 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
      * @param categoryId
      * @return
      */
-    List<Favorites> findTop40ByCategoryId(Integer categoryId);
+    List<Favorites> findTop40ByCategoryIdOrderBySortDescIdAsc(Integer categoryId);
 
     /**
      * 模糊搜索

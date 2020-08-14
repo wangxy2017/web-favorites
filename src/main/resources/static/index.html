@@ -238,6 +238,15 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline" style="width: 120px;">
+            <input type="text" name="sort" lay-verify="sortNum" placeholder="请输入数值"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux">数值越大越靠前</div>
+    </div>
+    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateFavorites">立即提交</button>
             <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteFavorites">删除</button>
@@ -836,6 +845,7 @@
                             , "categoryId": data.categoryId
                             , "name": data.name
                             , "url": data.url
+                            , "sort": data.sort
                         });
                     }
                 }
@@ -845,10 +855,11 @@
             sortNum: function (value, item) {
                 if(value != ""){
                     if(isNaN(value)){
-                        return "只能填写数字";
-                    }
-                    if(value > 9999){
-                        return "请输入小于 9999 的值";
+                        return "请输入 9999 以内的整数";
+                    }else if(value%1 !== 0){
+                        return "请输入 9999 以内的整数";
+                    }else if(value > 9999){
+                        return "请输入 9999 以内的整数";
                     }
                 }
             }

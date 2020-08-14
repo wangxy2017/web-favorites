@@ -39,6 +39,9 @@ public class Favorites {
     @Column(name = "pinyin", nullable = false, columnDefinition = "varchar(500) comment '拼音'")
     private String pinyin;
 
+    @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
+    private Integer sort;
+
     @Transient
     private Password password;
 }
