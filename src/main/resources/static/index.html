@@ -499,12 +499,15 @@
         });
         // 搜索
         $("#search_name").on("keydown", function (event) {
+            // 1.按上下键进入选择模式，并控制，回车退出选择模式
+            // 2.在选择模式时，按下回车跳转超链接，输入值，退出选择模式
+            // 3.不在选择模式时，输入框有值，按下回车查询，输入框没有值，按下回车退出查询模式
             if (event.key === "Enter") {
                 var activeLi = $(".favorites-li.active")[0];
                 if(typeof activeLi !== "undefined"){
                     openUrl(activeLi);
                 }else{
-                    var name = $(this).val().trim();
+                    var name = $("#search_name").val().trim();
                     if (name == "") {
                         loadList();
                     } else {
@@ -576,7 +579,6 @@
                     }
                 }
             } else if (event.key === "Backspace") {
-                // 退出选择模式
                 $(".favorites-li.active").removeClass("active");
             }
         }).on("input", function () {
@@ -585,6 +587,7 @@
             } else {
                 $("#search_close").hide();
             }
+            $(".favorites-li.active").removeClass("active");
         });
 
         // 打开新窗口
