@@ -495,18 +495,49 @@
         $("#search_close").click(function () {
             loadList();
             $(this).hide();
-            var search_name = $("#search_name");
-            if (search_name.val() != "") {
-                search_name.val("");
-            }
-            search_name.blur();
+            $("#search_name").val("").blur();
         });
-        // 键盘事件
-        $(document).on("keydown", function (event) {
-            if (event.key === "Enter"){
+        // 搜索
+        $("#search_name").on("keydown", function (event) {
+            if (event.key === "Enter") {
                 var activeLi = $(".favorites-li.active")[0];
                 if(typeof activeLi !== "undefined"){
                     openUrl(activeLi);
+                }else{
+                    var name = $(this).val().trim();
+                    if (name == "") {
+                        loadList();
+                    } else {
+                        layer.load();
+                        $.ajax({
+                            type: "GET",
+                            url: "favorites/search",
+                            data: {"name": name},
+                            dataType: "json",
+                            success: function (result) {
+                                layer.closeAll('loading');
+                                if (result.code == 0) {
+                                    var html = '';
+                                    html += '<ul class="favorites">';
+                                    $.each(result.data, function (i, f) {
+                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                        html += '   <div class="favorites-bg">';
+                                        html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
+                                        html += '   </div>';
+                                        html += '   <p title="' + f.name + '">' + f.name + '</p>';
+                                        html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                        html += '</li>';
+                                    });
+                                    html += '</ul>';
+                                    $("#main").empty().append(html);
+                                }
+                            },
+                            error: function(){
+                                layer.closeAll('loading');
+                                layer.msg('服务器异常', {icon: 2});
+                            }
+                        });
+                    }
                 }
             } else if (event.key === "ArrowDown") {
                 var activeLi = $(".favorites-li.active")[0];
@@ -544,47 +575,9 @@
                         $(nextActiveLi).addClass("active");
                     }
                 }
-            }
-        });
-        // 搜索
-        $("#search_name").on("keydown", function (event) {
-            window.event? window.event.cancelBubble = true : e.stopPropagation();// 阻止冒泡
-            if (event.key === "Enter") {
-                $(this).blur();
-                var name = $(this).val().trim();
-                if (name == "") {
-                    loadList();
-                } else {
-                    layer.load();
-                    $.ajax({
-                        type: "GET",
-                        url: "favorites/search",
-                        data: {"name": name},
-                        dataType: "json",
-                        success: function (result) {
-                            layer.closeAll('loading');
-                            if (result.code == 0) {
-                                var html = '';
-                                html += '<ul class="favorites">';
-                                $.each(result.data, function (i, f) {
-                                    html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
-                                    html += '   <div class="favorites-bg">';
-                                    html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
-                                    html += '   </div>';
-                                    html += '   <p title="' + f.name + '">' + f.name + '</p>';
-                                    html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
-                                    html += '</li>';
-                                });
-                                html += '</ul>';
-                                $("#main").empty().append(html);
-                            }
-                        },
-                        error: function(){
-                            layer.closeAll('loading');
-                            layer.msg('服务器异常', {icon: 2});
-                        }
-                    });
-                }
+            } else if (event.key === "Backspace") {
+                // 退出选择模式
+                $(".favorites-li.active").removeClass("active");
             }
         }).on("input", function () {
             if ($(this).val() != "") {
