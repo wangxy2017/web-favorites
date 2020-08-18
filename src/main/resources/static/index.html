@@ -558,6 +558,8 @@
                     if(typeof nextActiveLi !== "undefined"){
                         $(activeLi).removeClass("active");
                         $(nextActiveLi).addClass("active");
+                        // 滚动
+                        elasticScroll(nextActiveLi.offsetTop);
                     }
                 }
             } else if (event.key === "ArrowUp") {
@@ -576,6 +578,8 @@
                     if(typeof nextActiveLi !== "undefined"){
                         $(activeLi).removeClass("active");
                         $(nextActiveLi).addClass("active");
+                        // 滚动
+                        elasticScroll(nextActiveLi.offsetTop);
                     }
                 }
             } else if (event.key === "Backspace") {
@@ -589,6 +593,16 @@
             }
             $(".favorites-li.active").removeClass("active");
         });
+
+        // 弹性滚动
+        window.elasticScroll = function(height){
+            var visibleHeight = $("#layuiBody").height();
+            var shouldScroll = Math.floor(height/ visibleHeight) * visibleHeight;
+            var scrollTop = $("#layuiBody").scrollTop();
+            if(Math.abs(scrollTop - shouldScroll) >= visibleHeight){
+                $("#layuiBody").animate({scrollTop: shouldScroll}, 50);
+            }
+        }
 
         // 打开新窗口
         window.openUrl = function (obj) {
