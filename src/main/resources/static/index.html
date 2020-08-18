@@ -548,10 +548,15 @@
                     $(".favorites-li").eq(0).addClass("active");
                 }else{
                     var nextActiveLi;
+                    var last;
                     var list = $(".favorites-li");
                     list.each(function(index,item){
                         if($(item).hasClass("active")){
-                            nextActiveLi = list[index+1];
+                            var nextIndex = index + 1;
+                            nextActiveLi = list[nextIndex];
+                            if(nextIndex + 1 === list.length){
+                                last = true
+                            }
                             return false;
                         }
                     });
@@ -559,7 +564,11 @@
                         $(activeLi).removeClass("active");
                         $(nextActiveLi).addClass("active");
                         // 滚动
-                        elasticScroll(nextActiveLi.offsetTop);
+                        if(last){
+                            $("#layuiBody").animate({scrollTop: $("#layuiBody")[0].scrollHeight}, 50);
+                        }else{
+                            elasticScroll(nextActiveLi.offsetTop);
+                        }
                     }
                 }
             } else if (event.key === "ArrowUp") {
@@ -568,10 +577,15 @@
                     $(".favorites-li").eq(0).addClass("active");
                 }else{
                     var nextActiveLi;
+                    var first;
                     var list = $(".favorites-li");
                     list.each(function(index,item){
                         if($(item).hasClass("active")){
-                            nextActiveLi = list[index-1];
+                            var nextIndex = index - 1;
+                            nextActiveLi = list[nextIndex];
+                            if(nextIndex === 0){
+                                first = true;
+                            }
                             return false;
                         }
                     });
@@ -579,7 +593,11 @@
                         $(activeLi).removeClass("active");
                         $(nextActiveLi).addClass("active");
                         // 滚动
-                        elasticScroll(nextActiveLi.offsetTop);
+                        if(first){
+                            $("#layuiBody").animate({scrollTop: 0}, 50);
+                        }else{
+                            elasticScroll(nextActiveLi.offsetTop);
+                        }
                     }
                 }
             } else if (event.key === "Backspace") {
@@ -697,6 +715,8 @@
                 elem: '#main'
                 , scrollElem: '#layuiBody'
                 , isLazyimg: true
+                , isAuto: true
+                , mb: $("#layuiBody").height()
                 , end: ' '
                 , done: function(page, next){
                     var lis = [];
