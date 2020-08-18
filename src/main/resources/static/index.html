@@ -94,6 +94,10 @@
             border: 0;
         }
 
+        .favorites li.active {
+            background-color: #f2f2f2;
+        }
+
         .favorites li:hover {
             background-color: #f2f2f2;
         }
@@ -497,8 +501,54 @@
             }
             search_name.blur();
         });
+        // 键盘事件
+        $(document).on("keydown", function (event) {
+            if (event.key === "Enter"){
+                var activeLi = $(".favorites-li.active")[0];
+                if(typeof activeLi !== "undefined"){
+                    openUrl(activeLi);
+                }
+            } else if (event.key === "ArrowDown") {
+                var activeLi = $(".favorites-li.active")[0];
+                if(typeof activeLi === "undefined"){
+                    $(".favorites-li").eq(0).addClass("active");
+                }else{
+                    var nextActiveLi;
+                    var list = $(".favorites-li");
+                    list.each(function(index,item){
+                        if($(item).hasClass("active")){
+                            nextActiveLi = list[index+1];
+                            return false;
+                        }
+                    });
+                    if(typeof nextActiveLi !== "undefined"){
+                        $(activeLi).removeClass("active");
+                        $(nextActiveLi).addClass("active");
+                    }
+                }
+            } else if (event.key === "ArrowUp") {
+                var activeLi = $(".favorites-li.active")[0];
+                if(typeof activeLi === "undefined"){
+                    $(".favorites-li").eq(0).addClass("active");
+                }else{
+                    var nextActiveLi;
+                    var list = $(".favorites-li");
+                    list.each(function(index,item){
+                        if($(item).hasClass("active")){
+                            nextActiveLi = list[index-1];
+                            return false;
+                        }
+                    });
+                    if(typeof nextActiveLi !== "undefined"){
+                        $(activeLi).removeClass("active");
+                        $(nextActiveLi).addClass("active");
+                    }
+                }
+            }
+        });
         // 搜索
-        $("#search_name").keydown(function (event) {
+        $("#search_name").on("keydown", function (event) {
+            window.event? window.event.cancelBubble = true : e.stopPropagation();// 阻止冒泡
             if (event.key === "Enter") {
                 $(this).blur();
                 var name = $(this).val().trim();
@@ -517,7 +567,7 @@
                                 var html = '';
                                 html += '<ul class="favorites">';
                                 $.each(result.data, function (i, f) {
-                                    html += '<li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                                    html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
                                     html += '   <div class="favorites-bg">';
                                     html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                     html += '   </div>';
@@ -543,8 +593,10 @@
                 $("#search_close").hide();
             }
         });
+
         // 打开新窗口
-        window.openUrl = function (url) {
+        window.openUrl = function (obj) {
+            var url = $(obj).attr("data-url");
             if(url.startsWith("https://") || url.startsWith("http://")){
                 window.open(url);
             }else{
@@ -652,7 +704,7 @@
                                     html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                                     html += '   <ul class="favorites">';
                                     $.each(c.favorites, function (j, f) {
-                                        html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '           <div class="favorites-bg">';
                                         html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '           </div>';
@@ -716,7 +768,7 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (i, f) {
-                            html += '       <li class="layui-anim layui-anim-scale" onclick="openUrl(\'' + f.url + '\')">';
+                            html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
                             html += '           <div class="favorites-bg">';
                             html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '           </div>';
