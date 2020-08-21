@@ -4,6 +4,7 @@ import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author wangxiaoyuan
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
  * @Description
  **/
 @Service
+@Transactional
 public class UserService {
 
     @Autowired

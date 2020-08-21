@@ -4,6 +4,7 @@ import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Favorites;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @Description
  **/
 @Service
+@Transactional
 public class FavoritesService {
 
     @Autowired

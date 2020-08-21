@@ -523,7 +523,7 @@
                                     var html = '';
                                     html += '<ul class="favorites">';
                                     $.each(result.data, function (i, f) {
-                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '   <div class="favorites-bg">';
                                         html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                         html += '   </div>';
@@ -627,6 +627,14 @@
             var url = $(obj).attr("data-url");
             if(url.startsWith("https://") || url.startsWith("http://")){
                 window.open(url);
+                // 存入历史记录
+                var id = $(obj).attr("data-id");
+                $.ajax({
+                    type: "POST",
+                    url: "history",
+                    data: JSON.stringify({"favoritesId": id}),
+                    contentType: 'application/json;charset=utf-8'
+                });
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -710,7 +718,7 @@
         });
         // 加载数据
         window.loadList = function () {
-            $("#main").empty();
+            $("#main").empty().append('<fieldset class="layui-elem-field" style="border-width:1px 0 0;border-radius:0;"><legend onclick="showHistory(this)" style="font-size:16px;">最近访问</legend></fieldset>');
             flow.load({
                 elem: '#main'
                 , scrollElem: '#layuiBody'
@@ -734,7 +742,7 @@
                                     html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                                     html += '   <ul class="favorites">';
                                     $.each(c.favorites, function (j, f) {
-                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '           <div class="favorites-bg">';
                                         html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '           </div>';
@@ -785,6 +793,60 @@
                 }
             });
         };
+        // 最近访问
+        window.showHistory = function (obj) {
+            var favoritesList = $("#historyFavorites")[0];
+            if(typeof favoritesList === "undefined"){
+                $.ajax({
+                    type: "GET",
+                    url: "history",
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        if (result.code == 0 && result.data.length > 0) {
+                            var html = '';
+                            html += '<ul class="favorites" id="historyFavorites">';
+                            $.each(result.data, function (i, f) {
+                                html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                html += '   <div class="favorites-bg">';
+                                html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
+                                html += '   </div>';
+                                html += '   <p title="' + f.name + '">' + f.name + '</p>';
+                                html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical" data-id="' + f.id + '"></i>';
+                                html += '</li>';
+                            });
+                            html += '   <li class="layui-anim layui-anim-scale" onclick="clearHistory()">';
+                            html += '       <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-delete"></i></div>';
+                            html += '       <p title="清除记录">清除记录</p>';
+                            html += '   </li>';
+                            html += '</ul>';
+                            $(obj).parent().append(html);
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('服务器异常', {icon: 2});
+                    }
+                });
+            }else{
+                $(favoritesList).remove();
+            }
+        };
+        window.clearHistory = function () {
+            $.ajax({
+                type: "DELETE",
+                url: "history/all",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg('操作成功', {icon: 6});
+                        $("#historyFavorites").remove();
+                    } else {
+                       layer.msg('操作失败', {icon: 5});
+                    }
+                }
+            });
+        }
         // 显示更多
         window.moreFavorites = function (categoryId) {
             layer.load();
@@ -798,7 +860,7 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (i, f) {
-                            html += '<li class="favorites-li layui-anim layui-anim-scale" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                             html += '           <div class="favorites-bg">';
                             html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '           </div>';
