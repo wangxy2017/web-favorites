@@ -95,29 +95,29 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>0.9.6</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:alpine</image>
-                    </from>
-                    <to>
-                        <image>registry.hub.docker.com/wangxiaoyuan2020/web-favorites</image>
-                    </to>
-                    <useOnlyProjectCache>true</useOnlyProjectCache>
-                    <allowInsecureRegistries>true</allowInsecureRegistries>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>0.9.6</version>-->
+<!--                <configuration>-->
+<!--                    <from>-->
+<!--                        <image>openjdk:alpine</image>-->
+<!--                    </from>-->
+<!--                    <to>-->
+<!--                        <image>registry.hub.docker.com/wangxiaoyuan2020/web-favorites</image>-->
+<!--                    </to>-->
+<!--                    <useOnlyProjectCache>true</useOnlyProjectCache>-->
+<!--                    <allowInsecureRegistries>true</allowInsecureRegistries>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
