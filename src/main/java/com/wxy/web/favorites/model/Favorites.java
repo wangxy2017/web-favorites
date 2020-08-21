@@ -42,6 +42,9 @@ public class Favorites {
     @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
     private Integer sort;
 
+    @Column(name = "star", columnDefinition = "int(1) comment '是否标记：1-是 0-否'")
+    private Integer star;
+
     @Transient
     private Password password;
 }

@@ -51,4 +51,8 @@ public class FavoritesService {
     public List<Favorites> findTop100ByUserIdAndNameLikeOrPinyinLike(Integer userId, String name, String pinyin) {
         return favoritesRepository.findTop100ByUserIdAndNameLikeOrPinyinLike(userId, name, pinyin);
     }
+
+    public List<Favorites> findStarFavorites(Integer userId){
+        return favoritesRepository.findByUserIdAndStar(userId,1);
+    }
 }

@@ -46,6 +46,9 @@ public class FavoritesController {
     @Value("${index.page.size:10}")
     private Integer indexPageSize;
 
+    @Value("${star.limit:10}")
+    private Integer starLimit;
+
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
@@ -127,6 +130,30 @@ public class FavoritesController {
         return ApiResponse.success(list);
     }
 
+    @GetMapping("/star")
+    public ApiResponse star() {
+        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
+    }
+
+    @PostMapping("/star")
+    public ApiResponse starUpdate(@RequestBody Favorites favorites) {
+        Favorites favorites1 = favoritesService.findById(favorites.getId());
+        if (favorites1 != null) {
+            if (favorites.getStar() == 1) {
+                User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+                List<Favorites> list = favoritesService.findStarFavorites(user.getId());
+                if (list.size() >= starLimit && !list.contains(favorites1)) {
+                    return ApiResponse.error("最多标记" + starLimit + "个网址");
+                }
+            }
+            favorites1.setStar(favorites.getStar());
+            favoritesService.save(favorites1);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error("非法操作");
+    }
+
     private List<Category> parseXML(InputStream in) throws DocumentException {
         ArrayList<Category> list = new ArrayList<>();
         SAXReader reader = new SAXReader();
@@ -135,7 +162,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             ArrayList<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),null, null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

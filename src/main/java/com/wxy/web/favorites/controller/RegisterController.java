@@ -54,8 +54,8 @@ public class RegisterController {
             categoryService.save(category);
             // 推荐收藏
             List<Favorites> recommends = new ArrayList<>();
-            recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId(), PinYinUtils.toPinyin("百度搜索"),null,null));
-            recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译"),null,null));
+            recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId(), PinYinUtils.toPinyin("百度搜索"),null,null,null));
+            recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译"),null,null,null));
             favoritesService.saveAll(recommends);
             // 设置session
             SpringUtils.getRequest().getSession().setAttribute("user", user1);

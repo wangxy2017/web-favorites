@@ -32,4 +32,7 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
      * @return
      */
     List<Favorites> findTop100ByUserIdAndNameLikeOrPinyinLike(Integer userId, String name,String pinyin);
+
+
+    List<Favorites> findByUserIdAndStar(Integer userId,Integer star);
 }
