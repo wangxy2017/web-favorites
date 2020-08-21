@@ -53,6 +53,6 @@ public class FavoritesService {
     }
 
     public List<Favorites> findStarFavorites(Integer userId){
-        return favoritesRepository.findByUserIdAndStar(userId,1);
+        return favoritesRepository.findStarFavorites(userId);
     }
 }

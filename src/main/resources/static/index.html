@@ -183,9 +183,9 @@
             <fieldset class="layui-elem-field layui-field-title" style="border-radius: 0;margin: 0 2px;">
                 <legend onclick="showStartFavorites()" style="font-size:16px;">常用网址</legend>
             </fieldset>
-            <div id="starFavorites" style="margin-bottom: 10px;"></div>
+            <div id="starFavorites" style="display:none;"></div>
         </div>
-        <div id="main"></div>
+        <div id="main" style="margin-top:10px;"></div>
     </div>
     <div class="layui-footer" style="left: 0;">
         <p class="open-source">本项目已开源，开源地址：<a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git"
@@ -799,8 +799,6 @@
             });
         };
         window.loadStarFavorites = function () {
-            // 判断隐藏
-            var visible = $("#starFavorites .favorites").is(":visible");
             $.ajax({
                 type: "GET",
                 url: "favorites/star",
@@ -809,7 +807,7 @@
                     if (result.code == 0) {
                         if(result.data.length > 0){
                             var html = '';
-                            html += '<ul class="favorites"' + (visible?'':' style="display:none"') + '>';
+                            html += '<ul class="favorites">';
                             $.each(result.data, function (i, f) {
                                 html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
@@ -829,7 +827,7 @@
             });
         };
         window.showStartFavorites = function () {
-            var that = $("#starFavorites .favorites");
+            var that = $("#starFavorites");
             if(that.is(":hidden")){
                 that.show();
             }else{
