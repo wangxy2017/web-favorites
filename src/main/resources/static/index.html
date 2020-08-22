@@ -809,7 +809,7 @@
                             var html = '';
                             html += '<ul class="favorites">';
                             $.each(result.data, function (i, f) {
-                                html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                html += '<li class="layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
                                 html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                 html += '   </div>';
