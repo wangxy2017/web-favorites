@@ -179,7 +179,7 @@
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="smartBtn">一键收藏</button>
         </div>
-        <div>
+        <div id="starDiv">
             <fieldset class="layui-elem-field layui-field-title" style="border-radius: 0;margin: 0 2px;">
                 <legend onclick="showStartFavorites()" style="font-size:16px;">常用网址</legend>
             </fieldset>
@@ -509,6 +509,7 @@
             loadList();
             $(this).hide();
             $("#search_name").val("").blur();
+            $("#starDiv").show();
         });
         // 搜索
         $("#search_name").on("keydown", function (event) {
@@ -523,6 +524,7 @@
                     var name = $("#search_name").val().trim();
                     if (name == "") {
                         loadList();
+                        $("#starDiv").show();
                     } else {
                         layer.load();
                         $.ajax({
@@ -546,6 +548,7 @@
                                     });
                                     html += '</ul>';
                                     $("#main").empty().append(html);
+                                    $("#starDiv").hide();
                                 }
                             },
                             error: function(){
