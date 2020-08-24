@@ -521,11 +521,12 @@
                 if(typeof activeLi !== "undefined"){
                     openUrl(activeLi);
                 }else{
-                    var name = $("#search_name").val().trim();
-                    if (name == "") {
+                    var name = $(this).val().trim();
+                    if (name == "") { //退出搜索模式
                         loadList();
                         $("#starDiv").show();
-                    } else {
+                        $(this).blur();
+                    } else { //进入搜索模式
                         layer.load();
                         $.ajax({
                             type: "GET",
@@ -625,6 +626,7 @@
             } else {
                 $("#search_close").hide();
             }
+            //退出选择模式
             $(".favorites-li.active").removeClass("active");
         });
 
