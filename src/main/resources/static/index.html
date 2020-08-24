@@ -305,7 +305,7 @@
     </div>
 </form>
 <!-- 修改密码表单 -->
-<form class="layui-form" action="" id="passwordForm" style="display: none;padding: 10px">
+<form class="layui-form" action="" id="passwordForm" lay-filter="passwordForm" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">旧密码</label>
         <div class="layui-input-inline">
@@ -328,7 +328,7 @@
     </div>
 </form>
 <!-- 修改邮箱表单 -->
-<form class="layui-form" action="" id="emailForm" style="display: none;padding: 10px">
+<form class="layui-form" action="" id="emailForm" lay-filter="emailForm" style="display: none;padding: 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">新邮箱</label>
         <div class="layui-input-inline">
@@ -766,14 +766,24 @@
                 area: '400px',
                 content: $('#passwordForm')
             });
+            // 表单赋值
+            form.val("passwordForm", {
+                "oldPassword": ""
+                , "newPassword": ""
+            });
         });
-        // 修改密码
+        // 修改邮箱
         $("#changeEmail").click(function () {
             layer.open({
                 type: 1,
                 title: "修改邮箱",
                 area: '400px',
                 content: $('#emailForm')
+            });
+            // 表单赋值
+            form.val("emailForm", {
+                "newEmail": ""
+                , "code": ""
             });
         });
         // 登出
