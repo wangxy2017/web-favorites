@@ -16,6 +16,13 @@ public class EmailUtils {
     @Value("${spring.mail.username}")
     private String from;
 
+    /**
+     * 异步发送邮件
+     *
+     * @param to    收件人
+     * @param title 主题
+     * @param text  内容
+     */
     @Async
     public void send(String to, String title, String text) {
         SimpleMailMessage message = new SimpleMailMessage();

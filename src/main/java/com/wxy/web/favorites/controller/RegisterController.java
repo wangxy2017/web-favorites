@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.SecretKey;
@@ -9,7 +10,6 @@ import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class RegisterController {
     public ApiResponse register(@RequestBody User user) {
         String password = user.getPassword();
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
-            SecretKey secretKey = new SecretKey(null, user.getUsername(), PasswordUtils.randomStrongPassword(16));
+            SecretKey secretKey = new SecretKey(null, user.getUsername(), RandomUtil.randomString(16));
             secretKeyService.save(secretKey);
             user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()));
             User user1 = userService.save(user);
@@ -54,8 +54,8 @@ public class RegisterController {
             categoryService.save(category);
             // 推荐收藏
             List<Favorites> recommends = new ArrayList<>();
-            recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId(), PinYinUtils.toPinyin("百度搜索"),null,null,null));
-            recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译"),null,null,null));
+            recommends.add(new Favorites(null, "百度搜索", "https://www.baidu.com/favicon.ico", "https://www.baidu.com/", category.getId(), user1.getId(), PinYinUtils.toPinyin("百度搜索"), null, null, null));
+            recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译"), null, null, null));
             favoritesService.saveAll(recommends);
             // 设置session
             SpringUtils.getRequest().getSession().setAttribute("user", user1);

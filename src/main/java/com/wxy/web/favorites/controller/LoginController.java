@@ -1,12 +1,12 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
-import com.wxy.web.favorites.util.PasswordUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -54,7 +54,7 @@ public class LoginController {
     public ApiResponse forgot(@RequestBody User user) {
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (user1 != null) {
-            String tempPwd = PasswordUtils.randomPassword(8);
+            String tempPwd = RandomUtil.randomString(8);
             SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
             // 重置用户密码
             user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));

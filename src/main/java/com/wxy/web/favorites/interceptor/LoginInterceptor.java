@@ -16,7 +16,7 @@ import java.util.Base64;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    private Base64.Decoder decoder = Base64.getDecoder();
+    private final Base64.Decoder decoder = Base64.getDecoder();
 
     @Autowired
     private UserRepository userRepository;
