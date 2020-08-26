@@ -682,6 +682,9 @@
                     url: "user/email/code",
                     data: {"email": email}
                 });
+            }else{
+                $("#newEmail").focus().addClass("layui-form-danger");
+                 layer.msg('必填项不能为空', {icon: 5, anim: 6});
             }
         };
         // 弹性滚动

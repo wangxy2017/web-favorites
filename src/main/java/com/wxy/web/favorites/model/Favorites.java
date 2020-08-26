@@ -21,7 +21,7 @@ public class Favorites {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(100) comment '名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(500) comment '名称'")
     private String name;
 
     @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")

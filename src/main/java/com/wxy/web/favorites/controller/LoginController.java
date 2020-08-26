@@ -55,9 +55,9 @@ public class LoginController {
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (user1 != null) {
             String tempPwd = RandomUtil.randomString(8);
-            SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
+            SecretKey secretKey = secretKeyService.findByUsername(user1.getUsername());
             // 重置用户密码
-            user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
+            user1.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
             emailUtils.send(user1.getEmail(), "网络收藏夹|重置密码",
