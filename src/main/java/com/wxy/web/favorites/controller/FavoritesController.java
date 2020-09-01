@@ -62,6 +62,14 @@ public class FavoritesController {
         return ApiResponse.success();
     }
 
+    @GetMapping("/url")
+    public ApiResponse url(@RequestParam String url) {
+        if (StringUtils.isNotBlank(url)) {
+            return ApiResponse.success(HtmlUtils.getTitle(url));
+        }
+        return ApiResponse.error();
+    }
+
     @PostMapping("/smartAdd")
     public ApiResponse smartAdd(@RequestBody Favorites favorites) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");

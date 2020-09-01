@@ -117,7 +117,6 @@
             white-space: nowrap;
             margin-top: 10px;
             text-align: center;
-            line-height: 22px;
         }
 
         .favorites li .action-icon {
@@ -158,22 +157,21 @@
 
         /** 书签模式 **/
         .bookmark .favorites li{
-            flex-direction: unset !important;
+            flex-direction: row !important;
         }
         .bookmark .favorites li .favorites-bg{
             width: 16px !important;
             height: 16px !important;
-            line-height: inherit !important;
-            text-align: left !important;
+            line-height: 16px !important;
+            text-align: center !important;
             border-radius: 0 !important;
-            display: inline-block !important;
         }
 
         .bookmark .favorites li .favorites-bg img{
             width: 100% !important;
             height: 100% !important;
             border: 0 !important;
-            vertical-align: unset !important;
+            vertical-align: baseline !important;
         }
 
         .bookmark .favorites li:hover .favorites-bg{
@@ -187,12 +185,10 @@
             white-space: nowrap !important;
             margin-top: 0 !important;
             text-align: left !important;
-            line-height: inherit !important;
-            display: inline-block !important;
             margin-left: 10px !important;
         }
         .bookmark .favorites li .action-icon{
-            top: 6px !important;
+            top: 8px !important;
         }
         .bookmark .favorites .add-icon{
             font-size: 16px !important;
@@ -263,16 +259,17 @@
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
+            <input type="text" name="url" id="url_input" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
+        <i id="url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 22px;margin-top: 6px;display: none;"></i>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -509,6 +506,32 @@
                     }
                 }
             });
+        });
+        $("#url_input").on('input',function(){
+            var url = $(this).val();
+            if(url.startsWith("https://") || url.startsWith("http://")){
+                $("#name_input").addClass("layui-disabled").attr("disabled",true);
+                $("#url_loading").show();
+                // 请求后台解析url
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/url",
+                    data: {"url": url},
+                    dataType: "json",
+                    success: function (result) {
+                        $("#name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#url_loading").hide();
+
+                        if (result.code == 0) {
+                            $("#name_input").val(result.data);
+                        }
+                    },
+                    error: function(){
+                        $("#name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#url_loading").hide();
+                    }
+                });
+            }
         });
         $("#settingPwd").click(function () {
             layer.open({
