@@ -35,7 +35,7 @@
             position: absolute;
             top: 16px;
             left: 200px;
-            width: 180px;
+            width: 200px;
             height: 30px;
         }
 
@@ -67,13 +67,17 @@
         }
 
         .favorites {
+            display: flex;
+            flex-wrap: wrap;
             overflow: hidden;
             padding: 10px;
         }
 
         .favorites li {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
             position: relative;
-            float: left;
             padding: 10px 20px;
             cursor: pointer;
             user-select: none;
@@ -141,10 +145,58 @@
             color: inherit;
         }
 
+        .style-select{
+            position: absolute;
+            top: 12px;
+            right: 140px;
+        }
 
+        .style-select .layui-form-switch{
+            border:none;
+            background-color: #393d49;
+        }
 
+        /** 书签模式 **/
+        .bookmark .favorites li{
+            flex-direction: unset !important;
+        }
+        .bookmark .favorites li .favorites-bg{
+            width: 16px !important;
+            height: 16px !important;
+            line-height: inherit !important;
+            text-align: left !important;
+            border-radius: 0 !important;
+            display: inline-block !important;
+        }
 
+        .bookmark .favorites li .favorites-bg img{
+            width: 100% !important;
+            height: 100% !important;
+            border: 0 !important;
+            vertical-align: unset !important;
+        }
 
+        .bookmark .favorites li:hover .favorites-bg{
+            background-color: transparent !important;
+        }
+
+        .bookmark .favorites li p{
+            width: 300px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            margin-top: 0 !important;
+            text-align: left !important;
+            line-height: inherit !important;
+            display: inline-block !important;
+            margin-left: 10px !important;
+        }
+        .bookmark .favorites li .action-icon{
+            top: 6px !important;
+        }
+        .bookmark .favorites .add-icon{
+            font-size: 16px !important;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -157,6 +209,11 @@
             <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill"></i>
+        </div>
+        <div class="layui-form style-select" lay-filter="styleSelect">
+            <div class="layui-input-inline">
+                <input type="checkbox" name="style" id="styleSwitch" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="styleSwitch">
+            </div>
         </div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
@@ -204,16 +261,16 @@
 <form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
     <input type="hidden" name="categoryId">
     <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+        <label class="layui-form-label">地址</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">地址</label>
+        <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
@@ -229,16 +286,16 @@
       style="display: none;padding: 10px">
     <input type="hidden" name="id" id="favoritesId">
     <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+        <label class="layui-form-label">地址</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">地址</label>
+        <label class="layui-form-label">名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
@@ -568,7 +625,7 @@
                                     var html = '';
                                     html += '<ul class="favorites">';
                                     $.each(result.data, function (i, f) {
-                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                        html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '   <div class="favorites-bg">';
                                         html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                         html += '   </div>';
@@ -829,7 +886,7 @@
                                     html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                                     html += '   <ul class="favorites">';
                                     $.each(c.favorites, function (j, f) {
-                                        html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                        html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '           <div class="favorites-bg">';
                                         html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '           </div>';
@@ -837,14 +894,14 @@
                                         html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                         html += '       </li>';
                                         if(j == 39){
-                                            html += '       <li class="layui-anim layui-anim-scale" onclick="moreFavorites(' + c.id + ')">';
+                                            html += '       <li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                             html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-more"></i></div>';
                                             html += '           <p title="显示更多">显示更多</p>';
                                             html += '       </li>';
                                             return false;
                                         }
                                     });
-                                    html += '       <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + c.id + ')">';
+                                    html += '       <li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
                                     html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
                                     html += '           <p title="添加收藏">添加收藏</p>';
                                     html += '       </li>';
@@ -891,7 +948,7 @@
                             var html = '';
                             html += '<ul class="favorites">';
                             $.each(result.data, function (i, f) {
-                                html += '<li class="layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                html += '<li class="layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
                                 html += '       <img src="' + f.icon + '" onerror="javascript:this.src=\'images/book.svg\'"/>';
                                 html += '   </div>';
@@ -929,7 +986,7 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (i, f) {
-                            html += '<li class="favorites-li layui-anim layui-anim-scale" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                             html += '           <div class="favorites-bg">';
                             html += '               <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '           </div>';
@@ -937,7 +994,7 @@
                             html += '           <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '       </li>';
                         });
-                        html += '       <li class="layui-anim layui-anim-scale" onclick="addFavorites(' + categoryId + ')">';
+                        html += '       <li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + categoryId + ')">';
                         html += '           <div class="favorites-bg"><i class="add-icon layui-icon layui-icon-add-1"></i></div>';
                         html += '           <p title="添加收藏">添加收藏</p>';
                         html += '       </li>';
@@ -1092,6 +1149,14 @@
                 });
                 return msg;
             }
+        });
+        form.on('switch(styleSwitch)', function(data){
+            if(data.elem.checked){
+                localStorage.setItem("bookmark", true);
+            }else{
+                localStorage.removeItem("bookmark");
+            }
+            window.location.reload();
         });
         form.on('switch(starSwitch)', function(data){
             layer.load();
@@ -1261,6 +1326,17 @@
 
         // 页面加载完成执行
         $(function () {
+            // 书签模式
+            var bookmark = localStorage.getItem("bookmark");
+            if(bookmark){
+                $("#styleSwitch").attr("checked",true);
+                form.render('checkbox','styleSelect');
+                $("#layuiBody").addClass("bookmark");
+            }else{
+                $("#styleSwitch").removeAttr("checked");
+                form.render('checkbox','styleSelect');
+                $("#layuiBody").removeClass("bookmark");
+            }
             // 加载数据
             loadList();
             // 加载用户信息
