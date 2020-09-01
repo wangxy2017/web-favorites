@@ -43,12 +43,13 @@ public class RegisterController {
      */
     @PostMapping
     public ApiResponse register(@RequestBody User user) {
-        String password = user.getPassword();
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
-            SecretKey secretKey = new SecretKey(null, user.getUsername(), RandomUtil.randomString(16));
-            secretKeyService.save(secretKey);
-            user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()));
+            String key = RandomUtil.randomString(16);
+            user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + key).getBytes()));
             User user1 = userService.save(user);
+            // 保存secretKey
+            SecretKey secretKey = new SecretKey(null, user1.getId(), key);
+            secretKeyService.save(secretKey);
             // 创建默认分类
             Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
             categoryService.save(category);

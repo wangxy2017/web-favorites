@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "t_category")
+@Table(name = "t_category",indexes = {@Index(columnList = "user_id")})
 @org.hibernate.annotations.Table(appliesTo = "t_category", comment = "分类表")
 @AllArgsConstructor
 @NoArgsConstructor

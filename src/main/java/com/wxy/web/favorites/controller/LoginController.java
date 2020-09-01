@@ -34,20 +34,21 @@ public class LoginController {
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
-        SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
-        if (user1 != null && user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
-            HttpServletRequest request = SpringUtils.getRequest();
-            request.getSession().setAttribute("user", user1);
-            if ("1".equals(remember)) {
-                Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
-                token.setPath("/");
-                token.setMaxAge(60 * 60 * 24 * 14);
-                SpringUtils.getResponse().addCookie(token);
+        if (user1 != null) {
+            SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
+            if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
+                HttpServletRequest request = SpringUtils.getRequest();
+                request.getSession().setAttribute("user", user1);
+                if ("1".equals(remember)) {
+                    Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
+                    token.setPath("/");
+                    token.setMaxAge(60 * 60 * 24 * 14);
+                    SpringUtils.getResponse().addCookie(token);
+                }
+                return ApiResponse.success();
             }
-            return ApiResponse.success();
-        } else {
-            return ApiResponse.error("用户名或密码错误");
         }
+        return ApiResponse.error("用户名或密码错误");
     }
 
     @PostMapping("/forgot")
@@ -55,7 +56,7 @@ public class LoginController {
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (user1 != null) {
             String tempPwd = RandomUtil.randomString(8);
-            SecretKey secretKey = secretKeyService.findByUsername(user1.getUsername());
+            SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             // 重置用户密码
             user1.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
             userService.save(user1);

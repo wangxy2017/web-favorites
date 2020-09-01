@@ -9,11 +9,13 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "t_favorites")
+@Table(name = "t_favorites", indexes = {
+        @Index(columnList = "user_id"),
+        @Index(columnList = "category_id")})
 @org.hibernate.annotations.Table(appliesTo = "t_favorites", comment = "收藏表")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Favorites {
 
     @Id

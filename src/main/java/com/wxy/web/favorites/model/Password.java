@@ -27,6 +27,6 @@ public class Password {
     @Column(name = "password", nullable = false, columnDefinition = "varchar(100) comment '密码'")
     private String password;
 
-    @Column(name = "favorites_id", nullable = false, columnDefinition = "int(10) comment '收藏ID'")
+    @Column(name = "favorites_id", unique = true, nullable = false, columnDefinition = "int(10) comment '收藏ID'")
     private Integer favoritesId;
 }

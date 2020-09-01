@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/password")
     public ApiResponse password(String oldPassword, String newPassword) {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        SecretKey secretKey = secretKeyService.findByUsername(user.getUsername());
+        SecretKey secretKey = secretKeyService.findByUserId(user.getId());
         if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + secretKey.getRandomKey()).getBytes()))) {
             user.setPassword(DigestUtils.md5DigestAsHex((newPassword + secretKey.getRandomKey()).getBytes()));
             userService.save(user);
