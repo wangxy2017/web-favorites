@@ -7,9 +7,47 @@
     <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
+    <style>
+        html,body{
+            width:100%;
+            height:100%;
+        }
+        .bg{
+            position: absolute;
+            top: 100px;
+            left: 0;
+            right: 0;
+            bottom: 100px;
+            background: #009688;
+        }
+        .loginTitle{
+            margin-top: 20px;
+            margin-left: 15px;
+            background: #fff;
+        }
+        .loginDiv{
+            z-index: 999;
+            position: absolute;
+            top: 200px;
+            left: calc(50% - 200px);
+            width: 400px;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px -5px rgba(0,0,0,.5);
+        }
+        .loginFooter{
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div class="layui-tab layui-tab-brief">
+<blockquote class="layui-elem-quote loginTitle">在线网络收藏夹</blockquote>
+<div class="bg"></div>
+<div class="layui-tab layui-tab-brief loginDiv">
     <ul class="layui-tab-title">
         <li class="layui-this">登录</li>
         <li>注册</li>
@@ -42,7 +80,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="login">登录</button>
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
                     </div>
                 </div>
             </form>
@@ -78,7 +116,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="register">注册</button>
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="register">注册</button>
                     </div>
                 </div>
             </form>
@@ -106,12 +144,15 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="forgotPwd">提交</button>
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="forgotPwd">提交</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+</div>
+<div class="loginFooter">
+    © 2020 - 在线网络收藏夹 || 在线网络收藏夹版权所有
 </div>
 <script src="layui/layui.js"></script>
 <script>
