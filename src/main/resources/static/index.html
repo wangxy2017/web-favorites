@@ -455,6 +455,7 @@
             , bgcolor: '#393D49'
             , css: {right: 30, bottom: 50}
         });
+
         //执行实例
         var uploadInst = upload.render({
             elem: '#import' //绑定元素
@@ -479,6 +480,7 @@
                 layer.msg('导入失败', {icon: 5});
             }
         });
+
         // 清除密码
         $("#unsetPwd").click(function(){
             var passwordId = $("#pwdId").val();
@@ -507,6 +509,7 @@
                 }
             });
         });
+
         $("#url_input").on('input',function(){
             var url = $(this).val();
             if(url.startsWith("https://") || url.startsWith("http://")){
@@ -533,6 +536,7 @@
                 });
             }
         });
+
         $("#settingPwd").click(function () {
             layer.open({
                 type: 1,
@@ -567,18 +571,23 @@
                 }
             });
         });
+
         $("#export").click(function () {
             window.location.href = "favorites/export";
         });
+
         $("#cancelPwd").click(function () {
             layer.closeAll();
         });
+
         $("#cancelEmail").click(function () {
             layer.closeAll();
         });
+
         $("#cancelAddFavorites").click(function () {
             layer.closeAll();
         });
+
         $("#importOrExportBtn").click(function () {
             layer.open({
                 type: 1,
@@ -587,6 +596,7 @@
                 content: $('#importOrExport')
             });
         });
+
         // 智能按钮
         $("#smartBtn").click(function () {
             layer.prompt({title: "一键收藏（默认分类）", placeholder: 'https://', maxlength: 500}, function (value, index, elem) {
@@ -613,6 +623,7 @@
                 layer.load();
             });
         });
+
         // 关闭搜索
         $("#search_close").click(function () {
             loadList();
@@ -620,6 +631,7 @@
             $("#search_name").val("").blur();
             $("#starDiv").show();
         });
+
         // 搜索
         $("#search_name").on("keydown", function (event) {
             // 1.按上下键进入选择模式，并控制，回车退出选择模式
@@ -768,6 +780,7 @@
                  layer.msg('必填项不能为空', {icon: 5, anim: 6});
             }
         };
+
         // 弹性滚动
         window.elasticScroll = function(height){
             var visibleHeight = $("#layuiBody").height();
@@ -787,6 +800,7 @@
                 layer.msg('此链接无效', {icon: 7});
             }
         };
+
         // 编辑分类
         window.editCategory = function (obj) {
             layer.open({
@@ -821,6 +835,7 @@
                 }
             });
         };
+
         // 新增分类
         $("#addCategoryBtn").click(function () {
             layer.prompt({title: "添加分类", placeholder:"输入分类名称", maxlength: 10}, function (value, index, elem) {
@@ -842,6 +857,7 @@
                 });
             });
         });
+
         // 修改密码
         $("#changePwd").click(function () {
             layer.open({
@@ -856,6 +872,7 @@
                 , "newPassword": ""
             });
         });
+
         // 修改邮箱
         $("#changeEmail").click(function () {
             layer.open({
@@ -870,6 +887,7 @@
                 , "code": ""
             });
         });
+
         // 登出
         $("#logout").click(function () {
             $.ajax({
@@ -883,6 +901,7 @@
                 }
             });
         });
+
         // 加载数据
         window.loadList = function () {
             $("#main").empty();
@@ -942,6 +961,7 @@
                 }
             });
         };
+
         // 加载分类
         window.loadCategoryList = function () {
             $.ajax({
@@ -960,6 +980,7 @@
                 }
             });
         };
+
         window.loadStarFavorites = function () {
             $.ajax({
                 type: "GET",
@@ -988,6 +1009,7 @@
                 }
             });
         };
+
         window.showStartFavorites = function () {
             var that = $("#starFavorites");
             if(that.is(":hidden")){
@@ -996,6 +1018,7 @@
                 that.hide();
             }
         };
+
         // 显示更多
         window.moreFavorites = function (categoryId) {
             layer.load();
@@ -1032,6 +1055,7 @@
                 }
             });
         };
+
         // 添加收藏
         window.addFavorites = function (categoryId) {
             layer.open({
@@ -1047,6 +1071,7 @@
                 , "categoryId": categoryId
             });
         };
+
         // 删除收藏
         $("#deleteFavorites").click(function () {
             layer.confirm('确认删除收藏吗?', function(index){
@@ -1068,6 +1093,7 @@
                 });
             });
         });
+
         // 清空收藏
         $("#clean").click(function () {
             layer.confirm('确认清空分类下所有收藏吗?', function(index){
@@ -1091,6 +1117,7 @@
                 });
             });
         });
+
         // 删除分类
         $("#deleteCategory").click(function () {
             layer.confirm('确认删除分类吗?', function(index){
@@ -1114,6 +1141,7 @@
                 });
             });
         });
+
         // 编辑收藏
         window.editFavorites = function (obj, e) {
             window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
@@ -1145,6 +1173,7 @@
                 }
             });
         };
+
         form.verify({
             sortNum: function (value, item) {
                 if(value != ""){
@@ -1173,14 +1202,17 @@
                 return msg;
             }
         });
+
         form.on('switch(styleSwitch)', function(data){
             if(data.elem.checked){
                 localStorage.setItem("bookmark", true);
+                $("#layuiBody").addClass("bookmark");
             }else{
                 localStorage.removeItem("bookmark");
+                $("#layuiBody").removeClass("bookmark");
             }
-            window.location.reload();
         });
+
         form.on('switch(starSwitch)', function(data){
             layer.load();
             $.ajax({
@@ -1210,6 +1242,7 @@
                 }
             });
         });
+
         // 新增收藏
         form.on('submit(addFavorites)', function (data) {
             $.ajax({
@@ -1231,7 +1264,8 @@
             layer.load();
             return false;
         });
-         // 保存密码
+
+        // 保存密码
         form.on('submit(savePwd)', function (data) {
             layer.load();
             $.ajax({
@@ -1259,6 +1293,7 @@
             });
             return false;
         });
+
         // 修改邮箱
         form.on('submit(updateEmail)', function (data) {
             layer.closeAll();
@@ -1279,6 +1314,7 @@
             });
             return false;
         });
+
         // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
             layer.closeAll();
@@ -1300,6 +1336,7 @@
             });
             return false;
         });
+
         // 修改分类
         form.on('submit(updateCategory)', function (data) {
             layer.closeAll();
@@ -1322,6 +1359,7 @@
             });
             return false;
         });
+
         // 修改密码
         form.on('submit(updatePassword)', function (data) {
             layer.closeAll();
@@ -1347,9 +1385,7 @@
             return false;
         });
 
-        // 页面加载完成执行
-        $(function () {
-            // 书签模式
+        window.initStyle = function(){
             var bookmark = localStorage.getItem("bookmark");
             if(bookmark){
                 $("#styleSwitch").attr("checked",true);
@@ -1360,9 +1396,9 @@
                 form.render('checkbox','styleSelect');
                 $("#layuiBody").removeClass("bookmark");
             }
-            // 加载数据
-            loadList();
-            // 加载用户信息
+        };
+
+        window.loadUserInfo = function(){
             $.ajax({
                 type: "GET",
                 url: "user/info",
@@ -1374,17 +1410,31 @@
                     }
                 }
             });
-            // 加载分类
-            loadCategoryList();
-            // 初始化剪贴板插件
+        };
+
+        window.initClipboard = function(){
             var clipboard = new ClipboardJS('#accountCopy');
             clipboard.on('success', function(e) {layer.msg("复制成功");});
             clipboard.on('error', function(e) {layer.msg("复制失败");});
             var clipboard1 = new ClipboardJS('#passwordCopy');
             clipboard1.on('success', function(e) {layer.msg("复制成功");});
             clipboard1.on('error', function(e) {layer.msg("复制失败");});
+        };
+
+        // 页面加载完成执行
+        $(function () {
+            // 书签模式
+            initStyle();
+            // 加载用户信息
+            loadUserInfo();
             // 加载常用网址
             loadStarFavorites();
+            // 加载数据
+            loadList();
+            // 加载分类
+            loadCategoryList();
+            // 初始化剪贴板插件
+            initClipboard();
         });
     });
 </script>
