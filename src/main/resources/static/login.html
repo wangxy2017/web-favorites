@@ -28,7 +28,7 @@
         .loginDiv{
             z-index: 999;
             position: absolute;
-            top: 200px;
+            top: calc(50% - 150px);
             left: calc(50% - 200px);
             width: 400px;
             background: white;
@@ -42,11 +42,21 @@
             width: 100%;
             text-align: center;
         }
+        .zylVerCode{
+            font-size: 22px;
+            background: #eee;
+            display: inline-block;
+            width: 70px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 <blockquote class="layui-elem-quote loginTitle">在线网络收藏夹</blockquote>
-<div class="bg"></div>
+<div class="bg" id="particles-js"></div>
 <div class="layui-tab layui-tab-brief loginDiv">
     <ul class="layui-tab-title">
         <li class="layui-this">登录</li>
@@ -143,6 +153,16 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label">验证码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="code" required lay-verify="required|zylVerCode"
+                               placeholder="请输入验证码"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                    <span class="zylVerCode" onclick="zylVerCode()"></span>
+                </div>
+                <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="forgotPwd">提交</button>
                     </div>
@@ -155,6 +175,7 @@
     © 2020 - 在线网络收藏夹 || 在线网络收藏夹版权所有
 </div>
 <script src="layui/layui.js"></script>
+<script src="layui/particles.min.js"></script>
 <script>
     //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
     layui.use(['element', 'form', 'jquery', 'layer'], function () {
@@ -162,6 +183,11 @@
         var form = layui.form;
         var $ = layui.$;
         var layer = layui.layer;
+
+        /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+        particlesJS.load('particles-js', 'layui/particles.json', function() {
+          console.log('callback - particles.js config loaded');
+        });
 
         //监听提交
         form.on('submit(login)', function (data) {
@@ -263,7 +289,26 @@
                     }
                 });
                 return msg;
+            },
+            zylVerCode: function (value, item) {
+                if(value !== $(".zylVerCode").text().toLowerCase()){
+                    return "验证码错误";
+                }
             }
+        });
+        window.zylVerCode = function (len){
+            len = len || 4;
+            var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';//默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1
+            var maxPos = $chars.length;
+            var zylCode = '';
+            for (i = 0; i < len; i++) {
+                zylCode += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            $(".zylVerCode").text(zylCode);
+        };
+
+        $(function(){
+            zylVerCode();
         });
     });
 </script>
