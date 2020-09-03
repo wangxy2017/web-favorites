@@ -53,6 +53,7 @@
             line-height: 36px;
             text-align: center;
             cursor: pointer;
+            user-select: none;
         }
     </style>
 </head>
@@ -236,6 +237,7 @@
                     layer.msg("服务器异常", {icon: 2});
                 }
             });
+            zylVerCode();
             return false;
         });
         form.on('submit(register)', function (data) {
