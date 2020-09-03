@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -163,12 +164,12 @@ public class FavoritesController {
     }
 
     private List<Category> parseXML(InputStream in) throws DocumentException {
-        ArrayList<Category> list = new ArrayList<>();
+        List<Category> list = new ArrayList<>();
         SAXReader reader = new SAXReader();
         Document document = reader.read(in);
         Element root = document.getRootElement();
         root.elements("CATEGORY").forEach(c -> {
-            ArrayList<Favorites> list1 = new ArrayList<>();
+            List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
                 Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null);
                 Element pwd = f.element("USER");
@@ -186,33 +187,37 @@ public class FavoritesController {
     @PostMapping("/import")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
-        if (file.getSize() > 0 && file.getOriginalFilename().endsWith(".xml")) {
+        if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户已存在的数据，防止重复导入
             List<Category> categories = categoryService.findByUserId(user.getId());
-            for (Category c : categories) {
-                List<Favorites> favoritesList = favoritesService.findByCategoryId(c.getId());
-                for (Favorites f : favoritesList) {
-                    Password password = passwordService.findByFavoritesId(f.getId());
-                    f.setPassword(password);
-                }
-                c.setFavorites(favoritesList);
-            }
+            categories.forEach(category -> {
+                List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
+                favoritesList.forEach(favorites -> {
+                    Password password = passwordService.findByFavoritesId(favorites.getId());
+                    favorites.setPassword(password);
+                });
+                category.setFavorites(favoritesList);
+            });
             // 遍历导入数据
-            for (Category c : list) {
+            list.forEach(c -> {
                 Category category = existCategory(c.getName(), categories);
                 if (category == null) {// 如果该分类不存在，则新增分类，并保存所有收藏
                     c.setUserId(user.getId());
                     categoryService.save(c);
                     // 保存所有收藏
-                    List<Favorites> favorites = c.getFavorites();
-                    favorites.forEach(f -> {
+                    Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
                         f.setCategoryId(c.getId());
                         f.setUserId(user.getId());
+                        Favorites favorites = favoritesService.save(f);
+                        if (f.getPassword() != null) {
+                            Password password = f.getPassword();
+                            password.setFavoritesId(favorites.getId());
+                            passwordService.save(password);
+                        }
                     });
-                    favoritesService.saveAll(favorites);
                 } else {// 如果该分类存在，则跳过分类，直接遍历收藏
-                    for (Favorites f : c.getFavorites()) {
+                    Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
                         Favorites favorites = existFavorites(f.getUrl(), category.getFavorites());
                         if (favorites == null) {// 如果收藏不存在，则保存收藏
                             f.setCategoryId(category.getId());
@@ -231,9 +236,9 @@ public class FavoritesController {
                                 passwordService.save(password);
                             }
                         }
-                    }
+                    });
                 }
-            }
+            });
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -266,14 +271,14 @@ public class FavoritesController {
         User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
         // 查询用户分类
         List<Category> categories = categoryService.findByUserId(user.getId());
-        for (Category c : categories) {
-            List<Favorites> favoritesList = favoritesService.findByCategoryId(c.getId());
-            for (Favorites f : favoritesList) {
-                Password password = passwordService.findByFavoritesId(f.getId());
-                f.setPassword(password);
-            }
-            c.setFavorites(favoritesList);
-        }
+        categories.forEach(category -> {
+            List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
+            favoritesList.forEach(favorites -> {
+                Password password = passwordService.findByFavoritesId(favorites.getId());
+                favorites.setPassword(password);
+            });
+            category.setFavorites(favoritesList);
+        });
         HttpServletResponse response = SpringUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
@@ -288,7 +293,7 @@ public class FavoritesController {
             Element category = data.addElement("CATEGORY");
             category.addElement("NAME").setText(c.getName());
             Element list = category.addElement("LIST");
-            c.getFavorites().forEach(f -> {
+            Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
                 Element favorites = list.addElement("FAVORITES");
                 favorites.addElement("NAME").setText(f.getName());
                 favorites.addElement("URL").setText(f.getUrl());
