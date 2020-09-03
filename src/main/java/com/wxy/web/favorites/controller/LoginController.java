@@ -46,9 +46,12 @@ public class LoginController {
                     SpringUtils.getResponse().addCookie(token);
                 }
                 return ApiResponse.success();
+            } else {
+                return ApiResponse.error("用户名或密码错误");
             }
+        } else {
+            return ApiResponse.error("请先注册账号");
         }
-        return ApiResponse.error("用户名或密码错误");
     }
 
     @PostMapping("/forgot")
