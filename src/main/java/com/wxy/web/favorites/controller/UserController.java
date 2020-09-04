@@ -30,13 +30,13 @@ public class UserController {
 
     @GetMapping("/info")
     public ApiResponse info() {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         return ApiResponse.success(user);
     }
 
     @PostMapping("/password")
     public ApiResponse password(String oldPassword, String newPassword) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         SecretKey secretKey = secretKeyService.findByUserId(user.getId());
         if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + secretKey.getRandomKey()).getBytes()))) {
             user.setPassword(DigestUtils.md5DigestAsHex((newPassword + secretKey.getRandomKey()).getBytes()));
@@ -51,7 +51,7 @@ public class UserController {
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
         HttpSession session = SpringUtils.getRequest().getSession();
-        session.setAttribute("code", code);
+        session.setAttribute("email_update_code", code);
         emailUtils.send(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
@@ -60,12 +60,13 @@ public class UserController {
     public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
         if (StringUtils.isNotBlank(newEmail) && StringUtils.isNotBlank(code)) {
             HttpSession session = SpringUtils.getRequest().getSession();
-            String code1 = (String) session.getAttribute("code");
-            User user = (User) session.getAttribute("user");
+            String emailCode = (String) session.getAttribute("email_update_code");
             User user1 = userService.findByEmail(newEmail);
-            if (user1 == null && code1.equals(code)) {
+            if (user1 == null && code.equals(emailCode)) {
+                User user = SpringUtils.getCurrentUser();
                 user.setEmail(newEmail);
                 userService.save(user);
+                session.removeAttribute("email_update_code");
                 return ApiResponse.success();
             }
         }

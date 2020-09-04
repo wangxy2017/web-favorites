@@ -29,4 +29,7 @@ public class User {
 
     @Column(name = "email", unique = true, nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
     private String email;
+
+    @Transient
+    private String code;
 }

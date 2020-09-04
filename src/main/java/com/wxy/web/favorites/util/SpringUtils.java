@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.util;
 
+import com.wxy.web.favorites.model.User;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -13,5 +14,9 @@ public class SpringUtils {
 
     public static HttpServletResponse getResponse() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+    }
+
+    public static User getCurrentUser() {
+        return (User) getRequest().getSession().getAttribute("user");
     }
 }

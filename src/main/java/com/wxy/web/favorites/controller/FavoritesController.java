@@ -52,7 +52,7 @@ public class FavoritesController {
 
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
@@ -73,7 +73,7 @@ public class FavoritesController {
 
     @PostMapping("/smartAdd")
     public ApiResponse smartAdd(@RequestBody Favorites favorites) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         favorites.setUserId(user.getId());
         // 设置分类
         Category category = categoryService.findDefaultCategory(user.getId());
@@ -97,7 +97,7 @@ public class FavoritesController {
      */
     @GetMapping("/list")
     public ApiResponse list(@RequestParam Integer pageNum) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, indexPageSize);
         for (Category c : page.getList()) {
@@ -132,7 +132,7 @@ public class FavoritesController {
 
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
         List<Favorites> list = favoritesService.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(),
                 "%" + name + "%", "%" + name + "%");
@@ -141,7 +141,7 @@ public class FavoritesController {
 
     @GetMapping("/star")
     public ApiResponse star() {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
     }
 
@@ -150,7 +150,7 @@ public class FavoritesController {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
         if (favorites1 != null) {
             if (favorites.getStar() == 1) {
-                User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+                User user = (User) SpringUtils.getCurrentUser();
                 List<Favorites> list = favoritesService.findStarFavorites(user.getId());
                 if (list.size() >= starLimit && !list.contains(favorites1)) {
                     return ApiResponse.error("最多标记" + starLimit + "个网址");
@@ -186,7 +186,7 @@ public class FavoritesController {
 
     @PostMapping("/import")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户已存在的数据，防止重复导入
@@ -268,7 +268,7 @@ public class FavoritesController {
 
     @GetMapping("/export")
     public void export() throws IOException {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         // 查询用户分类
         List<Category> categories = categoryService.findByUserId(user.getId());
         categories.forEach(category -> {

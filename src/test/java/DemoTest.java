@@ -46,7 +46,7 @@ public class DemoTest {
     public void test() {
         for (int k = 0; k < 100; k++) {
             String key = RandomUtil.randomString(16);
-            User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex(("test" + k + key).getBytes()), "test" + k + "@qq.com"));
+            User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex(("test" + k + key).getBytes()), "test" + k + "@qq.com",null));
             secretKeyService.save(new SecretKey(null, user.getId(), key));
             for (int i = 0; i < 100; i++) {
                 Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null));

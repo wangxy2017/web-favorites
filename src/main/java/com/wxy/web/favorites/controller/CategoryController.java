@@ -24,7 +24,7 @@ public class CategoryController {
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
         if (!"默认分类".equals(category.getName())) {
-            User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+            User user = (User) SpringUtils.getCurrentUser();
             category.setUserId(user.getId());
             categoryService.save(category);
             return ApiResponse.success();
@@ -57,7 +57,7 @@ public class CategoryController {
 
     @GetMapping("/list")
     public ApiResponse list() {
-        User user = (User) SpringUtils.getRequest().getSession().getAttribute("user");
+        User user = (User) SpringUtils.getCurrentUser();
         List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }
