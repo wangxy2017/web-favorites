@@ -10,10 +10,9 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "t_user")
-@org.hibernate.annotations.Table(appliesTo = "t_user", comment = "用户表")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class User {
 
     @Id

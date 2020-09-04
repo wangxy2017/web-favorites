@@ -2,8 +2,6 @@ package com.wxy.web.favorites.interceptor;
 
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.util.SpringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,7 +23,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
-        if (session.getAttribute("user") != null) {
+        if (session.getAttribute("login_user") != null) {
             return true;
         } else {
             // 查看cookie
@@ -35,7 +33,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                         String[] token = new String(decoder.decode(cookie.getValue())).split("&&");
                         User user1 = userRepository.findByUsername(token[0]);
                         if (user1 != null && user1.getPassword().equals(token[1])) {
-                            session.setAttribute("user", user1);
+                            session.setAttribute("login_user", user1);
                             return true;
                         }
                     }

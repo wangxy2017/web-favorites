@@ -22,11 +22,13 @@
             bottom: 100px;
             background: #009688;
         }
+
         .loginTitle{
             margin-top: 20px;
             margin-left: 15px;
             background: #fff;
         }
+
         .loginDiv{
             z-index: 999;
             position: fixed;
@@ -38,12 +40,14 @@
             border-radius: 4px;
             box-shadow: 0 5px 15px -5px rgba(0,0,0,.5);
         }
+
         .loginFooter{
             position: fixed;
             bottom: 30px;
             width: 100%;
             text-align: center;
         }
+
         .zylVerCode{
             font-size: 22px;
             background: #eee;
@@ -224,6 +228,7 @@
             });
             return false;
         });
+
         form.on('submit(forgotPwd)', function (data) {
             layer.load();
             $.ajax({
@@ -248,6 +253,7 @@
             zylVerCode();
             return false;
         });
+
         form.on('submit(register)', function (data) {
             layer.load();
             $.ajax({
@@ -271,6 +277,7 @@
             });
             return false;
         });
+
         form.verify({
             username: function (value, item) {
                 var msg;
@@ -308,6 +315,7 @@
                 }
             }
         });
+
         // 发送验证码
         window.sendEmailCode = function (obj) {
             var email = $("#register-email").val();
@@ -337,6 +345,7 @@
                  layer.msg('必填项不能为空', {icon: 5, anim: 6});
             }
         };
+
         window.zylVerCode = function (len){
             len = len || 4;
             var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';//默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1

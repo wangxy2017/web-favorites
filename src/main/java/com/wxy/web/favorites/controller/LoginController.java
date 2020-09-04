@@ -38,7 +38,7 @@ public class LoginController {
             SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
                 HttpServletRequest request = SpringUtils.getRequest();
-                request.getSession().setAttribute("user", user1);
+                request.getSession().setAttribute("login_user", user1);
                 if ("1".equals(remember)) {
                     Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
                     token.setPath("/");
@@ -75,7 +75,7 @@ public class LoginController {
     @GetMapping("/out")
     public ApiResponse logout() {
         HttpServletRequest request = SpringUtils.getRequest();
-        request.getSession().removeAttribute("user");
+        request.getSession().removeAttribute("login_user");
         // 清除cookie
         if (request.getCookies() != null) {
             for (Cookie c : request.getCookies()) {

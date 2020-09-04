@@ -17,6 +17,6 @@ public class SpringUtils {
     }
 
     public static User getCurrentUser() {
-        return (User) getRequest().getSession().getAttribute("user");
+        return (User) getRequest().getSession().getAttribute("login_user");
     }
 }

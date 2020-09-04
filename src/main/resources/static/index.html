@@ -12,6 +12,7 @@
         img[src=""], img:not([src]){
             opacity:0;
         }
+
         /* 解决手机端宽度太小导致样式错乱 */
         body {
             min-width: 536px !important;
@@ -187,9 +188,11 @@
             text-align: left !important;
             margin-left: 10px !important;
         }
+
         .bookmark .favorites li .action-icon{
             top: 6px !important;
         }
+
         .bookmark .favorites .add-icon{
             font-size: 16px !important;
         }
@@ -573,6 +576,7 @@
         });
 
         $("#export").click(function () {
+            $(this).attr("disabled",true).addClass("layui-disabled");
             window.location.href = "favorites/export";
         });
 

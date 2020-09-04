@@ -68,7 +68,7 @@ public class RegisterController {
                 recommends.add(new Favorites(null, "谷歌翻译", "https://translate.google.cn/favicon.ico", "https://translate.google.cn/", category.getId(), user1.getId(), PinYinUtils.toPinyin("谷歌翻译"), null, null, null));
                 favoritesService.saveAll(recommends);
                 // 设置session
-                session.setAttribute("user", user1);
+                session.setAttribute("login_user", user1);
                 // 移除验证码
                 session.removeAttribute("register_email_code");
                 return ApiResponse.success();

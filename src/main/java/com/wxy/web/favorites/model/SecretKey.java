@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "t_secret_key")
-@org.hibernate.annotations.Table(appliesTo = "t_secret_key", comment = "密钥表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer"})

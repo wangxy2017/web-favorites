@@ -30,13 +30,13 @@ public class UserController {
 
     @GetMapping("/info")
     public ApiResponse info() {
-        User user = (User) SpringUtils.getCurrentUser();
+        User user = SpringUtils.getCurrentUser();
         return ApiResponse.success(user);
     }
 
     @PostMapping("/password")
     public ApiResponse password(String oldPassword, String newPassword) {
-        User user = (User) SpringUtils.getCurrentUser();
+        User user = SpringUtils.getCurrentUser();
         SecretKey secretKey = secretKeyService.findByUserId(user.getId());
         if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + secretKey.getRandomKey()).getBytes()))) {
             user.setPassword(DigestUtils.md5DigestAsHex((newPassword + secretKey.getRandomKey()).getBytes()));
