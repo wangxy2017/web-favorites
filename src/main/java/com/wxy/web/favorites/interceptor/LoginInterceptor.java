@@ -11,6 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Base64;
 
 @Component
@@ -23,8 +24,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        User user = (User) request.getSession().;
-        if (user != null) {
+        HttpSession session = request.getSession();
+        if (session.getAttribute("user") != null) {
             return true;
         } else {
             // 查看cookie
@@ -34,7 +35,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                         String[] token = new String(decoder.decode(cookie.getValue())).split("&&");
                         User user1 = userRepository.findByUsername(token[0]);
                         if (user1 != null && user1.getPassword().equals(token[1])) {
-                            request.getSession().setAttribute("user", user1);
+                            session.setAttribute("user", user1);
                             return true;
                         }
                     }
