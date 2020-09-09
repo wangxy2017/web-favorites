@@ -56,7 +56,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book1.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
@@ -69,24 +69,6 @@ public class FavoritesController {
             return ApiResponse.success(HtmlUtils.getTitle(url));
         }
         return ApiResponse.error();
-    }
-
-    @PostMapping("/smartAdd")
-    public ApiResponse smartAdd(@RequestBody Favorites favorites) {
-        User user = SpringUtils.getCurrentUser();
-        favorites.setUserId(user.getId());
-        // 设置分类
-        Category category = categoryService.findDefaultCategory(user.getId());
-        favorites.setCategoryId(category.getId());
-        // 处理icon和title
-        String icon = HtmlUtils.getIcon(favorites.getUrl());
-        String title = HtmlUtils.getTitle(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
-        favorites.setName(StringUtils.isBlank(title) ? favorites.getUrl() : title);
-        // 拼音
-        favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
-        favoritesService.save(favorites);
-        return ApiResponse.success();
     }
 
     /**
