@@ -2,10 +2,18 @@ package com.wxy.web.favorites.service;
 
 import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Favorites;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +24,12 @@ import java.util.List;
 @Service
 @Transactional
 public class FavoritesService {
+
+    @Value("${favorites.limit:40}")
+    private int favoritesLimit;
+
+    @Value("${search.limit:100}")
+    private int searchLimit;
 
     @Autowired
     private FavoritesRepository favoritesRepository;
@@ -36,8 +50,10 @@ public class FavoritesService {
         return favoritesRepository.saveAll(list);
     }
 
-    public List<Favorites> findTop40ByCategoryIdOrderBySortDescIdAsc(Integer categoryId) {
-        return favoritesRepository.findTop40ByCategoryIdOrderBySortDescIdAsc(categoryId);
+    public List<Favorites> findLimitByCategoryId(Integer categoryId) {
+        Sort sort = Sort.by(Sort.Order.desc("sort"), Sort.Order.asc("id"));
+        Pageable pageable = PageRequest.of(0, favoritesLimit, sort);
+        return favoritesRepository.findLimitByCategoryId(categoryId, pageable);
     }
 
     public void deleteById(Integer id) {
@@ -48,11 +64,21 @@ public class FavoritesService {
         return favoritesRepository.getOne(id);
     }
 
-    public List<Favorites> findTop100ByUserIdAndNameLikeOrPinyinLike(Integer userId, String name, String pinyin) {
-        return favoritesRepository.findTop100ByUserIdAndNameLikeOrPinyinLike(userId, name, pinyin);
+    public List<Favorites> searchFavorites(Integer userId, String searchName) {
+        Pageable pageable = PageRequest.of(0, searchLimit);
+        // 构造自定义查询条件
+        Specification<Favorites> queryCondition = (Specification<Favorites>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicateList = new ArrayList<>();
+            predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
+            if (StringUtils.isNotBlank(searchName)) {
+                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + searchName + "%")));
+            }
+            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+        };
+        return favoritesRepository.findAll(queryCondition, pageable).getContent();
     }
 
-    public List<Favorites> findStarFavorites(Integer userId){
+    public List<Favorites> findStarFavorites(Integer userId) {
         return favoritesRepository.findStarFavorites(userId);
     }
 }

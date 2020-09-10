@@ -449,6 +449,8 @@
         var flow = layui.flow;
         var util = layui.util;
 
+        const limit = 40;// 显示个数限制
+
         // 固定块
         util.fixbar({
             top: true
@@ -926,7 +928,7 @@
                                         html += '       <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                         html += '   </li>';
-                                        if(j == 39){
+                                        if(j + 1 == limit){
                                             html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                             html += '   <div class="favorites-bg">';
                                             html += '       <img src="images/more.svg"/>';

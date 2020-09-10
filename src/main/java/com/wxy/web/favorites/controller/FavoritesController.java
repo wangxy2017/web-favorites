@@ -83,7 +83,7 @@ public class FavoritesController {
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, indexPageSize);
         for (Category c : page.getList()) {
-            c.setFavorites(favoritesService.findTop40ByCategoryIdOrderBySortDescIdAsc(c.getId()));
+            c.setFavorites(favoritesService.findLimitByCategoryId(c.getId()));
         }
         return ApiResponse.success(page);
     }
@@ -116,8 +116,7 @@ public class FavoritesController {
     public ApiResponse search(@RequestParam String name) {
         User user = SpringUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
-        List<Favorites> list = favoritesService.findTop100ByUserIdAndNameLikeOrPinyinLike(user.getId(),
-                "%" + name + "%", "%" + name + "%");
+        List<Favorites> list = favoritesService.searchFavorites(user.getId(),name);
         return ApiResponse.success(list);
     }
 
