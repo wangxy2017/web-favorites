@@ -436,13 +436,13 @@
         </div>
     </div>
 </form>
+<script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use(['element', 'jquery', 'layer', 'form', 'upload','flow','util'], function () {
+    layui.use(['element', 'layer', 'form', 'upload','flow','util'], function () {
         var element = layui.element;
-        var $ = layui.$;
         var layer = layui.layer;
         var form = layui.form;
         var upload = layui.upload;
@@ -901,7 +901,6 @@
             flow.load({
                 elem: '#main'
                 , scrollElem: '#layuiBody'
-                , isLazyimg: true
                 , isAuto: true
                 , mb: $("#layuiBody").height()
                 , end: ' '
