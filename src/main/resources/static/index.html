@@ -655,7 +655,7 @@
                                     $.each(result.data, function (i, f) {
                                         html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '   <div class="favorites-bg">';
-                                        html += '       <img src="' + f.icon + '" onerror="this.src=\'images/book.svg\'"/>';
+                                        html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '   </div>';
                                         html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
@@ -986,7 +986,7 @@
                             $.each(result.data, function (i, f) {
                                 html += '<li class="layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
-                                html += '       <img src="' + f.icon + '" onerror="this.src=\'images/book.svg\'"/>';
+                                html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '   </div>';
                                 html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                 html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
@@ -1026,7 +1026,7 @@
                         $.each(result.data, function (i, f) {
                             html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                             html += '   <div class="favorites-bg">';
-                            html += '       <img src="' + f.icon + '" onerror="this.src=\'images/book.svg\'"/>';
+                            html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
                             html += '   <p title="' + f.name + '">' + f.name + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
