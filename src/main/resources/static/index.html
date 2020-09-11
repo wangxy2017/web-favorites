@@ -193,7 +193,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="cursor: pointer;" onclick="javascript:window.location.reload()">
+        <div class="layui-logo" style="cursor: pointer;user-select: none;" onclick="javascript:window.location.reload()">
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-div">
@@ -372,7 +372,14 @@
     <div class="layui-form-item">
         <label class="layui-form-label">新密码</label>
         <div class="layui-input-inline">
-            <input type="password" name="newPassword" required lay-verify="required" placeholder="请输入密码"
+            <input type="password" name="newPassword" id="newPassword" required lay-verify="required" placeholder="请输入密码"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">确认密码</label>
+        <div class="layui-input-inline">
+            <input type="password" name="confirmPassword" required lay-verify="required|confirmPassword" placeholder="请输入密码"
                    autocomplete="off" class="layui-input">
         </div>
     </div>
@@ -748,13 +755,15 @@
         window.sendEmailCode = function (obj) {
             var email = $("#newEmail").val();
             if(email != ""){
+                obj.setAttribute("disabled", true);
+                obj.value="重新发送(60)";
                 // 倒计时
-                var countdown = 60;
+                var countdown = 59;
                 var interval = setInterval(function() {
                     if (countdown == 0) {
                         obj.removeAttribute("disabled");
                         obj.value="获取验证码";
-                        countdown = 60;
+                        countdown = 59;
                         clearInterval(interval);
                     } else {
                         obj.setAttribute("disabled", true);
@@ -863,6 +872,7 @@
             form.val("passwordForm", {
                 "oldPassword": ""
                 , "newPassword": ""
+                , "confirmPassword": ""
             });
         });
 
@@ -1146,6 +1156,11 @@
         };
 
         form.verify({
+            confirmPassword: function (value, item) {
+                if($("#newPassword").val() !== value){
+                    return "两次输入密码不一致";
+                }
+            },
             sortNum: function (value, item) {
                 if(value != ""){
                     if(isNaN(value)){
