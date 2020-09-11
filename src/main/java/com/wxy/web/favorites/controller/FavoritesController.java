@@ -56,7 +56,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book1.svg" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         favoritesService.save(favorites);
