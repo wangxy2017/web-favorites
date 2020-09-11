@@ -759,7 +759,8 @@
         // 发送验证码
         window.sendEmailCode = function (obj) {
             var email = $("#newEmail").val();
-            if(email != ""){
+            var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if(email.match(reg)){
                 obj.setAttribute("disabled", true);
                 obj.value="重新发送(60)";
                 // 倒计时
@@ -784,7 +785,7 @@
                 });
             }else{
                 $("#newEmail").focus().addClass("layui-form-danger");
-                 layer.msg('必填项不能为空', {icon: 5, anim: 6});
+                 layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
             }
         };
 
