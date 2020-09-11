@@ -458,6 +458,9 @@
 
         const limit = 40;// 显示个数限制
 
+        // 图片懒加载
+        flow.lazyimg({elem: 'img.lazy', scrollElem: '#layuiBody'});
+
         // 固定块
         util.fixbar({
             top: true
@@ -662,7 +665,7 @@
                                     $.each(result.data, function (i, f) {
                                         html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '   <div class="favorites-bg">';
-                                        html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                        html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '   </div>';
                                         html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
@@ -671,6 +674,8 @@
                                     html += '</ul>';
                                     $("#main").empty().append(html);
                                     $("#starDiv").hide();
+                                    // 触发scroll模拟render
+                                    $("#layuiBody").scroll();
                                 }
                             },
                             error: function(){
@@ -932,7 +937,7 @@
                                     $.each(c.favorites, function (j, f) {
                                         html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                         html += '       <div class="favorites-bg">';
-                                        html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                        html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                         html += '       </div>';
                                         html += '       <p title="' + f.name + '">' + f.name + '</p>';
                                         html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
@@ -952,6 +957,8 @@
                                 });
                                 lis.push(html);
                                 next(lis.join(''), page < result.data.pages);
+                                // 触发scroll模拟render
+                                $("#layuiBody").scroll();
                             }
                         },
                         error: function(){
@@ -995,7 +1002,7 @@
                             $.each(result.data, function (i, f) {
                                 html += '<li class="layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
-                                html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '   </div>';
                                 html += '   <p title="' + f.name + '">' + f.name + '</p>';
                                 html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
@@ -1003,6 +1010,8 @@
                             });
                             html += '</ul>';
                             $("#starFavorites").empty().append(html);
+                            // 触发scroll模拟render
+                            $("#layuiBody").scroll();
                         }else{
                             $("#starFavorites").empty();
                         }
@@ -1015,6 +1024,8 @@
             var that = $("#starFavorites");
             if(that.is(":hidden")){
                 that.show();
+                // 触发scroll模拟render
+                $("#layuiBody").scroll();
             }else{
                 that.hide();
             }
@@ -1035,13 +1046,15 @@
                         $.each(result.data, function (i, f) {
                             html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                             html += '   <div class="favorites-bg">';
-                            html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
                             html += '   <p title="' + f.name + '">' + f.name + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
                         $("fieldset[data-id='" + categoryId + "']").find(".favorites").empty().append(html);
+                        // 触发scroll模拟render
+                        $("#layuiBody").scroll();
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }
