@@ -661,7 +661,7 @@
             // 2.在选择模式时，按下回车跳转超链接，输入值，退出选择模式
             // 3.不在选择模式时，输入框有值，按下回车查询，输入框没有值，按下回车退出查询模式
             if (event.key === "Enter") {
-                var activeLi = $(".favorites-li.active")[0];
+                var activeLi = $(".favorites-li.active:visible")[0];
                 if(typeof activeLi !== "undefined"){
                     openUrl(activeLi);
                 }else{
@@ -706,13 +706,13 @@
                     }
                 }
             } else if (event.key === "ArrowDown") {
-                var activeLi = $(".favorites-li.active")[0];
+                var activeLi = $(".favorites-li.active:visible")[0];
+                var list = $(".favorites-li:visible");
                 if(typeof activeLi === "undefined"){
-                    $(".favorites-li").eq(0).addClass("active");
+                    list.eq(0).addClass("active");
                 }else{
                     var nextActiveLi;
                     var last;
-                    var list = $(".favorites-li");
                     list.each(function(index,item){
                         if($(item).hasClass("active")){
                             var nextIndex = index + 1;
@@ -735,13 +735,13 @@
                     }
                 }
             } else if (event.key === "ArrowUp") {
-                var activeLi = $(".favorites-li.active")[0];
+                var activeLi = $(".favorites-li.active:visible")[0];
+                var list = $(".favorites-li:visible");
                 if(typeof activeLi === "undefined"){
-                    $(".favorites-li").eq(0).addClass("active");
+                    list.eq(0).addClass("active");
                 }else{
                     var nextActiveLi;
                     var first;
-                    var list = $(".favorites-li");
                     list.each(function(index,item){
                         if($(item).hasClass("active")){
                             var nextIndex = index - 1;
@@ -764,6 +764,7 @@
                     }
                 }
             } else if (event.key === "Backspace") {
+                //退出选择模式
                 $(".favorites-li.active").removeClass("active");
             }
         }).on("input", function () {
@@ -1021,7 +1022,7 @@
                             var html = '';
                             html += '<ul class="favorites">';
                             $.each(result.data, function (i, f) {
-                                html += '<li class="layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
                                 html += '   <div class="favorites-bg">';
                                 html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '   </div>';
@@ -1049,6 +1050,8 @@
                 $("#layuiBody").scroll();
             }else{
                 that.hide();
+                // 退出选择模式
+                that.find(".favorites-li.active").removeClass("active");
             }
         };
 
