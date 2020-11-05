@@ -61,4 +61,11 @@ public class CategoryController {
         List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }
+
+    @GetMapping("/catalog")
+    public ApiResponse catalog() {
+        User user = SpringUtils.getCurrentUser();
+        List<Category> list = categoryService.findCatalog(user.getId());
+        return ApiResponse.success(list);
+    }
 }

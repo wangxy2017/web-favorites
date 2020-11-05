@@ -4,6 +4,7 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,14 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      * @return
      */
     List<Category> findByUserId(Integer userId);
+
+    /**
+     * 查询用户下所有分类（排序）
+     *
+     * @param userId
+     * @return
+     */
+    List<Category> findByUserId(Integer userId, Sort sort);
 
     /**
      * 分页查询

@@ -42,6 +42,13 @@ public class CategoryService {
         return categoryRepository.findByUserId(userId);
     }
 
+    public List<Category> findCatalog(Integer userId) {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "sort"));
+        orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
+        return categoryRepository.findByUserId(userId,Sort.by(orders));
+    }
+
     public Category findDefaultCategory(Integer userId) {
         return categoryRepository.findDefaultCategory(userId);
     }
