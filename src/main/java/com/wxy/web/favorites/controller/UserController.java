@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/password")
-    public ApiResponse password(String oldPassword, String newPassword) {
+    public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
         User user = SpringUtils.getCurrentUser();
         SecretKey secretKey = secretKeyService.findByUserId(user.getId());
         if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + secretKey.getRandomKey()).getBytes()))) {
@@ -45,6 +45,14 @@ public class UserController {
         } else {
             return ApiResponse.error("身份验证错误");
         }
+    }
+
+    @PostMapping("/style")
+    public ApiResponse viewStyle(@RequestParam Integer viewStyle) {
+        User user = SpringUtils.getCurrentUser();
+        user.setViewStyle(viewStyle == 1 ? 1 : 0);
+        userService.save(user);
+        return ApiResponse.success();
     }
 
     @GetMapping("/email/code")

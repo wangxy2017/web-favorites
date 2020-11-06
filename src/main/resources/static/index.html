@@ -244,7 +244,7 @@
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
             <div class="layui-input-inline">
-                <input type="checkbox" name="style" id="styleSwitch" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="styleSwitch">
+                <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="viewStyle">
             </div>
         </div>
         <ul class="layui-nav layui-layout-right">
@@ -499,6 +499,8 @@
 
         const limit = 40;// 显示个数限制
 
+        const catalogLimit = 4;// 显示目录阀值
+
         const indexMap = new Map();// 索引map
 
         // 图片懒加载
@@ -629,7 +631,7 @@
         });
 
         $("#export").click(function () {
-            $(this).attr("disabled",true).addClass("layui-disabled");
+            layer.close(indexMap.get('#importOrExport'));
             window.location.href = "favorites/export";
         });
 
@@ -991,7 +993,7 @@
                                     html += '       <p title="' + f.name + '">' + f.name + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
-                                    if(j + 1 == limit){
+                                    if(j == limit - 1){
                                         html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                         html += '   <div class="favorites-bg">';
                                         html += '       <img src="images/more.svg"/>';
@@ -1261,14 +1263,17 @@
             }
         });
 
-        form.on('switch(styleSwitch)', function(data){
+        form.on('switch(viewStyle)', function(data){
             if(data.elem.checked){
-                localStorage.setItem("bookmark", true);
                 $("#layuiBody").addClass("bookmark");
             }else{
-                localStorage.removeItem("bookmark");
                 $("#layuiBody").removeClass("bookmark");
             }
+            $.ajax({
+                type: "POST",
+                url: "user/style",
+                data: {"viewStyle": data.elem.checked? 1 : 0}
+            });
         });
 
         form.on('switch(starSwitch)', function(data){
@@ -1448,19 +1453,6 @@
             $("#layuiBody").scroll();
         };
 
-        window.initStyle = function(){
-            var bookmark = localStorage.getItem("bookmark");
-            if(bookmark){
-                $("#styleSwitch").attr("checked",true);
-                form.render('checkbox','styleSelect');
-                $("#layuiBody").addClass("bookmark");
-            }else{
-                $("#styleSwitch").removeAttr("checked");
-                form.render('checkbox','styleSelect');
-                $("#layuiBody").removeClass("bookmark");
-            }
-        };
-
         window.loadUserInfo = function(){
             $.ajax({
                 type: "GET",
@@ -1468,8 +1460,10 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        var username = result.data.username;
-                        $("#username").text(username.substring(0, 4));
+                        var user = result.data;
+                        $("#username").text(user.username.substring(0, 4));
+                        form.val("styleSelect", {"viewStyle": user.viewStyle});
+                        if(user.viewStyle == 1)$("#layuiBody").addClass("bookmark");
                     }
                 }
             });
@@ -1490,7 +1484,7 @@
                 url: "category/catalog",
                 dataType: "json",
                 success: function (result) {
-                    if (result.code == 0) {
+                    if (result.code == 0 && result.data.length >= catalogLimit) {
                         var lis = '';
                         $.each(result.data, function (i, c) {
                             lis += '<li><a href="#catalog' + c.id + '"><cite>' + c.name + '</cite></a></li>';
@@ -1504,7 +1498,7 @@
                           ,skin: 'catalog'
                           ,shade: 0
                           ,offset: 'r'
-                          ,maxHeight: 300
+                          ,maxHeight: 600
                           ,success: function(layero, index){
                             $(layero).css("left","-=30px");
                           }
@@ -1521,8 +1515,6 @@
 
         // 页面加载完成执行
         $(function () {
-            // 书签模式
-            initStyle();
             // 加载用户信息
             loadUserInfo();
             // 加载常用网址

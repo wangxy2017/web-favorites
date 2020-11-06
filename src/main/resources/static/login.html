@@ -111,7 +111,7 @@
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
                         <input type="text" name="username" required lay-verify="required|username"
-                               placeholder="请输入用户名"
+                               placeholder="输入6~18个字符，字母、数字、下划线"
                                autocomplete="off"
                                class="layui-input">
                     </div>
@@ -119,8 +119,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">设置密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" id="password" required lay-verify="required"
-                               placeholder="请输入密码"
+                        <input type="password" name="password" id="password" required lay-verify="required|password"
+                               placeholder="输入6~16个字符，区分大小写"
                                autocomplete="off"
                                class="layui-input">
                     </div>
@@ -129,7 +129,7 @@
                     <label class="layui-form-label">邮箱</label>
                     <div class="layui-input-block">
                         <input type="email" name="email" id="register-email" required lay-verify="required|email|exitEmail"
-                               placeholder="请输入邮箱" autocomplete="off"
+                               placeholder="输入您的邮箱" autocomplete="off"
                                class="layui-input">
                     </div>
                 </div>
@@ -282,6 +282,9 @@
 
         form.verify({
             username: function (value, item) {
+                if(value.length<6||value.length>18||!/^[0-9a-zA-Z_]{1,}$/.test(value)){
+                    return '输入6~18个字符，字母、数字、下划线';
+                }
                 var msg;
                 $.ajax({
                     type: "GET",
@@ -314,6 +317,11 @@
             zylVerCode: function (value, item) {
                 if(value !== $(".zylVerCode").text().toLowerCase()){
                     return "验证码错误";
+                }
+            },
+            password: function (value, item) {
+                if(value.length<6||value.length>16){
+                    return '输入6~16个字符，区分大小写';
                 }
             }
         });

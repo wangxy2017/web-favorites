@@ -29,6 +29,9 @@ public class User {
     @Column(name = "email", unique = true, nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
     private String email;
 
+    @Column(name = "view_style", columnDefinition = "int(1) comment '模式：0-常规模式 1-书签模式'")
+    private Integer viewStyle;
+
     @Transient
     private String code;
 }
