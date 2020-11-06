@@ -219,11 +219,15 @@
             padding: 10px;
         }
 
-        .catalog ul li {
+        .catalog li {
             line-height: 26px;
             margin-left: 20px;
             overflow: visible;
             list-style-type: disc;
+        }
+
+        .catalog li a.layui-this {
+            color: #01AAED;
         }
 
     </style>
@@ -1494,12 +1498,18 @@
                         });
                         layer.open({
                           title: '分类'
+                          ,area: '150px'
                           ,content: '<ul>' + lis + '</ul>'
                           ,type: 1
                           ,skin: 'catalog'
                           ,shade: 0
                           ,offset: 'r'
                           ,maxHeight: 300
+                        });
+
+                        $(".catalog li a").on('click',function(){
+                            $(".catalog li a.layui-this").removeClass("layui-this");
+                            $(this).addClass("layui-this");
                         });
                     }
                 }
