@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -45,6 +46,9 @@ public class Favorites {
 
     @Column(name = "star", columnDefinition = "int(1) comment '是否标记：1-是 0-否'")
     private Integer star;
+
+    @Column(name = "visit_time", columnDefinition = "datetime comment '最近访问时间'")
+    private Date visitTime;
 
     @Transient
     private Password password;

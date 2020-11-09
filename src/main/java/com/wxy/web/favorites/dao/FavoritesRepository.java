@@ -25,6 +25,6 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
      */
     List<Favorites> findLimitByCategoryId(Integer categoryId, Pageable pageable);
 
-    @Query("select f from  Favorites f where f.userId = :userId and f.star = 1")
+    @Query("select f from  Favorites f where f.userId = :userId and f.star = 1 order by f.visitTime desc")
     List<Favorites> findStarFavorites(Integer userId);
 }

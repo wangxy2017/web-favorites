@@ -861,6 +861,10 @@
             var url = $(obj).attr("data-url");
             if(url.startsWith("https://") || url.startsWith("http://")){
                 window.open(url);
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/visit/" + $(obj).attr("data-id")
+                });
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }

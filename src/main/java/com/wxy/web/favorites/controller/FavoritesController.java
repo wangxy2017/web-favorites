@@ -26,10 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/favorites")
@@ -126,6 +123,14 @@ public class FavoritesController {
         return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
     }
 
+    @GetMapping("/visit/{id}")
+    public ApiResponse visit(@PathVariable Integer id) {
+        Favorites favorites = favoritesService.findById(id);
+        favorites.setVisitTime(new Date());
+        favoritesService.save(favorites);
+        return ApiResponse.success();
+    }
+
     @PostMapping("/star")
     public ApiResponse starUpdate(@RequestBody Favorites favorites) {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
@@ -152,7 +157,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null,null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

@@ -51,7 +51,7 @@ public class DemoTest {
             for (int i = 0; i < 100; i++) {
                 Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null));
                 for (int j = 0; j < 100; j++) {
-                    favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), null, null, null));
+                    favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), null, null, null,null));
                 }
             }
         }
