@@ -9,6 +9,10 @@
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
     <style>
+        * {
+            user-select: none;
+        }
+
         /* 解决没有src属性时出现的边框 */
         img[src=""], img:not([src]){
             opacity:0;
@@ -234,7 +238,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="cursor: pointer;user-select: none;width: 150px;" onclick="javascript:window.location.reload()">
+        <div class="layui-logo" style="width: 150px;">
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-div">
