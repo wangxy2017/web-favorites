@@ -113,7 +113,7 @@ public class FavoritesController {
     public ApiResponse search(@RequestParam String name) {
         User user = SpringUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
-        List<Favorites> list = favoritesService.searchFavorites(user.getId(),name);
+        List<Favorites> list = favoritesService.searchFavorites(user.getId(), name);
         return ApiResponse.success(list);
     }
 
@@ -126,9 +126,12 @@ public class FavoritesController {
     @GetMapping("/visit/{id}")
     public ApiResponse visit(@PathVariable Integer id) {
         Favorites favorites = favoritesService.findById(id);
-        favorites.setVisitTime(new Date());
-        favoritesService.save(favorites);
-        return ApiResponse.success();
+        if (favorites != null) {
+            favorites.setVisitTime(new Date());
+            favoritesService.save(favorites);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
     }
 
     @PostMapping("/star")
@@ -157,7 +160,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null,null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

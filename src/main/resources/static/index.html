@@ -275,9 +275,9 @@
         </div>
         <div id="starDiv">
             <fieldset class="layui-elem-field layui-field-title" style="border-radius: 0;margin: 0 2px;">
-                <legend onclick="showStartFavorites()" style="font-size:16px;">常用网址</legend>
+                <legend style="font-size:16px;">常用网址</legend>
             </fieldset>
-            <div id="starFavorites" style="display:none;"></div>
+            <div id="starFavorites"></div>
         </div>
         <div id="main" style="margin-top:10px;"></div>
     </div>
@@ -1082,18 +1082,6 @@
                     }
                 }
             });
-        };
-
-        window.showStartFavorites = function () {
-            var that = $("#starFavorites");
-            if(that.is(":hidden")){
-                that.show();
-                imgRender();
-            }else{
-                that.hide();
-                // 退出选择模式
-                that.find(".favorites-li.active").removeClass("active");
-            }
         };
 
         // 显示更多
