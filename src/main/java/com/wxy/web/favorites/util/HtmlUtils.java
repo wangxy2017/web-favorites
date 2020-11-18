@@ -31,7 +31,7 @@ public class HtmlUtils {
                 }
             }
         } catch (Exception e) {
-            log.error("解析异常: url:{}, error:{}", urlString, e.getMessage());
+            log.info("解析失败: url:{}, error:{}", urlString, e.getMessage());
         }
         return title;
     }
@@ -80,7 +80,7 @@ public class HtmlUtils {
                 }
             }
         } catch (Exception e) {
-            log.error("解析异常: url:{}, error:{}", urlString, e.getMessage());
+            log.info("解析失败: url:{}, error:{}", urlString, e.getMessage());
         }
         return iconUrl;
     }

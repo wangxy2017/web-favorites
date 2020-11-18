@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF" monitorInterval="60">
+    <Properties>
+        <Property name="baseDir">logs</Property>
+    </Properties>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss,SSS} [%thread] %logger{3}.%style{%method}{Blue}%style{(line%line)}{Red} %highlight{%-5level} - %msg%n%xEx"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${baseDir}/app.log"
+                     filePattern="${baseDir}/$${date:yyyy-MM-dd}/app-%d{yyyy-MM-dd_HH}-%i.log.gz">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss,SSS} [%thread] %logger{3}.%style{%method}{Blue}%style{(line%line)}{Red} %highlight{%-5level} - %msg%n%xEx"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="512MB"/>
+            </Policies>
+            <!--日志最大保留天数-->
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/app-*.log.gz" />
+                    <IfLastModified age="720H" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <Root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
+        </Root>
+    </loggers>
+</configuration>

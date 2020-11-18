@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ApiResponse exceptionHandle(Exception e) {
-        log.error("系统异常：", e);
+        log.error("系统异常：{}", e.getMessage(), e);
         return new ApiResponse(500, "系统错误", e.getMessage());
     }
 }
