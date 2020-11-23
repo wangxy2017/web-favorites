@@ -983,7 +983,7 @@
                         var html = '';
                         $.each(result.data.list, function (i, c) {
                             html += '<fieldset class="layui-elem-field" data-id="' + c.id + '">';
-                            html += '   <legend id="catalog' + c.id + '" onclick="editCategory(this)">' + c.name + '</legend>';
+                            html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
                                 $.each(c.favorites, function (j, f) {
@@ -1437,6 +1437,11 @@
             return false;
         });
 
+        window.position = function(id){
+            var offsetTop = $("fieldset[data-id="+id+"]").get(0).offsetTop;
+            $("#layuiBody").animate({scrollTop: offsetTop}, 200);
+        };
+
         window.imgRender = function(){
             // 触发scroll模拟render
             $("#layuiBody").scroll();
@@ -1476,7 +1481,7 @@
                     if (result.code == 0 && result.data.length >= catalogLimit) {
                         var lis = '';
                         $.each(result.data, function (i, c) {
-                            lis += '<li><a href="#catalog' + c.id + '"><cite>' + c.name + '</cite></a></li>';
+                            lis += '<li><a href="javascript:;" onclick="position(' + c.id + ')"><cite>' + c.name + '</cite></a></li>';
                         });
 
                         layer.open({
