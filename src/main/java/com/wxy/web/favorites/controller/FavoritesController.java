@@ -56,6 +56,8 @@ public class FavoritesController {
         favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
+        // 拼音首字母
+        favorites.setPinyinS(PinYinUtils.toPinyinS(favorites.getName()));
         favoritesService.save(favorites);
         return ApiResponse.success();
     }
@@ -160,7 +162,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), null, null, null, null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), null, null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

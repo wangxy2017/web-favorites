@@ -71,7 +71,7 @@ public class FavoritesService {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
             if (StringUtils.isNotBlank(searchName)) {
-                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + searchName + "%")));
+                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + searchName + "%"),criteriaBuilder.like(root.get("pinyinS"), "%" + searchName + "%")));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };

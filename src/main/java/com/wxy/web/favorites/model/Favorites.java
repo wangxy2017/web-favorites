@@ -38,8 +38,11 @@ public class Favorites {
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "pinyin", nullable = false, columnDefinition = "varchar(500) comment '拼音'")
+    @Column(name = "pinyin", columnDefinition = "varchar(500) comment '拼音'")
     private String pinyin;
+
+    @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")
+    private String pinyinS;
 
     @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
     private Integer sort;
