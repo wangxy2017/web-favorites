@@ -171,7 +171,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), null, null, null, null, null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), f.elementText("SHORTCUT"), null, null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -298,6 +298,9 @@ public class FavoritesController {
                 favorites.addElement("NAME").setText(f.getName());
                 favorites.addElement("URL").setText(f.getUrl());
                 favorites.addElement("ICON").setText(f.getIcon());
+                if(StringUtils.isNotBlank(f.getShortcut())){
+                    favorites.addElement("SHORTCUT").setText(f.getShortcut());
+                }
                 if (f.getPassword() != null) {
                     Password password = f.getPassword();
                     Element pwd = favorites.addElement("USER");
