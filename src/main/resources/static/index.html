@@ -712,6 +712,7 @@
                                 success: function (result) {
                                     layer.closeAll('loading');
                                     $("#search_name").val("");
+                                    $("#search_close").hide();
                                     if (result.code == 0) {
                                         $.ajax({
                                             type: "GET",
@@ -1282,7 +1283,7 @@
             },
             shortcut: function (value, item) {
                 if(value !== ""){
-                    if(!value.startsWith("打开") || !url.startsWith("Open")){
+                    if(!value.startsWith("打开") && !value.startsWith("Open")){
                         return '指令请以"打开"或"Open"开头';
                     }
                     var msg;
