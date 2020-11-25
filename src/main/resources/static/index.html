@@ -236,7 +236,7 @@
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-div">
-            <input type="text" id="search_name" name="search_name" placeholder="搜索收藏地址" autocomplete="off"
+            <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill"></i>
         </div>
@@ -358,6 +358,14 @@
             <input type="checkbox" name="star" lay-skin="switch" value="1" lay-filter="starSwitch">
         </div>
         <div class="layui-form-mid layui-word-aux">标记为常用网址</div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">快捷指令</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="shortcut" lay-verify="shortcut" placeholder="例如：打开...或Open..." autocomplete="off"
+                   class="layui-input">
+            <span style="color: #ff5722;font-size: 12px;padding: 5px 0;display: block;">温馨提示：配合语音输入效果更佳哦</span>
+        </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -696,36 +704,57 @@
                         $(this).blur();
                     } else { //进入搜索模式
                         layer.load();
-                        $.ajax({
-                            type: "GET",
-                            url: "favorites/search",
-                            data: {"name": name},
-                            dataType: "json",
-                            success: function (result) {
-                                layer.closeAll('loading');
-                                if (result.code == 0) {
-                                    var html = '';
-                                    html += '<ul class="favorites">';
-                                    $.each(result.data, function (i, f) {
-                                        html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
-                                        html += '   <div class="favorites-bg">';
-                                        html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                        html += '   </div>';
-                                        html += '   <p title="' + f.name + '">' + f.name + '</p>';
-                                        html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                        html += '</li>';
-                                    });
-                                    html += '</ul>';
-                                    $("#main").empty().append(html);
-                                    $("#starDiv").hide();
-                                    imgRender();
+                        if(name.startsWith("打开")||name.startsWith("Open")){// 搜索快捷指令
+                            $.ajax({
+                                type: "GET",
+                                url: "favorites/shortcut?key=" + name,
+                                dataType: "json",
+                                success: function (result) {
+                                    layer.closeAll('loading');
+                                    $("#search_name").val("");
+                                    if (result.code == 0) {
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "favorites/visit/" + result.data.id
+                                        });
+                                        window.open(result.data.url);
+                                    }else{
+                                        layer.tips('未找到指令', '#search_name', {tips: 1});
+                                    }
                                 }
-                            },
-                            error: function(){
-                                layer.closeAll('loading');
-                                layer.msg('服务器异常', {icon: 2});
-                            }
-                        });
+                            });
+                        }else{// 搜索文本
+                            $.ajax({
+                                type: "GET",
+                                url: "favorites/search",
+                                data: {"name": name},
+                                dataType: "json",
+                                success: function (result) {
+                                    layer.closeAll('loading');
+                                    if (result.code == 0) {
+                                        var html = '';
+                                        html += '<ul class="favorites">';
+                                        $.each(result.data, function (i, f) {
+                                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                            html += '   <div class="favorites-bg">';
+                                            html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                            html += '   </div>';
+                                            html += '   <p title="' + f.name + '">' + f.name + '</p>';
+                                            html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                                            html += '</li>';
+                                        });
+                                        html += '</ul>';
+                                        $("#main").empty().append(html);
+                                        $("#starDiv").hide();
+                                        imgRender();
+                                    }
+                                },
+                                error: function(){
+                                    layer.closeAll('loading');
+                                    layer.msg('服务器异常', {icon: 2});
+                                }
+                            });
+                        }
                     }
                 }
             } else if (event.key === "ArrowDown") {
@@ -853,11 +882,11 @@
         window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
             if(url.startsWith("https://") || url.startsWith("http://")){
-                window.open(url);
                 $.ajax({
                     type: "GET",
                     url: "favorites/visit/" + $(obj).attr("data-id")
                 });
+                window.open(url);
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -1212,6 +1241,7 @@
                             , "url": data.url
                             , "sort": data.sort
                             , "star": data.star
+                            , "shortcut": data.shortcut
                         });
                     }
                 }
@@ -1245,6 +1275,21 @@
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "邮箱已存在";
+                        }
+                    }
+                });
+                return msg;
+            },
+            shortcut: function (value, item) {
+                var msg;
+                $.ajax({
+                    type: "GET",
+                    url: 'favorites/shortcut?key=' + value,
+                    async: false, // 使用同步的方法
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code == 0) {
+                            msg = "指令已存在";
                         }
                     }
                 });

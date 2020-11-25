@@ -70,6 +70,15 @@ public class FavoritesController {
         return ApiResponse.error();
     }
 
+    @GetMapping("/shortcut")
+    public ApiResponse shortcut(@RequestParam String key) {
+        Favorites favorites = favoritesService.findByShortcut(key);
+        if (favorites != null) {
+            return ApiResponse.success(favorites);
+        }
+        return ApiResponse.error();
+    }
+
     /**
      * 用户收藏列表(分页查询)
      *
@@ -162,7 +171,7 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), null, null, null, null);
+                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), null, null, null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);

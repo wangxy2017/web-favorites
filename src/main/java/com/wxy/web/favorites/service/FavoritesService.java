@@ -64,6 +64,10 @@ public class FavoritesService {
         return favoritesRepository.getOne(id);
     }
 
+    public Favorites findByShortcut(String shortcut) {
+        return favoritesRepository.findByShortcut(shortcut);
+    }
+
     public List<Favorites> searchFavorites(Integer userId, String searchName) {
         Pageable pageable = PageRequest.of(0, searchLimit);
         // 构造自定义查询条件
