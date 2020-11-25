@@ -1281,19 +1281,24 @@
                 return msg;
             },
             shortcut: function (value, item) {
-                var msg;
-                $.ajax({
-                    type: "GET",
-                    url: 'favorites/shortcut?key=' + value,
-                    async: false, // 使用同步的方法
-                    dataType: 'json',
-                    success: function (result) {
-                        if (result.code == 0) {
-                            msg = "指令已存在";
-                        }
+                if(value !== ""){
+                    if(!value.startsWith("打开") || !url.startsWith("Open")){
+                        return '指令请以"打开"或"Open"开头';
                     }
-                });
-                return msg;
+                    var msg;
+                    $.ajax({
+                        type: "GET",
+                        url: 'favorites/shortcut?key=' + value,
+                        async: false, // 使用同步的方法
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code == 0) {
+                                msg = "指令已存在";
+                            }
+                        }
+                    });
+                    return msg;
+                }
             }
         });
 
