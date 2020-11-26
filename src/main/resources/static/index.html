@@ -718,7 +718,7 @@
                                             type: "GET",
                                             url: "favorites/visit/" + result.data.id
                                         });
-                                        window.open(result.data.url);
+                                        openWin(result.data.url);
                                     }else{
                                         layer.tips('未找到指令', '#search_name', {tips: 1});
                                     }
@@ -887,7 +887,7 @@
                     type: "GET",
                     url: "favorites/visit/" + $(obj).attr("data-id")
                 });
-                window.open(url);
+                openWin(url);
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -983,6 +983,20 @@
                 , "code": ""
             });
         });
+
+        window.openWin = function (url) {
+            try {
+                var a = document.createElement('a');
+                a.setAttribute("target", "_blank");
+                a.setAttribute("id", "openWin");
+                a.setAttribute("href", url);
+                document.body.appendChild(a);
+                document.getElementById("openWin").click();//点击事件
+                document.body.removeChild(a);
+            } catch (e) {
+                window.open(url);
+            }
+        };
 
         // 登出
         $("#logout").click(function () {
