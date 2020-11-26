@@ -534,7 +534,7 @@
             , done: function (result) {
                 layer.closeAll('loading'); //关闭loading
                 if (result.code == 0) {
-                    loadList();
+                    window.location.reload();//刷新
                 } else {
                     layer.msg('导入失败', {icon: 5});
                 }
