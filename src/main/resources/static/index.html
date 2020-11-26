@@ -695,7 +695,7 @@
             if (event.key === "Enter") {
                 var activeLi = $(".favorites-li.active:visible")[0];
                 if(typeof activeLi !== "undefined"){
-                    openUrl(activeLi);
+                    $(activeLi).click();
                 }else{
                     var name = $(this).val().trim();
                     if (name == "") { //退出搜索模式
@@ -714,11 +714,7 @@
                                     $("#search_name").val("");
                                     $("#search_close").hide();
                                     if (result.code == 0) {
-                                        $.ajax({
-                                            type: "GET",
-                                            url: "favorites/visit/" + result.data.id
-                                        });
-                                        openWin(result.data.url);
+                                        $(".favorites-li[data-id=" + result.data.id + "]").click();
                                     }else{
                                         layer.tips('未找到指令', '#search_name', {tips: 1});
                                     }
@@ -887,7 +883,7 @@
                     type: "GET",
                     url: "favorites/visit/" + $(obj).attr("data-id")
                 });
-                openWin(url);
+                window.open(url,'_blank');
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -983,20 +979,6 @@
                 , "code": ""
             });
         });
-
-        window.openWin = function (url) {
-            try {
-                var a = document.createElement('a');
-                a.setAttribute("target", "_blank");
-                a.setAttribute("id", "openWin");
-                a.setAttribute("href", url);
-                document.body.appendChild(a);
-                document.getElementById("openWin").click();//点击事件
-                document.body.removeChild(a);
-            } catch (e) {
-                window.open(url);
-            }
-        };
 
         // 登出
         $("#logout").click(function () {
