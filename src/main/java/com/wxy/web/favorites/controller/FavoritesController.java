@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/favorites")
@@ -171,10 +172,13 @@ public class FavoritesController {
         root.elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
+                int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
                 Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
                         f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
-                        PinYinUtils.toPinyinS(f.elementText("NAME")), f.elementText("SHORTCUT"), null,
-                        Boolean.parseBoolean(f.elementText("STAR")) ? 1 : 0, null, null);
+                        PinYinUtils.toPinyinS(f.elementText("NAME")),
+                        StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
+                        sort >= 0 && sort < 9999 ? sort : null,
+                        Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
                 Element pwd = f.element("USER");
                 if (pwd != null) {
                     Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -182,7 +186,8 @@ public class FavoritesController {
                 }
                 list1.add(favorites);
             });
-            list.add(new Category(null, c.elementText("NAME"), null, null, null, list1));
+            int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
+            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, list1));
         });
         return list;
     }
@@ -295,12 +300,18 @@ public class FavoritesController {
         categories.forEach(c -> {
             Element category = data.addElement("CATEGORY");
             category.addElement("NAME").setText(c.getName());
+            if (c.getSort() != null) {
+                category.addElement("SORT").setText(String.valueOf(c.getSort()));
+            }
             Element list = category.addElement("LIST");
             Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
                 Element favorites = list.addElement("FAVORITES");
                 favorites.addElement("NAME").setText(f.getName());
                 favorites.addElement("URL").setText(f.getUrl());
                 favorites.addElement("ICON").setText(f.getIcon());
+                if (f.getSort() != null) {
+                    favorites.addElement("SORT").setText(String.valueOf(f.getSort()));
+                }
                 if (Integer.valueOf(1).equals(f.getStar())) {
                     favorites.addElement("STAR").setText("true");
                 }
@@ -321,5 +332,10 @@ public class FavoritesController {
         writer.setEscapeText(true);
         writer.write(document);
         writer.close();
+    }
+
+    private boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return StringUtils.isNotBlank(str) && pattern.matcher(str).matches();
     }
 }

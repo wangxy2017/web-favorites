@@ -1254,11 +1254,11 @@
             sortNum: function (value, item) {
                 if(value != ""){
                     if(isNaN(value)){
-                        return "请输入 9999 以内的整数";
+                        return "请输入0~9999之间的整数";
                     }else if(value%1 !== 0){
-                        return "请输入 9999 以内的整数";
+                        return "请输入0~9999之间的整数";
                     }else if(value > 9999){
-                        return "请输入 9999 以内的整数";
+                        return "请输入0~9999之间的整数";
                     }
                 }
             },
