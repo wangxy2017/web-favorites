@@ -1289,7 +1289,7 @@
                         async: false, // 使用同步的方法
                         dataType: 'json',
                         success: function (result) {
-                            if (result.code == 0) {
+                            if (result.code == 0 && result.data.id != $("#favoritesId").val()) {
                                 msg = "指令已存在";
                             }
                         }

@@ -44,7 +44,7 @@ public class Favorites {
     @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")
     private String pinyinS;
 
-    @Column(name = "shortcut", unique = true, columnDefinition = "varchar(500) comment '快捷指令'")
+    @Column(name = "shortcut", columnDefinition = "varchar(500) comment '快捷指令'")
     private String shortcut;
 
     @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
