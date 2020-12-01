@@ -46,7 +46,7 @@ public class CategoryController {
             favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();
         }
-        return ApiResponse.error("无法删除");
+        return ApiResponse.error("系统分类无法删除");
     }
 
     @PostMapping("/clean")
