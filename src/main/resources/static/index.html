@@ -227,6 +227,29 @@
             color: #01AAED;
         }
 
+        .notFoundDiv {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .notFoundDiv img {
+            width: 100px;
+            height: 100px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .notFoundDiv span{
+            display: block;
+            text-align: center;
+            font-size: 24px;
+            color: #c2c2c2;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body class="layui-layout-body">
@@ -281,6 +304,11 @@
             &nbsp;QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a>
         </p>
     </div>
+</div>
+<!-- 找不到结果 -->
+<div id="notFoundDiv" class="notFoundDiv">
+    <img src="images/no_data.svg" alt="">
+    <span>找不到结果</span>
 </div>
 <!-- 导入/导出 -->
 <div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
@@ -685,11 +713,71 @@
             $(this).hide();
             $("#search_name").val("").blur();
             $("#starDiv").show();
+            $("#notFoundDiv").hide();
         });
+
+        // 搜索指令
+        window.searchShortcut = function(name){
+            layer.load();
+            $.ajax({
+                type: "GET",
+                url: "favorites/shortcut?key=" + name,
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    $("#search_name").val("");
+                    $("#search_close").hide();
+                    if (result.code == 0) {
+                        $(".favorites-li[data-id=" + result.data.id + "]").click();
+                    }else{
+                        layer.tips('未找到指令', '#search_name', {tips: 1});
+                    }
+                }
+            });
+        };
+
+        // 搜索文本
+        window.searchFavorites = function(name){
+            $("#main").empty();
+            $("#starDiv").hide();
+            layer.load();
+            $.ajax({
+                type: "GET",
+                url: "favorites/search",
+                data: {"name": name},
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0 && result.data.length > 0) {
+                        var html = '';
+                        html += '<ul class="favorites">';
+                        $.each(result.data, function (i, f) {
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '   <div class="favorites-bg">';
+                            html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '   </div>';
+                            html += '   <p title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '</li>';
+                        });
+                        html += '</ul>';
+                        $("#main").append(html);
+                        imgRender();
+                        $("#notFoundDiv").hide();
+                    }else{
+                        $("#notFoundDiv").show();
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg('服务器异常', {icon: 2});
+                }
+            });
+        };
 
         // 搜索
         $("#search_name").on("keydown", function (event) {
-            // 1.按上下键进入选择模式，并控制，回车退出选择模式
+            // 1.按上下键进入选择模式，并控制，返回键退出选择模式
             // 2.在选择模式时，按下回车跳转超链接，输入值，退出选择模式
             // 3.不在选择模式时，输入框有值，按下回车查询，输入框没有值，按下回车退出查询模式
             if (event.key === "Enter") {
@@ -699,59 +787,11 @@
                 }else{
                     var name = $(this).val().trim();
                     if (name == "") { //退出搜索模式
-                        loadList();
-                        $("#starDiv").show();
-                        $(this).blur();
-                    } else { //进入搜索模式
-                        layer.load();
-                        if(name.startsWith("打开")||name.startsWith("Open")){// 搜索快捷指令
-                            $.ajax({
-                                type: "GET",
-                                url: "favorites/shortcut?key=" + name,
-                                dataType: "json",
-                                success: function (result) {
-                                    layer.closeAll('loading');
-                                    $("#search_name").val("");
-                                    $("#search_close").hide();
-                                    if (result.code == 0) {
-                                        $(".favorites-li[data-id=" + result.data.id + "]").click();
-                                    }else{
-                                        layer.tips('未找到指令', '#search_name', {tips: 1});
-                                    }
-                                }
-                            });
-                        }else{// 搜索文本
-                            $.ajax({
-                                type: "GET",
-                                url: "favorites/search",
-                                data: {"name": name},
-                                dataType: "json",
-                                success: function (result) {
-                                    layer.closeAll('loading');
-                                    if (result.code == 0) {
-                                        var html = '';
-                                        html += '<ul class="favorites">';
-                                        $.each(result.data, function (i, f) {
-                                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
-                                            html += '   <div class="favorites-bg">';
-                                            html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                            html += '   </div>';
-                                            html += '   <p title="' + f.name + '">' + f.name + '</p>';
-                                            html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                            html += '</li>';
-                                        });
-                                        html += '</ul>';
-                                        $("#main").empty().append(html);
-                                        $("#starDiv").hide();
-                                        imgRender();
-                                    }
-                                },
-                                error: function(){
-                                    layer.closeAll('loading');
-                                    layer.msg('服务器异常', {icon: 2});
-                                }
-                            });
-                        }
+                        $("#search_close").click();
+                    } else if(name.startsWith("打开")||name.startsWith("Open")) { //搜索快捷指令
+                        searchShortcut(name);
+                    } else {// 搜索文本
+                        searchFavorites(name);
                     }
                 }
             } else if (event.key === "ArrowDown") {
