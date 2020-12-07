@@ -125,6 +125,7 @@
             display: none;
             width: 26px;
             height: 26px;
+            line-height: 26px;
             text-align: center;
         }
 
@@ -136,11 +137,6 @@
         .open-source {
             font-size: 12px;
             text-align: center;
-        }
-
-        .open-source a {
-            margin-right: 10px;
-            color: inherit;
         }
 
         .style-select{
@@ -281,15 +277,15 @@
     </div>
     <div class="layui-footer" style="left: 0;">
         <p class="open-source">
-            本项目已开源，开源地址：<a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">https://gitee.com/wangxiaoyuan_2019/web-favorites.git</a>
-            QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a>
+            © 2020 源码地址：<a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">https://gitee.com/wangxiaoyuan_2019/web-favorites.git</a>
+            &nbsp;QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a>
         </p>
     </div>
 </div>
 <!-- 导入/导出 -->
 <div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
-    <button type="button" class="layui-btn" id="import">导入收藏</button>
-    <button type="button" class="layui-btn" id="export">导出收藏</button>
+    <button type="button" class="layui-btn" id="import">导入收藏夹</button>
+    <button type="button" class="layui-btn" id="export">导出收藏夹</button>
 </div>
 <!-- 添加收藏表单 -->
 <form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
@@ -416,21 +412,21 @@
     <div class="layui-form-item">
         <label class="layui-form-label">旧密码</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入密码"
+            <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入旧密码"
                    autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">新密码</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="newPassword" id="newPassword" required lay-verify="required" placeholder="请输入密码"
+            <input type="password" name="newPassword" id="newPassword" required lay-verify="required" placeholder="请输入新密码"
                    autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">确认密码</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="confirmPassword" required lay-verify="required|confirmPassword" placeholder="请输入密码"
+            <input type="password" name="confirmPassword" required lay-verify="required|confirmPassword" placeholder="再次确认新密码"
                    autocomplete="off" class="layui-input">
         </div>
     </div>
@@ -659,7 +655,7 @@
         $("#importOrExportBtn").click(function () {
             var index = layer.open({
                 type: 1,
-                title: "导入收藏夹",
+                title: "导入/导出收藏",
                 area: '400px',
                 content: $('#importOrExport')
             });
