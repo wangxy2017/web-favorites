@@ -39,6 +39,16 @@ public class CategoryController {
         return ApiResponse.success(category);
     }
 
+    @GetMapping("/check/{name}")
+    public ApiResponse queryName(@PathVariable String name) {
+        User user = SpringUtils.getCurrentUser();
+        Category category = categoryService.findByName(name, user.getId());
+        if (category != null) {
+            return ApiResponse.success(category);
+        }
+        return ApiResponse.error();
+    }
+
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);

@@ -23,6 +23,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
      */
     List<Category> findByUserId(Integer userId);
 
+    Category findByNameAndUserId(String name,Integer userId);
+
     /**
      * 查询用户下所有分类（排序）
      *

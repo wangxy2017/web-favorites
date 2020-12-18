@@ -38,6 +38,10 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
+    public Category findByName(String name,Integer userId){
+        return  categoryRepository.findByNameAndUserId(name,userId);
+    }
+
     public List<Category> findByUserId(Integer userId) {
         return categoryRepository.findByUserId(userId);
     }

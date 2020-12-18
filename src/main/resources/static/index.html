@@ -490,7 +490,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 228px;">
-            <input type="text" name="name" id="categoryName" required lay-verify="required" placeholder="请输入名称"
+            <input type="text" name="name" id="categoryName" required lay-verify="required|category" placeholder="请输入名称"
                    autocomplete="off"
                    class="layui-input">
         </div>
@@ -970,22 +970,38 @@
         // 新增分类
         $("#addCategoryBtn").click(function () {
             layer.prompt({title: "添加分类", placeholder:"输入分类名称", maxlength: 10}, function (value, index, elem) {
-                layer.close(index);
-                layer.load();
+                // 验证
+                var bool = true;
                 $.ajax({
-                    type: "POST",
-                    url: "category",
-                    data: JSON.stringify({"name": value}),
-                    contentType: 'application/json;charset=utf-8',
-                    dataType: "json",
+                    type: "GET",
+                    url: 'category/check/' + value,
+                    async: false, // 使用同步的方法
+                    dataType: 'json',
                     success: function (result) {
-                        layer.closeAll('loading');
                         if (result.code == 0) {
-                            loadList();
-                            loadCategoryList();
+                            layer.tips('分类已存在', elem, {tips: 3});
+                            bool = false;
                         }
                     }
                 });
+                if(bool){
+                    layer.close(index);
+                    layer.load();
+                    $.ajax({
+                        type: "POST",
+                        url: "category",
+                        data: JSON.stringify({"name": value}),
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: "json",
+                        success: function (result) {
+                            layer.closeAll('loading');
+                            if (result.code == 0) {
+                                loadList();
+                                loadCategoryList();
+                            }
+                        }
+                    });
+                }
             });
         });
 
@@ -1343,6 +1359,22 @@
                     });
                     return msg;
                 }
+            },
+            category: function (value, item) {
+                var categoryId = form.val("update-category").id;
+                var msg;
+                $.ajax({
+                    type: "GET",
+                    url: 'category/check/' + value,
+                    async: false, // 使用同步的方法
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code == 0 && result.data.id != categoryId) {
+                            msg = "分类已存在";
+                        }
+                    }
+                });
+                return msg;
             }
         });
 
