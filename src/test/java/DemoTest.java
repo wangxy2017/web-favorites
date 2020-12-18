@@ -49,7 +49,7 @@ public class DemoTest {
             User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex(("test" + k + key).getBytes()), "test" + k + "@qq.com", null, null));
             secretKeyRepository.save(new SecretKey(null, user.getId(), key));
             for (int i = 0; i < 100; i++) {
-                Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null));
+                Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null,null));
                 for (int j = 0; j < 100; j++) {
                     favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j),null, null, null, null, null));
                 }

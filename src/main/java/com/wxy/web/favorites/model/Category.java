@@ -34,6 +34,9 @@ public class Category {
     @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
     private Integer sort;
 
+    @Column(name = "bookmark", columnDefinition = "int(1) comment '强制书签模式'")
+    private Integer bookmark;
+
     @Transient
     private List<Favorites> favorites;
 }

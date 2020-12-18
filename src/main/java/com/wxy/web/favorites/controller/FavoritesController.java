@@ -187,7 +187,7 @@ public class FavoritesController {
                 list1.add(favorites);
             });
             int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, list1));
+            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null,Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
         });
         return list;
     }
@@ -302,6 +302,9 @@ public class FavoritesController {
             category.addElement("NAME").setText(c.getName());
             if (c.getSort() != null) {
                 category.addElement("SORT").setText(String.valueOf(c.getSort()));
+            }
+            if (Integer.valueOf(1).equals(c.getBookmark())) {
+                category.addElement("BOOKMARK").setText("true");
             }
             Element list = category.addElement("LIST");
             Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {

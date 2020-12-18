@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -67,5 +68,16 @@ public class CategoryController {
         User user = SpringUtils.getCurrentUser();
         List<Category> list = categoryService.findCatalog(user.getId());
         return ApiResponse.success(list);
+    }
+
+    @PostMapping("/bookmark")
+    public ApiResponse bookmark(@RequestBody Category category) {
+        Category category1 = categoryService.findById(category.getId());
+        if (category1 != null) {
+            category1.setBookmark(category.getBookmark());
+            categoryService.save(category1);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error("非法操作");
     }
 }

@@ -510,6 +510,13 @@
         <div class="layui-form-mid layui-word-aux">数值越大越靠前</div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">模式</label>
+        <div class="layui-input-inline" style="width: 50px;">
+            <input type="checkbox" name="bookmark" lay-skin="switch" value="1" lay-filter="bookmarkSwitch">
+        </div>
+        <div class="layui-form-mid layui-word-aux">强制以书签模式显示</div>
+    </div>
+    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="updateCategory">立即提交</button>
             <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="deleteCategory">删除分类</button>
@@ -950,6 +957,7 @@
                             "id": data.id
                             , "name": data.name
                             , "sort": data.sort
+                            , "bookmark": data.bookmark
                         });
                         //禁用系统分类
                         if (data.isSystem == 1) {
@@ -1047,7 +1055,8 @@
                         // 加载数据
                         var html = '';
                         $.each(result.data.list, function (i, c) {
-                            html += '<fieldset class="layui-elem-field layui-field-title" data-id="' + c.id + '">';
+                            var bookmark = c.bookmark==1?"bookmark":"";
+                            html += '<fieldset class="layui-elem-field layui-field-title ' + bookmark + '" data-id="' + c.id + '">';
                             html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
@@ -1364,6 +1373,41 @@
                     if (result.code == 0) {
                         layer.msg("操作成功", {icon: 6});
                         loadStarFavorites();
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                        // 回退
+                        $(data.elem).removeAttr("checked");
+                        $(data.othis).removeClass("layui-form-onswitch");
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg('服务器异常', {icon: 2});
+                    // 回退
+                    $(data.elem).removeAttr("checked");
+                    $(data.othis).removeClass("layui-form-onswitch");
+                }
+            });
+        });
+
+        form.on('switch(bookmarkSwitch)', function(data){
+            var categoryId = form.val("update-category").id;
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "category/bookmark",
+                data: JSON.stringify({"id": categoryId,"bookmark": data.elem.checked? 1 : 0}),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        layer.msg("操作成功", {icon: 6});
+                        if(data.elem.checked){
+                             $("fieldset[data-id=" + categoryId + "]").addClass("bookmark");
+                        }else{
+                             $("fieldset[data-id=" + categoryId + "]").removeClass("bookmark");
+                        }
                     } else {
                         layer.msg(result.msg, {icon: 5});
                         // 回退

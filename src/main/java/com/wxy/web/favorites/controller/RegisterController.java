@@ -60,7 +60,7 @@ public class RegisterController {
                 SecretKey secretKey = new SecretKey(null, user1.getId(), key);
                 secretKeyService.save(secretKey);
                 // 创建默认分类
-                Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null);
+                Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null,null);
                 categoryService.save(category);
                 // 推荐收藏
                 List<Favorites> recommends = new ArrayList<>();
