@@ -25,10 +25,10 @@ import java.util.List;
 @Transactional
 public class FavoritesService {
 
-    @Value("${favorites.limit:40}")
+    @Value("${app.favorites-nums:40}")
     private int favoritesLimit;
 
-    @Value("${search.limit:100}")
+    @Value("${app.search-nums:100}")
     private int searchLimit;
 
     @Autowired
@@ -64,8 +64,8 @@ public class FavoritesService {
         return favoritesRepository.getOne(id);
     }
 
-    public Favorites findByShortcut(String shortcut) {
-        return favoritesRepository.findByShortcut(shortcut);
+    public Favorites findByShortcut(String shortcut,Integer userId) {
+        return favoritesRepository.findByShortcutAndUserId(shortcut,userId);
     }
 
     public List<Favorites> searchFavorites(Integer userId, String searchName) {

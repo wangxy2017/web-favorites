@@ -1,0 +1,41 @@
+server:
+  port: 9020 #端口
+  servlet:
+    context-path: /web-favorites #设置上下文路径
+  compression:
+    enabled: true #开启压缩功能
+    mime-types:
+      - image/svg+xml
+      - image/x-icon
+      - text/html
+      - application/javascript
+      - text/css
+      - application/octet-stream
+      - application/json
+      - font/x-font-woff
+      - text/plain
+    min-response-size: 1024
+spring:
+  datasource: #数据源
+    url: jdbc:h2:file:./db/h2
+  jpa: #jpa配置
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  jackson:
+    default-property-inclusion: non_null #不传输为空的值到前端
+  mail: #邮件配置
+    username:
+    password:
+    host:
+    port: 465
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+app:
+  page-size: 4 #设置分页大小
+  star-nums: 30 #标记个数限制
+  search-nums: 100 #搜索个数限制
+  favorites-nums: 40 #显示收藏个数限制

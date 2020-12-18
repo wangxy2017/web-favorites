@@ -42,10 +42,10 @@ public class FavoritesController {
     @Autowired
     private PasswordService passwordService;
 
-    @Value("${index.page.size:10}")
-    private Integer indexPageSize;
+    @Value("${app.page-size:10}")
+    private Integer pageSize;
 
-    @Value("${star.limit:10}")
+    @Value("${app.star-nums:10}")
     private Integer starLimit;
 
     @PostMapping("/save")
@@ -73,7 +73,8 @@ public class FavoritesController {
 
     @GetMapping("/shortcut")
     public ApiResponse shortcut(@RequestParam String key) {
-        Favorites favorites = favoritesService.findByShortcut(key);
+        User user = SpringUtils.getCurrentUser();
+        Favorites favorites = favoritesService.findByShortcut(key, user.getId());
         if (favorites != null) {
             return ApiResponse.success(favorites);
         }
@@ -90,7 +91,7 @@ public class FavoritesController {
     public ApiResponse list(@RequestParam Integer pageNum) {
         User user = SpringUtils.getCurrentUser();
         // 查询用户分类
-        PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, indexPageSize);
+        PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, pageSize);
         for (Category c : page.getList()) {
             c.setFavorites(favoritesService.findLimitByCategoryId(c.getId()));
         }
@@ -187,7 +188,7 @@ public class FavoritesController {
                 list1.add(favorites);
             });
             int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null,Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
+            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
         });
         return list;
     }
