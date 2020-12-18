@@ -62,6 +62,7 @@ public class RegisterController {
                 Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null, null);
                 categoryService.save(category);
                 // 推荐收藏
+                long s = System.currentTimeMillis();
                 Map<String, String> recommendMap = new HashMap<>();
                 recommendMap.put("bilibili", "https://www.bilibili.com/");
                 recommendMap.put("淘宝", "https://www.taobao.com/");
@@ -69,10 +70,12 @@ public class RegisterController {
                 recommendMap.put("京东", "https://www.jd.com/");
                 recommendMap.put("腾讯视频", "https://v.qq.com/");
                 recommendMap.put("今日头条", "https://www.toutiao.com/");
-                recommendMap.forEach((k, v) -> favoritesService.save(new Favorites(null, k, HtmlUtils.getIcon(v)
+                recommendMap.forEach((k, v) -> favoritesService.save(new Favorites(null, k, v + "favicon.ico"
                         , v, category.getId(), user1.getId(),
                         PinYinUtils.toPinyin(k),
                         PinYinUtils.toPinyinS(k), null, null, null, null, null)));
+                if (log.isDebugEnabled())
+                    log.debug("插入推荐数据耗时：{}ms", System.currentTimeMillis() - s);
                 // 设置session
                 session.setAttribute("login_user", user1);
                 // 移除验证码
