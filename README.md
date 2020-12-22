@@ -8,11 +8,11 @@
 ![在这里插入图片描述](https://images.gitee.com/uploads/images/2020/0526/165956_e54f7fa8_5420333.png)
 ##### 安装教程：
 1. 进入项目目录，使用maven命令进行打包：mvn clean package
-2. 服务器终端执行命令：nohup java -jar web-favorites.jar > console.log &
+2. 服务器终端执行命令：nohup java -jar web-favorites.jar > /dev/null 2>&1 &
 ##### docker启动：
 1. docker pull wangxiaoyuan2020/web-favorites:latest
 2. docker run -d -p 9020:9020 wangxiaoyuan2020/web-favorites
 ##### 访问：
-1. http://ip:9020/web-favorites/index.html，也可以配置nginx转发
+1. `http://ip:9020/web-favorites/index.html `，也可以配置nginx转发
 ##### QQ群：
 - 972265056
