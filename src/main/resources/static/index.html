@@ -1215,6 +1215,7 @@
                         layer.close(indexMap.get('#update-favorites'));
                         if (result.code == 0) {
                             loadList();
+                            loadStarFavorites();
                         } else {
                             layer.msg("删除失败", {icon: 5});
                         }
@@ -1542,6 +1543,7 @@
                     layer.close(indexMap.get('#update-favorites'));
                     if (result.code == 0) {
                         loadList();
+                        loadStarFavorites();
                     } else {
                         layer.msg("修改失败", {icon: 5});
                     }
