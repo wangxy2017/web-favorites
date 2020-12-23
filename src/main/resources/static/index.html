@@ -996,8 +996,9 @@
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
-                                loadList();
-                                loadCategoryList();
+                                window.location.reload();
+                            } else {
+                                layer.msg("添加失败", {icon: 5});
                             }
                         }
                     });
@@ -1214,8 +1215,7 @@
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-favorites'));
                         if (result.code == 0) {
-                            loadList();
-                            loadStarFavorites();
+                            window.location.reload();
                         } else {
                             layer.msg("删除失败", {icon: 5});
                         }
@@ -1239,9 +1239,7 @@
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-category'));
                         if (result.code == 0) {
-                            // 清空分类下的收藏
-                            var addBtn = '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + data.id + ')"><div class="favorites-bg"><img src="images/add.svg"></div><p title="添加网址">添加网址</p></li>';
-                            $("fieldset[data-id='" + data.id + "']").find(".favorites").empty().append(addBtn);
+                            window.location.reload();
                         } else {
                             layer.msg(result.msg, {icon: 2});
                         }
@@ -1264,9 +1262,7 @@
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-category'));
                         if (result.code == 0) {
-                            // 删除分类
-                            $("fieldset[data-id='" + data.id + "']").remove();
-                            loadCategoryList();
+                            window.location.reload();
                         } else {
                             layer.msg(result.msg, {icon: 2});
                         }
@@ -1542,8 +1538,7 @@
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#update-favorites'));
                     if (result.code == 0) {
-                        loadList();
-                        loadStarFavorites();
+                        window.location.reload();
                     } else {
                         layer.msg("修改失败", {icon: 5});
                     }
@@ -1565,8 +1560,7 @@
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#update-category'));
                     if (result.code == 0) {
-                        loadList();
-                        loadCategoryList();
+                        window.location.reload();
                     } else {
                         layer.msg("修改失败", {icon: 5});
                     }
