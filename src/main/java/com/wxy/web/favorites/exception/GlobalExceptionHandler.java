@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ApiResponse exceptionHandle(Exception e) {
+    public ApiResponse ExceptionHandle(Exception e) {
         log.error("系统异常：{}", e.getMessage(), e);
-        return new ApiResponse(500, "系统错误",null);
+        return new ApiResponse(500, "系统错误", null);
+    }
+
+    @ExceptionHandler(value = NoLoginException.class)
+    @ResponseBody
+    public ApiResponse NoLoginExceptionHandle(Exception e) {
+        return new ApiResponse(1001, "未登录", null);
     }
 }

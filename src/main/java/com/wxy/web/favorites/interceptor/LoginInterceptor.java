@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.interceptor;
 
 import com.wxy.web.favorites.dao.UserRepository;
+import com.wxy.web.favorites.exception.NoLoginException;
 import com.wxy.web.favorites.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,8 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                 }
 
             }
-            response.sendRedirect(request.getContextPath() + "/login.html");
+            throw new NoLoginException();
         }
-        return false;
     }
 }

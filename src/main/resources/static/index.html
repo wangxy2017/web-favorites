@@ -538,6 +538,18 @@
 
         const indexMap = new Map();// 索引map
 
+        // jQuery全局拦截器
+        $(document).ajaxSend(function(event,xhr,options){
+            xhr.setRequestHeader("Auth-Token", localStorage.getItem("token"));
+        });
+
+        $(document).ajaxSuccess(function(event,xhr,options){
+            var result = xhr.responseJSON;
+            if(result != undefined && result.code == "1001"){
+                window.location.href= "login.html";
+            }
+        });
+
         // 图片懒加载
         flow.lazyimg({elem: 'img.lazy', scrollElem: '#layuiBody'});
 
