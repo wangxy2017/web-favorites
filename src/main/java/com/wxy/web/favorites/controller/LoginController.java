@@ -31,19 +31,22 @@ public class LoginController {
     @Autowired
     private EmailUtils emailUtils;
 
+    @Autowired
+    private SpringUtils springUtils;
+
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
-                HttpServletRequest request = SpringUtils.getRequest();
+                HttpServletRequest request = springUtils.getRequest();
                 request.getSession().setAttribute("login_user", user1);
                 if ("1".equals(remember)) {
                     Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
                     token.setPath("/");
                     token.setMaxAge(60 * 60 * 24 * 14);
-                    SpringUtils.getResponse().addCookie(token);
+                    springUtils.getResponse().addCookie(token);
                 }
                 return ApiResponse.success();
             } else {
@@ -74,7 +77,7 @@ public class LoginController {
 
     @GetMapping("/out")
     public ApiResponse logout() {
-        HttpServletRequest request = SpringUtils.getRequest();
+        HttpServletRequest request = springUtils.getRequest();
         request.getSession().removeAttribute("login_user");
         // 清除cookie
         if (request.getCookies() != null) {
@@ -82,7 +85,7 @@ public class LoginController {
                 Cookie cookie = new Cookie(c.getName(), null);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
-                SpringUtils.getResponse().addCookie(cookie);
+                springUtils.getResponse().addCookie(cookie);
             }
         }
         return ApiResponse.success();

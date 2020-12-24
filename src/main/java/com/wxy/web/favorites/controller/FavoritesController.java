@@ -48,9 +48,12 @@ public class FavoritesController {
     @Value("${app.star-nums:10}")
     private Integer starLimit;
 
+    @Autowired
+    private SpringUtils springUtils;
+
     @PostMapping("/save")
     public ApiResponse save(@RequestBody Favorites favorites) {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
@@ -73,7 +76,7 @@ public class FavoritesController {
 
     @GetMapping("/shortcut")
     public ApiResponse shortcut(@RequestParam String key) {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         Favorites favorites = favoritesService.findByShortcut(key, user.getId());
         if (favorites != null) {
             return ApiResponse.success(favorites);
@@ -89,7 +92,7 @@ public class FavoritesController {
      */
     @GetMapping("/list")
     public ApiResponse list(@RequestParam Integer pageNum) {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, pageSize);
         for (Category c : page.getList()) {
@@ -124,7 +127,7 @@ public class FavoritesController {
 
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String name) {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
         List<Favorites> list = favoritesService.searchFavorites(user.getId(), name);
         return ApiResponse.success(list);
@@ -132,7 +135,7 @@ public class FavoritesController {
 
     @GetMapping("/star")
     public ApiResponse star() {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
     }
 
@@ -152,7 +155,7 @@ public class FavoritesController {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
         if (favorites1 != null) {
             if (favorites.getStar() == 1) {
-                User user = SpringUtils.getCurrentUser();
+                User user = springUtils.getCurrentUser();
                 List<Favorites> list = favoritesService.findStarFavorites(user.getId());
                 if (list.size() >= starLimit && !list.contains(favorites1)) {
                     return ApiResponse.error("最多标记" + starLimit + "个网址");
@@ -195,7 +198,7 @@ public class FavoritesController {
 
     @PostMapping("/import")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
             List<Category> list = parseXML(file.getInputStream());
             // 查询用户已存在的数据，防止重复导入
@@ -277,7 +280,7 @@ public class FavoritesController {
 
     @GetMapping("/export")
     public void export() throws IOException {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         // 查询用户分类
         List<Category> categories = categoryService.findByUserId(user.getId());
         categories.forEach(category -> {
@@ -288,7 +291,7 @@ public class FavoritesController {
             });
             category.setFavorites(favoritesList);
         });
-        HttpServletResponse response = SpringUtils.getResponse();
+        HttpServletResponse response = springUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流

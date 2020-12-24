@@ -40,6 +40,9 @@ public class RegisterController {
     @Autowired
     private EmailUtils emailUtils;
 
+    @Autowired
+    private SpringUtils springUtils;
+
     /**
      * 注册
      *
@@ -49,7 +52,7 @@ public class RegisterController {
     @PostMapping
     public ApiResponse register(@RequestBody User user) {
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
-            HttpSession session = SpringUtils.getRequest().getSession();
+            HttpSession session = springUtils.getRequest().getSession();
             String code = (String) session.getAttribute("register_email_code");
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 String randomKey = RandomUtil.randomString(16);
@@ -102,7 +105,7 @@ public class RegisterController {
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
         log.info("注册验证码：{}", code);
-        HttpSession session = SpringUtils.getRequest().getSession();
+        HttpSession session = springUtils.getRequest().getSession();
         session.setAttribute("register_email_code", code);
         emailUtils.send(email, "网络收藏夹|注册", "您正在注册账号，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();

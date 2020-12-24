@@ -22,10 +22,13 @@ public class CategoryController {
     @Autowired
     private FavoritesService favoritesService;
 
+    @Autowired
+    private SpringUtils springUtils;
+
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
         if (!"默认分类".equals(category.getName())) {
-            User user = SpringUtils.getCurrentUser();
+            User user = springUtils.getCurrentUser();
             category.setUserId(user.getId());
             categoryService.save(category);
             return ApiResponse.success();
@@ -41,7 +44,7 @@ public class CategoryController {
 
     @GetMapping("/check/{name}")
     public ApiResponse queryName(@PathVariable String name) {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         Category category = categoryService.findByName(name, user.getId());
         if (category != null) {
             return ApiResponse.success(category);
@@ -68,14 +71,14 @@ public class CategoryController {
 
     @GetMapping("/list")
     public ApiResponse list() {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }
 
     @GetMapping("/catalog")
     public ApiResponse catalog() {
-        User user = SpringUtils.getCurrentUser();
+        User user = springUtils.getCurrentUser();
         List<Category> list = categoryService.findCatalog(user.getId());
         return ApiResponse.success(list);
     }
