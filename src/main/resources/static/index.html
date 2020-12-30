@@ -359,6 +359,7 @@
         </div>
         <div id="starDiv"></div>
         <div id="main"></div>
+        <div id="searchDiv"></div>
         <div class="lGDtb" style="display: none;position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);">
             <div class="ljZkoB"></div>
             <div class="gPySoS"></div>
@@ -794,8 +795,9 @@
 
         // 关闭搜索
         $("#search_close").click(function () {
-            loadList();
-            loadStarFavorites();
+            $("#starDiv").show();
+            $("#main").show();
+            $("#searchDiv").empty();
             $(this).hide();
             $("#search_name").val("").blur();
             $("#notFoundDiv").hide();
@@ -823,8 +825,8 @@
 
         // 搜索文本
         window.searchFavorites = function(name){
-            $("#main").empty();
-            $("#starDiv").empty();
+            $("#main").hide();
+            $("#starDiv").hide();
             layer.load();
             $.ajax({
                 type: "GET",
@@ -833,6 +835,7 @@
                 dataType: "json",
                 success: function (result) {
                     layer.closeAll('loading');
+                    $("#searchDiv").empty();
                     if (result.code == 0 && result.data.length > 0) {
                         var html = '';
                         html += '<ul class="favorites">';
@@ -846,7 +849,7 @@
                             html += '</li>';
                         });
                         html += '</ul>';
-                        $("#main").append(html);
+                        $("#searchDiv").append(html);
                         imgRender();
                         $("#notFoundDiv").hide();
                     }else{
@@ -1225,29 +1228,26 @@
                 dataType: "json",
                 success: function (result) {
                     $(".lGDtb").fadeOut();
-                    if (result.code == 0) {
-                        if(result.data.length > 0){
-                            var html = '';
-                            html += '<fieldset class="layui-elem-field layui-field-title">';
-                            html += '   <legend style="font-size:16px;">常用网址</legend>';
-                            html += '   <ul class="favorites">';
-                            $.each(result.data, function (i, f) {
-                                html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
-                                html += '       <div class="favorites-bg">';
-                                html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                html += '       </div>';
-                                html += '       <p title="' + f.name + '">' + f.name + '</p>';
-                                html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                html += '   </li>';
-                            });
-                            html += '   </ul>';
-                            html += '</fieldset>';
+                    $("#starDiv").empty();
+                    if(result.code == 0 && result.data.length > 0){
+                        var html = '';
+                        html += '<fieldset class="layui-elem-field layui-field-title">';
+                        html += '   <legend style="font-size:16px;">常用网址</legend>';
+                        html += '   <ul class="favorites">';
+                        $.each(result.data, function (i, f) {
+                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '       <div class="favorites-bg">';
+                            html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '       </div>';
+                            html += '       <p title="' + f.name + '">' + f.name + '</p>';
+                            html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '   </li>';
+                        });
+                        html += '   </ul>';
+                        html += '</fieldset>';
 
-                            $("#starDiv").empty().append(html);
-                            imgRender();
-                        }else{
-                            $("#starDiv").empty();
-                        }
+                        $("#starDiv").append(html);
+                        imgRender();
                     }
                 }
             });
