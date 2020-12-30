@@ -1221,13 +1221,11 @@
         };
 
         window.loadStarFavorites = function () {
-            $(".lGDtb").fadeIn();
             $.ajax({
                 type: "GET",
                 url: "favorites/star",
                 dataType: "json",
                 success: function (result) {
-                    $(".lGDtb").fadeOut();
                     $("#starDiv").empty();
                     if(result.code == 0 && result.data.length > 0){
                         var html = '';
@@ -1696,6 +1694,7 @@
                 url: "user/info",
                 dataType: "json",
                 success: function (result) {
+                    $(".lGDtb").fadeOut();
                     if (result.code == 0) {
                         var user = result.data;
                         $("#username").text(user.username.substring(0, 4));
@@ -1748,6 +1747,8 @@
 
         // 页面加载完成执行
         $(function () {
+            // 执行加载动画
+            $(".lGDtb").fadeIn();
             // 加载用户信息
             loadUserInfo();
             // 加载常用网址
