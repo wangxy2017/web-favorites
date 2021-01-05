@@ -18,4 +18,16 @@
 	"name": "天眼查",
 	"icon": "https://www.tianyancha.com/favicon.ico",
 	"url": "https://www.tianyancha.com/search?key="
+}, {
+	"name": "开源中国",
+	"icon": "https://www.oschina.net/favicon.ico",
+	"url": "https://www.oschina.net/search?q="
+}, {
+	"name": "码云gitee",
+	"icon": "https://search.gitee.com/favicon.ico",
+	"url": "https://search.gitee.com/?q="
+}, {
+	"name": "github",
+	"icon": "https://github.com/favicon.ico",
+	"url": "https://github.com/search?q="
 }]
