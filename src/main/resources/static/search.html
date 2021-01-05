@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|搜索</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				user-select: none;
+			}
+
+			body {
+                line-height: 24px;
+                font: 14px Helvetica Neue,Helvetica,PingFang SC,Tahoma,Arial,sans-serif;
+            }
+
+			ul,
+			li {
+				list-style: none;
+			}
+
+			.main {
+				margin: 0 auto;
+				width: 50%;
+				text-align: center;
+				min-width: 400px;
+			}
+
+			.main .logo {
+				margin-top: 100px;
+				margin-bottom: 40px;
+			}
+
+			.main .search-form {
+				border: 1px solid #009688;
+				border-radius: 4px;
+				height: 40px;
+				position: relative;
+			}
+
+			.main .search-form button {
+				background-color: #009688;
+				color: #fff;
+				white-space: nowrap;
+				text-align: center;
+				font-size: 18px;
+				border: none;
+				cursor: pointer;
+				width: 20%;
+				float: right;
+				height: 100%;
+				outline: none;
+				border-radius: 0;
+			}
+
+			.main .search-form input {
+				float: left;
+				height: 100%;
+				width: 80%;
+				border: none;
+				outline: none;
+				padding: 0 10px;
+				font-size: 14px;
+				border-radius: 4px;
+			}
+
+			.main .search-form .search-items {
+				position: absolute;
+				width: 100%;
+				top: 40px;
+				left: 0;
+				border: 1px solid #009688;
+				background: #FFFFFF;
+				display: none;
+			}
+
+			.main .search-form .search-items li {
+				line-height: 30px;
+				text-align: left;
+				padding: 0 10px;
+				cursor: pointer;
+			}
+
+			.main .search-form .search-items li.hover-in {
+				color: #009688;
+			}
+
+			.main .search-type {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				margin-top: 20px;
+			}
+
+			.main .search-type li {
+				display: flex;
+				flex-direction: row;
+				width: 25%;
+				cursor: pointer;
+				padding: 10px;
+			}
+
+			.main .search-type li:hover {
+				background-color: #f2f2f2;
+			}
+
+			.main .search-type li.search-type-selected {
+				background-color: #f2f2f2;
+			}
+
+			.main .search-type li img {
+				width: 20px;
+				height: 20px;
+				margin-right: 6px;
+				border: none;
+			}
+
+			.main .search-type li span {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				word-break: break-all;
+			}
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 30px;
+				cursor: pointer;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 30px;
+                width: 100%;
+                text-align: center;
+			}
+		</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html"><img class="home-icon" src="images/home.svg"></a>
+</div>
+<div class="main">
+    <div class="logo">
+        <img style="width: 36px;height: 36px;display: inline-block;vertical-align: bottom;" src="images/search.svg" alt="">
+        <h1 style="color: #009688;display: inline-block;">聚合搜索</h1>
+    </div>
+    <div class="search-form">
+        <input type="text" id="search_content" value="" />
+        <button type="button" id="search_btn">搜索</button>
+        <ul class="search-items"></ul>
+    </div>
+    <ul class="search-type"></ul>
+</div>
+<div class="footer">
+    © 2020 在线网络收藏夹 || 在线网络收藏夹版权所有
+</div>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+			$(function() {
+			    $.ajax({
+                    type: "GET",
+                    url: "search/data",
+                    dataType: "json",
+                    success: function (result) {
+                        var html = '';
+                        $.each(result.data, function(index, item) {
+                            html += '<li data-search="' + item.url + '"><img src="' + item.icon +
+                                '" onerror="javascript:this.src=\'images/web.svg\';"><span>' + item.name +
+                                '</span></li>';
+                        });
+                        if (html !== "") $(".search-type").empty().append(html);
+                    }
+                });
+			});
+			// 搜索类型绑定点击事件
+			$(document).on('click', '.search-type li', function() {
+				$(this).addClass('search-type-selected').siblings().removeClass('search-type-selected');
+				if ($("#search_content").val().trim() !== "") $("#search_btn").trigger("click");
+			});
+			// 搜索项绑定hover事件
+			$(document).on('mouseenter', '.search-items li', function() {
+				$(this).addClass('hover-in');
+			});
+			$(document).on('mouseleave', '.search-items li', function() {
+				$(this).removeClass('hover-in');
+			});
+			// 搜索项绑定点击事件
+			$(document).on('click', '.search-items li', function() {
+				$("#search_content").val($(this).text());
+				$(this).parent().hide();
+			});
+			// 点击搜索按钮搜索
+			$("#search_btn").click(function() {
+				var content = $("#search_content").val().trim();
+				if (content != "") {
+					// 存入历史记录
+					var search_history = JSON.parse(localStorage.getItem("search_history"));
+					if (search_history == null || search_history.length > 2) search_history = [];
+					if (search_history.indexOf(content) < 0) search_history.push(content);
+					localStorage.setItem("search_history", JSON.stringify(search_history));
+					// 跳转页面
+					var selected = typeof $(".search-type li.search-type-selected")[0] === "undefined" ? $(".search-type li:first")[
+						0] : $(".search-type li.search-type-selected")[0];
+					var search_url = $(selected).attr("data-search");
+					if (typeof search_url !== "undefined") {
+						openUrl(search_url + content);
+					}
+				} else {
+					window.location.reload();
+				}
+			});
+
+			$("#search_content").keyup(function(event) {
+				if (event.keyCode == 13) { // 回车搜索，隐藏搜索项
+					$("#search_btn").trigger("click");
+					$(".search-items").hide();
+				} else if (event.keyCode == 38) {
+					var hover_in = typeof $(".search-items li.hover-in")[0] === "undefined" ? $(".search-items li:last")[0] : $(
+						".search-items li.hover-in").prev()[0];
+					if (typeof hover_in !== "undefined") {
+						$(hover_in).addClass('hover-in').siblings().removeClass('hover-in');
+						$(this).val(hover_in.innerText);
+					}
+				} else if (event.keyCode == 40) {
+					var hover_in = typeof $(".search-items li.hover-in")[0] === "undefined" ? $(".search-items li:first")[0] : $(
+						".search-items li.hover-in").next()[0];
+					if (typeof hover_in !== "undefined") {
+						$(hover_in).addClass('hover-in').siblings().removeClass('hover-in');
+						$(this).val(hover_in.innerText);
+					}
+				}
+			}).bind("input propertychange", function() { // 输入框输入值，查询百度词条
+				var keyword = $(this).val().trim();
+				if (keyword !== "") {
+					$.ajax({
+						url: "https://www.baidu.com/su?wd=" + keyword,
+						type: "GET",
+						dataType: "jsonp", //指定服务器返回的数据类型
+						jsonp: "cb",
+						success: function(data) {
+							var html = '';
+							$.each(data.s, function(index, item) {
+								html += '<li>' + item + '</li>';
+							});
+							if (html != "") $(".search-items").empty().append(html).show();
+						}
+					});
+				}
+			}).focus(function() { // 输入框聚焦，显示历史搜索
+				var search_history = JSON.parse(localStorage.getItem("search_history"));
+				var html = '';
+				$.each(search_history, function(index, item) {
+					html += '<li>' + item + '</li>';
+				});
+				if (html !== "") $(".search-items").empty().append(html).show();
+			}).blur(function() { // 失去焦点隐藏搜索项X
+				$(".search-items").fadeOut(300);
+			});
+
+			window.openUrl = function(url) {
+				if (url.startsWith("https://") || url.startsWith("http://")) {
+					window.open(url, '_blank');
+				} else {
+					alert("此链接无效");
+				}
+			};
+		</script>
+</body>
+</html>
