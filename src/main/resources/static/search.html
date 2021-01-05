@@ -142,11 +142,29 @@
                 width: 100%;
                 text-align: center;
 			}
+
+			#logout {
+			    background-color: #009688;
+                color: #fff;
+                white-space: nowrap;
+                text-align: center;
+                border: none;
+                border-radius: 2px;
+                cursor: pointer;
+                height: 22px;
+                line-height: 22px;
+                padding: 0 6px;
+                font-size: 12px;
+                float: right;
+                margin-top: 20px;
+                margin-right: 30px;
+			}
 		</style>
 </head>
 <body>
 <div class="header">
     <a href="index.html"><img class="home-icon" src="images/home.svg"></a>
+    <button type="button" id="logout">退出</button>
 </div>
 <div class="main">
     <div class="logo">
@@ -165,6 +183,28 @@
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
+            // jQuery全局拦截器
+            $(document).ajaxSuccess(function(event,xhr,options){
+                var result = xhr.responseJSON;
+                if(result != undefined && result.code == "1001"){
+                    window.location.href= "login.html";
+                }
+            });
+
+            // 登出
+            $("#logout").click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "login/out",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            window.location.href = "login.html";
+                        }
+                    }
+                });
+            });
+
 			$(function() {
 			    $.ajax({
                     type: "GET",
