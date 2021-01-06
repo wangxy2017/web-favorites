@@ -113,6 +113,8 @@
 				height: 20px;
 				margin-right: 6px;
 				border: none;
+				background-image: url(images/web.svg);
+                background-size: contain;
 			}
 
 			.main .search-type li span {
@@ -220,7 +222,7 @@
                         var html = '';
                         $.each(result.data, function(index, item) {
                             html += '<li data-search="' + item.url + '"><img src="' + item.icon +
-                                '" onerror="javascript:this.src=\'images/web.svg\';"><span>' + item.name +
+                                '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
                                 '</span></li>';
                         });
                         if (html !== "") $(".search-type").empty().append(html);
