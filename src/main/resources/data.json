@@ -1,33 +1,42 @@
-[{
-	"name": "百度搜索",
-	"icon": "https://www.baidu.com/favicon.ico",
-	"url": "https://www.baidu.com/s?wd="
-}, {
-	"name": "必应搜索",
-	"icon": "https://www.bing.com/favicon.ico",
-	"url": "https://www.bing.com/search?q="
-}, {
-	"name": "csdn搜索",
-	"icon": "https://so.csdn.net/favicon.ico",
-	"url": "https://so.csdn.net/so/search/all?q="
-}, {
-	"name": "segmentfault",
-	"icon": "https://segmentfault.com/favicon.ico",
-	"url": "https://segmentfault.com/search?q="
-}, {
-	"name": "天眼查",
-	"icon": "https://www.tianyancha.com/favicon.ico",
-	"url": "https://www.tianyancha.com/search?key="
-}, {
-	"name": "开源中国",
-	"icon": "https://www.oschina.net/favicon.ico",
-	"url": "https://www.oschina.net/search?q="
-}, {
-	"name": "码云gitee",
-	"icon": "https://search.gitee.com/favicon.ico",
-	"url": "https://search.gitee.com/?q="
-}, {
-	"name": "github",
-	"icon": "https://github.com/favicon.ico",
-	"url": "https://github.com/search?q="
-}]
+[
+  {
+    "name": "百度搜索",
+    "icon": "https://www.baidu.com/favicon.ico",
+    "url": "https://www.baidu.com/s?wd="
+  },
+  {
+    "name": "必应搜索",
+    "icon": "https://www.bing.com/favicon.ico",
+    "url": "https://www.bing.com/search?q="
+  },
+  {
+    "name": "谷歌搜索",
+    "icon": "https://www.google.com/favicon.ico",
+    "url": "https://www.google.com/search?q="
+  },
+  {
+    "name": "360搜索",
+    "icon": "https://www.so.com/favicon.ico",
+    "url": "https://www.so.com/s?q="
+  },
+  {
+    "name": "csdn搜索",
+    "icon": "https://so.csdn.net/favicon.ico",
+    "url": "https://so.csdn.net/so/search/all?q="
+  },
+  {
+    "name": "开源中国",
+    "icon": "https://www.oschina.net/favicon.ico",
+    "url": "https://www.oschina.net/search?q="
+  },
+  {
+    "name": "码云gitee",
+    "icon": "https://search.gitee.com/favicon.ico",
+    "url": "https://search.gitee.com/?q="
+  },
+  {
+    "name": "github",
+    "icon": "https://github.com/favicon.ico",
+    "url": "https://github.com/search?q="
+  }
+]
