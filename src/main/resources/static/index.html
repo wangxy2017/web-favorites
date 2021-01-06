@@ -50,9 +50,9 @@
 
         .search-div i {
             position: absolute;
-            top: 4px;
+            top: 6px;
             right: 4px;
-            font-size: 20px;
+            font-size: 18px;
             color: #666;
             display: none;
             cursor: pointer;
@@ -356,7 +356,6 @@
         <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
-            <a href="search.html" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i>搜索</a>
         </div>
         <div id="starDiv"></div>
         <div id="main"></div>
@@ -626,9 +625,15 @@
         // 固定块
         util.fixbar({
             top: true
-            , scrollElem: '#layuiBody'
-            , bgcolor: '#393D49'
-            , css: {right: 30, bottom: 50}
+            ,bar1: '&#xe615;'
+            ,scrollElem: '#layuiBody'
+            ,bgcolor: '#393D49'
+            ,css: {right: 30, bottom: 50}
+            ,click: function(type){
+                if(type === 'bar1'){
+                    window.location.href = "search.html";
+                }
+            }
         });
 
         //执行实例
@@ -946,13 +951,10 @@
                 $(".favorites-li.active").removeClass("active");
             }
         }).on("input", function () {
-            if ($(this).val() != "") {
-                $("#search_close").show();
-            } else {
-                $("#search_close").hide();
-            }
             //退出选择模式
             $(".favorites-li.active").removeClass("active");
+        }).on("focus", function () {
+           $("#search_close").show();
         });
         // 添加收藏
         window.addFavorites = function (categoryId) {

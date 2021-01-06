@@ -27,9 +27,9 @@
 
 			.main {
 				margin: 0 auto;
-				width: 50%;
+				width: 90%;
 				text-align: center;
-				min-width: 400px;
+				max-width: 654px;
 			}
 
 			.main .logo {
@@ -59,13 +59,23 @@
 				border-radius: 0;
 			}
 
+			.main .search-form .search-close {
+			    width: 22px;
+                height: 22px;
+                position: absolute;
+                top: 8px;
+                right: calc(20% + 8px);
+                cursor: pointer;
+                display: none;
+			}
+
 			.main .search-form input {
 				float: left;
 				height: 100%;
 				width: 80%;
 				border: none;
 				outline: none;
-				padding: 0 10px;
+				padding: 0 30px 0 10px;
 				font-size: 14px;
 				border-radius: 4px;
 			}
@@ -106,10 +116,11 @@
 				cursor: pointer;
 				padding: 10px;
 				margin-bottom: 10px;
+				border-radius: 4px;
 			}
 
 			.main .search-type li:hover {
-				background-color: #f2f2f2;
+				background-color: #f5f5f5;
 			}
 
 			.main .search-type li.search-type-selected {
@@ -191,13 +202,14 @@
 <div class="center">
     <div class="main">
         <div class="logo">
-            <img style="width: 32px;height: 32px;display: inline-block;vertical-align: bottom;" src="images/search.svg" alt="">
+            <img style="width: 2rem;height: 2rem;display: inline-block;vertical-align: bottom;" src="images/search.svg" alt="">
             <h1 style="color: #009688;display: inline-block;">聚合搜索</h1>
         </div>
         <div class="search-form">
             <input type="text" id="search_content" value="" />
             <button type="button" id="search_btn">搜索</button>
             <ul class="search-items"></ul>
+            <img src="images/close.svg" class="search-close" id="search_close">
         </div>
         <ul class="search-type"></ul>
     </div>
@@ -263,6 +275,13 @@
 				$(this).parent().hide();
 				$("#search_btn").trigger("click");
 			});
+
+			$("#search_close").click(function() {
+			    $("#search_content").val("").blur();
+			    $(".search-items").hide();
+			    $(this).hide();
+			});
+
 			// 点击搜索按钮搜索
 			$("#search_btn").click(function() {
 				var content = $("#search_content").val().trim();
@@ -273,12 +292,9 @@
 					if (search_history.indexOf(content) < 0) search_history.push(content);
 					localStorage.setItem("search_history", JSON.stringify(search_history));
 					// 跳转页面
-					var selected = typeof $(".search-type li.search-type-selected")[0] === "undefined" ? $(".search-type li:first")[
-						0] : $(".search-type li.search-type-selected")[0];
-					var search_url = $(selected).attr("data-search");
-					if (typeof search_url !== "undefined") {
-						openUrl(search_url + content);
-					}
+					var search_url = $(".search-type li.search-type-selected").attr("data-search");
+					search_url = typeof search_url === "undefined" ? "https://www.baidu.com/s?wd=" : search_url;
+					openUrl(search_url + content);
 				} else {
 					window.location.reload();
 				}
@@ -321,13 +337,14 @@
 					});
 				}
 			}).focus(function() { // 输入框聚焦，显示历史搜索
+		        $("#search_close").show();
 				var search_history = JSON.parse(localStorage.getItem("search_history"));
 				var html = '';
 				$.each(search_history, function(index, item) {
-					html += '<li>' + item + '</li>';
+					html = '<li>' + item + '</li>' + html;
 				});
 				if (html !== "") $(".search-items").empty().append(html).show();
-			}).blur(function() { // 失去焦点隐藏搜索项X
+			}).blur(function() { // 失去焦点隐藏搜索项
 				$(".search-items").fadeOut(300);
 			});
 
