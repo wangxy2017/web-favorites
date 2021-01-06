@@ -7,26 +7,10 @@
     <title>网络收藏夹|搜索</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="layui/css/layui.css">
     <style type="text/css">
 			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
 				user-select: none;
-			}
-
-			button:hover {
-			    opacity: .8;
-			}
-
-			body {
-                line-height: 24px;
-                font: 14px Helvetica Neue,Helvetica,PingFang SC,Tahoma,Arial,sans-serif;
-            }
-
-			ul,
-			li {
-				list-style: none;
 			}
 
 			.main {
@@ -39,6 +23,9 @@
 			.main .logo {
 				margin-top: 100px;
 				margin-bottom: 40px;
+				display: flex;
+                line-height: 32px;
+                justify-content: center;
 			}
 
 			.main .search-form {
@@ -46,48 +33,36 @@
 				border-radius: 4px;
 				height: 40px;
 				position: relative;
+				display: flex;
 			}
 
 			.main .search-form button {
-				background-color: #009688;
-				color: #fff;
-				white-space: nowrap;
-				text-align: center;
-				font-size: 18px;
-				border: none;
-				cursor: pointer;
-				width: 20%;
-				float: right;
 				height: 100%;
-				outline: none;
-				border-radius: 0;
+                border-radius: 0;
+                line-height: 100%;
 			}
 
 			.main .search-form .search-close {
-			    width: 22px;
-                height: 22px;
-                position: absolute;
+			    position: absolute;
                 top: 8px;
-                right: calc(20% + 8px);
+                right: 90px;
                 cursor: pointer;
                 display: none;
+                font-size: 22px;
+                color: #009688;
 			}
 
 			.main .search-form input {
-				float: left;
 				height: 100%;
-				width: 80%;
 				border: none;
-				outline: none;
-				padding: 0 30px 0 10px;
-				font-size: 14px;
 				border-radius: 4px;
+				padding-right: 30px;
 			}
 
 			.main .search-form .search-items {
 				position: absolute;
-				width: 80%;
-				top: 40px;
+				width: calc(100% - 84px);
+				top: 42px;
 				left: 0;
 				border: 1px solid #009688;
 				border-radius: 4px;
@@ -122,6 +97,7 @@
 				padding: 10px;
 				margin-bottom: 10px;
 				border-radius: 4px;
+				box-sizing: border-box;
 			}
 
 			.main .search-type li:hover {
@@ -161,6 +137,8 @@
                 width: 100%;
                 height: 60px;
                 box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+                display: flex;
+                justify-content: space-between;
 			}
 
 			.center {
@@ -181,40 +159,27 @@
 			}
 
 			#logout {
-			    background-color: #009688;
-                color: #fff;
-                white-space: nowrap;
-                text-align: center;
-                border: none;
-                border-radius: 2px;
-                cursor: pointer;
-                height: 22px;
-                line-height: 22px;
-                padding: 0 6px;
-                font-size: 12px;
-                float: right;
                 margin-top: 20px;
                 margin-right: 20px;
-                outline: none;
 			}
 		</style>
 </head>
 <body>
 <div class="header">
-    <a href="index.html"><img class="home-icon" src="images/home.svg"></a>
-    <button type="button" id="logout">退出</button>
+    <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
 <div class="center">
     <div class="main">
         <div class="logo">
-            <img style="width: 2rem;height: 2rem;display: inline-block;vertical-align: bottom;" src="images/search.svg" alt="">
-            <h1 style="color: #009688;display: inline-block;">聚合搜索</h1>
+            <i class="layui-icon layui-icon-search" style="font-size: 28px;color: #009688;margin-right: 6px;"></i>
+            <h1 style="color: #009688;">聚合搜索</h1>
         </div>
         <div class="search-form">
-            <input type="text" id="search_content" value="" />
-            <button type="button" id="search_btn">搜索</button>
+            <input class="layui-input" type="text" id="search_content" value="" />
+            <button class="layui-btn layui-btn-lg" type="button" id="search_btn">搜索</button>
             <ul class="search-items"></ul>
-            <img src="images/close.svg" class="search-close" id="search_close">
+            <i class="layui-icon layui-icon-close-fill search-close" id="search_close"></i>
         </div>
         <ul class="search-type"></ul>
     </div>
