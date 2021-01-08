@@ -894,6 +894,11 @@
                         $("#searchDiv").append(html);
                         imgRender();
                         $("#notFoundDiv").hide();
+                        // 存入历史记录
+                        var input_history = JSON.parse(localStorage.getItem("input_history"));
+                        if (input_history == null || input_history.length >= 5) input_history = [];
+                        if (input_history.indexOf(name) < 0) input_history.push(name);
+                        localStorage.setItem("input_history", JSON.stringify(input_history));
                     }else{
                         $("#notFoundDiv").show();
                     }
@@ -903,11 +908,6 @@
                     layer.msg('服务器异常', {icon: 2});
                 }
             });
-            // 存入历史记录
-            var input_history = JSON.parse(localStorage.getItem("input_history"));
-            if (input_history == null || input_history.length >= 5) input_history = [];
-            if (input_history.indexOf(name) < 0) input_history.push(name);
-            localStorage.setItem("input_history", JSON.stringify(input_history));
         };
 
         // 搜索
