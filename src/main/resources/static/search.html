@@ -75,11 +75,20 @@
 				text-align: left;
 				padding: 0 10px;
 				cursor: pointer;
+				position: relative;
 			}
 
 			.main .search-form .search-items li.hover-in {
 				color: #009688;
 			}
+
+			.main .search-form .search-items li .history-close {
+                font-size: 14px;
+                position: absolute;
+                top: 0;
+                right: 10px;
+                font-weight: bold;
+            }
 
 			.main .search-type {
 				display: flex;
@@ -201,6 +210,14 @@
                 }
             });
 
+            // 根据数组的下标，删除该下标的元素
+            Array.prototype.remove = function(val) {
+                var index = this.indexOf(val);
+                if (index > -1) {
+                    this.splice(index, 1);
+                }
+            };
+
             // 登出
             $("#logout").click(function () {
                 $.ajax({
@@ -243,12 +260,27 @@
 			$(document).on('mouseleave', '.search-items li', function() {
 				$(this).removeClass('hover-in');
 			});
+
 			// 搜索项绑定点击事件
 			$(document).on('click', '.search-items li', function() {
 				$("#search_content").val($(this).text());
 				$(this).parent().hide();
 				$("#search_btn").trigger("click");
 			});
+
+			$(document).on('click', '.search-items li .history-close', function(event) {
+                event.stopPropagation();
+
+                $(this).parent().remove();
+                if($(".search-items").children().length === 0) $(".search-items").hide();
+
+                var text = $(this).parent().text();
+                var search_history = JSON.parse(localStorage.getItem("search_history"));
+                if(search_history.indexOf(text) >= 0) {
+                    search_history.remove(text);
+                    localStorage.setItem("search_history", JSON.stringify(search_history));
+                }
+            });
 
 			$("#search_close").click(function() {
 			    $("#search_content").val("").blur();
@@ -315,7 +347,7 @@
 		        var html = '';
 				var search_history = JSON.parse(localStorage.getItem("search_history"));
 				$.each(search_history, function(index, item) {
-					html = '<li>' + item + '</li>' + html;
+					html = '<li>' + item + '<i class="layui-icon layui-icon-close history-close"></i></li>' + html;
 				});
 				if (html !== "") $(".search-items").empty().append(html).show();
 			}).blur(function() { // 失去焦点隐藏搜索项

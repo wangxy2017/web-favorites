@@ -48,7 +48,7 @@
             padding-right: 26px;
         }
 
-        .search-div i {
+        .search-div .search-close {
             position: absolute;
             top: 6px;
             right: 4px;
@@ -330,10 +330,12 @@
         }
 
         .search-items li {
-            padding: 0 10px;
+            padding-left: 10px;
+            padding-right: 20px;
             cursor: pointer;
             line-height: 26px;
             font-size: 12px;
+            position: relative;
         }
 
         .search-items li:hover {
@@ -341,8 +343,22 @@
             color: #fff;
         }
 
-        .search-items li:last-child{
+        .search-items li:last-child {
             margin-bottom: 6px;
+        }
+
+        .search-items li .history-close {
+            color: #fff;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            right: 8px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .search-items li:hover .history-close {
+            display: block;
         }
     </style>
 </head>
@@ -355,7 +371,7 @@
         <div class="search-div">
             <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
-            <i id="search_close" class="layui-icon layui-icon-close-fill"></i>
+            <i id="search_close" class="layui-icon layui-icon-close-fill search-close"></i>
             <ul class="search-items"></ul>
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
@@ -647,6 +663,14 @@
             }
         });
 
+        // 根据数组的下标，删除该下标的元素
+        Array.prototype.remove = function(val) {
+            var index = this.indexOf(val);
+            if (index > -1) {
+                this.splice(index, 1);
+            }
+        };
+
         // 图片懒加载
         flow.lazyimg({elem: 'img.lazy', scrollElem: '#layuiBody'});
 
@@ -805,6 +829,20 @@
             var text = $(this).text();
             $("#search_name").val(text);
             searchFavorites(text);
+        });
+
+        $(document).on('click', '.search-items li .history-close', function(event) {
+            event.stopPropagation();
+
+            $(this).parent().remove();
+            if($(".search-items").children().length === 0) $(".search-items").hide();
+
+            var text = $(this).parent().text();
+            var input_history = JSON.parse(localStorage.getItem("input_history"));
+            if(input_history.indexOf(text) >= 0) {
+                input_history.remove(text);
+                localStorage.setItem("input_history", JSON.stringify(input_history));
+            }
         });
 
         $("#importOrExportBtn").click(function () {
@@ -1002,7 +1040,7 @@
             var html = '';
             var input_history = JSON.parse(localStorage.getItem("input_history"));
             $.each(input_history, function(index, item) {
-                html = '<li>' + item + '</li>' + html;
+                html = '<li>' + item + '<i class="layui-icon layui-icon-close history-close"></i></li>' + html;
             });
             if (html !== "") $(".search-items").empty().append(html).show();
         }).blur(function() { // 失去焦点隐藏搜索项
