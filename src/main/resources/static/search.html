@@ -262,7 +262,7 @@
 				if (content != "") {
 					// 存入历史记录
 					var search_history = JSON.parse(localStorage.getItem("search_history"));
-					if (search_history == null || search_history.length > 2) search_history = [];
+					if (search_history == null || search_history.length >= 10) search_history = [];
 					if (search_history.indexOf(content) < 0) search_history.push(content);
 					localStorage.setItem("search_history", JSON.stringify(search_history));
 					// 跳转页面
@@ -312,8 +312,8 @@
 				}
 			}).focus(function() { // 输入框聚焦，显示历史搜索
 		        $("#search_close").show();
+		        var html = '';
 				var search_history = JSON.parse(localStorage.getItem("search_history"));
-				var html = '';
 				$.each(search_history, function(index, item) {
 					html = '<li>' + item + '</li>' + html;
 				});

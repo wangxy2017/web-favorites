@@ -317,6 +317,33 @@
             transform: scaleY(1);
           }
         }
+
+        .search-items {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            background: #393d49;
+            color: #b2b2b2;
+            border-radius: 0 0 4px 4px;
+            display: none;
+        }
+
+        .search-items li {
+            padding: 0 10px;
+            cursor: pointer;
+            line-height: 26px;
+            font-size: 12px;
+        }
+
+        .search-items li:hover {
+            background: #5fb878;
+            color: #fff;
+        }
+
+        .search-items li:last-child{
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -329,6 +356,7 @@
             <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill"></i>
+            <ul class="search-items"></ul>
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
             <div class="layui-input-inline">
@@ -772,6 +800,13 @@
             layer.close(indexMap.get('#add-favorites'));
         });
 
+        // 搜索项绑定点击事件
+        $(document).on('click', '.search-items li', function() {
+            var text = $(this).text();
+            $("#search_name").val(text);
+            searchFavorites(text);
+        });
+
         $("#importOrExportBtn").click(function () {
             var index = layer.open({
                 type: 1,
@@ -807,6 +842,7 @@
             $(this).hide();
             $("#search_name").val("").blur();
             $("#notFoundDiv").hide();
+            $(".search-items").hide();
         });
 
         // 搜索指令
@@ -867,6 +903,11 @@
                     layer.msg('服务器异常', {icon: 2});
                 }
             });
+            // 存入历史记录
+            var input_history = JSON.parse(localStorage.getItem("input_history"));
+            if (input_history == null || input_history.length >= 5) input_history = [];
+            if (input_history.indexOf(name) < 0) input_history.push(name);
+            localStorage.setItem("input_history", JSON.stringify(input_history));
         };
 
         // 搜索
@@ -875,6 +916,7 @@
             // 2.在选择模式时，按下回车跳转超链接，输入值，退出选择模式
             // 3.不在选择模式时，输入框有值，按下回车查询，输入框没有值，按下回车退出查询模式
             if (event.key === "Enter") {
+                $(".search-items").hide();
                 var activeLi = $(".favorites-li.active:visible")[0];
                 if(typeof activeLi !== "undefined"){
                     $(activeLi).click();
@@ -955,7 +997,15 @@
             $(".favorites-li.active").removeClass("active");
         }).on("focus", function () {
            $("#search_close").show();
-        });
+            var html = '';
+            var input_history = JSON.parse(localStorage.getItem("input_history"));
+            $.each(input_history, function(index, item) {
+                html = '<li>' + item + '</li>' + html;
+            });
+            if (html !== "") $(".search-items").empty().append(html).show();
+        }).blur(function() { // 失去焦点隐藏搜索项
+	        $(".search-items").fadeOut(300);
+	    });
         // 添加收藏
         window.addFavorites = function (categoryId) {
             $("#addFavoritesBtn").click();
