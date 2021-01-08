@@ -275,17 +275,17 @@
 			});
 
 			$("#search_content").keyup(function(event) {
-				if (event.keyCode == 13) { // 回车搜索，隐藏搜索项
+				if (event.key === "Enter") { // 回车搜索，隐藏搜索项
 					$("#search_btn").trigger("click");
 					$(".search-items").hide();
-				} else if (event.keyCode == 38) {
+				} else if (event.key === "ArrowUp") {
 					var hover_in = typeof $(".search-items li.hover-in")[0] === "undefined" ? $(".search-items li:last")[0] : $(
 						".search-items li.hover-in").prev()[0];
 					if (typeof hover_in !== "undefined") {
 						$(hover_in).addClass('hover-in').siblings().removeClass('hover-in');
 						$(this).val(hover_in.innerText);
 					}
-				} else if (event.keyCode == 40) {
+				} else if (event.key === "ArrowDown") {
 					var hover_in = typeof $(".search-items li.hover-in")[0] === "undefined" ? $(".search-items li:first")[0] : $(
 						".search-items li.hover-in").next()[0];
 					if (typeof hover_in !== "undefined") {

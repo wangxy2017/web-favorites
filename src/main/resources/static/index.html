@@ -931,6 +931,7 @@
                     }
                 }
             } else if (event.key === "ArrowDown") {
+                $(".search-items").hide();
                 var activeLi = $(".favorites-li.active:visible")[0];
                 var list = $(".favorites-li:visible");
                 if(typeof activeLi === "undefined"){
@@ -960,6 +961,7 @@
                     }
                 }
             } else if (event.key === "ArrowUp") {
+                $(".search-items").hide();
                 var activeLi = $(".favorites-li.active:visible")[0];
                 var list = $(".favorites-li:visible");
                 if(typeof activeLi === "undefined"){
