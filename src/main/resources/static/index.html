@@ -52,7 +52,7 @@
             position: absolute;
             top: 6px;
             right: 4px;
-            font-size: 18px;
+            font-size: 20px;
             color: #666;
             display: none;
             cursor: pointer;
@@ -331,15 +331,15 @@
 
         .search-items li {
             padding-left: 10px;
-            padding-right: 20px;
+            padding-right: 26px;
             cursor: pointer;
             line-height: 26px;
             font-size: 12px;
             position: relative;
             white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            word-break: break-all;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            word-break: break-all;
         }
 
         .search-items li:hover {
@@ -663,8 +663,8 @@
         $(document).on("click", function(e) {
             var _conss = $('.search-div');//点击的容器范围
             if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
-                $(".search-items").fadeOut(300);
-                $("#search_close").fadeOut(300);
+                $(".search-items").hide();
+                $("#search_close").hide();
             }
         });
 

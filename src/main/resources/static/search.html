@@ -87,7 +87,7 @@
                 font-size: 14px;
                 position: absolute;
                 top: 0;
-                right: 10px;
+                right: 12px;
                 font-weight: bold;
             }
 
@@ -207,8 +207,8 @@
             $(document).on("click", function(e) {
                 var _conss = $('.search-form');//点击的容器范围
                 if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
-                    $(".search-items").fadeOut(300);
-                    $("#search_close").fadeOut(300);
+                    $(".search-items").hide();
+                    $("#search_close").hide();
                 }
             });
             // jQuery全局拦截器
