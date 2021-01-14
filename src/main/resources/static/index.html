@@ -690,12 +690,15 @@
         // 固定块
         util.fixbar({
             top: true
-            ,bar1: '&#xe615;'
+            ,bar1: '&#xe68d;'
+            ,bar2: '&#xe615;'
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
             ,css: {right: 30, bottom: 50}
             ,click: function(type){
                 if(type === 'bar1'){
+                    window.location.href = "moment.html";
+                }else if(type === 'bar2'){
                     window.location.href = "search.html";
                 }
             }
@@ -841,6 +844,7 @@
         $(document).on('click', '.search-items li', function() {
             var text = $(this).text();
             $("#search_name").val(text);
+            $(this).parent().hide();
             searchFavorites(text);
         });
 
