@@ -27,6 +27,17 @@ public class MomentController {
         return ApiResponse.success();
     }
 
+    @PostMapping("/update")
+    public ApiResponse update(@RequestBody Moment moment) {
+        Moment moment1 = momentService.findById(moment.getId());
+        if (moment1 != null) {
+            moment1.setContent(moment.getContent());
+            momentService.save(moment1);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
     @GetMapping("/{id}")
     public ApiResponse query(@PathVariable Integer id) {
         Moment moment = momentService.findById(id);
