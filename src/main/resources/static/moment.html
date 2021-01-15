@@ -111,7 +111,7 @@
     <div class="main">
         <ul class="layui-timeline" id="topMoment"></ul>
         <ul class="layui-timeline" id="momentList"></ul>
-        <div id="noData" style="text-align: center;display: none;">
+        <div id="noData" style="text-align: center;margin-top: 40px;display: none;">
             <img src="images/nodata-topic.svg" alt="">
             <p style="color: #666;margin-top: 10px;">您还没有瞬间，<a href="javascript:document.getElementById('addMoment').click();" style="color: #009688;">立即发布</a> ...</p>
         </div>
@@ -185,7 +185,7 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        var width = parseInt($(window).width());
+                        var width = parseInt($(window).width()) * 0.9;
                         width = (width >= 800? 800 : width) + 'px';
                         layer.open({
                           id:"wangEditor",
@@ -278,7 +278,7 @@
 
         // 发布
         $("#addMoment").click(function() {
-            var width = parseInt($(window).width());
+            var width = parseInt($(window).width()) * 0.9;
             width = (width >= 800? 800 : width) + 'px';
             layer.open({
               id:"wangEditor",
