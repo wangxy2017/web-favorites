@@ -33,6 +33,43 @@ public class MomentController {
         return ApiResponse.success(moment);
     }
 
+    @GetMapping("/top")
+    public ApiResponse queryTop() {
+        User user = springUtils.getCurrentUser();
+        Moment moment = momentService.findTopMoment(user.getId());
+        return ApiResponse.success(moment);
+    }
+
+    @PostMapping("/top/{id}")
+    public ApiResponse setTop(@PathVariable Integer id) {
+        Moment moment1 = momentService.findById(id);
+        if (moment1 != null) {
+            // 取消已有置顶
+            User user = springUtils.getCurrentUser();
+            Moment moment = momentService.findTopMoment(user.getId());
+            if (moment != null) {
+                moment.setIsTop(0);
+                momentService.save(moment);
+            }
+            // 设置新置顶
+            moment1.setIsTop(1);
+            momentService.save(moment1);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
+    @DeleteMapping("/top/{id}")
+    public ApiResponse cancelTop(@PathVariable Integer id) {
+        Moment moment = momentService.findById(id);
+        if (moment != null) {
+            moment.setIsTop(0);
+            momentService.save(moment);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
 
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
@@ -46,4 +83,5 @@ public class MomentController {
         PageInfo<Moment> page = momentService.findPageByUserId(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
+
 }
