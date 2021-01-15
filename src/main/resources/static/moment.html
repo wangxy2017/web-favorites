@@ -185,11 +185,13 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
+                        var width = parseInt($(window).width());
+                        width = (width >= 800? 800 : width) + 'px';
                         layer.open({
                           id:"wangEditor",
                           type: 2,
                           content: 'wangEditor.html#' + id,
-                          area: ['800px', '600px'],
+                          area: [width, '500px'],
                           btn: ['确认', '取消'],
                           yes: function(index, layero){
                             layer.load();
@@ -276,11 +278,13 @@
 
         // 发布
         $("#addMoment").click(function() {
+            var width = parseInt($(window).width());
+            width = (width >= 800? 800 : width) + 'px';
             layer.open({
               id:"wangEditor",
               type: 2,
               content: 'wangEditor.html',
-              area: ['800px', '600px'],
+              area: [width,'500px'],
               btn: ['确认', '取消'],
               yes: function(index, layero){
                 layer.load();
