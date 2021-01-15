@@ -111,6 +111,10 @@
     <div class="main">
         <ul class="layui-timeline" id="topMoment"></ul>
         <ul class="layui-timeline" id="momentList"></ul>
+        <div id="noData" style="text-align: center;display: none;">
+            <img src="images/nodata-topic.svg" alt="">
+            <p style="color: #666;margin-top: 10px;">您还没有瞬间，<a href="javascript:document.getElementById('addMoment').click();" style="color: #009688;">立即发布</a> ...</p>
+        </div>
     </div>
 </div>
 <div class="footer">
@@ -347,6 +351,17 @@
 
         $(function(){
             loadTopMoment();
+            // 暂无数据
+            $.ajax({
+                type: "GET",
+                url: "moment/count",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0 && result.data == 0) {
+                        $("#noData").show();
+                    }
+                }
+            });
         });
     });
 </script>

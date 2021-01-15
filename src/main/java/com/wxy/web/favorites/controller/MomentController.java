@@ -44,6 +44,13 @@ public class MomentController {
         return ApiResponse.success(moment);
     }
 
+    @GetMapping("/count")
+    public ApiResponse count() {
+        User user = springUtils.getCurrentUser();
+        int count = momentService.countByUserId(user.getId());
+        return ApiResponse.success(count);
+    }
+
     @GetMapping("/top")
     public ApiResponse queryTop() {
         User user = springUtils.getCurrentUser();

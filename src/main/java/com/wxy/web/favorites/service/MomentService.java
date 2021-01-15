@@ -49,5 +49,9 @@ public class MomentService {
         Page<Moment> page = momentRepository.findByUserId(userId, pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
+
+    public int countByUserId(Integer userId){
+        return momentRepository.countByUserId(userId);
+    }
 }
 

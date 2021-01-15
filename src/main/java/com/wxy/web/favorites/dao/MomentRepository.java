@@ -21,4 +21,11 @@ public interface MomentRepository extends JpaRepository<Moment, Integer> {
 
     @Query("select m from  Moment m where m.userId = :userId and m.isTop = 1 ")
     Moment findTopMoment(Integer userId);
+
+    /**
+     * 计数
+     * @param userId
+     * @return
+     */
+    int countByUserId(Integer userId);
 }
