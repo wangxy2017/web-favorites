@@ -32,7 +32,7 @@ public class Moment {
     private Integer userId;
 
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
     private Date createTime;
 
