@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface MomentRepository extends JpaRepository<Moment, Integer> {
@@ -17,7 +19,7 @@ public interface MomentRepository extends JpaRepository<Moment, Integer> {
      * @param pageable 分页信息
      * @return
      */
-    Page<Moment> findByUserId(Integer userId, Pageable pageable);
+    Page<Moment> findPageByUserId(Integer userId, Pageable pageable);
 
     @Query("select m from  Moment m where m.userId = :userId and m.isTop = 1 ")
     Moment findTopMoment(Integer userId);
@@ -28,4 +30,6 @@ public interface MomentRepository extends JpaRepository<Moment, Integer> {
      * @return
      */
     int countByUserId(Integer userId);
+
+    List<Moment> findByUserId(Integer userId);
 }

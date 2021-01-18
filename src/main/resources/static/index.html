@@ -392,7 +392,7 @@
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
                     <dd><a href="javascript:;" id="changeEmail">修改邮箱</a></dd>
-                    <dd><a href="javascript:;" id="importOrExportBtn">导入/导出</a></dd>
+                    <dd><a href="javascript:;" id="importOrExportBtn">导入/备份</a></dd>
                     <dd><a href="javascript:;" id="logout">安全退出</a></dd>
                 </dl>
             </li>
@@ -425,10 +425,26 @@
     <img src="images/no_data.svg" alt="">
     <span>找不到结果</span>
 </div>
-<!-- 导入/导出 -->
-<div class="layui-btn-container" id="importOrExport" style="display: none;margin: 16px 0;text-align: center">
-    <button type="button" class="layui-btn" id="import">导入收藏夹</button>
-    <button type="button" class="layui-btn" id="export">导出收藏夹</button>
+<!-- 导入/备份 -->
+<div class="layui-tab layui-tab-brief" id="importOrExport" style="display: none;">
+    <ul class="layui-tab-title">
+        <li class="layui-this">导入</li>
+        <li>备份</li>
+    </ul>
+    <div class="layui-tab-content" style="text-align: center;">
+        <div class="layui-tab-item layui-show">
+            <button style="margin-top: 20px;" type="button" class="layui-btn" id="import">导入收藏夹</button>
+            <div style="margin: 20px 0;color: #999;line-height: 32px;">请将 "export.xml" 文件上传至服务器</div>
+        </div>
+        <div class="layui-tab-item">
+            <button style="margin-top: 20px;" type="button" class="layui-btn" id="export">备份收藏夹</button>
+            <div class="layui-form" style="margin: 20px 0;line-height: 32px;">
+                <span>备份数据：</span>
+                <input type="checkbox" id="favorites" name="favorites" title="收藏" lay-skin="primary" checked>
+                <input type="checkbox" id="moment" name="moment" title="瞬间" lay-skin="primary" checked>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- 添加收藏表单 -->
 <form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px">
@@ -824,8 +840,10 @@
         });
 
         $("#export").click(function () {
+            var favorites = $("#favorites").is(":checked")?"1":"0";
+            var moment = $("#moment").is(":checked")?"1":"0";
             layer.close(indexMap.get('#importOrExport'));
-            window.location.href = "favorites/export";
+            window.location.href = "favorites/export?f="+ favorites +"&m=" + moment;
         });
 
         $("#cancelPwd").click(function () {
@@ -865,8 +883,8 @@
         $("#importOrExportBtn").click(function () {
             var index = layer.open({
                 type: 1,
-                title: "导入/导出收藏",
                 area: '400px',
+                title: false,
                 content: $('#importOrExport')
             });
             indexMap.set('#importOrExport',index);

@@ -26,6 +26,10 @@ public class MomentService {
     @Autowired
     private MomentRepository momentRepository;
 
+    public void saveAll(List<Moment> momentList){
+        momentRepository.saveAll(momentList);
+    }
+
     public Moment save(Moment moment) {
         return momentRepository.save(moment);
     }
@@ -38,7 +42,7 @@ public class MomentService {
         momentRepository.deleteById(id);
     }
 
-    public Moment findTopMoment(Integer userId){
+    public Moment findTopMoment(Integer userId) {
         return momentRepository.findTopMoment(userId);
     }
 
@@ -46,11 +50,15 @@ public class MomentService {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
-        Page<Moment> page = momentRepository.findByUserId(userId, pageable);
+        Page<Moment> page = momentRepository.findPageByUserId(userId, pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 
-    public int countByUserId(Integer userId){
+    public List<Moment> findByUserId(Integer userId) {
+        return momentRepository.findByUserId(userId);
+    }
+
+    public int countByUserId(Integer userId) {
         return momentRepository.countByUserId(userId);
     }
 }

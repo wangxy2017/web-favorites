@@ -1,11 +1,9 @@
 package com.wxy.web.favorites.controller;
 
-import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.model.Favorites;
-import com.wxy.web.favorites.model.Password;
-import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
+import com.wxy.web.favorites.service.MomentService;
 import com.wxy.web.favorites.service.PasswordService;
 import com.wxy.web.favorites.util.*;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +39,9 @@ public class FavoritesController {
 
     @Autowired
     private PasswordService passwordService;
+
+    @Autowired
+    private MomentService momentService;
 
     @Value("${app.page-size:10}")
     private Integer pageSize;
@@ -168,12 +169,22 @@ public class FavoritesController {
         return ApiResponse.error("非法操作");
     }
 
-    private List<Category> parseXML(InputStream in) throws DocumentException {
+    private void parseMomentList(InputStream in) throws DocumentException {
+        Integer userId = springUtils.getCurrentUser().getId();
+        List<Moment> list = new ArrayList<>();
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(in);
+        Element root = document.getRootElement();
+        root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+        momentService.saveAll(list);
+    }
+
+    private List<Category> parseCategoryList(InputStream in) throws DocumentException {
         List<Category> list = new ArrayList<>();
         SAXReader reader = new SAXReader();
         Document document = reader.read(in);
         Element root = document.getRootElement();
-        root.elements("CATEGORY").forEach(c -> {
+        root.element("CATEGORIES").elements("CATEGORY").forEach(c -> {
             List<Favorites> list1 = new ArrayList<>();
             c.element("LIST").elements("FAVORITES").forEach(f -> {
                 int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
@@ -200,7 +211,7 @@ public class FavoritesController {
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
         User user = springUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
-            List<Category> list = parseXML(file.getInputStream());
+            List<Category> list = parseCategoryList(file.getInputStream());
             // 查询用户已存在的数据，防止重复导入
             List<Category> categories = categoryService.findByUserId(user.getId());
             categories.forEach(category -> {
@@ -251,6 +262,8 @@ public class FavoritesController {
                     });
                 }
             });
+            // 保存瞬间
+            parseMomentList(file.getInputStream());
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -279,30 +292,39 @@ public class FavoritesController {
     }
 
     @GetMapping("/export")
-    public void export() throws IOException {
+    public void export(@RequestParam(required = false) String f, @RequestParam(required = false) String m) throws IOException {
+        List<Category> categories = new ArrayList<>();
+        List<Moment> momentList = new ArrayList<>();
         User user = springUtils.getCurrentUser();
         // 查询用户分类
-        List<Category> categories = categoryService.findByUserId(user.getId());
-        categories.forEach(category -> {
-            List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
-            favoritesList.forEach(favorites -> {
-                Password password = passwordService.findByFavoritesId(favorites.getId());
-                favorites.setPassword(password);
+        if ("1".equals(f)) {
+            categories = categoryService.findByUserId(user.getId());
+            categories.forEach(category -> {
+                List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
+                favoritesList.forEach(favorites -> {
+                    Password password = passwordService.findByFavoritesId(favorites.getId());
+                    favorites.setPassword(password);
+                });
+                category.setFavorites(favoritesList);
             });
-            category.setFavorites(favoritesList);
-        });
+        }
+        // 查询用户瞬间
+        if ("1".equals(m)) {
+            momentList = momentService.findByUserId(user.getId());
+        }
         HttpServletResponse response = springUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流
-        writeXML(response.getOutputStream(), categories);
+        writeXML(response.getOutputStream(), categories, momentList);
     }
 
-    private void writeXML(OutputStream out, List<Category> categories) throws IOException {
+    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList) throws IOException {
         Document document = DocumentHelper.createDocument();
-        Element data = document.addElement("DATA");
+        Element root = document.addElement("DATA");
+        Element categoriesList = root.addElement("CATEGORIES");
         categories.forEach(c -> {
-            Element category = data.addElement("CATEGORY");
+            Element category = categoriesList.addElement("CATEGORY");
             category.addElement("NAME").setText(c.getName());
             if (c.getSort() != null) {
                 category.addElement("SORT").setText(String.valueOf(c.getSort()));
@@ -332,6 +354,11 @@ public class FavoritesController {
                     pwd.addElement("PASSWORD").setText(password.getPassword());
                 }
             });
+        });
+        Element moments = root.addElement("MOMENTS");
+        momentList.forEach(m -> {
+            Element moment = moments.addElement("MOMENT");
+            moment.addElement("CONTENT").setText(m.getContent());
         });
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
