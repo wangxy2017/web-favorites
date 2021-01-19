@@ -49,6 +49,7 @@ public class MomentService {
     public PageInfo<Moment> findPageByUserId(Integer userId, Integer pageNum, Integer pageSize) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         Page<Moment> page = momentRepository.findPageByUserId(userId, pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
