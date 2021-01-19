@@ -69,9 +69,8 @@
 			}
 
 			.time {
-				font-size: 14px;
-				color: #999;
-				margin-left: 6px;
+				font-size: 14px !important;
+				color: #999 !important;
 			}
 
 			.moment {
@@ -147,7 +146,7 @@
                                 html += '<li class="layui-timeline-item" data-id="' + item.id + '">';
                                 html += '   <i class="layui-icon layui-timeline-axis">&#xe63f;</i>';
                                 html += '   <div class="layui-timeline-content layui-text">';
-                                html += '       <h3 class="layui-timeline-title">' + item.createTime.substring(0,10) + '<span class="time">' + item.createTime.substring(11) + '</span></h3>';
+                                html += '       <h3 class="layui-timeline-title time">' + item.createTime + '</h3>';
                                 html += '       <div class="moment">';
                                 html += '           <div class="content">'+ item.content +'</div>';
                                 html += '           <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
@@ -341,7 +340,7 @@
                         html += '<li class="layui-timeline-item">';
                         html += '   <i class="layui-icon layui-timeline-axis">&#xe63f;</i>';
                         html += '   <div class="layui-timeline-content layui-text">';
-                        html += '       <h3 class="layui-timeline-title"><span class="layui-badge layui-bg-cyan set-top" data-id="' + moment.id + '">置顶</span>' + moment.createTime.substring(0,10) + '<span class="time">' + moment.createTime.substring(11) + '</span></h3>';
+                        html += '       <h3 class="layui-timeline-title time"><span class="layui-badge layui-bg-cyan set-top" data-id="' + moment.id + '">置顶</span>' + moment.createTime + '</h3>';
                         html += '       <div class="moment">';
                         html += '           <div class="content">'+ moment.content +'</div>';
                         html += '       </div>';
