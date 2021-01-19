@@ -861,7 +861,7 @@
         // 搜索项绑定点击事件
         $(document).on('click', '.search-items li', function() {
             var text = $(this).text();
-            $("#search_name").val(text);
+            $("#search_name").val(text).focus();
             $(this).parent().hide();
             searchFavorites(text);
         });
@@ -1064,7 +1064,7 @@
                     }
                 }
             } else if (event.key === "Backspace") {
-                //退出选择模式
+                // 退出选择模式
                 $(".favorites-li.active").removeClass("active");
             }
         }).on("input", function () {
