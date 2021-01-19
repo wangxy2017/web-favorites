@@ -369,7 +369,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="width: 150px;">
+        <div class="layui-logo" style="width: 150px;cursor: pointer;" onclick="window.location.reload();">
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-div">
@@ -1611,6 +1611,8 @@
                     if (result.code == 0) {
                         layer.msg("操作成功", {icon: 6});
                         loadStarFavorites();
+                        // 退出搜索模式
+                        $("#search_close").click();
                     } else {
                         layer.msg(result.msg, {icon: 5});
                         // 回退
@@ -1676,7 +1678,7 @@
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#add-favorites'));
                     if (result.code == 0) {
-                        loadList();
+                        window.location.reload();
                     } else {
                         layer.msg("添加失败", {icon: 5});
                     }
