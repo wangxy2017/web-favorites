@@ -216,6 +216,7 @@
 
         .catalog ul {
             padding: 10px;
+            min-height: 120px;
         }
 
         .catalog li {
@@ -364,6 +365,26 @@
         .search-items li:hover .history-close {
             display: block;
         }
+
+        #slideBtn {
+            display: inline-block;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            margin-bottom: 1px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 24px;
+            background-color: #393D49;
+            color: #fff;
+            border-radius: 2px;
+            opacity: .95;
+        }
+
+        #slideBtn:hover {
+            opacity: .85
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -402,6 +423,7 @@
     <div class="layui-body" id="layuiBody" style="padding: 15px;left: 0;">
         <!-- 内容主体区域 -->
         <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
+            <span class="layui-icon layui-icon-right" id="slideBtn"></span>
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
         </div>
@@ -656,6 +678,8 @@
         </div>
     </div>
 </form>
+<!-- 目录 -->
+<ul id="catalogList" style="display:none;"></ul>
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
@@ -670,8 +694,6 @@
         var util = layui.util;
 
         var limit = 40;// 显示个数限制
-
-        var catalogLimit = 4;// 显示目录阀值
 
         var indexMap = new Map();// 索引map
 
@@ -1848,30 +1870,32 @@
                 url: "category/catalog",
                 dataType: "json",
                 success: function (result) {
-                    if (result.code == 0 && result.data.length >= catalogLimit) {
-                        var lis = '';
+                    if (result.code == 0) {
+                        var html = '';
                         $.each(result.data, function (i, c) {
-                            lis += '<li><a href="javascript:;" onclick="position(' + c.id + ')"><cite>' + c.name + '</cite></a></li>';
+                            html += '<li><a href="javascript:;" onclick="position(' + c.id + ')"><cite>' + c.name + '</cite></a></li>';
                         });
-
-                        layer.open({
-                          title: '目录'
-                          ,content: '<ul>' + lis + '</ul>'
-                          ,type: 1
-                          ,skin: 'catalog'
-                          ,shade: 0
-                          ,offset: 'catalog'
-                          ,maxHeight: 600
-                        });
-
-                        $(".catalog li a").on('click',function(){
-                            $(".catalog li a.layui-this").removeClass("layui-this");
+                        $("#catalogList").empty().append(html);
+                        // 绑定点击事件
+                        $("#catalogList a").on('click',function(){
+                            $("#catalogList a.layui-this").removeClass("layui-this");
                             $(this).addClass("layui-this");
                         });
                     }
                 }
             });
         };
+
+        $("#slideBtn").click(function(){
+            layer.open({
+              title: '目录'
+              ,content: $("#catalogList")
+              ,type: 1
+              ,skin: 'catalog'
+              ,offset: 'catalog'
+              ,maxHeight: 600
+            });
+        });
 
         // 页面加载完成执行
         $(function () {
