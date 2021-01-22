@@ -227,6 +227,15 @@
 				font-weight: bold;
 			}
 
+			.lunar {
+				position: absolute;
+				right: 8px;
+				bottom: 4px;
+				display: block;
+				line-height: initial;
+				color: #ccc;
+			}
+
 		</style>
 </head>
 <body>
@@ -248,6 +257,7 @@
             <div class="day-list">
                 <div class="day-item">
                     <span class="date"></span>
+                    <span class="lunar"></span>
                     <span class="layui-badge task-count">0</span>
                     <div class="layui-anim layui-anim-fadein task-new-mask">
                         <button type="button" class="layui-btn layui-btn-sm task-new-btn">添加日程</button>
@@ -343,6 +353,7 @@
     </div>
 </form>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/calendar.js"></script>
 <script src="layui/layui.js"></script>
 <script>
     layui.use(['layer', 'form', 'laydate'], function() {
@@ -439,6 +450,13 @@
                 '') + now.getDate()
         };
 
+        // 获取农历
+        window.getLunar = function(text) { // 2020-01-11
+            var split = text.split("-");
+            var lunar = calendar.solar2lunar(split[0], split[1], split[2]);
+            return lunar;
+        };
+
         // 数据
         var data = {
             "month": "2021-12",
@@ -490,6 +508,7 @@
                 for (var j = 0; j < 7; j++) {
                     html += '	<div class="day-item ">';
                     html += '		<span class="date"></span>';
+                    html += '		<span class="lunar"></span>';
                     html += '	</div>';
                 }
                 html += '</div>';
@@ -498,19 +517,26 @@
             // 填数据
             $('#calendar .date').each(function(index) {
                 index = index + 1;
+                var day;
                 if (index < firstDayWeekDay) {
                     var num = preMonthDays - (firstDayWeekDay - index - 1);
+                    day = preMonth + '-' + (num < 10 ? '0' : '') + num;
                     $(this).css("color", "#ccc").html(num);
-                    $(this).parent().attr("id", preMonth + '-' + (num < 10 ? '0' : '') + num);
+                    $(this).parent().attr("id", day);
                 } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
+                    day = currMonth + '-' + (currMonthCount < 10 ? '0' : '') + currMonthCount;
                     $(this).css("color", "inherit").html(currMonthCount);
-                    $(this).parent().attr("id", currMonth + '-' + (currMonthCount < 10 ? '0' : '') + currMonthCount);
+                    $(this).parent().attr("id", day);
                     currMonthCount++;
                 } else {
+                    day = nextMonth + '-' + (nextMonthCount < 10 ? '0' : '') + nextMonthCount;
                     $(this).css("color", "#ccc").html(nextMonthCount);
-                    $(this).parent().attr("id", nextMonth + '-' + (nextMonthCount < 10 ? '0' : '') + nextMonthCount);
+                    $(this).parent().attr("id", day);
                     nextMonthCount++;
                 }
+                // 农历
+                var lunar = getLunar(day);
+                $(this).siblings(".lunar").html(lunar.IDayCn === "初一" ? lunar.IMonthCn : lunar.IDayCn);
             });
             // 标记今天
             $("#" + today).find(".date").addClass("today");
