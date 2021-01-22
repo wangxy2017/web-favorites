@@ -375,7 +375,7 @@
             margin-bottom: 1px;
             text-align: center;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 20px;
             background-color: #393D49;
             color: #fff;
             border-radius: 2px;
@@ -683,6 +683,24 @@
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
     //JavaScript代码区域
     layui.use(['element', 'layer', 'form', 'upload','flow','util'], function () {
@@ -730,6 +748,7 @@
             top: true
             ,bar1: '&#xe68d;'
             ,bar2: '&#xe615;'
+            ,bar3: '&#xe637;'
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
             ,css: {right: 30, bottom: 50}
@@ -738,6 +757,8 @@
                     window.location.href = "moment.html";
                 }else if(type === 'bar2'){
                     window.location.href = "search.html";
+                }else if(type === 'bar3'){
+                    window.location.href = "calendar.html";
                 }
             }
         });
@@ -1916,5 +1937,3 @@
         });
     });
 </script>
-</body>
-</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|日程</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style type="text/css">
+			* {
+				user-select: none;
+			}
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 20px;
+				cursor: pointer;
+			}
+
+			.header {
+			    position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+                background-color: #23262E;
+			}
+
+			.center {
+			    position: fixed;
+                width: 100%;
+                top: 60px;
+                bottom: 44px;
+                overflow: hidden;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                height: 44px;
+                line-height: 44px;
+                background-color: #eee;
+			}
+
+			#logout {
+                margin-top: 20px;
+                margin-right: 20px;
+                float: right;
+			}
+
+			.week-list {
+				display: flex;
+			}
+
+			.week-item {
+				width: calc(100% / 7);
+				height: 38px;
+				line-height: 38px;
+				text-align: center;
+				border: 1px solid #ddd;
+				margin-right: -1px;
+				margin-bottom: -1px;
+			}
+
+			.main {
+				width: 100%;
+				padding: 15px;
+				box-sizing: border-box;
+				height: 100%;
+				overflow: auto;
+			}
+
+			.day-list {
+				display: flex;
+			}
+
+			.day-item {
+				position: relative;
+				width: calc(100% / 7);
+				height: 140px;
+				line-height: 140px;
+				text-align: center;
+				border: 1px solid #ddd;
+				margin-right: -1px;
+				margin-bottom: -1px;
+				cursor: pointer;
+			}
+
+			.day-item .task-count {
+				position: absolute;
+				top: 4px;
+				right: 4px;
+				display: none;
+			}
+
+			.task-view {
+				position: absolute;
+				top: 140px;
+				left: 50%;
+				transform: translate(-50%, 0);
+				width: 300px;
+				background-color: #fff;
+				z-index: 999;
+				box-shadow: 0 5px 15px -5px rgba(0, 0, 0, .5);
+				line-height: 30px;
+				display: none;
+			}
+
+			.day-item:hover .task-view {
+				display: block;
+			}
+
+			.task-item {
+				display: flex;
+				padding: 10px;
+			}
+
+			.task-item .clock {
+				margin-right: 10px;
+				color: #ccc;
+			}
+
+			.task-item .time {
+				margin-right: 10px;
+			}
+
+			.task-item .content {
+				text-align: left;
+			}
+
+			.calendar-header {
+				margin-bottom: 10px;
+				text-align: center;
+			}
+
+			.calendar-header .layui-icon {
+				color: #009688;
+				cursor: pointer;
+			}
+
+			.date-input {
+				background-color: #009688;
+				border-radius: 4px;
+				height: 30px;
+				width: 200px;
+				margin: 0 10px;
+			}
+
+			.date-input input {
+				background: transparent;
+				border: none;
+				text-align: center;
+				color: #fff;
+				padding: 0;
+				height: 30px;
+				line-height: 30px;
+				cursor: pointer;
+			}
+
+			.date-input span {
+				position: absolute;
+				top: 6px;
+				right: 24px;
+				color: #fff !important;
+			}
+
+			.task-new-mask {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: #fff;
+				z-index: 999;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+
+			.day-item:hover .task-new-mask {
+				display: block;
+			}
+
+			.task-header {
+				color: #1e9fff;
+				margin-top: 10px;
+				border-bottom: 1px solid #1e9fff;
+			}
+
+			.task-level {
+				top: 6px;
+				margin-right: 6px;
+				flex: 0 0 auto;
+			}
+
+			.task-list {
+				max-height: 600px;
+				overflow: auto;
+			}
+
+			#taskForm {
+				padding-top: 10px;
+				padding-right: 40px;
+			}
+
+			.today {
+				padding: 20px;
+				border-radius: 50%;
+				background-color: #009688;
+				color: #fff !important;
+			}
+
+			.calendar-header .left,
+			.calendar-header .right {
+				display: inline-block;
+				padding: 4px 6px;
+				vertical-align: middle;
+			}
+
+			.date {
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+		</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
+</div>
+<div class="center" id="center">
+    <div class="main">
+        <div class="calendar-header">
+            <span id="leftBtn" style="transform:rotate(180deg);" class="layui-icon layui-icon-triangle-r left"></span>
+            <div class="layui-inline date-input">
+                <input type="text" class="layui-input" id="calendarInput">
+                <span class="layui-icon layui-icon-triangle-d"></span>
+            </div>
+            <span id="rightBtn" class="layui-icon layui-icon-triangle-r right"></span>
+        </div>
+        <div class="calendar-table" id="calendar">
+            <div class="day-list">
+                <div class="day-item">
+                    <span class="date"></span>
+                    <span class="layui-badge task-count">0</span>
+                    <div class="layui-anim layui-anim-fadein task-new-mask">
+                        <button type="button" class="layui-btn layui-btn-sm task-new-btn">添加日程</button>
+                    </div>
+                    <div class="layui-anim layui-anim-fadein task-view">
+                        <div class="task-header">
+                            <span>2020年02月12日</span>
+                        </div>
+                        <div class="task-list">
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock"></span>
+                                <span class="layui-badge task-level">紧急</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床</span>
+                            </div>
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock" style="color: #ff5722;"></span>
+                                <span class="layui-badge layui-bg-orange task-level">优先</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床起床起床起床起床起床起床起床起床起床起床起床起床起床起床起床起床起床起床</span>
+                            </div>
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock"></span>
+                                <span class="layui-badge layui-bg-green task-level">待办</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床</span>
+                            </div>
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock"></span>
+                                <span class="layui-badge layui-bg-blue task-level">重要</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床</span>
+                            </div>
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock"></span>
+                                <span class="layui-badge layui-bg-cyan task-level">完成</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床</span>
+                            </div>
+                            <div class="task-item">
+                                <span class="layui-icon layui-icon-time clock"></span>
+                                <span class="layui-badge layui-bg-gray task-level">取消</span>
+                                <span class="time">03:22:20</span>
+                                <span class="content">起床</span>
+                            </div>
+                        </div>
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn layui-btn-sm task-new-btn">添加日程</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    © 2020 在线网络收藏夹 || 在线网络收藏夹版权所有
+</div>
+<form class="layui-form" action="" id="taskForm" style="display: none;">
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">日程内容</label>
+        <div class="layui-input-block">
+            <textarea name="content" required lay-verify="required" placeholder="请输入日程内容..." class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">执行时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="time" id="timeInput" required lay-verify="required" placeholder="请选择时间" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">事件等级</label>
+        <div class="layui-input-block">
+            <input type="radio" name="level" value="0" title="紧急" checked>
+            <input type="radio" name="level" value="1" title="优先">
+            <input type="radio" name="level" value="2" title="重要">
+            <input type="radio" name="level" value="3" title="待办">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮件提醒</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="isClock" lay-skin="switch">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="saveTaskBtn">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary">取消</button>
+        </div>
+    </div>
+</form>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'form', 'laydate'], function() {
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        // jQuery全局拦截器
+        $(document).ajaxSuccess(function(event,xhr,options){
+            var result = xhr.responseJSON;
+            if(result != undefined && result.code == "1001"){
+                window.location.href= "login.html";
+            }
+        });
+
+        laydate.render({
+            elem: '#calendarInput',
+            type: 'month',
+            format: 'yyyy年MM月',
+            value: new Date(),
+            theme: 'grid',
+            btns: ['confirm'],
+            done: function(value, date, endDate) {
+                var text = value.substring(0, 4) + '-' + value.substring(5, 7);
+                drawCalender(text);
+            }
+        });
+
+        laydate.render({
+            elem: '#timeInput',
+            type: 'time'
+        });
+
+        // 获取某月第一天是周几
+        window.getFirstDayWeekDay = function(text) { // 2021-12
+            var split = text.split('-');
+            var d = new Date(parseInt(split[0]), parseInt(split[1]) - 1, 1);
+            d.setDate(1);
+            return d.getDay();
+        };
+
+        // 获取某月有多少天
+        window.getCurrMonthDays = function(text) { // 2021-12
+            var split = text.split('-');
+            var d = new Date(parseInt(split[0]), parseInt(split[1]), 0);
+            return d.getDate();
+        };
+
+        // 获取上个月有多少天
+        window.getPreMonthDays = function(text) { // 2021-12
+            var split = text.split('-');
+            var d = new Date(parseInt(split[0]), parseInt(split[1]) - 1, 1);
+            if (d.getMonth() == 0) {
+                d.setFullYear(d.getFullYear() - 1);
+                d.setMonth(11);
+            } else {
+                d.setMonth(d.getMonth() - 1);
+            }
+            return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+        };
+
+        // 获取上一个月
+        window.getPreMonth = function(text) { // 2021-12
+            var split = text.split('-');
+            var d = new Date(parseInt(split[0]), parseInt(split[1]) - 1, 1);
+            if (d.getMonth() == 0) {
+                d.setFullYear(d.getFullYear() - 1);
+                d.setMonth(11);
+            } else {
+                d.setMonth(d.getMonth() - 1);
+            }
+            return d.getFullYear() + '-' + (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1);
+        };
+
+        // 获取下一个月
+        window.getNextMonth = function(text) { // 2021-12
+            var split = text.split('-');
+            var d = new Date(parseInt(split[0]), parseInt(split[1]) - 1, 1);
+            if (d.getMonth() == 11) {
+                d.setFullYear(d.getFullYear() + 1);
+                d.setMonth(0);
+            } else {
+                d.setMonth(d.getMonth() + 1);
+            }
+            return d.getFullYear() + '-' + (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1);
+        };
+
+        // 获取今天日期
+        window.getToday = function() {
+            var now = new Date();
+            return now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' : '') + (now.getMonth() + 1) + '-' + (now.getDate() <
+                10 ?
+                '0' :
+                '') + now.getDate()
+        };
+
+        // 数据
+        var data = {
+            "month": "2021-12",
+            "dataList": [{
+                "date": "2021-12-11",
+                "count": 0,
+                "taskList": [{
+                    "id": 1,
+                    "content": "起床",
+                    "time": "10:30:00",
+                    "level": 1
+                }]
+            }]
+        };
+
+        // 画日历
+        window.drawCalender = function(text) { // 2021-12
+            if (!text) {
+                var now = new Date();
+                text = now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' : '') + (now.getMonth() + 1);
+            }
+            // 获取当前月份第一天星期几
+            var firstDayWeekDay = getFirstDayWeekDay(text);
+            // 获取当前月份有多少天
+            var currMonthDays = getCurrMonthDays(text);
+            // 获取上月有多少天
+            var preMonthDays = getPreMonthDays(text);
+            var currMonthCount = 1;
+            var currMonthBlock = firstDayWeekDay + currMonthDays - 1;
+            var nextMonthCount = 1;
+            var currMonth = text;
+            var preMonth = getPreMonth(text);
+            var nextMonth = getNextMonth(text);
+            var today = getToday();
+            // console.log(firstDayWeekDay, currMonthDays, preMonthDays, currMonth, preMonth, nextMonth);
+            // 画格子
+            var html = '';
+            html += '<div class="week-list">';
+            html += '	<div class="week-item">周一</div>';
+            html += '	<div class="week-item">周二</div>';
+            html += '	<div class="week-item">周三</div>';
+            html += '	<div class="week-item">周四</div>';
+            html += '	<div class="week-item">周五</div>';
+            html += '	<div class="week-item">周六</div>';
+            html += '	<div class="week-item">周日</div>';
+            html += '</div>';
+            for (var i = 0; i < 6; i++) {
+                html += '<div class="day-list">';
+                for (var j = 0; j < 7; j++) {
+                    html += '	<div class="day-item ">';
+                    html += '		<span class="date"></span>';
+                    html += '	</div>';
+                }
+                html += '</div>';
+            }
+            $("#calendar").addClass("calendar-table").empty().append(html);
+            // 填数据
+            $('#calendar .date').each(function(index) {
+                index = index + 1;
+                if (index < firstDayWeekDay) {
+                    var num = preMonthDays - (firstDayWeekDay - index - 1);
+                    $(this).css("color", "#ccc").html(num);
+                    $(this).parent().attr("id", preMonth + '-' + (num < 10 ? '0' : '') + num);
+                } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
+                    $(this).css("color", "inherit").html(currMonthCount);
+                    $(this).parent().attr("id", currMonth + '-' + (currMonthCount < 10 ? '0' : '') + currMonthCount);
+                    currMonthCount++;
+                } else {
+                    $(this).css("color", "#ccc").html(nextMonthCount);
+                    $(this).parent().attr("id", nextMonth + '-' + (nextMonthCount < 10 ? '0' : '') + nextMonthCount);
+                    nextMonthCount++;
+                }
+            });
+            // 标记今天
+            $("#" + today).find(".date").addClass("today");
+        };
+
+        drawCalender();
+
+        //监听提交
+        form.on('submit(saveTaskBtn)', function(data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+
+        $(document).on('click', '.task-new-btn', function() {
+            layer.open({
+                type: 1,
+                content: $('#taskForm')
+            });
+        });
+
+        $("#leftBtn").click(function() {
+            var date = $("#calendarInput").val();
+            var preMonth = getPreMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
+            var split = preMonth.split("-");
+            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
+            drawCalender(preMonth);
+        });
+
+        $("#rightBtn").click(function() {
+            var date = $("#calendarInput").val();
+            var nextMonth = getNextMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
+            var split = nextMonth.split("-");
+            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
+            drawCalender(nextMonth);
+        });
+
+        // 登出
+        $("#logout").click(function () {
+            $.ajax({
+                type: "GET",
+                url: "login/out",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        window.location.href = "login.html";
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+</html>
