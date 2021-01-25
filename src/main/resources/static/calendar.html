@@ -79,8 +79,7 @@
 				padding: 15px;
 				box-sizing: border-box;
 				height: 100%;
-				overflow-x: hidden;
-                overflow-y: auto;
+                overflow: auto;
 			}
 
 			.day-list {
@@ -107,19 +106,12 @@
 
 			.task-view {
 				position: absolute;
-				top: 140px;
-				left: 50%;
-				transform: translate(-50%, 0);
 				width: 300px;
 				background-color: #fff;
 				z-index: 999;
 				box-shadow: 0 5px 15px -5px rgba(0, 0, 0, .5);
 				line-height: 30px;
 				display: none;
-			}
-
-			.day-item:hover .task-view {
-				display: block;
 			}
 
 			.task-item {
@@ -260,7 +252,7 @@
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
 <div class="center" id="center">
-    <div class="main">
+    <div class="main" id="main">
         <div class="calendar-header">
             <span id="leftBtn" style="transform:rotate(180deg);" class="layui-icon layui-icon-triangle-r left"></span>
             <div class="layui-inline date-input">
@@ -502,7 +494,29 @@
                             html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
                             html += '   </div>';
                             html += '</div>';
-                            $("#" + date).append(html).find(".task-new-mask").remove();
+                            $("#" + date).append(html).hover(function(){// 任务列表显示
+                                var offset = $(this).offset();
+                                var mWidth = parseInt($("#main").width());
+                                var mHeight = parseInt($("#main").height());
+                                console.log(offset.top,offset.left,mWidth,mHeight);
+                                var top;
+                                var right;
+                                var bottom;
+                                var left;
+                                if(offset.left < 400){
+                                    left = $(this).width();
+                                }
+                                if(mHeight - offset.top < 400){
+                                    bottom = $(this).height();
+                                }
+                                if(mWidth - offset.left < 400){
+                                    right = $(this).width();
+                                }
+                                console.log(top,right,bottom,left);
+                                $(this).find('.task-view').css({"top":top,"right":right,"bottom":bottom,"left":left}).show();
+                            },function(){
+                                $(this).find('.task-view').hide();
+                            }).find(".task-new-mask").remove();
                         });
                     }
                 }
