@@ -216,7 +216,7 @@
 				padding-right: 40px;
 			}
 
-			.today .date {
+			.day-today .date {
 				padding: 20px;
 				border-radius: 50%;
 				background-color: #009688;
@@ -441,6 +441,19 @@
             return lunar;
         };
 
+        // 日期比较
+        window.dateCompare = function(text1,text2){ // 2020-01-11
+            var date1 = new Date(text1.replace("-","/"));
+            var date2 = new Date(text2.replace("-","/"));
+            if(date1 < date2){
+                return -1;
+            }else if(date1 == date2){
+                return 0;
+            }else{
+                return 1;
+            }
+        }
+
         window.getLabel = function(level){
             var html = '';
             switch(level) {
@@ -554,17 +567,17 @@
                     day = preMonth + '-' + (num < 10 ? '0' : '') + num;
                     $(this).attr("id", day).addClass('last-month').find('.date').text(num);
                 } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
-                    var c = '';
-                    if(currMonth == nowMonth){
-                        if(currMonthCount < nowDay){
-                            c = 'yesterday';
-                        }else if(currMonthCount == nowDay){
-                            c = 'today';
-                        } else if(currMonthCount > nowDay){
-                            c = 'tomorrow'
-                        }
-                    }
                     day = currMonth + '-' + (currMonthCount < 10 ? '0' : '') + currMonthCount;
+                    // 过去 现在 未来
+                    var c = '';
+                    var value = dateCompare(day,today);
+                    if(value == -1){
+                        c = 'day-before';
+                    }else if(value == 0){
+                        c = 'day-today';
+                    }else {
+                        c = 'day-after';
+                    }
                     $(this).attr("id", day).addClass(c).find('.date').text(currMonthCount);
                     currMonthCount++;
                 } else {
@@ -577,7 +590,7 @@
                 $(this).find(".lunar").text(lunar.IDayCn === "初一" ? lunar.IMonthCn : lunar.IDayCn);
             });
             // 给今天和明天添加新增日程按钮
-            $(".day-item.tomorrow,.day-item.today").each(function(){
+            $(".day-item.day-after,.day-item.day-today").each(function(){
                 var d = $(this).attr("id");
                 var html = '';
                 html += '<div class="layui-anim layui-anim-fadein task-new-mask">';
