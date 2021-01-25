@@ -117,6 +117,7 @@
 			.task-item {
 				display: flex;
 				padding: 10px;
+				position: relative;
 			}
 
 			.task-item .clock {
@@ -132,6 +133,17 @@
 				text-align: left;
                 word-break: break-all;
                 flex: 1;
+			}
+
+			.task-item .task-action {
+			    position: absolute;
+                bottom: 4px;
+                right: 0;
+                display:none;
+			}
+
+			.task-item:hover .task-action {
+			    display:block;
 			}
 
 			.calendar-header {
@@ -487,6 +499,12 @@
                                 html += '   <div class="task-item">';
                                 html += getLabel(t.level);
                                 html += '	    <span class="content">' + t.content + '</span>';
+                                if(t.level < 4){
+                                    html += '       <div class="layui-btn-container task-action" data-id="' + t.id + '">';
+                                    html += '           <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
+                                    html += '           <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                    html += '       </div>';
+                                }
                                 html += '   </div>';
                             });
                             html += '   </div>';
@@ -658,6 +676,43 @@
                 content: $('#taskForm')
             });
             indexMap.set('#taskForm',index);
+        };
+
+        // 完成任务
+        window.doTask = function(obj){
+            var id = $(obj).parent().attr("data-id");
+            $.ajax({
+                type: "GET",
+                url: "task/done/" + id ,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg('操作成功', {icon: 6});
+                        $(obj).parent().parent().find('.task-level').addClass('layui-bg-cyan').text("完成");
+                        $(obj).parent().parent().find('.task-action').remove();
+                    } else {
+                        layer.msg('操作失败', {icon: 5});
+                    }
+                }
+            });
+        };
+
+        // 删除任务
+        window.deleteTask = function(obj){
+            var id = $(obj).parent().attr("data-id");
+            $.ajax({
+                type: "GET",
+                url: "task/delete/" + id ,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg('删除成功', {icon: 6});
+                        $(obj).parent().parent().remove();
+                    } else {
+                        layer.msg('删除失败', {icon: 5});
+                    }
+                }
+            });
         };
 
         $("#rightBtn").click(function() {

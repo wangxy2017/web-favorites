@@ -45,6 +45,17 @@ public class TaskController {
         return ApiResponse.success();
     }
 
+    @GetMapping("/done/{id}")
+    public ApiResponse done(@PathVariable Integer id) {
+        Task task = taskService.findById(id);
+        if (task != null) {
+            task.setLevel(4);
+            taskService.save(task);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
     @GetMapping("/all/{date}")
     public ApiResponse findAll(@PathVariable String date) {
         User user = springUtils.getCurrentUser();
