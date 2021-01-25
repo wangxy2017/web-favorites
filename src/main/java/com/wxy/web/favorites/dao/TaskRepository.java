@@ -14,4 +14,9 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("select t from Task t where t.userId = :userId and t.taskDate between :startDate and :endDate")
     List<Task> findAllByUserId(Date startDate, Date endDate, Integer userId);
+
+    List<Task> findByAlarmTime(Date alarmTime);
+
+    @Query("select t from Task t where t.taskDate = :taskDate and t.level in (0,1,2,3)")
+    List<Task> findUndoTask(Date taskDate);
 }

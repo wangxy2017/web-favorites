@@ -54,5 +54,12 @@ public class TaskService {
         return list;
     }
 
+    public List<Task> findByAlarmTime(Date alarmTime) {
+        return taskRepository.findByAlarmTime(alarmTime);
+    }
+
+    public List<Task> findUndoTask(Date taskDate) {
+        return taskRepository.findUndoTask(taskDate);
+    }
 }
 

@@ -287,10 +287,10 @@
     <div class="layui-form-item">
         <label class="layui-form-label">事件等级</label>
         <div class="layui-input-block">
-            <input type="radio" name="level" value="0" title="紧急" checked>
-            <input type="radio" name="level" value="1" title="优先">
+            <input type="radio" name="level" value="3" title="待办" checked>
             <input type="radio" name="level" value="2" title="重要">
-            <input type="radio" name="level" value="3" title="待办">
+            <input type="radio" name="level" value="1" title="优先">
+            <input type="radio" name="level" value="0" title="紧急">
         </div>
     </div>
     <div class="layui-form-item">
@@ -458,10 +458,10 @@
                     html = '<span class="layui-badge layui-bg-orange task-level">优先</span>';
                     break;
                 case 2:
-                    html = '<span class="layui-badge layui-bg-blue task-level">重要</span>';
+                    html = '<span class="layui-badge layui-bg-green task-level">重要</span>';
                     break;
                 case 3:
-                    html = '<span class="layui-badge layui-bg-green task-level">待办</span>';
+                    html = '<span class="layui-badge layui-bg-blue task-level">待办</span>';
                     break;
                 case 4:
                     html = '<span class="layui-badge layui-bg-cyan task-level">完成</span>';
