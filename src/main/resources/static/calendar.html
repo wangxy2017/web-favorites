@@ -13,6 +13,11 @@
 				user-select: none;
 			}
 
+			/* 解决弹出框中select显示难看 */
+            .to-fix-select .layui-layer-content {
+                overflow: visible !important;
+            }
+
 			.home-icon {
 				width: 30px;
 				height: 30px;
@@ -211,11 +216,11 @@
 				padding-right: 40px;
 			}
 
-			.today {
+			.today .date {
 				padding: 20px;
 				border-radius: 50%;
 				background-color: #009688;
-				color: #fff !important;
+				color: #fff;
 			}
 
 			.calendar-header .left,
@@ -240,7 +245,11 @@
 			}
 
 			.calendar-table {
-			    margin-bottom: 300px;
+			    margin-bottom: 70px;
+			}
+
+			.last-month,.next-month {
+			    color: #ccc;
 			}
 
     </style>
@@ -255,7 +264,7 @@
         <div class="calendar-header">
             <span id="leftBtn" style="transform:rotate(180deg);" class="layui-icon layui-icon-triangle-r left"></span>
             <div class="layui-inline date-input">
-                <input type="text" class="layui-input" id="calendarInput">
+                <input type="text" class="layui-input" id="calendarInput" readonly="readonly">
                 <span class="layui-icon layui-icon-triangle-d"></span>
             </div>
             <span id="rightBtn" class="layui-icon layui-icon-triangle-r right"></span>
@@ -293,9 +302,34 @@
     <div class="layui-form-item">
         <label class="layui-form-label">提醒时间</label>
         <div class="layui-input-block">
-            <input type="text" name="alarmTime" placeholder="请选择时间"
-                   autocomplete="off"
-                   class="layui-input">
+            <select name="alarmTime" lay-search>
+                <option value="">请选择时间</option>
+                <option value="06:00">06:00</option>
+                <option value="06:30">06:30</option>
+                <option value="07:00">07:00</option>
+                <option value="07:30">07:30</option>
+                <option value="08:00">08:00</option>
+                <option value="08:30">08:30</option>
+                <option value="09:00">09:00</option>
+                <option value="09:30">09:30</option>
+                <option value="10:00">10:00</option>
+                <option value="10:30">10:30</option>
+                <option value="11:00">11:00</option>
+                <option value="11:30">11:30</option>
+                <option value="12:00">12:00</option>
+                <option value="12:30">12:30</option>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+                <option value="14:30">14:30</option>
+                <option value="15:00">15:00</option>
+                <option value="15:30">15:30</option>
+                <option value="16:00">16:00</option>
+                <option value="16:30">16:30</option>
+                <option value="17:00">17:00</option>
+                <option value="17:30">17:30</option>
+                <option value="18:00">18:00</option>
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
@@ -459,7 +493,7 @@
                             });
                             html += '   </div>';
                             html += '   <div class="layui-btn-container">';
-                            html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(' + item.date + ')">添加日程</button>';
+                            html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
                             html += '   </div>';
                             html += '</div>';
                             $("#" + date).append(html).find(".task-new-mask").remove();
@@ -512,44 +546,47 @@
             }
             $("#calendar").addClass("calendar-table").empty().append(html);
             // 填数据
-            $('#calendar .date').each(function(index) {
+            var nowDay = parseInt(today.substring(8));
+            var nowMonth = today.substring(0,7);
+            $('#calendar .day-item').each(function(index) {
                 index = index + 1;
                 var day;
                 if (index < firstDayWeekDay) {
                     var num = preMonthDays - (firstDayWeekDay - index - 1);
                     day = preMonth + '-' + (num < 10 ? '0' : '') + num;
-                    $(this).css("color", "#ccc").html(num);
-                    $(this).parent().attr("id", day);
+                    $(this).attr("id", day).addClass('last-month').find('.date').text(num);
                 } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
+                    var c = '';
+                    if(currMonth == nowMonth){
+                        if(currMonthCount < nowDay){
+                            c = 'yesterday';
+                        }else if(currMonthCount == nowDay){
+                            c = 'today';
+                        } else if(currMonthCount > nowDay){
+                            c = 'tomorrow'
+                        }
+                    }
                     day = currMonth + '-' + (currMonthCount < 10 ? '0' : '') + currMonthCount;
-                    $(this).css("color", "inherit").html(currMonthCount);
-                    $(this).parent().attr("id", day);
+                    $(this).attr("id", day).addClass(c).find('.date').text(currMonthCount);
                     currMonthCount++;
                 } else {
                     day = nextMonth + '-' + (nextMonthCount < 10 ? '0' : '') + nextMonthCount;
-                    $(this).css("color", "#ccc").html(nextMonthCount);
-                    $(this).parent().attr("id", day);
+                    $(this).attr("id", day).addClass('next-month').find('.date').text(nextMonthCount);
                     nextMonthCount++;
                 }
                 // 农历
                 var lunar = getLunar(day);
-                $(this).siblings(".lunar").html(lunar.IDayCn === "初一" ? lunar.IMonthCn : lunar.IDayCn);
+                $(this).find(".lunar").text(lunar.IDayCn === "初一" ? lunar.IMonthCn : lunar.IDayCn);
             });
-            // 标记今天
-            $("#" + today).find(".date").addClass("today");
-            // 显示添加日程按钮
-            var num = parseInt(today.substring(8));
-            var showDays = currMonthDays - num + 1;
-            for (var i = 0; i < showDays; i++) {
-                var n = num + i;
-                n = n < 10 ? '0' + n : n;
-                var d = currMonth + '-' + n;
+            // 给今天和明天添加新增日程按钮
+            $(".day-item.tomorrow,.day-item.today").each(function(){
+                var d = $(this).attr("id");
                 var html = '';
                 html += '<div class="layui-anim layui-anim-fadein task-new-mask">';
-                html += '	<button type="button" class="layui-btn layui-btn-sm" onclick="addTask('+ d +')">添加日程</button>';
+                html += '	<button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\''+ d +'\')">新增日程</button>';
                 html += '</div>';
-                $("#" + d).append(html);
-            }
+                $(this).append(html);
+            });
             // 请求后端数据
             loadDataList(text);
         };
@@ -558,11 +595,17 @@
 
         //监听提交
         form.on('submit(saveTaskBtn)', function(data) {
+            var postData = data.field;
+            if(postData.isAlarm && postData.alarmTime){
+                postData.alarmTime = postData.taskDate + ' ' + postData.alarmTime + ':00';
+            }else{
+                postData.alarmTime = "";
+            }
             layer.load();
             $.ajax({
                 type: "POST",
                 url: "task",
-                data: JSON.stringify(data.field),
+                data: JSON.stringify(postData),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
                 success: function (result) {
@@ -586,11 +629,13 @@
             drawCalender(preMonth);
         });
 
-        // 添加日程点击事件
+        // 新增日程点击事件
         window.addTask = function(text){// 2020-01-01
+            $('#taskForm')[0].reset();
             $("#taskDate").val(text);
             var index = layer.open({
                 type: 1,
+                skin: 'to-fix-select',
                 content: $('#taskForm')
             });
             indexMap.set('#taskForm',index);
