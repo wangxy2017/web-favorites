@@ -283,33 +283,37 @@
             layer.open({
               id:"wangEditor",
               type: 2,
+              title: "发布瞬间",
               content: 'wangEditor.html',
               area: [width,'500px'],
               btn: ['确认', '取消'],
               yes: function(index, layero){
-                layer.load();
                 var frameId = $(layero).find("iframe").attr('id');
                 var subWindow = document.getElementById(frameId).contentWindow;
                 var html = subWindow.editor.txt.html();
-                console.log(html);
-                // 保存数据
-                $.ajax({
-                    type: "POST",
-                    url: "moment",
-                    data: JSON.stringify({"content": html}),
-                    contentType: 'application/json;charset=utf-8',
-                    dataType: "json",
-                    success: function (result) {
-                        layer.closeAll('loading');
-                        if (result.code == 0) {
-                            layer.msg('保存成功', {icon: 6});
-                            layer.close(index);
-                            window.location.reload();
-                        } else {
-                            layer.msg('保存失败', {icon: 5});
+                if(html){
+                    layer.load();
+                    // 保存数据
+                    $.ajax({
+                        type: "POST",
+                        url: "moment",
+                        data: JSON.stringify({"content": html}),
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: "json",
+                        success: function (result) {
+                            layer.closeAll('loading');
+                            if (result.code == 0) {
+                                layer.msg('保存成功', {icon: 6});
+                                layer.close(index);
+                                window.location.reload();
+                            } else {
+                                layer.msg('保存失败', {icon: 5});
+                            }
                         }
-                    }
-                });
+                    });
+                }else{
+                    layer.msg("内容不能为空");
+                }
               }
             });
         });
