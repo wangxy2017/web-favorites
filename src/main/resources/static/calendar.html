@@ -474,7 +474,6 @@
                 url: "task/all/" + text,
                 dataType: "json",
                 success: function (result) {
-                    console.log(result);
                     if (result.code == 0) {
                         $(result.data).each(function(index,item){
                             var date = item.date;
@@ -522,7 +521,6 @@
             var preMonth = getPreMonth(text);
             var nextMonth = getNextMonth(text);
             var today = getToday();
-            // console.log(firstDayWeekDay, currMonthDays, preMonthDays, currMonth, preMonth, nextMonth);
             // 画格子
             var html = '';
             html += '<div class="week-list">';
