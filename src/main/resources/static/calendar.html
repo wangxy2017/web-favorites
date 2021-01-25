@@ -468,7 +468,7 @@
                     html = '<span class="layui-badge layui-bg-blue task-level">待办</span>';
                     break;
                 case 4:
-                    html = '<span class="layui-badge layui-bg-cyan task-level">完成</span>';
+                    html = '<span class="layui-badge-rim task-level">完成</span>';
                     break;
                 case 5:
                     html = '<span class="layui-badge layui-bg-gray task-level">取消</span>';
@@ -688,7 +688,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         layer.msg('操作成功', {icon: 6});
-                        $(obj).parent().parent().find('.task-level').addClass('layui-bg-cyan').text("完成");
+                        $(obj).parent().parent().find('.task-level').replaceWith('<span class="layui-badge-rim task-level">完成</span>');
                         $(obj).parent().parent().find('.task-action').remove();
                     } else {
                         layer.msg('操作失败', {icon: 5});
