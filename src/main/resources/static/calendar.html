@@ -201,6 +201,7 @@
 
 			.task-header {
 				color: #1e9fff;
+				font-weight: bold;
 				margin-top: 10px;
 				border-bottom: 1px solid #1e9fff;
 			}
@@ -213,6 +214,7 @@
 
 			.task-list {
 				max-height: 600px;
+				margin-bottom: 10px;
 				overflow: auto;
 			}
 
@@ -255,6 +257,12 @@
 
 			.last-month,.next-month {
 			    color: #ccc;
+			}
+
+			.task-history {
+			    position: absolute;
+                top: 8px;
+                right: 4px;
 			}
 
     </style>
@@ -301,13 +309,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">邮件提醒</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="isAlarm" lay-skin="switch" value="1">
+            <input type="checkbox" name="isAlarm" lay-filter="isAlarm" lay-skin="switch" value="1" checked>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">提醒时间</label>
         <div class="layui-input-block">
-            <select name="alarmTime" lay-search>
+            <select name="alarmTime" id="alarmTime" lay-verify="required" lay-search>
                 <option value="">请选择时间</option>
                 <option value="06:00">06:00</option>
                 <option value="06:30">06:30</option>
@@ -503,10 +511,10 @@
                                     html += getLabel(t.level);
                                     html += '	    <span class="content">' + t.content + '</span>';
                                     if(t.level < 4){
-                                        html += '       <div class="layui-btn-container task-action" data-id="' + t.id + '">';
-                                        html += '           <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
-                                        html += '           <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
-                                        html += '       </div>';
+                                        html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
+                                        html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
+                                        html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                        html += '   </div>';
                                     }
                                     html += '   </div>';
                                 });
@@ -516,6 +524,7 @@
                                 html += '   </div>';
                                 html += '</div>';
                             }else{// 昨天
+                                html += '<span class="layui-badge layui-bg-gray task-history">历史</span>';
                                 html += '<div class="layui-anim layui-anim-fadein task-view">';
                                 html += '   <div class="task-header">';
                                 html += '	    <span>' + date + '</span>';
@@ -648,7 +657,16 @@
 
         drawCalender();
 
-        //监听提交
+        // 邮件提醒开关
+        form.on('switch(isAlarm)', function(data){
+            if(data.elem.checked){
+                $("#alarmTime").attr("lay-verify","required");
+            }else{
+                $("#alarmTime").removeAttr("lay-verify");
+            }
+        });
+
+        // 监听提交
         form.on('submit(saveTaskBtn)', function(data) {
             var postData = data.field;
             if(postData.isAlarm && postData.alarmTime){
