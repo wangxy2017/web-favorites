@@ -141,11 +141,11 @@
 			    position: absolute;
                 bottom: 4px;
                 right: 0;
-                display:none;
 			}
 
-			.task-item:hover .task-action {
-			    display:block;
+			.task-item .task-action .layui-btn {
+			    height: 18px;
+                line-height: 18px;
 			}
 
 			.calendar-header {
@@ -272,6 +272,7 @@
                 margin-right: 4px;
                 margin-top: 6px;
 			}
+
 
     </style>
 </head>
@@ -516,13 +517,13 @@
                                 html += '	<div class="task-list">';
                                 $(item.taskList).each(function(i,t){
                                     html += '   <div class="task-item">';
-                                    if(t.isAlarm){
+                                    if(t.isAlarm && t.level < 4){
                                         html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
                                     }
                                     html += getLabel(t.level);
                                     html += '	    <span class="content">' + t.content + '</span>';
                                     if(t.level < 4){
-                                        html += '   <div class="layui-btn-container layui-anim layui-anim-fadein task-action" data-id="' + t.id + '">';
+                                        html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
                                         html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
                                         html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
                                         html += '   </div>';
@@ -742,9 +743,11 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
+                        var task_item = $(obj).parent().parent();
                         layer.msg('操作成功', {icon: 6});
-                        $(obj).parent().parent().find('.task-level').replaceWith('<span class="layui-badge-rim task-level">完成</span>');
-                        $(obj).parent().parent().find('.task-action').remove();
+                        task_item.find('.task-level').replaceWith('<span class="layui-badge-rim task-level">完成</span>');
+                        task_item.find('.task-action').remove();
+                        task_item.find('.alarm-icon').remove();
                     } else {
                         layer.msg('操作失败', {icon: 5});
                     }
@@ -797,6 +800,7 @@
         });
 
     });
+
 
 </script>
 </body>
