@@ -267,10 +267,11 @@
 			}
 
 			.alarm-icon {
-			    width: 18px;
-                height: 18px;
-                margin-right: 4px;
-                margin-top: 6px;
+			    width: 16px;
+                height: 16px;
+                margin-right: 10px;
+                vertical-align: top;
+                margin-top: 3px;
 			}
 
 
@@ -517,13 +518,13 @@
                                 html += '	<div class="task-list">';
                                 $(item.taskList).each(function(i,t){
                                     html += '   <div class="task-item">';
-                                    if(t.isAlarm && t.level < 4){
-                                        html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
-                                    }
                                     html += getLabel(t.level);
                                     html += '	    <span class="content">' + t.content + '</span>';
                                     if(t.level < 4){
                                         html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
+                                        if(t.isAlarm){
+                                            html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
+                                        }
                                         html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
                                         html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
                                         html += '   </div>';
@@ -574,14 +575,13 @@
                             },function(){
                                 $(this).find('.task-view').hide();
                             }).find(".task-new-mask").remove();
-
-                            // 闹钟hover事件
-                            $(".alarm-icon").hover(function(){
-                                var that = this;
-                                layer.tips($(that).attr("data-time").substring(11), that, {tips: 4});
-                            },function(){
-                                layer.closeAll('tips');
-                            });
+                        });
+                        // 闹钟hover事件
+                        $(".alarm-icon").hover(function(){
+                            var that = this;
+                            layer.tips($(that).attr("data-time").substring(11), that, {tips: 4});
+                        },function(){
+                            layer.closeAll('tips');
                         });
                     }
                 }
