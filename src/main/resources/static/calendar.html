@@ -109,10 +109,10 @@
 				position: absolute;
 				width: 300px;
 				background-color: #fff;
-				z-index: 999;
 				box-shadow: 0 5px 15px -5px rgba(0, 0, 0, .5);
 				line-height: 30px;
 				display: none;
+				z-index: 9999;
 			}
 
 			.task-item {
@@ -190,10 +190,10 @@
 				width: 100%;
 				height: 100%;
 				background-color: #fff;
-				z-index: 999;
 				top: 0;
 				left: 0;
 				display: none;
+				z-index: 1;
 			}
 
 			.day-item:hover .task-new-mask {
@@ -225,7 +225,7 @@
 			}
 
 			.day-today .date {
-				padding: 20px;
+				padding: 10%;
 				border-radius: 50%;
 				background-color: #009688;
 				color: #fff;
@@ -552,25 +552,25 @@
                                 html += '</div>';
                             }
                             $("#" + date).append(html).hover(function(){// 任务列表显示
-                                var offset = $(this).offset();
+                                var taskView = $(this).find('.task-view');
+                                var top = $(this).offset().top;
+                                var left = $(this).offset().left;
+                                var width = parseInt($(this).width());
+                                var height = parseInt($(this).height());
+                                var tWidth = parseInt(taskView.width());
+                                var tHeight = parseInt(taskView.height());
                                 var mWidth = parseInt($("#main").width());
                                 var mHeight = parseInt($("#main").height());
-                                console.log(offset.top,offset.left,mWidth,mHeight);
-                                var top;
-                                var right;
-                                var bottom;
-                                var left;
-                                if(offset.left < 400){
-                                    left = $(this).width();
+                                //console.log("top:"+top,"left:"+left,"tWidth:"+tWidth,"tHeight:"+tHeight,"mWidth:"+mWidth,"mHeight:"+mHeight);
+                                // 计算固定显示位置
+                                if(left + tWidth > mWidth && top + tHeight > mHeight){
+                                    taskView.css({"right":0,"bottom":height});
+                                }else if(left + tWidth > mWidth){
+                                    taskView.css({"right":width,"top":0});
+                                }else if(top + tHeight > mHeight){
+                                    taskView.css({"bottom":height,"left":0});
                                 }
-                                if(mHeight - offset.top < 400){
-                                    bottom = $(this).height();
-                                }
-                                if(mWidth - offset.left < 400){
-                                    right = $(this).width();
-                                }
-                                console.log(top,right,bottom,left);
-                                $(this).find('.task-view').css({"top":top,"right":right,"bottom":bottom,"left":left}).show();
+                                taskView.show();
                             },function(){
                                 $(this).find('.task-view').hide();
                             }).find(".task-new-mask").remove();
