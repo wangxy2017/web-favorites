@@ -5,10 +5,12 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.TaskService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.EmailUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
  * 2021/1/25 14:21
  **/
 @Component
+@Slf4j
 public class TaskNoticeJob {
 
     @Autowired
@@ -30,8 +33,12 @@ public class TaskNoticeJob {
 
     @Scheduled(cron = "0 0,30 6-18 * * ?")
     public void run() {
+        log.info("任务通知程序开始执行...");
         // 查询此刻任务
-        List<Task> taskList = taskService.findByAlarmTime(new Date(System.currentTimeMillis() / 1000 / 60));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        List<Task> taskList = taskService.findByAlarmTime(calendar.getTime());
         // 邮件通知
         taskList.stream().filter(t -> t.getLevel() < 4).forEach(t -> {
             User user = userService.findById(t.getUserId());

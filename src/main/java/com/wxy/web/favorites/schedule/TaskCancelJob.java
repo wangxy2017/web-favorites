@@ -2,6 +2,7 @@ package com.wxy.web.favorites.schedule;
 
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.service.TaskService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.List;
  * 2021/1/25 15:16
  **/
 @Component
+@Slf4j
 public class TaskCancelJob {
 
     @Autowired
@@ -21,6 +23,7 @@ public class TaskCancelJob {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void run() {
+        log.info("任务取消程序开始执行...");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DATE, -1);
         // 查询昨日未完成的任务，将状态改为取消
