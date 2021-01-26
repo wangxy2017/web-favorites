@@ -33,7 +33,7 @@ public class TaskNoticeJob {
         // 查询此刻任务
         List<Task> taskList = taskService.findByAlarmTime(new Date(System.currentTimeMillis() / 1000 / 60));
         // 邮件通知
-        taskList.forEach(t -> {
+        taskList.stream().filter(t -> t.getLevel() < 4).forEach(t -> {
             User user = userService.findById(t.getUserId());
             emailUtils.send(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
         });
