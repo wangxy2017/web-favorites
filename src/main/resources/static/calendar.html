@@ -690,7 +690,7 @@
         form.on('submit(saveTaskBtn)', function(data) {
             var postData = data.field;
             if(postData.isAlarm && postData.alarmTime){
-                postData.alarmTime = postData.taskDate + ' ' + postData.alarmTime + ':00';
+                postData.alarmTime = postData.taskDate.substring(0,10) + ' ' + postData.alarmTime + ':00';
             }else{
                 postData.alarmTime = "";
             }
@@ -725,7 +725,7 @@
         // 新增日程点击事件
         window.addTask = function(text){// 2020-01-01
             $('#taskForm')[0].reset();
-            $("#taskDate").val(text);
+            $("#taskDate").val(text + ' 00:00:00');
             var index = layer.open({
                 type: 1,
                 skin: 'to-fix-select',

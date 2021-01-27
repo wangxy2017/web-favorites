@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,14 +27,12 @@ public class Task {
     @Column(name = "content", nullable = false, columnDefinition = "varchar(500) comment '内容'")
     private String content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Column(name = "task_date", nullable = false, columnDefinition = "date comment '任务日期'")
     private Date taskDate;
 
     @Column(name = "is_alarm", columnDefinition = "int(1) comment '是否告警: 0-否 1-是'")
     private Integer isAlarm;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "alarm_time", columnDefinition = "datetime comment '告警时间'")
     private Date alarmTime;
 
@@ -43,7 +40,6 @@ public class Task {
     private Integer userId;
 
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
     private Date createTime;
 
