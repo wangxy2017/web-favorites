@@ -3,9 +3,9 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/favorites")
 public class FavoritesController {
@@ -170,75 +171,88 @@ public class FavoritesController {
         return ApiResponse.error("非法操作");
     }
 
-    private void parseMomentList(InputStream in) throws DocumentException {
+    private void parseMomentList(InputStream in) {
         Integer userId = springUtils.getCurrentUser().getId();
-        List<Moment> list = new ArrayList<>();
-        SAXReader reader = new SAXReader();
-        Document document = reader.read(in);
-        Element root = document.getRootElement();
-        if (root.element("MOMENTS") != null) {
-            root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+        try {
+            List<Moment> list = new ArrayList<>();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            if (root.element("MOMENTS") != null) {
+                root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+            }
+            momentService.saveAll(list);
+        } catch (Exception e) {
+            log.error("瞬间导入失败：userId = {}", userId, e);
         }
-        momentService.saveAll(list);
     }
 
-    private void parseTaskList(InputStream in) throws DocumentException {
+    private void parseTaskList(InputStream in) {
         Integer userId = springUtils.getCurrentUser().getId();
-        List<Task> list = new ArrayList<>();
-        SAXReader reader = new SAXReader();
-        Document document = reader.read(in);
-        Element root = document.getRootElement();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (root.element("TASKS") != null) {
-            root.element("TASKS").elements("TASK").forEach(t -> {
-                try {
-                    Date date = sdf.parse(t.elementText("DATE"));
-                    if (date.getTime() >= sdf.parse(sdf.format(new Date())).getTime()) {
-                        list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? 1 : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
+        try {
+            List<Task> list = new ArrayList<>();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date today = sdf.parse(sdf.format(new Date()));
+            if (root.element("TASKS") != null) {
+                root.element("TASKS").elements("TASK").forEach(t -> {
+                    try {
+                        Date date = sdf.parse(t.elementText("DATE"));
+                        if (date.getTime() >= today.getTime()) {
+                            list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? 1 : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
+                        }
+                    } catch (ParseException ignored) {
                     }
-                } catch (ParseException ignored) {
-                }
-            });
-        }
-        taskService.saveAll(list);
-    }
-
-    private List<Category> parseCategoryList(InputStream in) throws DocumentException {
-        List<Category> list = new ArrayList<>();
-        SAXReader reader = new SAXReader();
-        Document document = reader.read(in);
-        Element root = document.getRootElement();
-        if (root.element("CATEGORIES") != null) {
-            root.element("CATEGORIES").elements("CATEGORY").forEach(c -> {
-                List<Favorites> list1 = new ArrayList<>();
-                c.element("LIST").elements("FAVORITES").forEach(f -> {
-                    int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
-                    Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
-                            f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
-                            PinYinUtils.toPinyinS(f.elementText("NAME")),
-                            StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
-                            sort >= 0 && sort < 9999 ? sort : null,
-                            Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
-                    Element pwd = f.element("USER");
-                    if (pwd != null) {
-                        Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
-                        favorites.setPassword(password);
-                    }
-                    list1.add(favorites);
                 });
-                int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
-            });
+            }
+            taskService.saveAll(list);
+        } catch (Exception e) {
+            log.error("日程导入失败：userId = {}", userId, e);
+        }
+    }
+
+    private List<Category> parseCategoryList(InputStream in, Integer userId) {
+        List<Category> list = new ArrayList<>();
+        try {
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            if (root.element("CATEGORIES") != null) {
+                root.element("CATEGORIES").elements("CATEGORY").forEach(c -> {
+                    List<Favorites> list1 = new ArrayList<>();
+                    c.element("LIST").elements("FAVORITES").forEach(f -> {
+                        int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
+                        Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
+                                f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
+                                PinYinUtils.toPinyinS(f.elementText("NAME")),
+                                StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
+                                sort >= 0 && sort < 9999 ? sort : null,
+                                Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
+                        Element pwd = f.element("USER");
+                        if (pwd != null) {
+                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
+                            favorites.setPassword(password);
+                        }
+                        list1.add(favorites);
+                    });
+                    int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
+                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
+                });
+            }
+        } catch (Exception e) {
+            log.error("收藏导入失败：userId = {}", userId, e);
         }
         return list;
     }
 
     @PostMapping("/import")
-    public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException, DocumentException {
+    public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
         User user = springUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
-            List<Category> list = parseCategoryList(file.getInputStream());
+            List<Category> list = parseCategoryList(file.getInputStream(), user.getId());
             // 查询用户已存在的数据，防止重复导入
             List<Category> categories = categoryService.findByUserId(user.getId());
             categories.forEach(category -> {
