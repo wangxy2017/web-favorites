@@ -22,6 +22,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
   jackson:
     default-property-inclusion: non_null #不传输为空的值到前端
     date-format: yyyy-MM-dd HH:mm:ss
