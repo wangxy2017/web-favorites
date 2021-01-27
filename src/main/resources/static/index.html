@@ -1316,7 +1316,7 @@
             $.ajax({
                 type: "GET",
                 url: "favorites/list",
-                data: {"pageNum":page},
+                data: {"pageNum":page, "pageSize":4},
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {

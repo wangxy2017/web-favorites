@@ -43,9 +43,6 @@ public class FavoritesController {
     @Autowired
     private MomentService momentService;
 
-    @Value("${app.page-size:10}")
-    private Integer pageSize;
-
     @Value("${app.star-nums:10}")
     private Integer starLimit;
 
@@ -92,7 +89,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/list")
-    public ApiResponse list(@RequestParam Integer pageNum) {
+    public ApiResponse list(@RequestParam Integer pageNum,@RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, pageSize);

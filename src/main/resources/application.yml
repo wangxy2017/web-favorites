@@ -35,7 +35,6 @@ spring:
           ssl:
             enable: true
 app:
-  page-size: 4 #设置分页大小
   star-nums: 30 #标记个数限制
   search-nums: 100 #搜索个数限制
   favorites-nums: 40 #显示收藏个数限制
