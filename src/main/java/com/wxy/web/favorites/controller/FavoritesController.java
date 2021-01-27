@@ -1,10 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.*;
-import com.wxy.web.favorites.service.CategoryService;
-import com.wxy.web.favorites.service.FavoritesService;
-import com.wxy.web.favorites.service.MomentService;
-import com.wxy.web.favorites.service.PasswordService;
+import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -16,6 +13,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,8 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/favorites")
@@ -42,6 +43,9 @@ public class FavoritesController {
 
     @Autowired
     private MomentService momentService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Value("${app.star-nums:10}")
     private Integer starLimit;
@@ -89,7 +93,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/list")
-    public ApiResponse list(@RequestParam Integer pageNum,@RequestParam Integer pageSize) {
+    public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, pageSize);
@@ -172,8 +176,32 @@ public class FavoritesController {
         SAXReader reader = new SAXReader();
         Document document = reader.read(in);
         Element root = document.getRootElement();
-        root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+        if (root.element("MOMENTS") != null) {
+            root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+        }
         momentService.saveAll(list);
+    }
+
+    private void parseTaskList(InputStream in) throws DocumentException {
+        Integer userId = springUtils.getCurrentUser().getId();
+        List<Task> list = new ArrayList<>();
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(in);
+        Element root = document.getRootElement();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (root.element("TASKS") != null) {
+            root.element("TASKS").elements("TASK").forEach(t -> {
+                try {
+                    Date date = sdf.parse(t.elementText("DATE"));
+                    if (date.getTime() >= sdf.parse(sdf.format(new Date())).getTime()) {
+                        list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? 1 : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
+                    }
+                } catch (ParseException ignored) {
+                }
+            });
+        }
+        taskService.saveAll(list);
     }
 
     private List<Category> parseCategoryList(InputStream in) throws DocumentException {
@@ -181,26 +209,28 @@ public class FavoritesController {
         SAXReader reader = new SAXReader();
         Document document = reader.read(in);
         Element root = document.getRootElement();
-        root.element("CATEGORIES").elements("CATEGORY").forEach(c -> {
-            List<Favorites> list1 = new ArrayList<>();
-            c.element("LIST").elements("FAVORITES").forEach(f -> {
-                int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
-                Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
-                        f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
-                        PinYinUtils.toPinyinS(f.elementText("NAME")),
-                        StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
-                        sort >= 0 && sort < 9999 ? sort : null,
-                        Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
-                Element pwd = f.element("USER");
-                if (pwd != null) {
-                    Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
-                    favorites.setPassword(password);
-                }
-                list1.add(favorites);
+        if (root.element("CATEGORIES") != null) {
+            root.element("CATEGORIES").elements("CATEGORY").forEach(c -> {
+                List<Favorites> list1 = new ArrayList<>();
+                c.element("LIST").elements("FAVORITES").forEach(f -> {
+                    int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
+                    Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
+                            f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
+                            PinYinUtils.toPinyinS(f.elementText("NAME")),
+                            StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
+                            sort >= 0 && sort < 9999 ? sort : null,
+                            Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
+                    Element pwd = f.element("USER");
+                    if (pwd != null) {
+                        Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
+                        favorites.setPassword(password);
+                    }
+                    list1.add(favorites);
+                });
+                int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
+                list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
             });
-            int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-            list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
-        });
+        }
         return list;
     }
 
@@ -261,6 +291,8 @@ public class FavoritesController {
             });
             // 保存瞬间
             parseMomentList(file.getInputStream());
+            // 保存日程
+            parseTaskList(file.getInputStream());
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -289,9 +321,10 @@ public class FavoritesController {
     }
 
     @GetMapping("/export")
-    public void export(@RequestParam(required = false) String f, @RequestParam(required = false) String m) throws IOException {
+    public void export(@RequestParam(required = false) String f, @RequestParam(required = false) String m, @RequestParam(required = false) String t) throws IOException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
+        List<Task> taskList = new ArrayList<>();
         User user = springUtils.getCurrentUser();
         // 查询用户分类
         if ("1".equals(f)) {
@@ -309,54 +342,82 @@ public class FavoritesController {
         if ("1".equals(m)) {
             momentList = momentService.findByUserId(user.getId());
         }
+        // 查询近一年用户未完成的日程
+        if ("1".equals(t)) {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String startDate = sdf.format(calendar.getTime());
+            calendar.add(Calendar.YEAR, 1);
+            String endDate = sdf.format(calendar.getTime());
+            taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < 4).collect(Collectors.toList());
+        }
         HttpServletResponse response = springUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流
-        writeXML(response.getOutputStream(), categories, momentList);
+        writeXML(response.getOutputStream(), categories, momentList, taskList);
     }
 
-    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList) throws IOException {
+    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList, List<Task> taskList) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("DATA");
-        Element categoriesList = root.addElement("CATEGORIES");
-        categories.forEach(c -> {
-            Element category = categoriesList.addElement("CATEGORY");
-            category.addElement("NAME").setText(c.getName());
-            if (c.getSort() != null) {
-                category.addElement("SORT").setText(String.valueOf(c.getSort()));
-            }
-            if (Integer.valueOf(1).equals(c.getBookmark())) {
-                category.addElement("BOOKMARK").setText("true");
-            }
-            Element list = category.addElement("LIST");
-            Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
-                Element favorites = list.addElement("FAVORITES");
-                favorites.addElement("NAME").setText(f.getName());
-                favorites.addElement("URL").setText(f.getUrl());
-                favorites.addElement("ICON").setText(f.getIcon());
-                if (f.getSort() != null) {
-                    favorites.addElement("SORT").setText(String.valueOf(f.getSort()));
+        if (!CollectionUtils.isEmpty(categories)) {
+            Element categoriesList = root.addElement("CATEGORIES");
+            categories.forEach(c -> {
+                Element category = categoriesList.addElement("CATEGORY");
+                category.addElement("NAME").setText(c.getName());
+                if (c.getSort() != null) {
+                    category.addElement("SORT").setText(String.valueOf(c.getSort()));
                 }
-                if (Integer.valueOf(1).equals(f.getStar())) {
-                    favorites.addElement("STAR").setText("true");
+                if (Integer.valueOf(1).equals(c.getBookmark())) {
+                    category.addElement("BOOKMARK").setText("true");
                 }
-                if (StringUtils.isNotBlank(f.getShortcut())) {
-                    favorites.addElement("SHORTCUT").setText(f.getShortcut());
-                }
-                if (f.getPassword() != null) {
-                    Password password = f.getPassword();
-                    Element pwd = favorites.addElement("USER");
-                    pwd.addElement("ACCOUNT").setText(password.getAccount());
-                    pwd.addElement("PASSWORD").setText(password.getPassword());
+                Element list = category.addElement("LIST");
+                Optional.ofNullable(c.getFavorites()).orElse(Collections.emptyList()).forEach(f -> {
+                    Element favorites = list.addElement("FAVORITES");
+                    favorites.addElement("NAME").setText(f.getName());
+                    favorites.addElement("URL").setText(f.getUrl());
+                    favorites.addElement("ICON").setText(f.getIcon());
+                    if (f.getSort() != null) {
+                        favorites.addElement("SORT").setText(String.valueOf(f.getSort()));
+                    }
+                    if (Integer.valueOf(1).equals(f.getStar())) {
+                        favorites.addElement("STAR").setText("true");
+                    }
+                    if (StringUtils.isNotBlank(f.getShortcut())) {
+                        favorites.addElement("SHORTCUT").setText(f.getShortcut());
+                    }
+                    if (f.getPassword() != null) {
+                        Password password = f.getPassword();
+                        Element pwd = favorites.addElement("USER");
+                        pwd.addElement("ACCOUNT").setText(password.getAccount());
+                        pwd.addElement("PASSWORD").setText(password.getPassword());
+                    }
+                });
+            });
+        }
+        if (!CollectionUtils.isEmpty(momentList)) {
+            Element moments = root.addElement("MOMENTS");
+            momentList.forEach(m -> {
+                Element moment = moments.addElement("MOMENT");
+                moment.addElement("CONTENT").setText(m.getContent());
+            });
+        }
+        if (!CollectionUtils.isEmpty(taskList)) {
+            Element tasks = root.addElement("TASKS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            taskList.forEach(t -> {
+                Element task = tasks.addElement("TASK");
+                task.addElement("CONTENT").setText(t.getContent());
+                task.addElement("DATE").setText(sdf.format(t.getTaskDate()));
+                task.addElement("LEVEL").setText(String.valueOf(t.getLevel()));
+                if (Integer.valueOf(1).equals(t.getIsAlarm())) {
+                    task.addElement("ALARM").setText("true");
+                    task.addElement("TIME").setText(sdf1.format(t.getAlarmTime()));
                 }
             });
-        });
-        Element moments = root.addElement("MOMENTS");
-        momentList.forEach(m -> {
-            Element moment = moments.addElement("MOMENT");
-            moment.addElement("CONTENT").setText(m.getContent());
-        });
+        }
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding("UTF-8");
         XMLWriter writer = new XMLWriter(out, format);

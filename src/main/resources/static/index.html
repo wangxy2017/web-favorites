@@ -464,6 +464,7 @@
                 <span>备份数据：</span>
                 <input type="checkbox" id="favorites" name="favorites" title="收藏" lay-skin="primary" checked>
                 <input type="checkbox" id="moment" name="moment" title="瞬间" lay-skin="primary" checked>
+                <input type="checkbox" id="task" name="task" title="日程" lay-skin="primary" checked>
             </div>
         </div>
     </div>
@@ -885,8 +886,9 @@
         $("#export").click(function () {
             var favorites = $("#favorites").is(":checked")?"1":"0";
             var moment = $("#moment").is(":checked")?"1":"0";
+            var task = $("#task").is(":checked")?"1":"0";
             layer.close(indexMap.get('#importOrExport'));
-            window.location.href = "favorites/export?f="+ favorites +"&m=" + moment;
+            window.location.href = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task;
         });
 
         $("#cancelPwd").click(function () {
