@@ -46,6 +46,9 @@ public class FavoritesController {
     private MomentService momentService;
 
     @Autowired
+    private SearchTypeService searchTypeService;
+
+    @Autowired
     private TaskService taskService;
 
     @Value("${app.star-nums:10}")
@@ -214,6 +217,28 @@ public class FavoritesController {
         }
     }
 
+    private void parseSearchTypeList(InputStream in) {
+        Integer userId = springUtils.getCurrentUser().getId();
+        List<String> names = searchTypeService.findByUserId(userId).stream().map(SearchType::getName).collect(Collectors.toList());
+        try {
+            List<SearchType> list = new ArrayList<>();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            if (root.element("SEARCH_TYPES") != null) {
+                root.element("SEARCH_TYPES").elements("SEARCH_TYPE").forEach(s -> {
+                    String name = s.elementText("NAME");
+                    if (!names.contains(name)) {
+                        list.add(new SearchType(null, name, s.elementText("ICON"), s.elementText("URL"), userId));
+                    }
+                });
+            }
+            searchTypeService.saveAll(list);
+        } catch (Exception e) {
+            log.error("搜索导入失败：userId = {}", userId, e);
+        }
+    }
+
     private List<Category> parseCategoryList(InputStream in, Integer userId) {
         List<Category> list = new ArrayList<>();
         try {
@@ -307,6 +332,8 @@ public class FavoritesController {
             parseMomentList(file.getInputStream());
             // 保存日程
             parseTaskList(file.getInputStream());
+            // 保存搜索引擎
+            parseSearchTypeList(file.getInputStream());
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -335,10 +362,14 @@ public class FavoritesController {
     }
 
     @GetMapping("/export")
-    public void export(@RequestParam(required = false) String f, @RequestParam(required = false) String m, @RequestParam(required = false) String t) throws IOException {
+    public void export(@RequestParam(required = false) String f,
+                       @RequestParam(required = false) String m,
+                       @RequestParam(required = false) String t,
+                       @RequestParam(required = false) String s) throws IOException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
         List<Task> taskList = new ArrayList<>();
+        List<SearchType> searchTypeList = new ArrayList<>();
         User user = springUtils.getCurrentUser();
         // 查询用户分类
         if ("1".equals(f)) {
@@ -365,14 +396,18 @@ public class FavoritesController {
             String endDate = sdf.format(calendar.getTime());
             taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < 4).collect(Collectors.toList());
         }
+        // 查询用户搜索引擎
+        if ("1".equals(s)) {
+            searchTypeList = searchTypeService.findByUserId(user.getId());
+        }
         HttpServletResponse response = springUtils.getResponse();
         response.setContentType("application/force-download");// 设置强制下载不打开
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
         // 写入输出流
-        writeXML(response.getOutputStream(), categories, momentList, taskList);
+        writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList);
     }
 
-    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList, List<Task> taskList) throws IOException {
+    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList, List<Task> taskList, List<SearchType> searchTypeList) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("DATA");
         if (!CollectionUtils.isEmpty(categories)) {
@@ -415,6 +450,15 @@ public class FavoritesController {
             momentList.forEach(m -> {
                 Element moment = moments.addElement("MOMENT");
                 moment.addElement("CONTENT").setText(m.getContent());
+            });
+        }
+        if (!CollectionUtils.isEmpty(searchTypeList)) {
+            Element searchTypes = root.addElement("SEARCH_TYPES");
+            searchTypeList.forEach(s -> {
+                Element searchType = searchTypes.addElement("SEARCH_TYPE");
+                searchType.addElement("NAME").setText(s.getName());
+                searchType.addElement("URL").setText(s.getUrl());
+                searchType.addElement("ICON").setText(s.getIcon());
             });
         }
         if (!CollectionUtils.isEmpty(taskList)) {

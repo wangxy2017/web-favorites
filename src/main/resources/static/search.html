@@ -20,7 +20,7 @@
 				max-width: 654px;
 			}
 
-			.main .logo {
+			.logo {
 				margin-top: 100px;
 				margin-bottom: 40px;
 				display: flex;
@@ -28,7 +28,7 @@
                 justify-content: center;
 			}
 
-			.main .search-form {
+			.search-form {
 				border: 1px solid #009688;
 				border-radius: 4px;
 				height: 40px;
@@ -36,13 +36,13 @@
 				display: flex;
 			}
 
-			.main .search-form button {
+			.search-form button {
 				height: 100%;
                 border-radius: 0;
                 line-height: 100%;
 			}
 
-			.main .search-form .search-close {
+			.search-close {
 			    position: absolute;
                 top: 8px;
                 right: 90px;
@@ -52,14 +52,14 @@
                 color: #009688;
 			}
 
-			.main .search-form input {
+			.search-form input {
 				height: 100%;
 				border: none;
 				border-radius: 4px;
 				padding-right: 30px;
 			}
 
-			.main .search-form .search-items {
+			.search-items {
 				position: absolute;
 				width: calc(100% - 84px);
 				top: 42px;
@@ -68,9 +68,10 @@
 				border-radius: 4px;
 				background: #FFFFFF;
 				display: none;
+				z-index: 999;
 			}
 
-			.main .search-form .search-items li {
+			.search-items li {
 				line-height: 32px;
 				text-align: left;
 				cursor: pointer;
@@ -79,11 +80,11 @@
                 padding-right: 30px;
 			}
 
-			.main .search-form .search-items li.hover-in {
+			.search-items li.hover-in {
 				color: #009688;
 			}
 
-			.main .search-form .search-items li .history-close {
+			.search-items li .history-close {
                 font-size: 14px;
                 position: absolute;
                 top: 0;
@@ -91,7 +92,7 @@
                 font-weight: bold;
             }
 
-			.main .search-type {
+			.search-type {
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
@@ -99,7 +100,7 @@
 				margin-bottom: 30px;
 			}
 
-			.main .search-type li {
+			.search-type li {
 				display: flex;
 				flex-direction: row;
 				width: 25%;
@@ -108,28 +109,43 @@
 				margin-bottom: 10px;
 				border-radius: 4px;
 				box-sizing: border-box;
+				position: relative;
 			}
 
-			.main .search-type li:hover {
+			.search-type li:hover {
 				background-color: #f5f5f5;
 			}
 
-			.main .search-type li.search-type-selected {
+			.search-type li.search-type-selected {
 				background-color: #f2f2f2;
 			}
 
-			.main .search-type li img {
+			.search-type li img {
 			    flex: 0 0 auto;
 				width: 20px;
 				height: 20px;
 				margin-right: 6px;
 				border: none;
-				background-image: url(images/web.svg);
+			}
+
+			.search-type li .layui-icon {
+			    position: absolute;
+                right: 8px;
+                top: 12px;
+                display: none;
+			}
+
+			.search-type li:hover .layui-icon {
+			    display: block;
+			}
+
+			.search-type .search-type-li img {
+			    background-image: url(images/web.svg);
                 background-size: 100%;
                 background-repeat: no-repeat;
 			}
 
-			.main .search-type li span {
+			.search-type li span {
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -201,8 +217,45 @@
 <div class="footer">
     © 2020 在线网络收藏夹 || 在线网络收藏夹版权所有
 </div>
+<!-- 添加搜索引擎表单 -->
+<form class="layui-form" action="" id="searchTypeFrom" lay-filter="searchTypeFrom" style="display: none;padding: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="name" required lay-verify="required" placeholder="搜索引擎名称" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="url" required lay-verify="required|url" placeholder="搜索引擎地址" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="icon" required lay-verify="required|url" placeholder="搜索引擎图标" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="addSearchType">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancelAddSearchType">取消</button>
+        </div>
+    </div>
+</form>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
 <script type="text/javascript">
+        layui.use(['layer', 'form'], function(){
+            var layer = layui.layer;
+            var form = layui.form;
+
+            var indexMap = new Map();// 弹出层索引容器
+
             // 点击空白关闭
             $(document).on("click", function(e) {
                 var _conss = $('.search-form');//点击的容器范围
@@ -211,6 +264,7 @@
                     $("#search_close").hide();
                 }
             });
+
             // jQuery全局拦截器
             $(document).ajaxSuccess(function(event,xhr,options){
                 var result = xhr.responseJSON;
@@ -241,31 +295,111 @@
                 });
             });
 
-			$(function() {
-			    $.ajax({
+            window.loadData = function(){
+                $.ajax({
                     type: "GET",
                     url: "search/data",
                     dataType: "json",
                     success: function (result) {
                         var html = '';
-                        $.each(result.data, function(index, item) {
-                            html += '<li data-search="' + item.url + '"><img src="' + item.icon +
+                        $.each(result.data.systemList, function(index, item) {
+                            html += '<li class="search-type-li" data-search="' + item.url + '"><img src="' + item.icon +
                                 '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
                                 '</span></li>';
                         });
-                        if (html !== "") $(".search-type").empty().append(html);
+                        $.each(result.data.userList, function(index, item) {
+                            html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img src="' + item.icon +
+                                '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
+                                '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
+                        });
+                        html += '<li onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
+                        $(".search-type").empty().append(html);
                     }
                 });
+            };
+
+			$(function() {
+			    loadData();
 			});
+
+            // 删除搜索引擎
+			window.deleteSearchType = function(event){
+			    event.stopPropagation();
+
+			    layer.confirm('确认删除搜索引擎吗?', function(index){
+                    layer.close(index);
+                    layer.load();
+
+                    var id = $(event.target).parent().attr("data-id");
+                    $.ajax({
+                        type: "GET",
+                        url: "search/delete/" + id,
+                        dataType: "json",
+                        success: function (result) {
+                            layer.closeAll('loading');
+                            if (result.code == 0) {
+                                window.location.reload();
+                            } else {
+                                layer.msg("删除失败", {icon: 5});
+                            }
+                        }
+                    });
+                });
+			};
+
+			// 添加搜索引擎
+			window.addSearchType = function(){
+			    var index = layer.open({
+                    type: 1,
+                    title: "添加搜索引擎",
+                    area: '400px',
+                    content: $('#searchTypeFrom')
+                });
+                indexMap.set('#searchTypeFrom',index);
+                // 表单赋值
+                form.val("searchTypeFrom", {
+                    "name": ""
+                    , "url": ""
+                });
+			};
+
+			//监听提交
+            form.on('submit(addSearchType)', function(data){
+                layer.load();
+                $.ajax({
+                    type: "POST",
+                    url: "search",
+                    data: JSON.stringify(data.field),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        layer.close(indexMap.get('#searchTypeFrom'));
+                        if (result.code == 0) {
+                            window.location.reload();
+                        } else {
+                            layer.msg("添加失败", {icon: 5});
+                        }
+                    }
+                });
+                return false;
+            });
+
+			$("#cancelAddSearchType").click(function () {
+                layer.close(indexMap.get('#searchTypeFrom'));
+            });
+
 			// 搜索类型绑定点击事件
-			$(document).on('click', '.search-type li', function() {
+			$(document).on('click', '.search-type-li', function() {
 				$(this).addClass('search-type-selected').siblings().removeClass('search-type-selected');
 				if ($("#search_content").val().trim() !== "") $("#search_btn").trigger("click");
 			});
+
 			// 搜索项绑定hover事件
 			$(document).on('mouseenter', '.search-items li', function() {
 				$(this).addClass('hover-in');
 			});
+
 			$(document).on('mouseleave', '.search-items li', function() {
 				$(this).removeClass('hover-in');
 			});
@@ -307,7 +441,7 @@
 					if (search_history.indexOf(content) < 0) search_history.push(content);
 					localStorage.setItem("search_history", JSON.stringify(search_history));
 					// 跳转页面
-					var search_url = $(".search-type li.search-type-selected").attr("data-search");
+					var search_url = $(".search-type .search-type-li.search-type-selected").attr("data-search");
 					search_url = typeof search_url === "undefined" ? "https://www.baidu.com/s?wd=" : search_url;
 					openUrl(search_url + content);
 				} else {
@@ -368,6 +502,7 @@
 					alert("此链接无效");
 				}
 			};
-		</script>
+        });
+</script>
 </body>
 </html>

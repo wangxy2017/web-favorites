@@ -429,6 +429,7 @@
                 <input type="checkbox" id="favorites" name="favorites" title="收藏" lay-skin="primary" checked>
                 <input type="checkbox" id="moment" name="moment" title="瞬间" lay-skin="primary" checked>
                 <input type="checkbox" id="task" name="task" title="日程" lay-skin="primary" checked>
+                <input type="checkbox" id="search" name="search" title="搜索" lay-skin="primary" checked>
             </div>
         </div>
     </div>
@@ -648,24 +649,6 @@
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
     //JavaScript代码区域
     layui.use(['element', 'layer', 'form', 'upload','flow','util'], function () {
@@ -851,8 +834,9 @@
             var favorites = $("#favorites").is(":checked")?"1":"0";
             var moment = $("#moment").is(":checked")?"1":"0";
             var task = $("#task").is(":checked")?"1":"0";
+            var search = $("#search").is(":checked")?"1":"0";
             layer.close(indexMap.get('#importOrExport'));
-            window.location.href = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task;
+            window.location.href = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task + "&s=" + search;
         });
 
         $("#cancelPwd").click(function () {
@@ -1903,3 +1887,5 @@
         });
     });
 </script>
+</body>
+</html>
