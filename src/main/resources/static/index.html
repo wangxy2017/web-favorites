@@ -349,25 +349,6 @@
             display: block;
         }
 
-        #slideBtn {
-            display: inline-block;
-            margin-right: 10px;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            margin-bottom: 1px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 20px;
-            background-color: #393D49;
-            color: #fff;
-            border-radius: 2px;
-            opacity: .95;
-        }
-
-        #slideBtn:hover {
-            opacity: .85
-        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -406,7 +387,7 @@
     <div class="layui-body" id="layuiBody" style="padding: 15px;left: 0;">
         <!-- 内容主体区域 -->
         <div class="layui-btn-container" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
-            <span class="layui-icon layui-icon-right" id="slideBtn"></span>
+            <button type="button" class="layui-btn layui-btn-sm" id="slideBtn">目录</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
         </div>
