@@ -67,7 +67,7 @@ public class LoginController {
             user1.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
-            emailUtils.send(user1.getEmail(), "网络收藏夹|重置密码",
+            emailUtils.sendSimpleMail(user1.getEmail(), "网络收藏夹|重置密码",
                     String.format("您的新密码：%s，请牢记。", tempPwd));
             return ApiResponse.success();
         } else {

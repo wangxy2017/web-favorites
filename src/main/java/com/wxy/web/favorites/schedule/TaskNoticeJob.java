@@ -11,8 +11,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @author wangxiaoyuan
@@ -36,6 +38,7 @@ public class TaskNoticeJob {
     public void run() {
         log.info("任务通知程序开始执行...");
         // 查询此刻任务
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC));
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
@@ -43,7 +46,7 @@ public class TaskNoticeJob {
         // 邮件通知
         taskList.stream().filter(t -> t.getLevel() < 4).forEach(t -> {
             User user = userService.findById(t.getUserId());
-            emailUtils.send(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
+            emailUtils.sendSimpleMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
         });
     }
 }

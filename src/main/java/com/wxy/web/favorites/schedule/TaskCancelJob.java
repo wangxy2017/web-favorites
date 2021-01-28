@@ -8,8 +8,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @author wangxiaoyuan
@@ -26,6 +28,7 @@ public class TaskCancelJob {
     @Scheduled(cron = "0 0 0 * * ?")
     public void run() {
         log.info("任务取消程序开始执行...");
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC));
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DATE, -1);
         // 查询昨日未完成的任务，将状态改为取消

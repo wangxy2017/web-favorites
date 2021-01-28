@@ -63,7 +63,7 @@ public class UserController {
         String code = RandomUtil.randomNumbers(6);
         HttpSession session = springUtils.getRequest().getSession();
         session.setAttribute("email_update_code", code);
-        emailUtils.send(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，30分钟内有效。");
+        emailUtils.sendSimpleMail(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
 

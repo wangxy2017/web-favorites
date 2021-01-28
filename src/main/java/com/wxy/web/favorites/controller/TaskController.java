@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,6 +57,7 @@ public class TaskController {
     @GetMapping("/all/{date}")
     public ApiResponse findAll(@PathVariable String date) {
         User user = springUtils.getCurrentUser();
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC));
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         cal.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);

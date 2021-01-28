@@ -107,7 +107,7 @@ public class RegisterController {
         log.info("注册邮箱：{}，注册验证码：{}", email, code);
         HttpSession session = springUtils.getRequest().getSession();
         session.setAttribute("register_email_code", code);
-        emailUtils.send(email, "网络收藏夹|注册", "您正在注册账号，验证码为：" + code + "，30分钟内有效。");
+        emailUtils.sendSimpleMail(email, "网络收藏夹|注册", "您正在注册账号，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
 
