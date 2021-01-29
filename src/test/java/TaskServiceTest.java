@@ -31,7 +31,7 @@ public class TaskServiceTest {
     @Test
    public void findByAlarmTime() throws ParseException {
        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-       Date date = sdf.parse("2021-01-26 17:00:00");
+       Date date = sdf.parse("2021-01-29 11:00:00");
        List<Task> taskList = taskService.findByAlarmTime(date);
        log.info("查询结果：taskList = {}",taskList);
    }
