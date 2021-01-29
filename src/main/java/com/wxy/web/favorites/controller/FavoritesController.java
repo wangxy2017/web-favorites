@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -390,7 +389,6 @@ public class FavoritesController {
         }
         // 查询近一年用户未完成的日程
         if ("1".equals(t)) {
-            TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC));
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String startDate = sdf.format(calendar.getTime());

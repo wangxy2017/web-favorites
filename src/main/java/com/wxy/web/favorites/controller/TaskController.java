@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,11 +59,10 @@ public class TaskController {
     @GetMapping("/all/{date}")
     public ApiResponse findAll(@PathVariable String date) {
         User user = springUtils.getCurrentUser();
-        TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC));
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
-        cal.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
-        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+        calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
+        int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         List<Task> list = taskService.findAllByUserId(date + "-01", date + "-" + lastDay, user.getId());
         // 按每天分组
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
