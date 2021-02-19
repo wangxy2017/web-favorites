@@ -44,7 +44,7 @@ public class TaskService {
     public List<Task> findAllByUserId(String startDate, String endDate, Integer userId) {
         List<Task> list = new ArrayList<>();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date start = sdf.parse(startDate);
             Date end = sdf.parse(endDate);
             list = taskRepository.findAllByUserId(start, end, userId);

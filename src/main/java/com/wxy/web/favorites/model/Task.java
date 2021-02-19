@@ -27,7 +27,7 @@ public class Task {
     @Column(name = "content", nullable = false, columnDefinition = "varchar(500) comment '内容'")
     private String content;
 
-    @Column(name = "task_date", nullable = false, columnDefinition = "date comment '任务日期'")
+    @Column(name = "task_date", nullable = false, columnDefinition = "datetime comment '任务日期'")
     private Date taskDate;
 
     @Column(name = "is_alarm", columnDefinition = "int(1) comment '是否告警: 0-否 1-是'")

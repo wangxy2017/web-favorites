@@ -63,7 +63,7 @@ public class TaskController {
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
         int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        List<Task> list = taskService.findAllByUserId(date + "-01", date + "-" + lastDay, user.getId());
+        List<Task> list = taskService.findAllByUserId(date + "-01 00:00:00", date + "-" + lastDay+" 23:59:59", user.getId());
         // 按每天分组
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Map<String, List<Task>> listMap = list.stream().collect(Collectors.groupingBy(t -> sdf.format(t.getTaskDate())));

@@ -759,9 +759,7 @@
         window.addTask = function(text){// 2020-01-01
             $('#taskForm')[0].reset();
 
-            var date_str = text + ' 00:00:00 UTC';
-            var date = new Date(date_str);
-            $("#taskDate").val(dateFormat('yyyy-MM-dd HH:mm:ss', date));
+            $("#taskDate").val(text + ' 00:00:00');
 
             var index = layer.open({
                 type: 1,
