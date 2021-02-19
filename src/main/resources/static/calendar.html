@@ -381,7 +381,7 @@
             format: 'yyyy年MM月',
             value: new Date(),
             theme: 'grid',
-            btns: ['confirm'],
+            btns: ['now','confirm'],
             done: function(value, date, endDate) {
                 var text = value.substring(0, 4) + '-' + value.substring(5, 7);
                 drawCalender(text);
