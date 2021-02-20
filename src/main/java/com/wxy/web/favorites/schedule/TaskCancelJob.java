@@ -28,6 +28,10 @@ public class TaskCancelJob {
         log.info("任务取消程序开始执行...");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DATE, -1);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         // 查询昨日未完成的任务，将状态改为取消
         List<Task> undoTaskList = taskService.findUndoTask(calendar.getTime());
         undoTaskList.forEach(t -> {
