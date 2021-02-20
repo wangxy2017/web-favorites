@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|文件</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style type="text/css">
+			* {
+				user-select: none;
+			}
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 20px;
+				cursor: pointer;
+			}
+
+			.header {
+			    position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+                background-color: #23262E;
+			}
+
+			.center {
+			    position: fixed;
+                width: 100%;
+                top: 60px;
+                bottom: 44px;
+                overflow: auto;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                height: 44px;
+                line-height: 44px;
+                background-color: #eee;
+			}
+
+			#logout {
+                margin-top: 20px;
+                margin-right: 20px;
+                float: right;
+			}
+
+			.main {
+				margin: 30px auto;
+                width: 98%;
+			}
+
+			.layui-table-link {
+                cursor: pointer;
+            }
+            .file-info .file-icon {
+                margin-right: 10px;
+                width: 16px;
+                height: 16px;
+                border: none;
+                vertical-align: sub;
+            }
+
+            .file-info .file-share {
+                cursor: pointer;
+                margin-left: 6px;
+                font-size: 14px;
+                display: none;
+                float: right;
+            }
+
+            .file-info:hover .file-share {
+                display: inline-block;
+            }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
+</div>
+<div class="center" id="center">
+    <div class="main" id="main">
+        <!-- 当前路径 -->
+        <input type="hidden" id="parent" value="">
+        <!-- 按钮 -->
+        <div class="layui-btn-container">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="goBack"
+                    style="padding: 0 6px;">
+                <i class="layui-icon layui-icon-left"></i>
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" id="upload">上传文件</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="newFolder">新建文件夹</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="delAll">全部删除</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="move">移动到</button>
+        </div>
+        <!-- 进度条 -->
+        <div class="layui-progress" lay-showPercent="true" lay-filter="progress">
+            <div class="layui-progress-bar" lay-percent="100%"></div>
+        </div>
+        <div style="margin-top: 10px">
+            搜索文件：<input class="layui-input" id="searchName" autocomplete="off"
+                        style="display: inline-block;width: 180px;height: 30px;margin-right: 10px;">
+        </div>
+        <!-- 数据表格 -->
+        <table id="fileList" lay-filter="fileList"></table>
+        <!-- 操作 -->
+        <script type="text/html" id="operates">
+            <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+</div>
+<div class="footer">
+    © 2020 在线网络收藏夹 || 在线网络收藏夹版权所有
+</div>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
+        var element = layui.element;
+        var layer = layui.layer;
+        var table = layui.table;
+        var upload = layui.upload;
+        var tree = layui.tree;
+
+        var indexMap = new Map();// 弹出层索引容器
+
+        // jQuery全局拦截器
+        $(document).ajaxSuccess(function(event,xhr,options){
+            var result = xhr.responseJSON;
+            if(result != undefined && result.code == "1001"){
+                window.location.href= "login.html";
+            }
+        });
+
+        //加载数据
+        table.render({
+            elem: '#fileList'
+            , url: 'file/list/' //数据接口
+            , page: false //开启分页
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "data": res.data.list, //解析数据列表
+                    "parent": res.data.parent
+                };
+            }
+            , done: function (res, curr, count) {
+                $("#parent").val(res.parent);
+            }
+            , cols: [[ //表头
+                {type: 'checkbox'}
+                , {
+                    field: 'name', title: '目录/文件', minWidth: 200, templet: function (d) {
+                        var html = '<div class="file-info">';
+                        if (d.isDirectory) {
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-path="' + d.path + '" data-directory="' + d.isDirectory + '"><img class="file-icon" src="svg/folder.svg"/>' + d.name + '</a>';
+                        } else {
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-path="' + d.path + '" data-directory="' + d.isDirectory + '"><img class="file-icon" src="' + suffix(d.path) + '"/>' + d.name + '</a>';
+                            html += '<i class="file-share layui-icon layui-icon-release" onclick="share(this)" data-path="' + d.path + '" title="分享文件"></i>';
+                        }
+                        html += '</div>';
+                        return html;
+                    }
+                }
+                , {
+                    field: 'size', title: '大小', templet: function (d) {
+                        return change(d.size);
+                    }
+                }
+                , {
+                    field: 'lastModified', title: '上传时间', templet: function (d) {
+                        return format(d.lastModified);
+                    }
+                }
+                , {title: '操作', width: 160, toolbar: '#operates', fixed: 'right'}
+            ]]
+        });
+        // 加载文件夹树
+        window.loadTree = function(){
+            $.ajax({
+                type: "GET",
+                url: "file/tree",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        // 渲染文件夹树结构
+                        tree.render({
+                            elem: '#folderTree'
+                            , data: result.data
+                            , showLine: false  //是否开启连接线
+                            , onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+                            , click: function (obj) {
+                                layer.confirm('确认移动到此文件夹吗?', function (index) {
+                                    var checkStatus = table.checkStatus('fileList');
+                                    var filePaths = [];
+                                    $.each(checkStatus.data, function (index, item) {
+                                        filePaths.push(item.path);
+                                    });
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "file/move",
+                                        data: {"filePaths": filePaths.join(";"), "folder": obj.data.id},
+                                        dataType: "json",
+                                        success: function (result) {
+                                            if (result.code == 0) {
+                                                layer.msg('操作成功', {icon: 6});
+                                                table.reload('fileList');
+                                            } else {
+                                                layer.msg('操作失败', {icon: 5});
+                                            }
+                                        }
+                                    });
+                                    layer.closeAll();
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        // 页面加载后执行
+        $(function () {
+            loadTree();
+        });
+
+        // 移动
+        $("#move").click(function () {
+            var checkStatus = table.checkStatus('fileList');
+            if (checkStatus.data.length === 0) {
+                layer.msg('请选择文件');
+                return false;
+            }
+            layer.open({
+                type: 1,
+                title: "移动文件(夹)",
+                area: ['400px', '300px'],
+                content: $('#folderTree')
+            });
+        });
+        // 全部删除
+        $("#delAll").click(function () {
+            var checkStatus = table.checkStatus('fileList');
+            if (checkStatus.data.length === 0) {
+                layer.msg('请选择文件');
+                return false;
+            }
+            layer.confirm('确认删除全部文件吗?', function (index) {
+                var filePaths = [];
+                $.each(checkStatus.data, function (index, item) {
+                    filePaths.push(item.path);
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "file/deleteMore",
+                    data: {"filePaths": filePaths.join(";")},
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            layer.msg('删除成功', {icon: 6});
+                            table.reload('fileList');
+                        } else {
+                            layer.msg('删除失败', {icon: 5});
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        });
+        // 搜索
+        $('#searchName').bind('keypress', function (event) {
+            if (event.key === "Enter") {
+                table.reload('fileList', {where: {"folder": $("#parent").val(), "name": $(this).val()}});
+            }
+        });
+        // 返回
+        $("#goBack").click(function () {
+            $.ajax({
+                type: "GET",
+                url: "file/back",
+                data: {"folder": $("#parent").val()},
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        table.reload('fileList', {where: {"folder": result.data}});
+                    }
+                }
+            });
+
+        });
+        // 新建文件夹
+        $("#newFolder").click(function () {
+            layer.prompt({
+                title: '新建文件夹',
+                maxlength: 100,
+            }, function (value, index, elem) {
+                $.ajax({
+                    type: "POST",
+                    url: "file/folder",
+                    data: {
+                        "filePath": $("#parent").val() + '/' + value
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            table.reload('fileList');
+                            loadTree();
+                        } else {
+                            layer.msg('新建失败', {icon: 5});
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+
+        //监听工具条
+        table.on('tool(fileList)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'edit') { //修改
+                layer.prompt({
+                    title: '重命名文件(夹)',
+                    value: data.name,
+                    maxlength: 100,
+                }, function (value, index, elem) {
+                    $.ajax({
+                        type: "POST",
+                        url: "file/rename",
+                        data: {"filePath": data.path, "newName": value},
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code == 0) {
+                                layer.msg('修改成功', {icon: 6});
+                                //同步更新缓存对应的值
+                                obj.update({name: value});
+                            } else {
+                                layer.msg('修改失败', {icon: 5});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (layEvent === 'del') { //删除
+                layer.confirm('确认删除文件吗？', function (index) {
+                    $.ajax({
+                        type: "POST",
+                        url: "file/delete",
+                        data: {"filePath": data.path},
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code == 0) {
+                                obj.del(); //移除当前行
+                                layer.msg('删除成功', {icon: 6});
+                            } else {
+                                layer.msg('删除失败', {icon: 5});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (layEvent === 'download') { //下载
+                if (!data.isDirectory) {
+                    window.location.href = encodeURI("file/download?filePath=" + data.path);
+                } else {
+                    layer.msg('暂不支持文件夹下载', {icon: 5});
+                }
+            }
+        });
+        //上传文件
+        upload.render({
+            elem: '#upload' //绑定元素
+            , url: 'file/upload/' //上传接口
+            , data: {
+                "folder": function () {
+                    return $("#parent").val();
+                }
+            }
+            , accept: 'file'
+            , before: function(obj){
+                 layer.load(1);
+            }
+            , done: function(res){
+                layer.closeAll('loading');
+                if(res.code == 0){
+                    layer.msg('上传成功', {icon: 6});
+                    table.reload('fileList');
+                }else{
+                    layer.msg('上传失败', {icon: 5});
+                }
+            }
+            , error: function () {
+                layer.closeAll('loading');
+                layer.msg('上传失败', {icon: 5});
+            }
+            , progress: function (n, elem) {
+                element.progress('progress', n + '%');
+            }
+        });
+        // 分享
+        window.share = function (obj) {
+            var current = window.location.href.substring(0,window.location.href.lastIndexOf("/"));
+            layer.alert(encodeURI(current + "/file/download?filePath=" + $(obj).attr("data-path")), {title: "复制以下链接分享"});
+        };
+        // 跳转
+        window.goto = function (obj) {
+            var that = $(obj);
+            if (that.attr("data-directory") === "true") {
+                table.reload('fileList', {where: {"folder": that.attr("data-path")}});
+            } else {
+                var path = that.attr("data-path");
+                if(path.endsWith(".properties")||path.endsWith(".txt")||path.endsWith(".xml")){
+                    // 查看文件内容
+                    $.ajax({
+                        type: "GET",
+                        url: "file/view",
+                        data: {"filePath": path},
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code == 0) {
+                                var html = '<textarea style="width: 100%;height: 99%;border: none;padding: 10px;box-sizing: border-box;resize: none;" readonly>'+result.data+'</textarea>';
+                                layer.open({
+                                    type: 1,
+                                    title: '文件内容',
+                                    area:['800px','600px'],
+                                    content: html
+                                });
+                            }
+                        }
+                    });
+                }else{
+                    layer.msg('暂不支持文件查看', {icon: 5});
+                }
+            }
+        };
+        /**
+         * 格式化文件大小
+         */
+        window.change = function (limit) {
+            var size = "";
+            if (limit < 0.1 * 1024) {                            //小于0.1KB，则转化成B
+                size = limit.toFixed(2) + " B"
+            } else if (limit < 0.1 * 1024 * 1024) {            //小于0.1MB，则转化成KB
+                size = (limit / 1024).toFixed(2) + " KB"
+            } else if (limit < 0.1 * 1024 * 1024 * 1024) {        //小于0.1GB，则转化成MB
+                size = (limit / (1024 * 1024)).toFixed(2) + " MB"
+            } else {                                            //其他转化成GB
+                size = (limit / (1024 * 1024 * 1024)).toFixed(2) + " GB"
+            }
+
+            var sizeStr = size + "";                        //转成字符串
+            var index = sizeStr.indexOf(".");                    //获取小数点处的索引
+            var dou = sizeStr.substr(index + 1, 2)            //获取小数点后两位的值
+            if (dou == "00") {                                //判断后两位是否为00，如果是则删除00
+                return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
+            }
+            return size;
+        };
+        /**
+         * 格式化时间
+         * @param time
+         * @returns {string}
+         */
+        window.format = function (time) {
+            // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+            function addZero(num) {
+                if (num < 10)
+                    return "0" + num;
+                return num;
+            }
+
+            var date = new Date(time);
+            // 按自定义拼接格式返回
+            return date.getFullYear() + "/" + addZero(date.getMonth() + 1) + "/" + addZero(date.getDate()) + " " +
+                addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds());
+        };
+        // 判断后缀
+        window.suffix = function (url) {
+            if (url.endsWith(".bat"))
+                return "svg/bat.svg";
+            else if (url.endsWith(".xls") || url.endsWith(".xlsx"))
+                return "svg/excel.svg";
+            else if (url.endsWith(".exe"))
+                return "svg/exe.svg";
+            else if (url.endsWith(".md"))
+                return "svg/markdown.svg";
+            else if (url.endsWith(".mp3") || url.endsWith(".wma"))
+                return "svg/music.svg";
+            else if (url.endsWith(".pdf"))
+                return "svg/pdf.svg";
+            else if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".ico"))
+                return "svg/photo.svg";
+            else if (url.endsWith(".gif"))
+                return "svg/gif.svg";
+            else if (url.endsWith(".svg"))
+                return "svg/svg.svg";
+            else if (url.endsWith(".ppt") || url.endsWith(".pptx"))
+                return "svg/ppt.svg";
+            else if (url.endsWith(".sh"))
+                return "svg/shell.svg";
+            else if (url.endsWith(".tar.gz") || url.endsWith(".tar") || url.endsWith(".tgz") || url.endsWith(".tar.xz"))
+                return "svg/tar.svg";
+            else if (url.endsWith(".txt"))
+                return "svg/txt.svg";
+            else if (url.endsWith(".properties"))
+                return "svg/properties.svg";
+            else if (url.endsWith(".yml"))
+                return "svg/yml.svg";
+            else if (url.endsWith(".mp4") || url.endsWith(".avi") || url.endsWith(".flv") || url.endsWith(".rmvb"))
+                return "svg/video.svg";
+            else if (url.endsWith(".doc") || url.endsWith(".docx"))
+                return "svg/word.svg";
+            else if (url.endsWith(".xml"))
+                return "svg/xml.svg";
+            else if (url.endsWith(".zip") || url.endsWith(".rar") || url.endsWith(".war") || url.endsWith(".7z"))
+                return "svg/zip.svg";
+            else if (url.endsWith(".sql"))
+                return "svg/sql.svg";
+            else if (url.endsWith(".db"))
+                return "svg/database.svg";
+            else if (url.endsWith(".java"))
+                return "svg/java.svg";
+            else if (url.endsWith(".py"))
+                return "svg/python.svg";
+            else if (url.endsWith(".php"))
+                return "svg/php.svg";
+            else if (url.endsWith(".json"))
+                return "svg/json.svg";
+            else if (url.endsWith(".css"))
+                return "svg/css.svg";
+            else if (url.endsWith(".js"))
+                return "svg/js.svg";
+            else if (url.endsWith(".html"))
+                return "svg/html.svg";
+            else if (url.endsWith(".jar"))
+                return "svg/jar.svg";
+            else if (url.endsWith(".apk"))
+                return "svg/apk.svg";
+            else if (url.endsWith(".desktop"))
+                return "svg/desktop.svg";
+            else if (url.endsWith(".lnk") || url.endsWith(".url"))
+                return "svg/link.svg";
+            else if (url.endsWith(".rpm"))
+                return "svg/rpm.svg";
+            else if (url.endsWith(".iso"))
+                return "svg/iso.svg";
+            else if (url.endsWith(".dll"))
+                return "svg/dll.svg";
+            else if (url.endsWith(".bak"))
+                return "svg/bak.svg";
+            else
+                return "svg/unknown.svg";
+
+        }
+        // 格式化时间
+        window.dateFormat = function(fmt, date) {
+            var ret;
+            const opt = {
+                "y+": date.getFullYear().toString(),        // 年
+                "M+": (date.getMonth() + 1).toString(),     // 月
+                "d+": date.getDate().toString(),            // 日
+                "H+": date.getHours().toString(),           // 时
+                "m+": date.getMinutes().toString(),         // 分
+                "s+": date.getSeconds().toString()          // 秒
+                // 有其他格式化字符需求可以继续添加，必须转化成字符串
+            };
+            for (var k in opt) {
+                ret = new RegExp("(" + k + ")").exec(fmt);
+                if (ret) {
+                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+                };
+            };
+            return fmt;
+        };
+
+        // 登出
+        $("#logout").click(function () {
+            $.ajax({
+                type: "GET",
+                url: "login/out",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        window.location.href = "login.html";
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
