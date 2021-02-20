@@ -266,6 +266,15 @@
                 right: 4px;
 			}
 
+			.holiday {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                height: 18px;
+                line-height: 18px;
+                color: #5fb878;
+            }
+
 			.alarm-icon {
 			    width: 16px;
                 height: 16px;
@@ -459,6 +468,12 @@
             var split = text.split("-");
             var lunar = calendar.solar2lunar(split[0], split[1], split[2]);
             return lunar;
+        };
+
+        window.isHoliday = function(lunar) {
+            var cArr = ['1-1','1-2','1-3','4-5','5-1','5-2','5-3','5-4','5-5','10-1','10-2','10-3','10-4','10-5','10-6','10-7'];
+            var lArr = ['12-30','1-1','1-2','1-3','1-4','1-5','1-6','5-5','8-15'];
+            return cArr.indexOf(lunar.cMonth + '-' + lunar.cDay) > -1 || lArr.indexOf(lunar.lMonth + '-' + lunar.lDay) > -1;
         };
 
         // 日期比较
@@ -673,6 +688,8 @@
                 // 农历
                 var lunar = getLunar(day);
                 $(this).find(".lunar").text(lunar.IDayCn === "初一" ? lunar.IMonthCn : lunar.IDayCn);
+                // 节假日
+                if(isHoliday(lunar)) $(this).append('<span class="holiday">假</span>');
             });
             // 给今天和明天添加新增日程按钮
             $(".day-item.day-after,.day-item.day-today").each(function(){
