@@ -8,7 +8,6 @@ import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,9 +29,6 @@ public class FileController {
     @Autowired
     private SpringUtils springUtils;
 
-    @Value("${file.repository}")
-    private String repository;
-
     private final List<String> suffixList = Arrays.asList(".txt", ".properties", ".xml");
 
     /**
@@ -47,7 +43,7 @@ public class FileController {
         User user = springUtils.getCurrentUser();
         List<UserFile> list;
         if (StringUtils.isNoneBlank(name)) {
-            list = userFileService.searchFiles("%" + name + "%");
+            list = userFileService.searchFiles(user.getId(), "%" + name + "%");
         } else {
             if (pid == null) {
                 list = userFileService.findRootList(user.getId());
@@ -57,7 +53,10 @@ public class FileController {
         }
         // 排序
         list.sort(Comparator.comparing(UserFile::getFilename));
-        return ApiResponse.success(list);
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("parent",pid);
+        data.put("list", list);
+        return ApiResponse.success(data);
     }
 
     @PostMapping("/rename")
@@ -121,6 +120,15 @@ public class FileController {
 
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
+        User user = springUtils.getCurrentUser();
+        if (files.length > 0) {
+            for (MultipartFile f : files) {
+                String path = userFileService.writeFile(f.getInputStream());
+                UserFile userFile = new UserFile(null, user.getId(), pid, null, null, f.getOriginalFilename(), path, null, f.getSize());
+                userFileService.save(userFile);
+            }
+            return ApiResponse.success();
+        }
         return ApiResponse.error();
     }
 
@@ -144,7 +152,7 @@ public class FileController {
     @PostMapping("/folder")
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
         User user = springUtils.getCurrentUser();
-        UserFile file = new UserFile(null, user.getId(), pid, null, null, filename, null, 1, 0);
+        UserFile file = new UserFile(null, user.getId(), pid, null, null, filename, null, 1, null);
         userFileService.save(file);
         return ApiResponse.success();
     }
@@ -167,7 +175,7 @@ public class FileController {
     @GetMapping("/view")
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file!=null && suffixList.contains(file.getFilename().substring(file.getFilename().lastIndexOf(".")))) {
+        if (file != null && suffixList.contains(file.getFilename().substring(file.getFilename().lastIndexOf(".")))) {
             StringBuilder sb = new StringBuilder();
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
@@ -187,7 +195,6 @@ public class FileController {
     public ApiResponse tree() {
         List<Map<String, Object>> list = new ArrayList<>();
         // 根目录
-        File root = new File(repository);
         Map<String, Object> map = new HashMap<>();
         map.put("title", "全部文件");
         map.put("id", null);

@@ -32,11 +32,11 @@ public class User {
     @Column(name = "view_style", columnDefinition = "int(1) comment '模式：0-常规模式 1-书签模式'")
     private Integer viewStyle;
 
-    @Column(name = "capacity", columnDefinition = "int(10) comment '容量'")
-    private Integer capacity;
+    @Column(name = "capacity", columnDefinition = "bigint(20) comment '容量'")
+    private Long capacity;
 
-    @Column(name = "used_size", columnDefinition = "int(10) comment '已使用大小'")
-    private Integer usedSize;
+    @Column(name = "used_size", columnDefinition = "bigint(20) comment '已使用大小'")
+    private Long usedSize;
 
     @Transient
     private String code;

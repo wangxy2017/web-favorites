@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -36,12 +37,16 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndPidIsNull(userId);
     }
 
-    public List<UserFile> searchFiles(String filename){
-        return userFileRepository.findByUserIdAndFilenameLike(filename);
+    public List<UserFile> searchFiles(Integer userId, String filename) {
+        return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
     public void deleteById(Integer id) {
         userFileRepository.deleteById(id);
+    }
+
+    public String writeFile(InputStream input) {
+        return "success";
     }
 }
 

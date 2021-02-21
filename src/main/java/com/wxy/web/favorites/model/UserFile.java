@@ -48,7 +48,7 @@ public class UserFile {
     @Column(name = "is_dir", columnDefinition = "int(1) comment '置顶: 0-否 1-是'")
     private Integer isDir;
 
-    @Column(name = "size", nullable = false, columnDefinition = "int(10) comment '大小(byte)'")
-    private Integer size;
+    @Column(name = "size", columnDefinition = "bigint(20) comment '大小(byte)'")
+    private Long size;
 
 }

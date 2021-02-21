@@ -56,8 +56,7 @@
 			}
 
 			.main {
-				margin: 30px auto;
-                width: 98%;
+			    padding: 15px;
 			}
 
 			.layui-table-link {
@@ -121,6 +120,7 @@
             <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         </script>
+        <div style="color:#666">已使用：<span id="used">0 M</span> / 剩余：<span id="rest">0 M</span></div>
     </div>
 </div>
 <div class="footer">
@@ -165,13 +165,13 @@
             , cols: [[ //表头
                 {type: 'checkbox'}
                 , {
-                    field: 'name', title: '目录/文件', minWidth: 200, templet: function (d) {
+                    field: 'filename', title: '目录/文件', minWidth: 200, templet: function (d) {
                         var html = '<div class="file-info">';
-                        if (d.isDirectory) {
-                            html += '<a class="layui-table-link" onclick="goto(this)" data-path="' + d.path + '" data-directory="' + d.isDirectory + '"><img class="file-icon" src="svg/folder.svg"/>' + d.name + '</a>';
+                        if (d.isDir == 1) {
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="images/folder.svg"/>' + d.filename + '</a>';
                         } else {
-                            html += '<a class="layui-table-link" onclick="goto(this)" data-path="' + d.path + '" data-directory="' + d.isDirectory + '"><img class="file-icon" src="' + suffix(d.path) + '"/>' + d.name + '</a>';
-                            html += '<i class="file-share layui-icon layui-icon-release" onclick="share(this)" data-path="' + d.path + '" title="分享文件"></i>';
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="' + suffix(d.filename) + '"/>' + d.filename + '</a>';
+                            html += '<i class="file-share layui-icon layui-icon-release" onclick="share(this)" data-id="' + d.id + '" title="分享文件"></i>';
                         }
                         html += '</div>';
                         return html;
@@ -179,15 +179,13 @@
                 }
                 , {
                     field: 'size', title: '大小', templet: function (d) {
-                        return change(d.size);
+                        return d.size == null ? "" : change(d.size);
                     }
                 }
                 , {
-                    field: 'lastModified', title: '上传时间', templet: function (d) {
-                        return format(d.lastModified);
-                    }
+                    field: 'updateTime', title: '上传时间'
                 }
-                , {title: '操作', width: 160, toolbar: '#operates', fixed: 'right'}
+                , {title: '操作', width: 170, toolbar: '#operates', fixed: 'right'}
             ]]
         });
         // 加载文件夹树
@@ -232,9 +230,26 @@
                     }
                 }
             });
-        }
+        };
+
+        window.loadUserInfo = function(){
+            $.ajax({
+                type: "GET",
+                url: "user/info",
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        var user = result.data;
+                        $("#used").text(user.usedSize == null ? 0 : change(user.usedSize));
+                        $("#rest").text(user.usedSize == null ? change(user.capacity) : change(user.capacity - user.usedSize));
+                    }
+                }
+            });
+        };
+
         // 页面加载后执行
         $(function () {
+            loadUserInfo();
             loadTree();
         });
 
@@ -312,7 +327,8 @@
                     type: "POST",
                     url: "file/folder",
                     data: {
-                        "filePath": $("#parent").val() + '/' + value
+                        "pid": $("#parent").val(),
+                        "filename": value
                     },
                     dataType: "json",
                     success: function (result) {
@@ -336,19 +352,19 @@
             if (layEvent === 'edit') { //修改
                 layer.prompt({
                     title: '重命名文件(夹)',
-                    value: data.name,
+                    value: data.filename,
                     maxlength: 100,
                 }, function (value, index, elem) {
                     $.ajax({
                         type: "POST",
                         url: "file/rename",
-                        data: {"filePath": data.path, "newName": value},
+                        data: {"id": data.id, "filename": value},
                         dataType: "json",
                         success: function (result) {
                             if (result.code == 0) {
                                 layer.msg('修改成功', {icon: 6});
                                 //同步更新缓存对应的值
-                                obj.update({name: value});
+                                obj.update({filename: value});
                             } else {
                                 layer.msg('修改失败', {icon: 5});
                             }
@@ -361,7 +377,7 @@
                     $.ajax({
                         type: "POST",
                         url: "file/delete",
-                        data: {"filePath": data.path},
+                        data: {"id": data.id},
                         dataType: "json",
                         success: function (result) {
                             if (result.code == 0) {
@@ -387,7 +403,7 @@
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
             , data: {
-                "folder": function () {
+                "pid": function () {
                     return $("#parent").val();
                 }
             }
@@ -492,79 +508,79 @@
         // 判断后缀
         window.suffix = function (url) {
             if (url.endsWith(".bat"))
-                return "svg/bat.svg";
+                return "images/bat.svg";
             else if (url.endsWith(".xls") || url.endsWith(".xlsx"))
-                return "svg/excel.svg";
+                return "images/excel.svg";
             else if (url.endsWith(".exe"))
-                return "svg/exe.svg";
+                return "images/exe.svg";
             else if (url.endsWith(".md"))
-                return "svg/markdown.svg";
+                return "images/markdown.svg";
             else if (url.endsWith(".mp3") || url.endsWith(".wma"))
-                return "svg/music.svg";
+                return "images/music.svg";
             else if (url.endsWith(".pdf"))
-                return "svg/pdf.svg";
+                return "images/pdf.svg";
             else if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".ico"))
-                return "svg/photo.svg";
+                return "images/photo.svg";
             else if (url.endsWith(".gif"))
-                return "svg/gif.svg";
+                return "images/gif.svg";
             else if (url.endsWith(".svg"))
-                return "svg/svg.svg";
+                return "images/svg.svg";
             else if (url.endsWith(".ppt") || url.endsWith(".pptx"))
-                return "svg/ppt.svg";
+                return "images/ppt.svg";
             else if (url.endsWith(".sh"))
-                return "svg/shell.svg";
+                return "images/shell.svg";
             else if (url.endsWith(".tar.gz") || url.endsWith(".tar") || url.endsWith(".tgz") || url.endsWith(".tar.xz"))
-                return "svg/tar.svg";
+                return "images/tar.svg";
             else if (url.endsWith(".txt"))
-                return "svg/txt.svg";
+                return "images/txt.svg";
             else if (url.endsWith(".properties"))
-                return "svg/properties.svg";
+                return "images/properties.svg";
             else if (url.endsWith(".yml"))
-                return "svg/yml.svg";
+                return "images/yml.svg";
             else if (url.endsWith(".mp4") || url.endsWith(".avi") || url.endsWith(".flv") || url.endsWith(".rmvb"))
-                return "svg/video.svg";
+                return "images/video.svg";
             else if (url.endsWith(".doc") || url.endsWith(".docx"))
-                return "svg/word.svg";
+                return "images/word.svg";
             else if (url.endsWith(".xml"))
-                return "svg/xml.svg";
+                return "images/xml.svg";
             else if (url.endsWith(".zip") || url.endsWith(".rar") || url.endsWith(".war") || url.endsWith(".7z"))
-                return "svg/zip.svg";
+                return "images/zip.svg";
             else if (url.endsWith(".sql"))
-                return "svg/sql.svg";
+                return "images/sql.svg";
             else if (url.endsWith(".db"))
-                return "svg/database.svg";
+                return "images/database.svg";
             else if (url.endsWith(".java"))
-                return "svg/java.svg";
+                return "images/java.svg";
             else if (url.endsWith(".py"))
-                return "svg/python.svg";
+                return "images/python.svg";
             else if (url.endsWith(".php"))
-                return "svg/php.svg";
+                return "images/php.svg";
             else if (url.endsWith(".json"))
-                return "svg/json.svg";
+                return "images/json.svg";
             else if (url.endsWith(".css"))
-                return "svg/css.svg";
+                return "images/css.svg";
             else if (url.endsWith(".js"))
-                return "svg/js.svg";
+                return "images/js.svg";
             else if (url.endsWith(".html"))
-                return "svg/html.svg";
+                return "images/html.svg";
             else if (url.endsWith(".jar"))
-                return "svg/jar.svg";
+                return "images/jar.svg";
             else if (url.endsWith(".apk"))
-                return "svg/apk.svg";
+                return "images/apk.svg";
             else if (url.endsWith(".desktop"))
-                return "svg/desktop.svg";
+                return "images/desktop.svg";
             else if (url.endsWith(".lnk") || url.endsWith(".url"))
-                return "svg/link.svg";
+                return "images/link.svg";
             else if (url.endsWith(".rpm"))
-                return "svg/rpm.svg";
+                return "images/rpm.svg";
             else if (url.endsWith(".iso"))
-                return "svg/iso.svg";
+                return "images/iso.svg";
             else if (url.endsWith(".dll"))
-                return "svg/dll.svg";
+                return "images/dll.svg";
             else if (url.endsWith(".bak"))
-                return "svg/bak.svg";
+                return "images/bak.svg";
             else
-                return "svg/unknown.svg";
+                return "images/unknown.svg";
 
         }
         // 格式化时间

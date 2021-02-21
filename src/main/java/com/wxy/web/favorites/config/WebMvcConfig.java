@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login/**", "/register/**",
-                        "/login.html","/index.html","/search.html","/moment.html","/calendar.html","/wangEditor.html", "/layui/**", "/images/**",
+                        "/login.html","/index.html","/search.html","/moment.html","/calendar.html","/wangEditor.html","/file.html", "/layui/**", "/images/**",
                         "/favicon.ico");
     }
 }

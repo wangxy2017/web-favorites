@@ -57,7 +57,7 @@ public class RegisterController {
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 String randomKey = RandomUtil.randomString(16);
                 user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + randomKey).getBytes()));
-                user.setCapacity(50 * 1024 * 1024);
+                user.setCapacity(50 * 1024 * 1024L);
                 User user1 = userService.save(user);
                 // 保存secretKey
                 SecretKey secretKey = new SecretKey(null, user1.getId(), randomKey);
