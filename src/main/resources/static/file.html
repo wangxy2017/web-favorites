@@ -433,10 +433,28 @@
                 element.progress('progress', n + '%');
             }
         });
+
+        window.copyText = function(value){
+            var input = document.createElement('input');
+            input.setAttribute('readonly', 'readonly');
+            input.setAttribute('value', value);
+            document.body.appendChild(input);
+            input.select();
+            if (document.execCommand('copy')) {
+                document.execCommand('copy');
+            }
+            document.body.removeChild(input);
+        };
+
         // 分享
         window.share = function (obj) {
             var current = window.location.href.substring(0,window.location.href.lastIndexOf("/"));
-            layer.alert(current + "/file/download/" + $(obj).attr("data-id"), {title: "复制以下链接分享"});
+            var content = current + "/file/download/" + $(obj).attr("data-id");
+            layer.alert(content, {title: "复制以下链接分享", btn: "复制"}, function(index){
+                copyText(content);
+                layer.msg("复制成功");
+                layer.close(index);
+            });
         };
         // 跳转
         window.goto = function (obj) {
