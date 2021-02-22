@@ -3,6 +3,7 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
+import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
@@ -25,6 +27,9 @@ public class FileController {
 
     @Autowired
     private UserFileService userFileService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private SpringUtils springUtils;
@@ -54,7 +59,7 @@ public class FileController {
         // 排序
         list.sort(Comparator.comparing(UserFile::getFilename));
         HashMap<String, Object> data = new HashMap<>();
-        data.put("parent",pid);
+        data.put("parent", pid);
         data.put("list", list);
         return ApiResponse.success(data);
     }
@@ -119,17 +124,18 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
+    public ApiResponse upload(@RequestParam("file") MultipartFile file, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
-        if (files.length > 0) {
-            for (MultipartFile f : files) {
-                String path = userFileService.writeFile(f.getInputStream());
-                UserFile userFile = new UserFile(null, user.getId(), pid, null, null, f.getOriginalFilename(), path, null, f.getSize());
-                userFileService.save(userFile);
-            }
+        long restSize = Optional.ofNullable(user.getCapacity()).orElse(0L) - Optional.ofNullable(user.getUsedSize()).orElse(0L);
+        if (restSize > file.getSize()) {
+            String path = userFileService.writeFile(file.getInputStream());
+            UserFile userFile = new UserFile(null, user.getId(), pid, null, null, file.getOriginalFilename(), path, null, file.getSize());
+            userFileService.save(userFile);
+            user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
+            userService.save(user);
             return ApiResponse.success();
         }
-        return ApiResponse.error();
+        return ApiResponse.error("剩余空间不足");
     }
 
     @GetMapping("/back")
@@ -222,5 +228,14 @@ public class FileController {
             }
         }
         return list;
+    }
+
+    @GetMapping("/capacity")
+    public ApiResponse capacity() {
+        User user = springUtils.getCurrentUser();
+        Map<String, Object> data = new HashMap<>();
+        data.put("capacity", Optional.ofNullable(user.getCapacity()).orElse(0L));
+        data.put("usedSize", Optional.ofNullable(user.getUsedSize()).orElse(0L));
+        return ApiResponse.success(data);
     }
 }

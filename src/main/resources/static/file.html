@@ -232,16 +232,17 @@
             });
         };
 
-        window.loadUserInfo = function(){
+        window.loadCapacity = function(){
             $.ajax({
                 type: "GET",
-                url: "user/info",
+                url: "file/capacity",
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        var user = result.data;
-                        $("#used").text(user.usedSize == null ? 0 : change(user.usedSize));
-                        $("#rest").text(user.usedSize == null ? change(user.capacity) : change(user.capacity - user.usedSize));
+                        var data = result.data;
+                        $("#used").text(change(data.usedSize));
+                        $("#rest").text(change(data.capacity - data.usedSize));
+                        uploadInst.reload({size: (data.capacity - data.usedSize) / 1024});
                     }
                 }
             });
@@ -249,7 +250,7 @@
 
         // 页面加载后执行
         $(function () {
-            loadUserInfo();
+            loadCapacity();
             loadTree();
         });
 
@@ -399,7 +400,7 @@
             }
         });
         //上传文件
-        upload.render({
+        var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
             , data: {
@@ -416,6 +417,7 @@
                 if(res.code == 0){
                     layer.msg('上传成功', {icon: 6});
                     table.reload('fileList');
+                    loadCapacity();
                 }else{
                     layer.msg('上传失败', {icon: 5});
                 }

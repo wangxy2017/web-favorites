@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * @Author wangxiaoyuan
@@ -45,8 +47,30 @@ public class UserFileService {
         userFileRepository.deleteById(id);
     }
 
-    public String writeFile(InputStream input) {
-        return "success";
+    public String writeFile(InputStream input) throws IOException {
+        String sequence = "1234567890qwertyuiopasdfghjklzxcvbnm";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            char c = sequence.charAt(new Random().nextInt(sequence.length()));
+            sb.append(c).append("/");
+        }
+        File folder = new File("repository/" + sb);
+        if (!folder.exists()) {
+            boolean bool = folder.mkdirs();
+            if (bool) {
+                File file = new File(folder.getPath() + File.pathSeparator + UUID.randomUUID().toString().replaceAll("-", ""));
+                BufferedInputStream bin = new BufferedInputStream(input);
+                FileOutputStream out = new FileOutputStream(file);
+                byte[] buffer = new byte[1024 * 1024 * 10];
+                int i = bin.read(buffer);
+                while (i != -1) {
+                    out.write(buffer, 0, i);
+                    i = bin.read(buffer);
+                }
+                return file.getPath();
+            }
+        }
+        throw new IOException();
     }
 }
 
