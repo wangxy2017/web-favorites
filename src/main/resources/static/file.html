@@ -384,6 +384,7 @@
                             if (result.code == 0) {
                                 obj.del(); //移除当前行
                                 layer.msg('删除成功', {icon: 6});
+                                loadCapacity();
                             } else {
                                 layer.msg('删除失败', {icon: 5});
                             }

@@ -146,6 +146,14 @@ public class FileController {
 
     @PostMapping("/delete")
     public ApiResponse delete(@RequestParam Integer id) {
+        User user = springUtils.getCurrentUser();
+        UserFile userFile = userFileService.findById(id);
+        if (StringUtils.isNoneBlank(userFile.getPath())) {
+            File file = new File(userFile.getPath());
+            file.delete();
+            user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) - userFile.getSize());
+            userService.save(user);
+        }
         userFileService.deleteById(id);
         return ApiResponse.success();
     }
