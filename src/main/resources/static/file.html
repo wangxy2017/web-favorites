@@ -290,6 +290,7 @@
                         if (result.code == 0) {
                             layer.msg('删除成功', {icon: 6});
                             table.reload('fileList');
+                            loadCapacity();
                         } else {
                             layer.msg('删除失败', {icon: 5});
                         }
@@ -301,9 +302,10 @@
         // 搜索
         $('#searchName').bind('keypress', function (event) {
             if (event.key === "Enter") {
-                table.reload('fileList', {where: {"folder": $("#parent").val(), "name": $(this).val()}});
+                table.reload('fileList', {where: {"name": $(this).val()}});
             }
         });
+
         // 返回
         $("#goBack").click(function () {
             $.ajax({
@@ -314,7 +316,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         var pid = result.data ? result.data : null;
-                        table.reload('fileList', {where: {"pid": pid}});
+                        table.reload('fileList', {where: {"pid": pid, "name": ""}});
                     }
                 }
             });

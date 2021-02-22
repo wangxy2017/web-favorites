@@ -79,9 +79,8 @@ public class UserFileService {
             for (UserFile file : userFileRepository.findByPid(userFile.getId())) {
                 results.addAll(findAllFiles(file.getId()));
             }
-        } else {
-            results.add(userFile);
         }
+        results.add(userFile);
         return results;
     }
 

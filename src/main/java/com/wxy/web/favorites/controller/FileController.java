@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
@@ -123,13 +122,15 @@ public class FileController {
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile file, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
-        long restSize = Optional.ofNullable(user.getCapacity()).orElse(0L) - Optional.ofNullable(user.getUsedSize()).orElse(0L);
+        User user1 = userService.findById(user.getId());
+        long restSize = Optional.ofNullable(user1.getCapacity()).orElse(0L) - Optional.ofNullable(user1.getUsedSize()).orElse(0L);
         if (restSize > file.getSize()) {
             String path = userFileService.writeFile(file.getInputStream());
-            UserFile userFile = new UserFile(null, user.getId(), pid, null, null, file.getOriginalFilename(), path, null, file.getSize());
+            String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
+            UserFile userFile = new UserFile(null, user1.getId(), pid, null, null, filename, path, null, file.getSize());
             userFileService.save(userFile);
-            user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
-            userService.save(user);
+            user1.setUsedSize(Optional.ofNullable(user1.getUsedSize()).orElse(0L) + file.getSize());
+            userService.save(user1);
             return ApiResponse.success();
         }
         return ApiResponse.error("剩余空间不足");
@@ -242,9 +243,10 @@ public class FileController {
     @GetMapping("/capacity")
     public ApiResponse capacity() {
         User user = springUtils.getCurrentUser();
+        User user1 = userService.findById(user.getId());
         Map<String, Object> data = new HashMap<>();
-        data.put("capacity", Optional.ofNullable(user.getCapacity()).orElse(0L));
-        data.put("usedSize", Optional.ofNullable(user.getUsedSize()).orElse(0L));
+        data.put("capacity", Optional.ofNullable(user1.getCapacity()).orElse(0L));
+        data.put("usedSize", Optional.ofNullable(user1.getUsedSize()).orElse(0L));
         return ApiResponse.success(data);
     }
 }
