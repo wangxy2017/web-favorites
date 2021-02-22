@@ -75,8 +75,8 @@ public class FileController {
         return ApiResponse.error();
     }
 
-    @GetMapping("/download")
-    public void download(HttpServletResponse response, @RequestParam Integer id) throws IOException {
+    @GetMapping("/download/{id}")
+    public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
         if (userFile != null && StringUtils.isNoneBlank(userFile.getPath())) {
             File file = new File(userFile.getPath());

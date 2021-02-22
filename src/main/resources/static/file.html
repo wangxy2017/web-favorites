@@ -277,14 +277,14 @@
                 return false;
             }
             layer.confirm('确认删除全部文件吗?', function (index) {
-                var filePaths = [];
+                var ids = [];
                 $.each(checkStatus.data, function (index, item) {
-                    filePaths.push(item.path);
+                    ids.push(item.id);
                 });
                 $.ajax({
                     type: "POST",
                     url: "file/deleteMore",
-                    data: {"filePaths": filePaths.join(";")},
+                    data: {"ids": ids.join(",")},
                     dataType: "json",
                     success: function (result) {
                         if (result.code == 0) {
@@ -398,7 +398,7 @@
                 if (data.isDir == 1) {
                     layer.msg('暂不支持文件夹下载', {icon: 5});
                 } else {
-                    window.location.href = "file/download?id=" + data.id;
+                    window.location.href = "file/download/" + data.id;
                 }
             }
         });
@@ -436,7 +436,7 @@
         // 分享
         window.share = function (obj) {
             var current = window.location.href.substring(0,window.location.href.lastIndexOf("/"));
-            layer.alert(encodeURI(current + "/file/download?filePath=" + $(obj).attr("data-path")), {title: "复制以下链接分享"});
+            layer.alert(current + "/file/download/" + $(obj).attr("data-id"), {title: "复制以下链接分享"});
         };
         // 跳转
         window.goto = function (obj) {
