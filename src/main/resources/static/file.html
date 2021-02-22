@@ -126,6 +126,7 @@
 <div class="footer">
     © 2020 在线网络收藏夹 || 在线网络收藏夹版权所有
 </div>
+<div id="folderTree" style="display: none;padding: 10px"></div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/layui.js"></script>
 <script>
@@ -200,19 +201,19 @@
                         tree.render({
                             elem: '#folderTree'
                             , data: result.data
-                            , showLine: false  //是否开启连接线
-                            , onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+                            , showLine: false
+                            , onlyIconControl: true
                             , click: function (obj) {
                                 layer.confirm('确认移动到此文件夹吗?', function (index) {
                                     var checkStatus = table.checkStatus('fileList');
-                                    var filePaths = [];
+                                    var ids = [];
                                     $.each(checkStatus.data, function (index, item) {
-                                        filePaths.push(item.path);
+                                        ids.push(item.id);
                                     });
                                     $.ajax({
                                         type: "POST",
                                         url: "file/move",
-                                        data: {"filePaths": filePaths.join(";"), "folder": obj.data.id},
+                                        data: {"ids": ids.join(","), "pid": obj.data.id},
                                         dataType: "json",
                                         success: function (result) {
                                             if (result.code == 0) {
