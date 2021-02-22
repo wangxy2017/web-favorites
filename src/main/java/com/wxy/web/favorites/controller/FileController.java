@@ -67,7 +67,7 @@ public class FileController {
     @PostMapping("/rename")
     public ApiResponse rename(@RequestParam Integer id, @RequestParam String filename) {
         UserFile file = userFileService.findById(id);
-        if (file != null&&StringUtils.isNoneBlank(filename)) {
+        if (file != null && StringUtils.isNoneBlank(filename)) {
             file.setFilename(filename);
             userFileService.save(file);
             return ApiResponse.success();
@@ -78,13 +78,10 @@ public class FileController {
     @GetMapping("/download")
     public void download(HttpServletResponse response, @RequestParam Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
-        if (userFile != null) {
+        if (userFile != null && StringUtils.isNoneBlank(userFile.getPath())) {
             File file = new File(userFile.getPath());
-            if (file.isDirectory()) {
-                // 打包下载
-            } else {
-                writeToResponse(response, file.getName(), new FileInputStream(file));
-            }
+            if (file.exists())
+                writeToResponse(response, userFile.getFilename(), new FileInputStream(file));
         }
     }
 
@@ -139,9 +136,15 @@ public class FileController {
     }
 
     @GetMapping("/back")
-    public ApiResponse goBack(@RequestParam Integer pid) {
-        UserFile file = userFileService.findById(pid);
-        return ApiResponse.success(file == null ? null : file.getPid());
+    public ApiResponse goBack(@RequestParam(required = false) Integer pid) {
+        Integer data = null;
+        if (pid != null) {
+            UserFile file = userFileService.findById(pid);
+            if (file != null) {
+                data = file.getPid();
+            }
+        }
+        return ApiResponse.success(data);
     }
 
     @PostMapping("/delete")

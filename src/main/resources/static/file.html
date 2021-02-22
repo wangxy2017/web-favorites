@@ -308,11 +308,12 @@
             $.ajax({
                 type: "GET",
                 url: "file/back",
-                data: {"folder": $("#parent").val()},
+                data: {"pid": $("#parent").val()},
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
-                        table.reload('fileList', {where: {"folder": result.data}});
+                        var pid = result.data ? result.data : null;
+                        table.reload('fileList', {where: {"pid": pid}});
                     }
                 }
             });
@@ -393,10 +394,10 @@
                     layer.close(index);
                 });
             } else if (layEvent === 'download') { //下载
-                if (!data.isDirectory) {
-                    window.location.href = encodeURI("file/download?filePath=" + data.path);
-                } else {
+                if (data.isDir == 1) {
                     layer.msg('暂不支持文件夹下载', {icon: 5});
+                } else {
+                    window.location.href = "file/download?id=" + data.id;
                 }
             }
         });
