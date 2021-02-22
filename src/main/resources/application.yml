@@ -46,3 +46,5 @@ app:
   search-nums: 100 #搜索个数限制
   favorites-nums: 40 #显示收藏个数限制
   data-url: ./data.json #搜索类型数据
+  init-capacity: 50 #初始容量(M)
+  file-repository: ./repository

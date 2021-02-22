@@ -5,6 +5,7 @@ import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserFileService {
+
+    @Value("${app.file-repository}")
+    private String repository;
 
     @Autowired
     private UserFileRepository userFileRepository;
@@ -49,7 +53,7 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
-    public void deleteById(Integer id,Integer userId) {
+    public void deleteById(Integer id, Integer userId) {
         List<UserFile> allFiles = findAllFiles(id);
         long totalSize = 0L;
         List<String> pathList = new ArrayList<>();
@@ -91,7 +95,7 @@ public class UserFileService {
             char c = sequence.charAt(new Random().nextInt(sequence.length()));
             sb.append(c).append(File.separator);
         }
-        File folder = new File("repository" + File.separator + sb);
+        File folder = new File(repository + File.separator + sb);
         if (!folder.exists()) {
             boolean bool = folder.mkdirs();
             if (bool) {
