@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import com.wxy.web.favorites.config.RecommendsConfig;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.SecretKey;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RestController
@@ -50,8 +52,8 @@ public class RegisterController {
     @Autowired
     private SpringUtils springUtils;
 
-    @Value("${app.recommend-list}")
-    private List<String> recommendList;
+    @Autowired
+    private RecommendsConfig recommendsConfig;
 
     /**
      * 注册
@@ -76,7 +78,7 @@ public class RegisterController {
                 Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null, null);
                 categoryService.save(category);
                 // 推荐收藏
-                List<Favorites> favorites = recommendList.stream().map(s -> {
+                List<Favorites> favorites = recommendsConfig.getRecommends().stream().map(s -> {
                     String[] split = s.split(",");
                     return new Favorites(null, split[0], split[1] + "favicon.ico"
                             , split[1], category.getId(), user1.getId(),
