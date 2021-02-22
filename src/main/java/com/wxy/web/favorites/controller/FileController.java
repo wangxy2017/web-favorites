@@ -67,7 +67,7 @@ public class FileController {
     @PostMapping("/rename")
     public ApiResponse rename(@RequestParam Integer id, @RequestParam String filename) {
         UserFile file = userFileService.findById(id);
-        if (file != null) {
+        if (file != null&&StringUtils.isNoneBlank(filename)) {
             file.setFilename(filename);
             userFileService.save(file);
             return ApiResponse.success();

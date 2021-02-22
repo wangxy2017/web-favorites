@@ -52,13 +52,13 @@ public class UserFileService {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10; i++) {
             char c = sequence.charAt(new Random().nextInt(sequence.length()));
-            sb.append(c).append("/");
+            sb.append(c).append(File.separator);
         }
-        File folder = new File("repository/" + sb);
+        File folder = new File("repository" + File.separator + sb);
         if (!folder.exists()) {
             boolean bool = folder.mkdirs();
             if (bool) {
-                File file = new File(folder.getPath() + File.pathSeparator + UUID.randomUUID().toString().replaceAll("-", ""));
+                File file = new File(folder.getPath() + File.separator + UUID.randomUUID().toString().replaceAll("-", ""));
                 BufferedInputStream bin = new BufferedInputStream(input);
                 FileOutputStream out = new FileOutputStream(file);
                 byte[] buffer = new byte[1024 * 1024 * 10];

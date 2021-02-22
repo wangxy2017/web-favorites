@@ -440,31 +440,28 @@
         window.goto = function (obj) {
             var that = $(obj);
             if (that.attr("data-directory") === "true") {
-                table.reload('fileList', {where: {"folder": that.attr("data-path")}});
+                table.reload('fileList', {where: {"pid": that.attr("data-id")}});
             } else {
-                var path = that.attr("data-path");
-                if(path.endsWith(".properties")||path.endsWith(".txt")||path.endsWith(".xml")){
-                    // 查看文件内容
-                    $.ajax({
-                        type: "GET",
-                        url: "file/view",
-                        data: {"filePath": path},
-                        dataType: "json",
-                        success: function (result) {
-                            if (result.code == 0) {
-                                var html = '<textarea style="width: 100%;height: 99%;border: none;padding: 10px;box-sizing: border-box;resize: none;" readonly>'+result.data+'</textarea>';
-                                layer.open({
-                                    type: 1,
-                                    title: '文件内容',
-                                    area:['800px','600px'],
-                                    content: html
-                                });
-                            }
+                var id = that.attr("data-id");
+                $.ajax({
+                    type: "GET",
+                    url: "file/view",
+                    data: {"id": id},
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {
+                            var html = '<textarea style="width: 100%;height: 99%;border: none;padding: 10px;box-sizing: border-box;resize: none;" readonly>'+result.data+'</textarea>';
+                            layer.open({
+                                area:['800px','600px'],
+                                type: 1,
+                                title: '文件内容',
+                                content: html
+                            });
+                        } else {
+                            layer.msg('暂不支持文件查看', {icon: 5});
                         }
-                    });
-                }else{
-                    layer.msg('暂不支持文件查看', {icon: 5});
-                }
+                    }
+                });
             }
         };
         /**
