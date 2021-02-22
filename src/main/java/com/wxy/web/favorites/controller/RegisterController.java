@@ -9,7 +9,10 @@ import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
-import com.wxy.web.favorites.util.*;
+import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.PinYinUtils;
+import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,8 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -47,6 +50,9 @@ public class RegisterController {
     @Autowired
     private SpringUtils springUtils;
 
+    @Value("${app.recommend-list}")
+    private List<String> recommendList;
+
     /**
      * 注册
      *
@@ -70,20 +76,15 @@ public class RegisterController {
                 Category category = new Category(null, "默认分类", user1.getId(), 1, 9999, null, null);
                 categoryService.save(category);
                 // 推荐收藏
-                long s = System.currentTimeMillis();
-                Map<String, String> recommendMap = new HashMap<>();
-                recommendMap.put("bilibili", "https://www.bilibili.com/");
-                recommendMap.put("淘宝", "https://www.taobao.com/");
-                recommendMap.put("知乎", "https://www.zhihu.com/");
-                recommendMap.put("京东", "https://www.jd.com/");
-                recommendMap.put("腾讯视频", "https://v.qq.com/");
-                recommendMap.put("今日头条", "https://www.toutiao.com/");
-                recommendMap.forEach((k, v) -> favoritesService.save(new Favorites(null, k, v + "favicon.ico"
-                        , v, category.getId(), user1.getId(),
-                        PinYinUtils.toPinyin(k),
-                        PinYinUtils.toPinyinS(k), null, null, null, null, null)));
-                if (log.isDebugEnabled())
-                    log.debug("插入推荐数据耗时：{}ms", System.currentTimeMillis() - s);
+                List<Favorites> favorites = recommendList.stream().map(s -> {
+                    String[] split = s.split(",");
+                    return new Favorites(null, split[0], split[1] + "favicon.ico"
+                            , split[1], category.getId(), user1.getId(),
+                            PinYinUtils.toPinyin(split[0]),
+                            PinYinUtils.toPinyinS(split[0]),
+                            null, null, null, null, null);
+                }).collect(Collectors.toList());
+                favoritesService.saveAll(favorites);
                 // 设置session
                 session.setAttribute("login_user", user1);
                 // 移除验证码

@@ -47,4 +47,11 @@ app:
   favorites-nums: 40 #显示收藏个数限制
   data-url: ./data.json #搜索类型数据
   init-capacity: 50 #初始容量(M)
-  file-repository: ./repository
+  file-repository: ./repository #文件仓库
+  recommend-list:
+    - bilibili,https://www.bilibili.com/
+    - 淘宝,https://www.taobao.com/
+    - 知乎,https://www.zhihu.com/
+    - 京东,https://www.jd.com/
+    - 腾讯视频,https://v.qq.com/
+    - 今日头条,https://www.toutiao.com/
