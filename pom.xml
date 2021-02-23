@@ -111,24 +111,29 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>1.7.0</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:8-jdk-alpine</image>
-                    </from>
-                    <to>
-                        <image>registry.hub.docker.com/wangxiaoyuan2020/${project.artifactId}</image>
-                        <tags>
-                            <tag>2.0.4.final</tag>
-                        </tags>
-                    </to>
-                    <useOnlyProjectCache>false</useOnlyProjectCache>
-                    <allowInsecureRegistries>false</allowInsecureRegistries>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>0.9.6</version>-->
+<!--                <configuration>-->
+<!--                    <from>-->
+<!--                        <image>openjdk:alpine</image>-->
+<!--                    </from>-->
+<!--                    <to>-->
+<!--                        <image>registry.hub.docker.com/wangxiaoyuan2020/web-favorites:2.0.4.final</image>-->
+<!--                    </to>-->
+<!--                    <useOnlyProjectCache>true</useOnlyProjectCache>-->
+<!--                    <allowInsecureRegistries>true</allowInsecureRegistries>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
