@@ -12,11 +12,12 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    @Query("select t from Task t where t.userId = :userId and t.taskDate between :startDate and :endDate")
-    List<Task> findAllByUserId(Date startDate, Date endDate, Integer userId);
+    @Query("select t from Task t where t.userId = :userId and to_char(t.taskDate,'yyyy-MM-dd') between :startDate and :endDate")
+    List<Task> findAllByUserId(String startDate, String endDate, Integer userId);
 
-    List<Task> findByAlarmTime(Date alarmTime);
+    @Query("select t from Task t where to_char(t.alarmTime,'yyyy-MM-dd HH24:MI:SS') = :alarmTime")
+    List<Task> findByAlarmTime(String alarmTime);
 
-    @Query("select t from Task t where t.taskDate = :taskDate and t.level in (0,1,2,3)")
-    List<Task> findUndoTask(Date taskDate);
+    @Query("select t from Task t where to_char(t.taskDate,'yyyy-MM-dd') = :taskDate and t.level in (0,1,2,3)")
+    List<Task> findUndoTask(String taskDate);
 }

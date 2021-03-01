@@ -29,18 +29,17 @@ public class TaskServiceTest {
     private TaskService taskService;
 
     @Test
-   public void findByAlarmTime() throws ParseException {
-       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-       Date date = sdf.parse("2021-02-20 10:00:00");
-       List<Task> taskList = taskService.findByAlarmTime(date);
-       log.info("查询结果：taskList = {}",taskList);
-   }
+    public void findByAlarmTime() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<Task> taskList = taskService.findByAlarmTime("2021-02-20 10:00:00");
+        log.info("查询结果：taskList = {}", taskList);
+    }
 
 
-   @Test
-   public void findById(){
-       Task task = taskService.findById(83);
-       log.info("查询结果：task = {}",task);
-   }
+    @Test
+    public void findById() {
+        Task task = taskService.findById(83);
+        log.info("查询结果：task = {}", task);
+    }
 
 }

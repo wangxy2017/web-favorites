@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,6 +54,7 @@ public class Favorites {
     @Column(name = "star", columnDefinition = "int(1) comment '是否标记：1-是 0-否'")
     private Integer star;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @Column(name = "visit_time", columnDefinition = "datetime comment '最近访问时间'")
     private Date visitTime;
 

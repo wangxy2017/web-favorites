@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,12 +29,9 @@ public class TaskCancelJob {
         log.info("任务取消程序开始执行...");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DATE, -1);
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
         // 查询昨日未完成的任务，将状态改为取消
-        List<Task> undoTaskList = taskService.findUndoTask(calendar.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<Task> undoTaskList = taskService.findUndoTask(sdf.format(calendar.getTime()));
         undoTaskList.forEach(t -> {
             t.setLevel(5);
             taskService.save(t);

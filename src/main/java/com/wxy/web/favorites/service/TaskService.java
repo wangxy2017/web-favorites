@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,23 +39,14 @@ public class TaskService {
     }
 
     public List<Task> findAllByUserId(String startDate, String endDate, Integer userId) {
-        List<Task> list = new ArrayList<>();
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date start = sdf.parse(startDate);
-            Date end = sdf.parse(endDate);
-            list = taskRepository.findAllByUserId(start, end, userId);
-        } catch (Exception e) {
-            log.error("查询失败,startDate:{},endDate:{},userId:{}", startDate, endDate, userId, e);
-        }
-        return list;
+        return taskRepository.findAllByUserId(startDate,endDate,userId);
     }
 
-    public List<Task> findByAlarmTime(Date alarmTime) {
+    public List<Task> findByAlarmTime(String alarmTime) {
         return taskRepository.findByAlarmTime(alarmTime);
     }
 
-    public List<Task> findUndoTask(Date taskDate) {
+    public List<Task> findUndoTask(String taskDate) {
         return taskRepository.findUndoTask(taskDate);
     }
 }

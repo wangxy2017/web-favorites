@@ -11,7 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,10 +37,8 @@ public class TaskNoticeJob {
     public void run() {
         log.info("任务通知程序开始执行...");
         // 查询此刻任务
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        List<Task> taskList = taskService.findByAlarmTime(calendar.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        List<Task> taskList = taskService.findByAlarmTime(sdf.format(new Date()) + ":00");
         // 邮件通知
         taskList.stream().filter(t -> t.getLevel() < 4).forEach(t -> {
             User user = userService.findById(t.getUserId());
