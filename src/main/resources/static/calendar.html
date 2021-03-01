@@ -478,8 +478,8 @@
 
         // 日期比较
         window.dateCompare = function(text1,text2){ // 2020-01-11
-            var time1 = new Date(text1.replace("-","/")).getTime();
-            var time2 = new Date(text2.replace("-","/")).getTime();
+            var time1 = new Date(text1.replace(/-/g, "/")).getTime();
+            var time2 = new Date(text2.replace(/-/g, "/")).getTime();
             return time1 - time2;
         }
 
@@ -750,27 +750,6 @@
             $("#calendarInput").val(split[0] + "年" + split[1] + "月");
             drawCalender(preMonth);
         });
-
-        // 格式化时间
-        window.dateFormat = function(fmt, date) {
-            var ret;
-            const opt = {
-                "y+": date.getFullYear().toString(),        // 年
-                "M+": (date.getMonth() + 1).toString(),     // 月
-                "d+": date.getDate().toString(),            // 日
-                "H+": date.getHours().toString(),           // 时
-                "m+": date.getMinutes().toString(),         // 分
-                "s+": date.getSeconds().toString()          // 秒
-                // 有其他格式化字符需求可以继续添加，必须转化成字符串
-            };
-            for (var k in opt) {
-                ret = new RegExp("(" + k + ")").exec(fmt);
-                if (ret) {
-                    fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-                };
-            };
-            return fmt;
-        }
 
         // 新增日程点击事件
         window.addTask = function(text){// 2020-01-01
