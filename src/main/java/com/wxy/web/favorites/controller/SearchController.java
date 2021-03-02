@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,7 @@ public class SearchController {
     @GetMapping("/data")
     public ApiResponse data() {
         // 查询系统搜索引擎
-        JSONArray jsonArray = JSONUtil.readJSONArray(FileUtil.file(dataUrl), StandardCharsets.UTF_8);
+        JSONArray jsonArray = JSONUtil.readJSONArray(new File(dataUrl), StandardCharsets.UTF_8);
         List<SearchType> systemList = jsonArray.toList(SearchType.class);
         // 查询自定义搜索引擎
         User user = springUtils.getCurrentUser();
