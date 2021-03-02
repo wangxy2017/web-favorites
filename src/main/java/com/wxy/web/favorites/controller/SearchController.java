@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.controller;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.model.SearchType;
@@ -8,12 +7,15 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.SearchTypeService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("/search")
+@Slf4j
 public class SearchController {
 
     @Value("${app.data-url}")
@@ -38,9 +41,14 @@ public class SearchController {
     @GetMapping("/data")
     public ApiResponse data() {
         // 查询系统搜索引擎
-        String path = Thread.currentThread().getContextClassLoader().getResource(dataUrl).getPath();
-        JSONArray jsonArray = JSONUtil.readJSONArray(new File(path), StandardCharsets.UTF_8);
-        List<SearchType> systemList = jsonArray.toList(SearchType.class);
+        List<SearchType> systemList = new ArrayList<>();
+        try {
+            ClassPathResource resource = new ClassPathResource(dataUrl);
+            JSONArray jsonArray = JSONUtil.readJSONArray(resource.getFile(), StandardCharsets.UTF_8);
+            systemList = jsonArray.toList(SearchType.class);
+        } catch (IOException e) {
+            log.error("文件读取错误：{}", dataUrl, e);
+        }
         // 查询自定义搜索引擎
         User user = springUtils.getCurrentUser();
         List<SearchType> list = searchTypeService.findByUserId(user.getId());
