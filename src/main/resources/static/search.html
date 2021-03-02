@@ -304,19 +304,21 @@
                     url: "search/data",
                     dataType: "json",
                     success: function (result) {
-                        var html = '';
-                        $.each(result.data.systemList, function(index, item) {
-                            html += '<li class="search-type-li" data-search="' + item.url + '"><img src="' + item.icon +
-                                '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
-                                '</span></li>';
-                        });
-                        $.each(result.data.userList, function(index, item) {
-                            html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img src="' + item.icon +
-                                '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
-                                '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
-                        });
-                        html += '<li onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
-                        $(".search-type").empty().append(html);
+                        if(result.code == 0){
+                            var html = '';
+                            $.each(result.data.systemList, function(index, item) {
+                                html += '<li class="search-type-li" data-search="' + item.url + '"><img src="' + item.icon +
+                                    '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
+                                    '</span></li>';
+                            });
+                            $.each(result.data.userList, function(index, item) {
+                                html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img src="' + item.icon +
+                                    '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
+                                    '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
+                            });
+                            html += '<li onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
+                            $(".search-type").empty().append(html);
+                        }
                     }
                 });
             };
