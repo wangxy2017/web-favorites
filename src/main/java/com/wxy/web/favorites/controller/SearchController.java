@@ -11,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +46,10 @@ public class SearchController {
         List<SearchType> systemList = new ArrayList<>();
         try {
             ClassPathResource resource = new ClassPathResource(dataUrl);
-            JSONArray jsonArray = JSONUtil.readJSONArray(resource.getFile(), StandardCharsets.UTF_8);
+            InputStream input = resource.getInputStream();
+            byte[] bytes = FileCopyUtils.copyToByteArray(input);
+            String json = new String(bytes, StandardCharsets.UTF_8);
+            JSONArray jsonArray = JSONUtil.parseArray(json);
             systemList = jsonArray.toList(SearchType.class);
         } catch (IOException e) {
             log.error("文件读取错误：{}", dataUrl, e);
