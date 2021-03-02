@@ -10,8 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +28,6 @@ public class TaskServiceTest {
 
     @Test
     public void findByAlarmTime() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Task> taskList = taskService.findByAlarmTime("2021-02-20 10:00:00");
         log.info("查询结果：taskList = {}", taskList);
     }
