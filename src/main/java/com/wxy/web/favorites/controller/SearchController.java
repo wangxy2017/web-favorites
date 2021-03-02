@@ -38,7 +38,8 @@ public class SearchController {
     @GetMapping("/data")
     public ApiResponse data() {
         // 查询系统搜索引擎
-        JSONArray jsonArray = JSONUtil.readJSONArray(new File(dataUrl), StandardCharsets.UTF_8);
+        String path = Thread.currentThread().getContextClassLoader().getResource(dataUrl).getPath();
+        JSONArray jsonArray = JSONUtil.readJSONArray(new File(path), StandardCharsets.UTF_8);
         List<SearchType> systemList = jsonArray.toList(SearchType.class);
         // 查询自定义搜索引擎
         User user = springUtils.getCurrentUser();
