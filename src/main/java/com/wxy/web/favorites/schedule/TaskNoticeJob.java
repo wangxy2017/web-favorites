@@ -44,7 +44,7 @@ public class TaskNoticeJob {
         List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < 4).collect(Collectors.toList());
         noticeList.forEach(t -> {
             User user = userService.findById(t.getUserId());
-            emailUtils.sendSimpleMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
+            emailUtils.sendHtmlMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
             // 改变状态
             t.setLevel(4);
         });
