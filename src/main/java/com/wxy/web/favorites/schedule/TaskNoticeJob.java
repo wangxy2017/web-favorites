@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wangxiaoyuan
@@ -40,9 +41,13 @@ public class TaskNoticeJob {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         List<Task> taskList = taskService.findByAlarmTime(sdf.format(new Date()) + ":00");
         // 邮件通知
-        taskList.stream().filter(t -> t.getLevel() < 4).forEach(t -> {
+        List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < 4).collect(Collectors.toList());
+        noticeList.forEach(t -> {
             User user = userService.findById(t.getUserId());
             emailUtils.sendSimpleMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
+            // 改变状态
+            t.setLevel(4);
         });
+        taskService.saveAll(noticeList);
     }
 }
