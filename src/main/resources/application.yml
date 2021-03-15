@@ -16,6 +16,10 @@ server:
       - text/plain
     min-response-size: 1024
 spring:
+  servlet: #网关请求配置大小
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB
   datasource: #数据源
     url: jdbc:h2:file:./db/h2
   jpa: #jpa配置
