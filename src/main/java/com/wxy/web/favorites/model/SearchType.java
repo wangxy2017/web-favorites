@@ -20,7 +20,7 @@ public class SearchType {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(10) comment '名称'")
+    @Column(name = "name", nullable = false, columnDefinition = "varchar(20) comment '名称'")
     private String name;
 
     @Column(name = "icon", nullable = false,columnDefinition = "varchar(500) comment '图标'")

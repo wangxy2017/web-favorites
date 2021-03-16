@@ -224,7 +224,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required|length" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
@@ -388,6 +388,13 @@
                     }
                 });
                 return false;
+            });
+
+            form.verify({
+              length: [
+                /^\w{0,20}$/
+                ,'最多输入20个字符'
+              ]
             });
 
 			$("#cancelAddSearchType").click(function () {
