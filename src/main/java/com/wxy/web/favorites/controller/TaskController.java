@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +26,7 @@ public class TaskController {
     public ApiResponse save(@RequestBody Task task) {
         User user = springUtils.getCurrentUser();
         task.setUserId(user.getId());
+        if (task.getId() == null) task.setCreateTime(new Date());
         taskService.save(task);
         return ApiResponse.success();
     }

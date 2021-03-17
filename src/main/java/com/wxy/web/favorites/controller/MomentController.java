@@ -9,6 +9,8 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("/moment")
 public class MomentController {
@@ -23,6 +25,7 @@ public class MomentController {
     public ApiResponse save(@RequestBody Moment moment) {
         User user = springUtils.getCurrentUser();
         moment.setUserId(user.getId());
+        if (moment.getId() == null) moment.setCreateTime(new Date());
         momentService.save(moment);
         return ApiResponse.success();
     }

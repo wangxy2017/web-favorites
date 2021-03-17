@@ -181,8 +181,18 @@ public class FavoritesController {
             SAXReader reader = new SAXReader();
             Document document = reader.read(in);
             Element root = document.getRootElement();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (root.element("MOMENTS") != null) {
-                root.element("MOMENTS").elements("MOMENT").forEach(m -> list.add(new Moment(null, m.elementText("CONTENT"), userId, null, null)));
+                root.element("MOMENTS").elements("MOMENT").forEach(m -> {
+                    try {
+                        String content = m.elementText("CONTENT");
+                        String time = m.elementText("TIME");
+                        if (StringUtils.isNoneBlank(content) && StringUtils.isNoneBlank(time)) {
+                            list.add(new Moment(null, content, userId, sdf.parse(time), null));
+                        }
+                    } catch (ParseException ignored) {
+                    }
+                });
             }
             momentService.saveAll(list);
         } catch (Exception e) {
@@ -447,9 +457,11 @@ public class FavoritesController {
         }
         if (!CollectionUtils.isEmpty(momentList)) {
             Element moments = root.addElement("MOMENTS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             momentList.forEach(m -> {
                 Element moment = moments.addElement("MOMENT");
                 moment.addElement("CONTENT").setText(m.getContent());
+                moment.addElement("TIME").setText(sdf.format(m.getCreateTime()));
             });
         }
         if (!CollectionUtils.isEmpty(searchTypeList)) {

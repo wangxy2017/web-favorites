@@ -68,6 +68,7 @@ public class FileController {
         UserFile file = userFileService.findById(id);
         if (file != null && StringUtils.isNoneBlank(filename)) {
             file.setFilename(filename);
+            file.setUpdateTime(new Date());
             userFileService.save(file);
             return ApiResponse.success();
         }
@@ -127,7 +128,7 @@ public class FileController {
         if (restSize > file.getSize()) {
             String path = userFileService.writeFile(file.getInputStream());
             String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-            UserFile userFile = new UserFile(null, user1.getId(), pid, null, null, filename, path, null, file.getSize());
+            UserFile userFile = new UserFile(null, user1.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize());
             userFileService.save(userFile);
             user1.setUsedSize(Optional.ofNullable(user1.getUsedSize()).orElse(0L) + file.getSize());
             userService.save(user1);

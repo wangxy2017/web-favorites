@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,7 +15,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
-@EntityListeners(AuditingEntityListener.class)
 public class Task {
 
     @Id
@@ -42,7 +39,6 @@ public class Task {
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @CreatedDate
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
     private Date createTime;
