@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/moment")
@@ -89,6 +90,13 @@ public class MomentController {
             return ApiResponse.success();
         }
         return ApiResponse.error();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse search(@RequestParam String text) {
+        User user = springUtils.getCurrentUser();
+        List<Moment> list = momentService.searchMoment(user.getId(), text);
+        return ApiResponse.success(list);
     }
 
 
