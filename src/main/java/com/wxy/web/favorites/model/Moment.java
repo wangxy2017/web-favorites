@@ -25,7 +25,7 @@ public class Moment {
     @Column(name = "content", nullable = false, columnDefinition = "text comment '内容'")
     private String content;
 
-    @Column(name = "text", nullable = false, columnDefinition = "text comment '纯文本内容'")
+    @Column(name = "text", columnDefinition = "text comment '纯文本内容'")
     private String text;
 
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")

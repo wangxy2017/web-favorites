@@ -235,15 +235,17 @@
                 if (text == "") { //退出搜索模式
                     $("#search_close").click();
                 } else {
-                    $("#topMoment").hide();
-                    $("#momentList").hide();
                     // 加载数据
+                    layer.load();
                     $.ajax({
                         type: "GET",
                         url: "moment/search",
                         data: {"text": text},
                         dataType: "json",
                         success: function (result) {
+                            layer.closeAll('loading');
+                            $("#topMoment").hide();
+                            $("#momentList").hide();
                             if (result.code == 0 && result.data.length > 0) {
                                 var html = '';
                                 $.each(result.data, function(index, item){
