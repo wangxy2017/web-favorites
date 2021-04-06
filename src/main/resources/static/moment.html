@@ -116,6 +116,7 @@
                 background-color: #393d49;
                 color: #b2b2b2;
                 padding-right: 26px;
+                padding-left: 26px;
             }
 
             .search-div .search-close {
@@ -127,6 +128,15 @@
                 display: none;
                 cursor: pointer;
             }
+
+            .search-div .search-icon {
+                position: absolute;
+                top: 8px;
+                left: 6px;
+                font-size: 16px;
+                color: #999;
+                cursor: pointer;
+            }
 		</style>
 </head>
 <body style="background-color: #f2f2f2;">
@@ -134,6 +144,7 @@
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
     <button id="addMoment" type="button" class="layui-btn layui-btn-sm">发布瞬间</button>
     <div class="search-div">
+        <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
         <input type="text" id="search_text" name="search_text" placeholder="快速搜索..." autocomplete="off"
                class="layui-input">
         <i id="search_close" class="layui-icon layui-icon-close-fill search-close"></i>
@@ -231,47 +242,7 @@
 
         $("#search_text").on("keydown", function(event){
             if(event.key === "Enter"){
-                var text = $(this).val().trim();
-                if (text == "") { //退出搜索模式
-                    $("#search_close").click();
-                } else {
-                    // 加载数据
-                    layer.load();
-                    $.ajax({
-                        type: "GET",
-                        url: "moment/search",
-                        data: {"text": text},
-                        dataType: "json",
-                        success: function (result) {
-                            layer.closeAll('loading');
-                            $("#topMoment").hide();
-                            $("#momentList").hide();
-                            if (result.code == 0 && result.data.length > 0) {
-                                var html = '';
-                                $.each(result.data, function(index, item){
-                                    html += '<li class="layui-timeline-item" data-id="' + item.id + '">';
-                                    html += '   <i class="layui-icon layui-timeline-axis">&#xe63f;</i>';
-                                    html += '   <div class="layui-timeline-content layui-text">';
-                                    html += '       <h3 class="layui-timeline-title time">' + item.createTime + '</h3>';
-                                    html += '       <div class="moment">';
-                                    html += '           <div class="content">'+ item.content +'</div>';
-                                    html += '           <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                    html += '               <i class="layui-icon layui-icon-flag"></i>';
-                                    html += '               <i class="layui-icon layui-icon-edit"></i>';
-                                    html += '               <i class="layui-icon layui-icon-delete"></i>';
-                                    html += '           </div>';
-                                    html += '       </div>';
-                                    html += '    </div>';
-                                    html += '</li>';
-                                });
-                                $("#searchList").append(html);
-                                $("#noData").hide();
-                            }else{
-                                $("#noData").show();
-                            }
-                        }
-                  });
-                }
+                searchText();
             }
         }).on("focus", function () {
            $("#search_close").show();
@@ -279,6 +250,54 @@
         }).on("blur", function(){
            $(this).parent().css({"width":"100px"});
         });
+
+        $("#search_icon").click(function(){
+            searchText();
+        });
+
+        window.searchText = function(){
+            var text = $("#search_text").val().trim();
+            if (text == "") { //退出搜索模式
+                $("#search_close").click();
+            } else {
+                // 加载数据
+                layer.load();
+                $.ajax({
+                    type: "GET",
+                    url: "moment/search",
+                    data: {"text": text},
+                    dataType: "json",
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        $("#topMoment").hide();
+                        $("#momentList").hide();
+                        if (result.code == 0 && result.data.length > 0) {
+                            var html = '';
+                            $.each(result.data, function(index, item){
+                                html += '<li class="layui-timeline-item" data-id="' + item.id + '">';
+                                html += '   <i class="layui-icon layui-timeline-axis">&#xe63f;</i>';
+                                html += '   <div class="layui-timeline-content layui-text">';
+                                html += '       <h3 class="layui-timeline-title time">' + item.createTime + '</h3>';
+                                html += '       <div class="moment">';
+                                html += '           <div class="content">'+ item.content +'</div>';
+                                html += '           <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
+                                html += '               <i class="layui-icon layui-icon-flag"></i>';
+                                html += '               <i class="layui-icon layui-icon-edit"></i>';
+                                html += '               <i class="layui-icon layui-icon-delete"></i>';
+                                html += '           </div>';
+                                html += '       </div>';
+                                html += '    </div>';
+                                html += '</li>';
+                            });
+                            $("#searchList").empty().append(html);
+                            $("#noData").hide();
+                        }else{
+                            $("#noData").show();
+                        }
+                    }
+              });
+            }
+        };
 
         // 编辑
         $(document).on('click', '.action .layui-icon-edit', function(e) {
