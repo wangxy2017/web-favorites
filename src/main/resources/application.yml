@@ -1,7 +1,5 @@
 server:
   port: 9020 #端口
-  servlet:
-    context-path: /web-favorites #设置上下文路径
   compression:
     enabled: true #开启压缩功能
     mime-types:
