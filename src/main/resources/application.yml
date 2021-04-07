@@ -14,7 +14,7 @@ server:
       - application/json
       - font/x-font-woff
       - text/plain
-    min-response-size: 1024
+    min-response-size: 2048
 spring:
   servlet: #网关请求配置大小
     multipart:
