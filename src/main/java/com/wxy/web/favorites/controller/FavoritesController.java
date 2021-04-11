@@ -189,7 +189,7 @@ public class FavoritesController {
                         String text = m.elementText("TEXT");
                         String time = m.elementText("TIME");
                         if (StringUtils.isNoneBlank(content) && StringUtils.isNoneBlank(time)) {
-                            list.add(new Moment(null, content,text, userId, sdf.parse(time), null));
+                            list.add(new Moment(null, content, text, userId, sdf.parse(time), null));
                         }
                     } catch (ParseException ignored) {
                     }
@@ -466,7 +466,9 @@ public class FavoritesController {
             momentList.forEach(m -> {
                 Element moment = moments.addElement("MOMENT");
                 moment.addElement("CONTENT").setText(m.getContent());
-                moment.addElement("TEXT").setText(m.getText());
+                if (StringUtils.isNotBlank(m.getText())) {
+                    moment.addElement("TEXT").setText(m.getText());
+                }
                 moment.addElement("TIME").setText(sdf.format(m.getCreateTime()));
             });
         }
