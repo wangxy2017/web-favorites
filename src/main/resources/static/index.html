@@ -525,6 +525,14 @@
         <div class="layui-form-mid layui-word-aux">标记为常用网址</div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">App</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="schemaName" placeholder="请输入app schema名称"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">快捷指令</label>
         <div class="layui-input-inline" style="width: 210px;">
             <input type="text" name="shortcut" lay-verify="shortcut" placeholder="例如：打开...或Open..." autocomplete="off"
@@ -817,6 +825,15 @@
             }
         });
 
+        window.isMobile = function(){
+            let info = navigator.userAgent;
+            let agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPod", "iPad"];
+            for(let i = 0; i < agents.length; i++){
+                if(info.indexOf(agents[i]) >= 0) return true;
+            }
+            return false;
+        };
+
         $("#settingPwd").click(function () {
             layer.open({
                 type: 1,
@@ -970,7 +987,7 @@
                         var html = '';
                         html += '<ul class="favorites">';
                         $.each(result.data, function (i, f) {
-                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
@@ -1147,12 +1164,17 @@
         // 打开新窗口
         window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
+            var schema = $(obj).attr("data-schema");
             if(url.startsWith("https://") || url.startsWith("http://")){
+                if(schema&&isMobile()){
+                    url = schema + url.substring(url.indexOf("://"));
+                }
+                window.open(url,'_blank');
+                // 记录访问时间
                 $.ajax({
                     type: "GET",
                     url: "favorites/visit/" + $(obj).attr("data-id")
                 });
-                window.open(url,'_blank');
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -1301,7 +1323,7 @@
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
                                 $.each(c.favorites, function (j, f) {
-                                    html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                                    html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
                                     html += '       <div class="favorites-bg">';
                                     html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                     html += '       </div>';
@@ -1374,7 +1396,7 @@
                         html += '   <legend style="font-size:16px;">常用网址</legend>';
                         html += '   <ul class="favorites">';
                         $.each(result.data, function (i, f) {
-                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
                             html += '       <div class="favorites-bg">';
                             html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '       </div>';
@@ -1405,7 +1427,7 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (i, f) {
-                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" onclick="openUrl(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
@@ -1524,6 +1546,7 @@
                             , "sort": data.sort
                             , "star": data.star
                             , "shortcut": data.shortcut
+                            , "schemaName": data.schemaName
                         });
                     }
                 }

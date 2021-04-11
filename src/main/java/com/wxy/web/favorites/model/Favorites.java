@@ -45,8 +45,11 @@ public class Favorites {
     @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")
     private String pinyinS;
 
-    @Column(name = "shortcut", columnDefinition = "varchar(500) comment '快捷指令'")
+    @Column(name = "shortcut", columnDefinition = "varchar(100) comment '快捷指令'")
     private String shortcut;
+
+    @Column(name = "schema_name", columnDefinition = "varchar(100) comment '快捷指令'")
+    private String schemaName;
 
     @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
     private Integer sort;
@@ -54,7 +57,7 @@ public class Favorites {
     @Column(name = "star", columnDefinition = "int(1) comment '是否标记：1-是 0-否'")
     private Integer star;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "visit_time", columnDefinition = "datetime comment '最近访问时间'")
     private Date visitTime;
 

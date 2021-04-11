@@ -84,7 +84,7 @@ public class RegisterController {
                             , split[1], category.getId(), user1.getId(),
                             PinYinUtils.toPinyin(split[0]),
                             PinYinUtils.toPinyinS(split[0]),
-                            null, null, null, null, null);
+                            null, null, null, null, null,null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 设置session

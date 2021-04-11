@@ -265,6 +265,7 @@ public class FavoritesController {
                                 f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
                                 PinYinUtils.toPinyinS(f.elementText("NAME")),
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
+                                StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < 9999 ? sort : null,
                                 Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
                         Element pwd = f.element("USER");
@@ -446,6 +447,9 @@ public class FavoritesController {
                     }
                     if (StringUtils.isNotBlank(f.getShortcut())) {
                         favorites.addElement("SHORTCUT").setText(f.getShortcut());
+                    }
+                    if (StringUtils.isNotBlank(f.getSchemaName())) {
+                        favorites.addElement("SCHEMA_NAME").setText(f.getSchemaName());
                     }
                     if (f.getPassword() != null) {
                         Password password = f.getPassword();
