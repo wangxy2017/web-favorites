@@ -99,7 +99,7 @@
 				position: absolute;
 				bottom: 4px;
                 left: 4px;
-                background-color: #5fb878!important;
+                background-color: #5fb878;
 			}
 
 			.task-view {
@@ -522,7 +522,11 @@
                             var html = '';
                             var date = item.date;
                             if(dateCompare(date,today) >= 0){
-                                html += '<span class="layui-badge task-count">' + item.count + '</span>';
+                                if(item.undo > 0){
+                                    html += '<span class="layui-badge task-count">' + item.undo + '</span>';
+                                }else{
+                                    html += '<span class="layui-badge layui-bg-gray task-count">' + item.count + '</span>';
+                                }
                                 html += '<div class="layui-anim layui-anim-fadein task-view">';
                                 html += '   <div class="task-header">';
                                 html += '	    <span>' + date + '</span>';

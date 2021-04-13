@@ -66,10 +66,12 @@ public class TaskController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Map<String, List<Task>> listMap = list.stream().collect(Collectors.groupingBy(t -> sdf.format(t.getTaskDate())));
         List<Map<String, Object>> dataList = listMap.entrySet().stream().map(entry -> {
+            List<Task> tasks = entry.getValue();
             Map<String, Object> map = new HashMap<>();
             map.put("date", entry.getKey());
-            map.put("count", entry.getValue().size());
-            map.put("taskList", entry.getValue());
+            map.put("count", tasks.size());
+            map.put("undo", tasks.stream().filter(t -> t.getLevel() < 4).count());
+            map.put("taskList", tasks);
             return map;
         }).collect(Collectors.toList());
         return ApiResponse.success(dataList);
