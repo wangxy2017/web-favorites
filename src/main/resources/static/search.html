@@ -141,12 +141,6 @@
 			    display: block;
 			}
 
-			.search-type .search-type-li img {
-			    background-image: url(images/web.svg);
-                background-size: 100%;
-                background-repeat: no-repeat;
-			}
-
 			.search-type li span {
 				white-space: nowrap;
 				text-overflow: ellipsis;
@@ -201,7 +195,7 @@
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
-<div class="center">
+<div class="center" id="center">
     <div class="main">
         <div class="logo">
             <i class="layui-icon layui-icon-search" style="font-size: 28px;color: #009688;margin-right: 6px;"></i>
@@ -253,9 +247,13 @@
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/layui.js"></script>
 <script type="text/javascript">
-        layui.use(['layer', 'form'], function(){
+        layui.use(['layer', 'form', 'flow'], function(){
             var layer = layui.layer;
             var form = layui.form;
+            var flow = layui.flow;
+
+            // 图片懒加载
+            flow.lazyimg({elem: 'img.lazy', scrollElem: '#center'});
 
             var indexMap = new Map();// 弹出层索引容器
 
@@ -298,6 +296,11 @@
                 });
             });
 
+            window.imgRender = function(){
+                // 触发scroll模拟render
+                $("#center").scroll();
+            };
+
             window.loadData = function(){
                 $.ajax({
                     type: "GET",
@@ -307,17 +310,16 @@
                         if(result.code == 0){
                             var html = '';
                             $.each(result.data.systemList, function(index, item) {
-                                html += '<li class="search-type-li" data-search="' + item.url + '"><img src="' + item.icon +
-                                    '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
+                                html += '<li class="search-type-li" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
                                     '</span></li>';
                             });
                             $.each(result.data.userList, function(index, item) {
-                                html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img src="' + item.icon +
-                                    '" onerror="javascript:this.src=\'images/web.svg\';" onload="javascript:this.style.background=\'none\';"><span>' + item.name +
+                                html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
                                     '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
                             });
                             html += '<li onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
                             $(".search-type").empty().append(html);
+                            imgRender();
                         }
                     }
                 });
