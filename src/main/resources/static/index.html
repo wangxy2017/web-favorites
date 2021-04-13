@@ -1318,7 +1318,7 @@
                         var html = '';
                         $.each(result.data.list, function (i, c) {
                             var bookmarkClass = c.bookmark==1?"bookmark":"";
-                            html += '<fieldset class="layui-elem-field layui-field-title ' + bookmarkClass + '" data-id="' + c.id + '">';
+                            html += '<fieldset class="layui-elem-field ' + bookmarkClass + '" data-id="' + c.id + '">';
                             html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
