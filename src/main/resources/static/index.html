@@ -1159,14 +1159,22 @@
             if(Math.abs(scrollTop - shouldScroll) >= visibleHeight){
                 $("#layuiBody").animate({scrollTop: shouldScroll}, 50);
             }
-        }
+        };
+
+        window.isEmpty = function(obj){
+            if(typeof obj == "undefined" || obj == null || obj == "" || obj == "none" || obj == "null"){
+                return true;
+            }else{
+                return false;
+            }
+        };
 
         // 打开新窗口
         window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
             var schema = $(obj).attr("data-schema");
             if(url.startsWith("https://") || url.startsWith("http://")){
-                if(schema&&isMobile()){
+                if(!isEmpty(schema)&&isMobile()){
                     url = schema + url.substring(url.indexOf("://"));
                 }
                 window.open(url,'_blank');
