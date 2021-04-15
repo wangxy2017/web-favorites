@@ -99,7 +99,11 @@
 				position: absolute;
 				bottom: 4px;
                 left: 4px;
-                background-color: #5fb878;
+                line-height: initial;
+			}
+
+			.task-count .layui-badge {
+			    margin-right: 2px;
 			}
 
 			.task-view {
@@ -499,10 +503,10 @@
                     html = '<span class="layui-badge layui-bg-blue task-level">待办</span>';
                     break;
                 case 4:
-                    html = '<span class="layui-badge-rim task-level">完成</span>';
+                    html = '<span class="layui-badge layui-bg-gray task-level">完成</span>';
                     break;
                 case 5:
-                    html = '<span class="layui-badge layui-bg-gray task-level">取消</span>';
+                    html = '<span class="layui-badge-rim task-level">取消</span>';
                     break;
                 default:
             }
@@ -522,11 +526,23 @@
                             var html = '';
                             var date = item.date;
                             if(dateCompare(date,today) >= 0){
-                                if(item.undo > 0){
-                                    html += '<span class="layui-badge task-count">' + item.undo + '</span>';
-                                }else{
-                                    html += '<span class="layui-badge layui-bg-gray task-count">' + item.count + '</span>';
+                                html += '<div class="task-count">';
+                                if(item.blueTasks > 0){
+                                    html += '<span class="layui-badge layui-bg-blue">' + item.blueTasks + '</span>';
                                 }
+                                if(item.greenTasks > 0){
+                                    html += '<span class="layui-badge layui-bg-green">' + item.greenTasks + '</span>';
+                                }
+                                if(item.orangeTasks > 0){
+                                    html += '<span class="layui-badge layui-bg-orange">' + item.orangeTasks + '</span>';
+                                }
+                                if(item.redTasks > 0){
+                                    html += '<span class="layui-badge layui-bg-red">' + item.redTasks + '</span>';
+                                }
+                                if(item.grayTasks > 0){
+                                    html += '<span class="layui-badge layui-bg-gray">' + item.grayTasks + '</span>';
+                                }
+                                html += '</div>';
                                 html += '<div class="layui-anim layui-anim-fadein task-view">';
                                 html += '   <div class="task-header">';
                                 html += '	    <span>' + date + '</span>';

@@ -67,10 +67,15 @@ public class TaskController {
         Map<String, List<Task>> listMap = list.stream().collect(Collectors.groupingBy(t -> sdf.format(t.getTaskDate())));
         List<Map<String, Object>> dataList = listMap.entrySet().stream().map(entry -> {
             List<Task> tasks = entry.getValue();
+            Map<Integer, Long> levelCountList = tasks.stream().collect(Collectors.groupingBy(Task::getLevel, Collectors.counting()));
             Map<String, Object> map = new HashMap<>();
             map.put("date", entry.getKey());
-            map.put("count", tasks.size());
-            map.put("undo", tasks.stream().filter(t -> t.getLevel() < 4).count());
+            map.put("redTasks", Optional.ofNullable(levelCountList.get(0)).orElse(0L));
+            map.put("orangeTasks", Optional.ofNullable(levelCountList.get(1)).orElse(0L));
+            map.put("greenTasks", Optional.ofNullable(levelCountList.get(2)).orElse(0L));
+            map.put("blueTasks", Optional.ofNullable(levelCountList.get(3)).orElse(0L));
+            map.put("grayTasks", Optional.ofNullable(levelCountList.get(4)).orElse(0L));
+            map.put("totalTasks", tasks.size());
             map.put("taskList", tasks);
             return map;
         }).collect(Collectors.toList());
