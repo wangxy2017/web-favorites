@@ -21,7 +21,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private UserRepository userRepository;
 
-    @Value("${aes-key}")
+    @Value("${aes-key:B!D&LL5lyk62lnHi}")
     private String aesKey;
 
     @Override

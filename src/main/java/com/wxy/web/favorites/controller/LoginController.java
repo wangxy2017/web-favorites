@@ -36,7 +36,7 @@ public class LoginController {
     @Autowired
     private SpringUtils springUtils;
 
-    @Value("${aes-key}")
+    @Value("${aes-key:B!D&LL5lyk62lnHi}")
     private String aesKey;
 
     @PostMapping
