@@ -3,7 +3,9 @@ package com.wxy.web.favorites.interceptor;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.exception.NoLoginException;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.util.AESUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,10 +18,11 @@ import java.util.Base64;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    private final Base64.Decoder decoder = Base64.getDecoder();
-
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${aes-key}")
+    private String aesKey;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -34,11 +37,19 @@ public class LoginInterceptor implements HandlerInterceptor {
             if (request.getCookies() != null) {
                 for (Cookie cookie : request.getCookies()) {
                     if (cookie.getName().equals("token")) {
-                        String[] token = new String(decoder.decode(cookie.getValue())).split("&&");
-                        User user1 = userRepository.findByUsername(token[0]);
-                        if (user1 != null && user1.getPassword().equals(token[1])) {
-                            session.setAttribute("login_user", user1);
-                            return true;
+                        String tokenValue = null;
+                        try {
+                            tokenValue = AESUtils.decrypt(cookie.getValue(), aesKey);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (tokenValue != null && tokenValue.contains("&&")) {
+                            String[] token = tokenValue.split("&&");
+                            User user1 = userRepository.findByUsername(token[0]);
+                            if (user1 != null && user1.getPassword().equals(token[1])) {
+                                session.setAttribute("login_user", user1);
+                                return true;
+                            }
                         }
                     }
                 }

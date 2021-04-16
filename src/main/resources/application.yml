@@ -49,3 +49,5 @@ app:
     - 京东,https://www.jd.com/
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
+### aes加密密钥
+aes-key: B!D&LL5lyk62lnHi

@@ -5,10 +5,13 @@ import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
+import com.wxy.web.favorites.util.AESUtils;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +21,8 @@ import java.util.Base64;
 
 @RestController
 @RequestMapping("/login")
+@Slf4j
 public class LoginController {
-
-    private final Base64.Encoder encoder = Base64.getEncoder();
 
     @Autowired
     private UserService userService;
@@ -34,6 +36,9 @@ public class LoginController {
     @Autowired
     private SpringUtils springUtils;
 
+    @Value("${aes-key}")
+    private String aesKey;
+
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
@@ -43,10 +48,18 @@ public class LoginController {
                 HttpServletRequest request = springUtils.getRequest();
                 request.getSession().setAttribute("login_user", user1);
                 if ("1".equals(remember)) {
-                    Cookie token = new Cookie("token", encoder.encodeToString((user1.getUsername() + "&&" + user1.getPassword()).getBytes()));
-                    token.setPath("/");
-                    token.setMaxAge(60 * 60 * 24 * 14);
-                    springUtils.getResponse().addCookie(token);
+                    String tokenValue = null;
+                    try {
+                        tokenValue = AESUtils.encrypt(user1.getUsername() + "&&" + user1.getPassword(), aesKey);
+                    } catch (Exception e) {
+                        log.error("token加密失败！！！", e);
+                    }
+                    if (tokenValue != null) {
+                        Cookie token = new Cookie("token", tokenValue);
+                        token.setPath("/");
+                        token.setMaxAge(60 * 60 * 24 * 14);
+                        springUtils.getResponse().addCookie(token);
+                    }
                 }
                 return ApiResponse.success();
             } else {
