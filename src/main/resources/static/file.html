@@ -415,7 +415,7 @@
             }
             , accept: 'file'
             , before: function(obj){
-                 layer.load(1);
+                 layer.load(1, {shadeClose: true, time: 0});
             }
             , done: function(res){
                 layer.closeAll('loading');
