@@ -63,6 +63,14 @@
             cursor: pointer;
             user-select: none;
         }
+
+        #qrcode {
+            padding: 15px;
+            border: 1px solid #e5e5e5;
+            width: 180px;
+            height: 180px;
+            margin: 15px auto;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +85,7 @@
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
             <!-- 登录表单 -->
-            <form class="layui-form" action="">
+            <form class="layui-form" action="" id="loginForm">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
@@ -105,7 +113,37 @@
                     </div>
                 </div>
             </form>
-<!--            <div><a href="#">邮箱登录</a> | <a href="#">扫一扫登录</a></div>-->
+            <div id="qrcode" style="display:none;"></div>
+            <form class="layui-form" action="" style="display:none;" id="emailLogin">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">注册邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="email" name="email" id="login-email" required lay-verify="required|email"
+                               placeholder="输入您的邮箱" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">验证码</label>
+                    <div class="layui-input-inline" style="width:170px;">
+                        <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                    <input type="button" class="layui-btn layui-btn-sm" style="margin-top:4px;width: 90px;" onclick="sendLoginEmailCode(this)" value="获取验证码">
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="emailLogin">登录</button>
+                    </div>
+                </div>
+            </form>
+            <div>
+                <span style="color:#999">其他登录方式：</span>
+                <span class="layui-breadcrumb" lay-separator="|">
+                  <a href="javascript:;" onclick="emailLogin()">邮箱登录</a>
+                  <a href="javascript:;" onclick="qrcodeLogin()">扫码登录</a>
+                </span>
+            </div>
         </div>
         <div class="layui-tab-item">
             <!-- 注册表单 -->
@@ -197,6 +235,7 @@
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/particles.min.js"></script>
+<script src="layui/qrcode.min.js"></script>
 <script>
     //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
     layui.use(['element', 'form', 'layer'], function () {
@@ -204,9 +243,61 @@
         var form = layui.form;
         var layer = layui.layer;
 
+        var qrcode = null;
+
         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-        particlesJS.load('particles-js', 'layui/particles.json', function() {
-          console.log('callback - particles.js config loaded');
+        particlesJS.load('particles-js', 'layui/particles.json');
+
+        window.emailLogin = function(){
+            $("#loginForm").hide();
+            $("#qrcode").hide();
+            $("#emailLogin").show();
+        };
+
+        // 扫码登录
+        var freshCount = 1;
+        window.qrcodeLogin = function(){
+            var text = "该功能暂未开通" + freshCount++;
+            if(qrcode == null){
+                qrcode = new QRCode("qrcode", {
+                    text: text,
+                    width: 180,
+                    height: 180,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }else{
+                qrcode.clear();
+                qrcode.makeCode(text);
+            }
+            $("#loginForm").hide();
+            $("#emailLogin").hide();
+            $("#qrcode").show();
+        };
+
+        //监听提交
+        form.on('submit(emailLogin)', function (data) {
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "login/emailLogin",
+                data: data.field,
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        window.location.href = "index.html";
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                    layer.msg("服务器异常", {icon: 2});
+                }
+            });
+            return false;
         });
 
         //监听提交
@@ -358,6 +449,39 @@
                 });
             }else{
                 $("#register-email").focus().addClass("layui-form-danger");
+                 layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
+            }
+        };
+        
+        // 发送验证码
+        window.sendLoginEmailCode = function (obj) {
+            var email = $("#login-email").val();
+            var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if(email.match(reg)){
+                obj.setAttribute("disabled", true);
+                obj.value="重新发送(60)";
+                // 倒计时
+                var countdown = 59;
+                var interval = setInterval(function() {
+                    if (countdown == 0) {
+                        obj.removeAttribute("disabled");
+                        obj.value="获取验证码";
+                        countdown = 59;
+                        clearInterval(interval);
+                    } else {
+                        obj.setAttribute("disabled", true);
+                        obj.value="重新发送(" + countdown + ")";
+                        countdown--;
+                    }
+                }, 1000);
+                // 请求后台
+                $.ajax({
+                    type: "GET",
+                    url: "login/email/code",
+                    data: {"email": email}
+                });
+            }else{
+                $("#login-email").focus().addClass("layui-form-danger");
                  layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
             }
         };
