@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|登录</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <style>
         * {
@@ -71,6 +71,16 @@
             height: 180px;
             margin: 15px auto;
         }
+
+        #refreshCode {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #refreshCode:hover {
+            color: #5fb878;
+        }
+
     </style>
 </head>
 <body>
@@ -113,10 +123,17 @@
                     </div>
                 </div>
             </form>
-            <div id="qrcode" style="display:none;"></div>
+            <div id="qrcodeDiv" style="display:none;">
+                <div style="text-align: center;">请使用手机扫一扫登录
+                    <span id="refreshCode">刷新
+                        <i class="layui-icon layui-icon-refresh-3" style="font-size: 14px;"></i>
+                    </span>
+                </div>
+                <div id="qrcode"></div>
+            </div>
             <form class="layui-form" action="" style="display:none;" id="emailLogin">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">注册邮箱</label>
+                    <label class="layui-form-label">邮箱账号</label>
                     <div class="layui-input-block">
                         <input type="email" name="email" id="login-email" required lay-verify="required|email"
                                placeholder="输入您的邮箱" autocomplete="off"
@@ -129,7 +146,8 @@
                         <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码"
                                autocomplete="off" class="layui-input">
                     </div>
-                    <input type="button" class="layui-btn layui-btn-sm" style="margin-top:4px;width: 90px;" onclick="sendLoginEmailCode(this)" value="获取验证码">
+                    <input type="button" class="layui-btn layui-btn-sm" style="margin-top:4px;width: 90px;"
+                           onclick="sendLoginEmailCode(this)" value="获取验证码">
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
@@ -137,11 +155,15 @@
                     </div>
                 </div>
             </form>
-            <div>
-                <span style="color:#999">其他登录方式：</span>
+            <div style="margin-left:14px;">
                 <span class="layui-breadcrumb" lay-separator="|">
-                  <a href="javascript:;" onclick="emailLogin()">邮箱登录</a>
-                  <a href="javascript:;" onclick="qrcodeLogin()">扫码登录</a>
+                  <a href="javascript:;" onclick="emailLogin(this)">邮箱登录</a>
+                  <a href="javascript:;" onclick="qrcodeLogin(this)">扫码登录</a>
+                </span>
+                <span class="layui-breadcrumb" style="display:none;">
+                  <a href="javascript:;" onclick="changeLogin(this)">
+                      <i class="layui-icon layui-icon-left" style="font-size: 14px;margin-right: 2px;"></i>切换其他登录方式
+                  </a>
                 </span>
             </div>
         </div>
@@ -169,7 +191,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">邮箱</label>
                     <div class="layui-input-block">
-                        <input type="email" name="email" id="register-email" required lay-verify="required|email|exitEmail"
+                        <input type="email" name="email" id="register-email" required
+                               lay-verify="required|email|exitEmail"
                                placeholder="输入您的邮箱" autocomplete="off"
                                class="layui-input">
                     </div>
@@ -180,7 +203,8 @@
                         <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码"
                                autocomplete="off" class="layui-input">
                     </div>
-                    <input type="button" class="layui-btn layui-btn-sm" style="margin-top:4px;width: 90px;" onclick="sendEmailCode(this)" value="获取验证码">
+                    <input type="button" class="layui-btn layui-btn-sm" style="margin-top:4px;width: 90px;"
+                           onclick="sendEmailCode(this)" value="获取验证码">
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
@@ -248,19 +272,14 @@
         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
         particlesJS.load('particles-js', 'layui/particles.json');
 
-        window.emailLogin = function(){
-            $("#loginForm").hide();
-            $("#qrcode").hide();
-            $("#emailLogin").show();
-        };
-
-        // 扫码登录
-        var freshCount = 1;
-        window.qrcodeLogin = function(){
-            var text = "该功能暂未开通" + freshCount++;
+        // 刷新二维码
+        var refreshCode = 1;
+        $("#refreshCode").click(function(){
+            var content = "该功能暂未开通" + refreshCode++;
+            // 如果没有生成二维码，则初始化二维码
             if(qrcode == null){
                 qrcode = new QRCode("qrcode", {
-                    text: text,
+                    text: content,
                     width: 180,
                     height: 180,
                     colorDark : "#000000",
@@ -269,11 +288,43 @@
                 });
             }else{
                 qrcode.clear();
-                qrcode.makeCode(text);
+                qrcode.makeCode(content);
             }
+        });
+
+        // 邮箱登录
+        window.emailLogin = function(obj){
+            $("#loginForm").hide();
+            $("#qrcodeDiv").hide();
+            $("#emailLogin").show();
+            $(obj).parent().hide().next().show();
+        };
+
+        // 切换登录方式
+        window.changeLogin = function(obj){
+            $("#emailLogin").hide();
+            $("#qrcodeDiv").hide();
+            $("#loginForm").show();
+            $(obj).parent().hide().prev().show();
+        };
+
+        // 扫码登录
+        window.qrcodeLogin = function(obj){
             $("#loginForm").hide();
             $("#emailLogin").hide();
-            $("#qrcode").show();
+            $("#qrcodeDiv").show();
+            $(obj).parent().hide().next().show();
+            // 如果没有生成二维码，则初始化二维码
+            if(qrcode == null){
+                qrcode = new QRCode("qrcode", {
+                    text: "该功能暂未开通",
+                    width: 180,
+                    height: 180,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
         };
 
         //监听提交
@@ -501,6 +552,7 @@
             zylVerCode();
         });
     });
+
 </script>
 </body>
 </html>
