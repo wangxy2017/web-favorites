@@ -10,6 +10,7 @@ import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -101,13 +102,10 @@ public class FileController {
     @GetMapping("/downloadAll")
     public void downloadAll(HttpServletResponse response) throws IOException {
         User user = springUtils.getCurrentUser();
-        UserFile root = userFileService.packageFileByUserId(user.getId());
-        if (root != null) {
-            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-            ZipUtils.compressFile(root, "", out);
-            out.close();
-            response.setContentType("application/force-download");// 设置强制下载不打开
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(root.getFilename() + ".zip", "UTF-8"));
+        List<UserFile> files = userFileService.packageFileByUserId(user.getId());
+        if (!CollectionUtils.isEmpty(files)) {
+            response.setContentType("application/x-zip-compressed");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("root.zip", "UTF-8"));
         }
     }
 

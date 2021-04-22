@@ -54,21 +54,14 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
-    public UserFile packageFileByUserId(Integer userId) {
+    public List<UserFile> packageFileByUserId(Integer userId) {
         List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
-        if (!CollectionUtils.isEmpty(files)) {
-            UserFile root = new UserFile();
-            root.setIsDir(1);
-            root.setFilename("root");
-            for (UserFile file : files) {
-                if (Integer.valueOf(1).equals(file.getIsDir())) {
-                    setChildren(file);
-                }
+        for (UserFile file : files) {
+            if (Integer.valueOf(1).equals(file.getIsDir())) {
+                setChildren(file);
             }
-            root.setChildren(files);
-            return root;
         }
-        return null;
+        return files;
     }
 
     public void deleteById(Integer id, Integer userId) {
