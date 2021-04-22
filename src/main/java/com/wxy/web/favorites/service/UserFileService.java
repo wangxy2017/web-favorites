@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -53,39 +54,66 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
-    public void deleteById(Integer id, Integer userId) {
-        List<UserFile> allFiles = findAllFiles(id);
-        long totalSize = 0L;
-        List<String> pathList = new ArrayList<>();
-        for (UserFile file : allFiles) {
-            if (!Integer.valueOf(1).equals(file.getIsDir())) {
-                totalSize += file.getSize();
-                pathList.add(file.getPath());
+    public UserFile packageFileByUserId(Integer userId) {
+        List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
+        if (!CollectionUtils.isEmpty(files)) {
+            UserFile root = new UserFile();
+            root.setIsDir(1);
+            root.setFilename("root");
+            for (UserFile file : files) {
+                if (Integer.valueOf(1).equals(file.getIsDir())) {
+                    setChildren(file);
+                }
             }
+            root.setChildren(files);
+            return root;
         }
-        // 物理删除
-        pathList.forEach(p -> {
-            File file = new File(p);
-            if (file.exists()) file.delete();
-        });
-        // 更新容量
-        User user = userRepository.getOne(userId);
-        user.setUsedSize(user.getUsedSize() - totalSize);
-        userRepository.save(user);
-        // 数据删除
-        allFiles.forEach(f -> userFileRepository.deleteById(f.getId()));
+        return null;
     }
 
-    public List<UserFile> findAllFiles(Integer id) {
-        List<UserFile> results = new ArrayList<>();
+    public void deleteById(Integer id, Integer userId) {
         UserFile userFile = userFileRepository.getOne(id);
+        if (userFile.getId() != null) {
+            List<UserFile> deletingFiles = new ArrayList<>();
+            addDeletingFile(deletingFiles, userFile);
+
+            long totalSize = 0L;
+            List<String> pathList = new ArrayList<>();
+            for (UserFile file : deletingFiles) {
+                if (!Integer.valueOf(1).equals(file.getIsDir())) {
+                    totalSize += file.getSize();
+                    pathList.add(file.getPath());
+                }
+            }
+            // 物理删除
+            pathList.forEach(p -> new File(p).delete());
+            // 更新容量
+            User user = userRepository.getOne(userId);
+            user.setUsedSize(user.getUsedSize() - totalSize);
+            userRepository.save(user);
+            // 数据删除
+            userFileRepository.deleteAll(deletingFiles);
+        }
+    }
+
+    private void setChildren(UserFile userFile) {
         if (Integer.valueOf(1).equals(userFile.getIsDir())) {
-            for (UserFile file : userFileRepository.findByPid(userFile.getId())) {
-                results.addAll(findAllFiles(file.getId()));
+            List<UserFile> children = userFileRepository.findByPid(userFile.getId());
+            userFile.setChildren(children);
+            for (UserFile child : children) {
+                setChildren(child);
             }
         }
-        results.add(userFile);
-        return results;
+    }
+
+    private void addDeletingFile(List<UserFile> deletingFiles, UserFile userFile) {
+        if (Integer.valueOf(1).equals(userFile.getIsDir())) {
+            List<UserFile> children = userFileRepository.findByPid(userFile.getId());
+            for (UserFile child : children) {
+                addDeletingFile(deletingFiles, child);
+            }
+        }
+        deletingFiles.add(userFile);
     }
 
     public String writeFile(InputStream input) throws IOException {

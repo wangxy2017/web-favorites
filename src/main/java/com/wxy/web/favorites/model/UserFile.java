@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -47,5 +48,8 @@ public class UserFile {
 
     @Column(name = "size", columnDefinition = "bigint(20) comment '大小(byte)'")
     private Long size;
+
+    @Transient
+    private List<UserFile> children;
 
 }

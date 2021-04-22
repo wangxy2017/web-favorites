@@ -6,6 +6,7 @@ import com.wxy.web.favorites.service.UserFileService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,45 +79,35 @@ public class FileController {
     @GetMapping("/download/{id}")
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
-        if (userFile != null && StringUtils.isNoneBlank(userFile.getPath())) {
+        if (userFile != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
             File file = new File(userFile.getPath());
-            if (file.exists())
-                writeToResponse(response, userFile.getFilename(), new FileInputStream(file));
-        }
-    }
-
-    private static void zipFiles(File[] srcfile, File zipfile) {
-        byte[] buf = new byte[1024];
-        try {
-            //ZipOutputStream类：完成文件或文件夹的压缩
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));
-            for (File file : srcfile) {
-                FileInputStream in = new FileInputStream(file);
-                out.putNextEntry(new ZipEntry(file.getName()));
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+            if (file.exists()) {
+                response.setContentType("application/force-download");// 设置强制下载不打开
+                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(userFile.getFilename(), "UTF-8"));// 设置文件名
+                BufferedInputStream bin = new BufferedInputStream(new FileInputStream(file));
+                OutputStream out = response.getOutputStream();
+                byte[] buffer = new byte[1024 * 1024 * 10];
+                int i = bin.read(buffer);
+                while (i != -1) {
+                    out.write(buffer, 0, i);
+                    i = bin.read(buffer);
                 }
-                out.closeEntry();
-                in.close();
+                bin.close();
+                out.close();
             }
-            out.close();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
-    private void writeToResponse(HttpServletResponse response, String fileName, InputStream in) throws IOException {
-        response.setContentType("application/force-download");// 设置强制下载不打开
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));// 设置文件名
-        BufferedInputStream bin = new BufferedInputStream(in);
-        OutputStream out = response.getOutputStream();
-        byte[] buffer = new byte[1024 * 1024 * 10];
-        int i = bin.read(buffer);
-        while (i != -1) {
-            out.write(buffer, 0, i);
-            i = bin.read(buffer);
+    @GetMapping("/downloadAll")
+    public void downloadAll(HttpServletResponse response) throws IOException {
+        User user = springUtils.getCurrentUser();
+        UserFile root = userFileService.packageFileByUserId(user.getId());
+        if (root != null) {
+            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+            ZipUtils.compressFile(root, "", out);
+            out.close();
+            response.setContentType("application/force-download");// 设置强制下载不打开
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(root.getFilename() + ".zip", "UTF-8"));
         }
     }
 
@@ -128,7 +119,7 @@ public class FileController {
         if (restSize > file.getSize()) {
             String path = userFileService.writeFile(file.getInputStream());
             String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-            UserFile userFile = new UserFile(null, user1.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize());
+            UserFile userFile = new UserFile(null, user1.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
             userFileService.save(userFile);
             user1.setUsedSize(Optional.ofNullable(user1.getUsedSize()).orElse(0L) + file.getSize());
             userService.save(user1);
@@ -169,7 +160,7 @@ public class FileController {
     @PostMapping("/folder")
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
         User user = springUtils.getCurrentUser();
-        UserFile file = new UserFile(null, user.getId(), pid, null, null, filename, null, 1, null);
+        UserFile file = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, 1, 0L, null);
         userFileService.save(file);
         return ApiResponse.success();
     }
