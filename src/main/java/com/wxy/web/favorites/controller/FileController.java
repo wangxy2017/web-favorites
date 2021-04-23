@@ -78,11 +78,11 @@ public class FileController {
 
     @GetMapping("/download/{id}")
     public void download(HttpServletResponse response, @PathVariable Integer id) {
-        UserFile userFile = userFileService.findById(id);
-        if (userFile.getId() != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
-            File file = new File(userFile.getPath());
-            if (file.exists()) {
-                try {
+        try {
+            UserFile userFile = userFileService.findById(id);
+            if (userFile.getId() != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
+                File file = new File(userFile.getPath());
+                if (file.exists()) {
                     response.setContentType("application/force-download");
                     response.setHeader("Content-Disposition", "attachment;filename="
                             + URLEncoder.encode(userFile.getFilename(), "UTF-8"));
@@ -95,29 +95,31 @@ public class FileController {
                     }
                     bis.close();
                     out.close();
-                } catch (IOException e) {
-                    log.error("文件下载失败", e);
                 }
             }
+        } catch (IOException e) {
+            log.error("文件下载失败", e);
         }
     }
 
     @GetMapping("/downloadAll")
     public void downloadAll(HttpServletResponse response) {
-        User user = springUtils.getCurrentUser();
-        String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
         try {
-            response.setContentType("application/x-zip-compressed");
-            response.setHeader("Content-Disposition", "attachment;filename="
-                    + URLEncoder.encode("文件备份.zip", "UTF-8"));
+            User user = springUtils.getCurrentUser();
+            String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
             File file = userFileService.packageFileByUserId(user.getId(), tempPath);
-            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-            out.setMethod(ZipEntry.DEFLATED);
-            out.setLevel(7);
-            // 压缩文件
-            ZipUtils.compressFile(out, file);
-            // 删除临时文件
-            file.delete();
+            if (file != null) {
+                response.setContentType("application/x-zip-compressed");
+                response.setHeader("Content-Disposition", "attachment;filename="
+                        + URLEncoder.encode("文件备份.zip", "UTF-8"));
+                ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+                out.setMethod(ZipEntry.DEFLATED);
+                out.setLevel(7);
+                // 压缩文件
+                ZipUtils.compressFile(out, file);
+                // 删除临时文件
+                file.delete();
+            }
         } catch (IOException e) {
             log.error("文件备份失败", e);
         }

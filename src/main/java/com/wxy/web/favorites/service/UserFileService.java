@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
@@ -57,27 +58,41 @@ public class UserFileService {
     public File packageFileByUserId(Integer userId, String tempPath) throws IOException {
         // 查询用户文件
         List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
-        File root = new File(tempPath + File.separator + userId);
-        if (root.exists()) {
-            root.delete();
+        if (!CollectionUtils.isEmpty(files)) {
+            File root = new File(tempPath + File.separator + userId);
+            if (root.exists()) {
+                root.delete();
+            }
+            root.mkdirs();
+            // 打包
+            createFile(files, root.getPath());
+            return root;
+        } else {
+            return null;
         }
-        root.mkdirs();
-        // 打包
-        createFile(files, root.getName());
-        return root;
     }
 
-    public void createFile(List<UserFile> list, String path) throws IOException {
+    public void createFile(List<UserFile> list, String base) throws IOException {
         for (UserFile file : list) {
             if (Integer.valueOf(1).equals(file.getIsDir())) {
+                // 创建文件夹
+                File director = new File(base + File.separator + file.getFilename());
+                if (director.exists()) {
+                    director.delete();
+                }
+                director.mkdirs();
+                // 查询文件夹下的文件并创建
                 List<UserFile> children = userFileRepository.findByPid(file.getId());
-                createFile(children, file.getFilename());
+                createFile(children, director.getPath());
             } else {
-                File out = new File(path + File.separator + file.getFilename());
-                if (out.exists()) {
-                    File in = new File(file.getPath());
-                    in.createNewFile();
-                    FileCopyUtils.copy(in, out);
+                File disk = new File(file.getPath());
+                if (disk.exists()) {
+                    File out = new File(base + File.separator + file.getFilename());
+                    if (out.exists()) {
+                        out.delete();
+                    }
+                    out.createNewFile();
+                    FileCopyUtils.copy(disk, out);
                 }
             }
         }

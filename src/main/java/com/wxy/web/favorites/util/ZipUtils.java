@@ -7,6 +7,11 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * @Author wangxiaoyuan
+ * @Date 2020/4/24 11:50
+ * @Description
+ **/
 public class ZipUtils {
 
     public static void compressFile(ZipOutputStream out, File sourceFile) throws IOException {
@@ -14,6 +19,14 @@ public class ZipUtils {
         out.close();
     }
 
+    /**
+     * 多层递归压缩
+     *
+     * @param out
+     * @param sourceFile
+     * @param base
+     * @throws IOException
+     */
     public static void compress(ZipOutputStream out, File sourceFile, String base) throws IOException {
         //如果路径为目录（文件夹）
         if (sourceFile.isDirectory()) {
