@@ -254,7 +254,7 @@
             layer.confirm('确认备份所有文件吗？', function(index){
                 layer.close(index);
 
-                layer.load(1, {time: 2000});
+                layer.load(1, {time: 1000});
                 window.location.href = "file/downloadAll";
             });
         });
@@ -410,7 +410,7 @@
                 if (data.isDir == 1) {
                     layer.msg('暂不支持文件夹下载', {icon: 5});
                 } else {
-                    layer.load(1, {time: 2000});
+                    layer.load(1, {time: 1000});
                     window.location.href = "file/download/" + data.id;
                 }
             }

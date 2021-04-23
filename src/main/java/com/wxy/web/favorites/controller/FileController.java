@@ -10,7 +10,6 @@ import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,34 +77,49 @@ public class FileController {
     }
 
     @GetMapping("/download/{id}")
-    public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
+    public void download(HttpServletResponse response, @PathVariable Integer id) {
         UserFile userFile = userFileService.findById(id);
-        if (userFile != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
+        if (userFile.getId() != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
             File file = new File(userFile.getPath());
             if (file.exists()) {
-                response.setContentType("application/force-download");// 设置强制下载不打开
-                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(userFile.getFilename(), "UTF-8"));// 设置文件名
-                BufferedInputStream bin = new BufferedInputStream(new FileInputStream(file));
-                OutputStream out = response.getOutputStream();
-                byte[] buffer = new byte[1024 * 1024 * 10];
-                int i = bin.read(buffer);
-                while (i != -1) {
-                    out.write(buffer, 0, i);
-                    i = bin.read(buffer);
+                try {
+                    response.setContentType("application/force-download");
+                    response.setHeader("Content-Disposition", "attachment;filename="
+                            + URLEncoder.encode(userFile.getFilename(), "UTF-8"));
+                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                    OutputStream out = response.getOutputStream();
+                    byte[] buf = new byte[1024 * 1024 * 10];
+                    int len;
+                    while ((len = bis.read(buf)) != -1) {
+                        out.write(buf, 0, len);
+                    }
+                    bis.close();
+                    out.close();
+                } catch (IOException e) {
+                    log.error("文件下载失败", e);
                 }
-                bin.close();
-                out.close();
             }
         }
     }
 
     @GetMapping("/downloadAll")
-    public void downloadAll(HttpServletResponse response) throws IOException {
+    public void downloadAll(HttpServletResponse response) {
         User user = springUtils.getCurrentUser();
-        List<UserFile> files = userFileService.packageFileByUserId(user.getId());
-        if (!CollectionUtils.isEmpty(files)) {
+        String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
+        try {
             response.setContentType("application/x-zip-compressed");
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("root.zip", "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;filename="
+                    + URLEncoder.encode("文件备份.zip", "UTF-8"));
+            File file = userFileService.packageFileByUserId(user.getId(), tempPath);
+            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+            out.setMethod(ZipEntry.DEFLATED);
+            out.setLevel(7);
+            // 压缩文件
+            ZipUtils.compressFile(out, file);
+            // 删除临时文件
+            file.delete();
+        } catch (IOException e) {
+            log.error("文件备份失败", e);
         }
     }
 
@@ -191,6 +205,7 @@ public class FileController {
                 }
             } catch (IOException e) {
                 sb.append("文件获取失败");
+                log.error("文件读取异常", e);
             }
             return ApiResponse.success(sb.toString());
         }

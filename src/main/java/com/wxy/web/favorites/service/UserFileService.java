@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -54,14 +54,33 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
-    public List<UserFile> packageFileByUserId(Integer userId) {
+    public File packageFileByUserId(Integer userId, String tempPath) throws IOException {
+        // 查询用户文件
         List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
-        for (UserFile file : files) {
+        File root = new File(tempPath + File.separator + userId);
+        if (root.exists()) {
+            root.delete();
+        }
+        root.mkdirs();
+        // 打包
+        createFile(files, root.getName());
+        return root;
+    }
+
+    public void createFile(List<UserFile> list, String path) throws IOException {
+        for (UserFile file : list) {
             if (Integer.valueOf(1).equals(file.getIsDir())) {
-                setChildren(file);
+                List<UserFile> children = userFileRepository.findByPid(file.getId());
+                createFile(children, file.getFilename());
+            } else {
+                File out = new File(path + File.separator + file.getFilename());
+                if (out.exists()) {
+                    File in = new File(file.getPath());
+                    in.createNewFile();
+                    FileCopyUtils.copy(in, out);
+                }
             }
         }
-        return files;
     }
 
     public void deleteById(Integer id, Integer userId) {
@@ -86,16 +105,6 @@ public class UserFileService {
             userRepository.save(user);
             // 数据删除
             userFileRepository.deleteAll(deletingFiles);
-        }
-    }
-
-    private void setChildren(UserFile userFile) {
-        if (Integer.valueOf(1).equals(userFile.getIsDir())) {
-            List<UserFile> children = userFileRepository.findByPid(userFile.getId());
-            userFile.setChildren(children);
-            for (UserFile child : children) {
-                setChildren(child);
-            }
         }
     }
 
