@@ -36,6 +36,27 @@ public class FileController {
 
     private final List<String> suffixList = Arrays.asList(".txt", ".properties", ".xml");
 
+    @GetMapping("/count")
+    public ApiResponse count() {
+        User user = springUtils.getCurrentUser();
+        List<UserFile> list = userFileService.findRootList(user.getId());
+        Map<String,Object> data = new HashMap<>();
+        data.put("count",list.size());
+        return ApiResponse.success(data);
+    }
+
+    @GetMapping("/exists/{id}")
+    public ApiResponse exists(@PathVariable Integer id) {
+        UserFile file = userFileService.findById(id);
+        if (file.getId() != null && StringUtils.isNotBlank(file.getPath())) {
+            File disk = new File(file.getPath());
+            if (disk.exists()) {
+                return ApiResponse.success();
+            }
+        }
+        return ApiResponse.error();
+    }
+
     /**
      * 获取文件列表
      *

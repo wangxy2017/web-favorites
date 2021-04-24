@@ -252,10 +252,21 @@
 
         $("#downloadAll").click(function(){
             layer.confirm('确认备份所有文件吗？', function(index){
-                layer.close(index);
+                $.ajax({
+                    type: "GET",
+                    url: "file/count",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0 && result.data.count > 0) {
+                            layer.load(1, {time: 1000});
+                            window.location.href = "file/downloadAll";
+                        } else {
+                            layer.msg('暂无可备份文件', {icon: 5});
+                        }
+                    }
+                });
 
-                layer.load(1, {time: 1000});
-                window.location.href = "file/downloadAll";
+                layer.close(index);
             });
         });
 
@@ -410,8 +421,19 @@
                 if (data.isDir == 1) {
                     layer.msg('暂不支持文件夹下载', {icon: 5});
                 } else {
-                    layer.load(1, {time: 1000});
-                    window.location.href = "file/download/" + data.id;
+                    $.ajax({
+                        type: "GET",
+                        url: "file/exists/" + data.id,
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code == 0) {
+                                layer.load(1, {time: 1000});
+                                window.location.href = "file/download/" + data.id;
+                            } else {
+                                layer.msg('文件已损坏', {icon: 5});
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -461,12 +483,24 @@
 
         // 分享
         window.share = function (obj) {
-            var current = window.location.href.substring(0,window.location.href.lastIndexOf("/"));
-            var content = current + "/file/download/" + $(obj).attr("data-id");
-            layer.alert(content, {title: "复制以下链接分享", btn: "复制"}, function(index){
-                copyText(content);
-                layer.msg("复制成功");
-                layer.close(index);
+            $.ajax({
+                type: "GET",
+                url: "file/exists/" + data.id,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 0) {
+                        var url = window.location.href;
+                        var path = url.substring(0,url.lastIndexOf("/"));
+                        var content = path + "/file/download/" + $(obj).attr("data-id");
+                        layer.alert(content, {title: "复制以下链接分享", btn: "复制"}, function(index){
+                            copyText(content);
+                            layer.msg("复制成功");
+                            layer.close(index);
+                        });
+                    } else {
+                        layer.msg('文件已损坏', {icon: 5});
+                    }
+                }
             });
         };
         // 跳转
