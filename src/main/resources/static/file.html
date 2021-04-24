@@ -72,7 +72,7 @@
 
             .file-info .file-share {
                 cursor: pointer;
-                margin-right: 20px;
+                margin-right: 10px;
                 margin-left: 10px;
                 font-size: 14px;
                 display: none;
@@ -80,7 +80,7 @@
             }
 
             .file-info:hover .file-share {
-                display: inline-block;
+                display: block;
             }
 
     </style>
@@ -253,13 +253,14 @@
 
         $("#downloadAll").click(function(){
             layer.confirm('确认备份所有文件吗？', function(index){
+                layer.load(1);
                 $.ajax({
                     type: "GET",
                     url: "file/count",
                     dataType: "json",
                     success: function (result) {
+                        layer.closeAll('loading');
                         if (result.code == 0 && result.data.count > 0) {
-                            layer.load(1, {time: 1000});
                             window.location.href = "file/downloadAll";
                         } else {
                             layer.msg('暂无可备份文件', {icon: 5});
@@ -422,13 +423,14 @@
                 if (data.isDir == 1) {
                     layer.msg('暂不支持文件夹下载', {icon: 5});
                 } else {
+                    layer.load(1);
                     $.ajax({
                         type: "GET",
                         url: "file/exists/" + data.id,
                         dataType: "json",
                         success: function (result) {
+                            layer.closeAll('loading');
                             if (result.code == 0) {
-                                layer.load(1, {time: 1000});
                                 window.location.href = "file/download/" + data.id;
                             } else {
                                 layer.msg('文件已损坏', {icon: 5});
@@ -485,11 +487,13 @@
         // 分享
         window.share = function (obj) {
             var id = $(obj).attr("data-id");
+            layer.load(1);
             $.ajax({
                 type: "GET",
                 url: "file/exists/" + id,
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
                         var url = window.location.href;
                         var path = url.substring(0,url.lastIndexOf("/"));
