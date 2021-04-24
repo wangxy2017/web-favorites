@@ -72,7 +72,8 @@
 
             .file-info .file-share {
                 cursor: pointer;
-                margin-left: 6px;
+                margin-right: 20px;
+                margin-left: 10px;
                 font-size: 14px;
                 display: none;
                 float: right;
@@ -181,7 +182,7 @@
                 }
                 , {
                     field: 'size', title: '大小', templet: function (d) {
-                        return d.isDir == 1 ? "" : change(d.size);
+                        return d.isDir == 1 ? "0 B" : change(d.size);
                     }
                 }
                 , {
@@ -483,15 +484,16 @@
 
         // 分享
         window.share = function (obj) {
+            var id = $(obj).attr("data-id");
             $.ajax({
                 type: "GET",
-                url: "file/exists/" + data.id,
+                url: "file/exists/" + id,
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 0) {
                         var url = window.location.href;
                         var path = url.substring(0,url.lastIndexOf("/"));
-                        var content = path + "/file/download/" + $(obj).attr("data-id");
+                        var content = path + "/file/download/" + id;
                         layer.alert(content, {title: "复制以下链接分享", btn: "复制"}, function(index){
                             copyText(content);
                             layer.msg("复制成功");
@@ -521,7 +523,7 @@
                                 area:['800px','600px'],
                                 type: 1,
                                 title: '文件内容',
-                                content: '<div style="white-space: pre-line;padding: 10px;">' + result.data + '</div>'
+                                content: '<div style="white-space: pre-line;padding: 10px;user-select: text;">' + result.data + '</div>'
                             });
                         } else {
                             layer.msg('暂不支持文件查看', {icon: 5});
