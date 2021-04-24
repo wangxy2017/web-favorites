@@ -10,6 +10,7 @@ import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,14 +35,15 @@ public class FileController {
     @Autowired
     private SpringUtils springUtils;
 
-    private final List<String> suffixList = Arrays.asList(".txt", ".properties", ".xml");
+    @Value("${app.file-suffixes:txt}")
+    private String fileSuffixes;
 
     @GetMapping("/count")
     public ApiResponse count() {
         User user = springUtils.getCurrentUser();
         List<UserFile> list = userFileService.findRootList(user.getId());
-        Map<String,Object> data = new HashMap<>();
-        data.put("count",list.size());
+        Map<String, Object> data = new HashMap<>();
+        data.put("count", list.size());
         return ApiResponse.success(data);
     }
 
@@ -218,19 +220,22 @@ public class FileController {
     @GetMapping("/view")
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && suffixList.contains(file.getFilename().substring(file.getFilename().lastIndexOf(".")))) {
-            StringBuilder sb = new StringBuilder();
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
-                String tempStr;
-                while ((tempStr = reader.readLine()) != null) {
-                    sb.append(tempStr).append("\n");
+        if (file.getId() != null) {
+            String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
+            if (StringUtils.isNotBlank(suffix) && Arrays.asList(fileSuffixes.split(",")).contains(suffix)) {
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
+                    String tempStr;
+                    while ((tempStr = reader.readLine()) != null) {
+                        sb.append(tempStr).append("\n");
+                    }
+                } catch (IOException e) {
+                    sb.append("文件获取失败");
+                    log.error("文件读取异常", e);
                 }
-            } catch (IOException e) {
-                sb.append("文件获取失败");
-                log.error("文件读取异常", e);
+                return ApiResponse.success(sb.toString());
             }
-            return ApiResponse.success(sb.toString());
         }
         return ApiResponse.error();
     }

@@ -42,6 +42,7 @@ app:
   data-url: search.json #搜索类型数据
   init-capacity: 50 #初始容量(M)
   file-repository: ./repository #文件仓库
+  file-suffixes: txt,properties,xml,sh,bat,sql,json
   recommends:
     - bilibili,https://www.bilibili.com/
     - 淘宝,https://www.taobao.com/
