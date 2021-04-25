@@ -739,6 +739,22 @@
                     window.location.href = "file.html";
                 }
             }
+            ,mouseenter: function(type,ele){
+                if(type === 'top'){
+                    layer.tips('回到顶部', ele, {tips: 4});
+                }else if(type === 'bar1'){
+                    layer.tips('瞬间', ele, {tips: 4});
+                }else if(type === 'bar2'){
+                    layer.tips('搜索', ele, {tips: 4});
+                }else if(type === 'bar3'){
+                    layer.tips('日程', ele, {tips: 4});
+                }else if(type === 'bar4'){
+                    layer.tips('文件', ele, {tips: 4});
+                }
+            }
+            ,mouseleave: function(ele,type){
+                layer.closeAll('tips');
+            }
         });
 
         //执行实例
