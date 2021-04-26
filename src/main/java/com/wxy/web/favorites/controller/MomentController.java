@@ -22,20 +22,31 @@ public class MomentController {
     @Autowired
     private SpringUtils springUtils;
 
+    /**
+     * 新增
+     * @param moment
+     * @return
+     */
     @PostMapping
     public ApiResponse save(@RequestBody Moment moment) {
         User user = springUtils.getCurrentUser();
         moment.setUserId(user.getId());
-        if (moment.getId() == null) moment.setCreateTime(new Date());
+        moment.setCreateTime(new Date());
         momentService.save(moment);
         return ApiResponse.success();
     }
 
+    /**
+     * 修改
+     * @param moment
+     * @return
+     */
     @PostMapping("/update")
     public ApiResponse update(@RequestBody Moment moment) {
         Moment moment1 = momentService.findById(moment.getId());
         if (moment1 != null) {
             moment1.setContent(moment.getContent());
+            moment1.setText(moment.getText());
             momentService.save(moment1);
             return ApiResponse.success();
         }
