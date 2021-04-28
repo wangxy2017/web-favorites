@@ -1070,6 +1070,8 @@
 					if (typeof hover_in !== "undefined") {
 						$(hover_in).addClass('hover-in').siblings().removeClass('hover-in');
 						$(this).val(hover_in.innerText);
+					}else{
+					    $(".search-items").hide();
 					}
                 }
             } else if (event.key === "ArrowUp") {
@@ -1110,6 +1112,8 @@
 					if (typeof hover_in !== "undefined") {
 						$(hover_in).addClass('hover-in').siblings().removeClass('hover-in');
 						$(this).val(hover_in.innerText);
+					}else{
+					    $(".search-items").hide();
 					}
                 }
             } else if (event.key === "Backspace") {
