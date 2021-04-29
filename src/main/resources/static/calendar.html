@@ -515,11 +515,13 @@
 
         // 加载数据
         window.loadDataList = function(text){// 2020-09
+            layer.load();
             $.ajax({
                 type: "GET",
                 url: "task/all/" + text,
                 dataType: "json",
                 success: function (result) {
+                    layer.closeAll('loading');
                     if (result.code == 0) {
                         var today = getToday();
                         $(result.data).each(function(index,item){
@@ -630,6 +632,8 @@
                         },function(){
                             layer.closeAll('tips');
                         });
+                    } else {
+                        layer.msg("数据加载失败", {icon: 5});
                     }
                 }
             });
