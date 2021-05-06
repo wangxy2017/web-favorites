@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
@@ -35,8 +36,8 @@ public class FileController {
     @Autowired
     private SpringUtils springUtils;
 
-    @Value("${app.file-suffixes:txt}")
-    private String fileSuffixes;
+    @Autowired
+    private AppConfig appConfig;
 
     @GetMapping("/count")
     public ApiResponse count() {
@@ -222,7 +223,7 @@ public class FileController {
         UserFile file = userFileService.findById(id);
         if (file.getId() != null) {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
-            if (StringUtils.isNotBlank(suffix) && Arrays.asList(fileSuffixes.split(",")).contains(suffix)) {
+            if (StringUtils.isNotBlank(suffix) && appConfig.getFileSuffixes().contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));

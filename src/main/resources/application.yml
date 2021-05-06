@@ -36,13 +36,20 @@ spring:
           ssl:
             enable: true
 app:
-  star-nums: 30 #标记个数限制
-  search-nums: 100 #搜索个数限制
-  favorites-nums: 40 #显示收藏个数限制
-  data-url: search.json #搜索类型数据
+  star-limit: 30 #标记个数限制
+  search-limit: 100 #搜索个数限制
+  favorites-limit: 40 #显示收藏个数限制
+  search-type-json: search.json #搜索类型数据
   init-capacity: 50 #初始容量(M)
   file-repository: ./repository #文件仓库
-  file-suffixes: txt,properties,xml,sh,bat,sql,json
+  file-suffixes:
+    - txt
+    - properties
+    - xml
+    - sh
+    - bat
+    - sql
+    - json
   recommends:
     - bilibili,https://www.bilibili.com/
     - 淘宝,https://www.taobao.com/
@@ -50,5 +57,4 @@ app:
     - 京东,https://www.jd.com/
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
-### aes加密密钥
-aes-key:
+  secret-key: B!D&LL5lyk62lnHi #加密密钥

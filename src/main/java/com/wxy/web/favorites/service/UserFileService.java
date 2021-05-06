@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.dao.UserFileRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
@@ -26,8 +27,8 @@ import java.util.UUID;
 @Transactional
 public class UserFileService {
 
-    @Value("${app.file-repository}")
-    private String repository;
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private UserFileRepository userFileRepository;
@@ -140,7 +141,7 @@ public class UserFileService {
             char c = sequence.charAt(new Random().nextInt(sequence.length()));
             sb.append(c).append(File.separator);
         }
-        File folder = new File(repository + File.separator + sb);
+        File folder = new File(appConfig.getFileRepository() + File.separator + sb);
         if (!folder.exists()) {
             boolean bool = folder.mkdirs();
             if (bool) {

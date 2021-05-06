@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
@@ -51,8 +52,8 @@ public class FavoritesController {
     @Autowired
     private TaskService taskService;
 
-    @Value("${app.star-nums:10}")
-    private Integer starLimit;
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private SpringUtils springUtils;
@@ -163,8 +164,8 @@ public class FavoritesController {
             if (favorites.getStar() == 1) {
                 User user = springUtils.getCurrentUser();
                 List<Favorites> list = favoritesService.findStarFavorites(user.getId());
-                if (list.size() >= starLimit && !list.contains(favorites1)) {
-                    return ApiResponse.error("最多标记" + starLimit + "个网址");
+                if (list.size() >= appConfig.getStarLimit() && !list.contains(favorites1)) {
+                    return ApiResponse.error("最多标记" + appConfig.getStarLimit() + "个网址");
                 }
             }
             favorites1.setStar(favorites.getStar());

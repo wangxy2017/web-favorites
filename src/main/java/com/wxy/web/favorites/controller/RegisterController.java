@@ -1,7 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
-import com.wxy.web.favorites.config.RecommendsConfig;
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.SecretKey;
@@ -24,15 +24,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
 
-    @Value("${app.init-capacity:100}")
-    private long initCapacity;
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private UserService userService;
@@ -53,7 +52,7 @@ public class RegisterController {
     private SpringUtils springUtils;
 
     @Autowired
-    private RecommendsConfig recommendsConfig;
+    private AppConfig recommendsConfig;
 
     /**
      * 注册
@@ -69,7 +68,7 @@ public class RegisterController {
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 String randomKey = RandomUtil.randomString(16);
                 user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + randomKey).getBytes()));
-                user.setCapacity(initCapacity * 1024 * 1024L);
+                user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
                 // 保存secretKey
                 SecretKey secretKey = new SecretKey(null, user1.getId(), randomKey);

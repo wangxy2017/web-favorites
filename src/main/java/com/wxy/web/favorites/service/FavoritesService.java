@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Favorites;
 import org.apache.commons.lang3.StringUtils;
@@ -25,11 +26,8 @@ import java.util.List;
 @Transactional
 public class FavoritesService {
 
-    @Value("${app.favorites-nums:40}")
-    private int favoritesLimit;
-
-    @Value("${app.search-nums:100}")
-    private int searchLimit;
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private FavoritesRepository favoritesRepository;
@@ -52,7 +50,7 @@ public class FavoritesService {
 
     public List<Favorites> findLimitByCategoryId(Integer categoryId) {
         Sort sort = Sort.by(Sort.Order.desc("sort"), Sort.Order.asc("id"));
-        Pageable pageable = PageRequest.of(0, favoritesLimit, sort);
+        Pageable pageable = PageRequest.of(0, appConfig.getFavoritesLimit(), sort);
         return favoritesRepository.findLimitByCategoryId(categoryId, pageable);
     }
 
@@ -69,7 +67,7 @@ public class FavoritesService {
     }
 
     public List<Favorites> searchFavorites(Integer userId, String searchName) {
-        Pageable pageable = PageRequest.of(0, searchLimit);
+        Pageable pageable = PageRequest.of(0, appConfig.getSearchLimit());
         // 构造自定义查询条件
         Specification<Favorites> queryCondition = (Specification<Favorites>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();

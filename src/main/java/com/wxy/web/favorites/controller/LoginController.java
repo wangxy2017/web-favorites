@@ -1,7 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
-import com.wxy.web.favorites.config.RecommendsConfig;
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.SecretKey;
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LoginController {
 
-    @Value("${app.init-capacity:100}")
-    private long initCapacity;
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private UserService userService;
@@ -51,10 +51,7 @@ public class LoginController {
     private SpringUtils springUtils;
 
     @Autowired
-    private RecommendsConfig recommendsConfig;
-
-    @Value("${aes-key:B!D&LL5lyk62lnHi}")
-    private String aesKey;
+    private AppConfig recommendsConfig;
 
     @GetMapping("/email/code")
     public ApiResponse code(@RequestParam String email) {
@@ -81,7 +78,7 @@ public class LoginController {
                 user.setUsername(email);
                 user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + randomKey).getBytes()));
                 user.setEmail(email);
-                user.setCapacity(initCapacity * 1024 * 1024L);
+                user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 user = userService.save(user);
                 // 保存secretKey
                 SecretKey secretKey = new SecretKey(null, user.getId(), randomKey);
@@ -108,7 +105,7 @@ public class LoginController {
             // 存入cookie
             String tokenValue = null;
             try {
-                tokenValue = AESUtils.encrypt(user.getUsername() + "&&" + user.getPassword(), aesKey);
+                tokenValue = AESUtils.encrypt(user.getUsername() + "&&" + user.getPassword(), appConfig.getSecretKey());
             } catch (Exception e) {
                 log.error("token加密失败！！！", e);
             }
@@ -135,7 +132,7 @@ public class LoginController {
                 if ("1".equals(remember)) {
                     String tokenValue = null;
                     try {
-                        tokenValue = AESUtils.encrypt(user1.getUsername() + "&&" + user1.getPassword(), aesKey);
+                        tokenValue = AESUtils.encrypt(user1.getUsername() + "&&" + user1.getPassword(), appConfig.getSecretKey());
                     } catch (Exception e) {
                         log.error("token加密失败！！！", e);
                     }
