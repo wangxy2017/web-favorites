@@ -385,7 +385,7 @@ public class FavoritesController {
         List<SearchType> searchTypeList = new ArrayList<>();
         User user = springUtils.getCurrentUser();
         // 查询用户分类
-        if ("1".equals(f)) {
+        if (PublicConstants.EXPORT_FAVORITES_CODE.equals(f)) {
             categories = categoryService.findByUserId(user.getId());
             categories.forEach(category -> {
                 List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
@@ -397,11 +397,11 @@ public class FavoritesController {
             });
         }
         // 查询用户瞬间
-        if ("1".equals(m)) {
+        if (PublicConstants.EXPORT_MOMENT_CODE.equals(m)) {
             momentList = momentService.findByUserId(user.getId());
         }
         // 查询近一年用户未完成的日程
-        if ("1".equals(t)) {
+        if (PublicConstants.EXPORT_TASK_CODE.equals(t)) {
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
             String startDate = sdf.format(calendar.getTime());
@@ -410,7 +410,7 @@ public class FavoritesController {
             taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
         }
         // 查询用户搜索引擎
-        if ("1".equals(s)) {
+        if (PublicConstants.EXPORT_SEARCH_CODE.equals(s)) {
             searchTypeList = searchTypeService.findByUserId(user.getId());
         }
         HttpServletResponse response = springUtils.getResponse();

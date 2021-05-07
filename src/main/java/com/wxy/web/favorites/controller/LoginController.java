@@ -107,7 +107,7 @@ public class LoginController {
     }
 
     @PostMapping
-    public ApiResponse login(@RequestBody User user, @RequestParam(required = false) Integer remember) {
+    public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             SecretKey secretKey = secretKeyService.findByUserId(user1.getId());

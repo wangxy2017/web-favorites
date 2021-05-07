@@ -25,7 +25,7 @@ public class PublicConstants {
     public static final Integer VERIFICATION_EMAIL_UPDATE = 2;
 
     public static final Integer REMEMBER_ME_DAYS = 14;
-    public static final Integer REMEMBER_ME_CODE = 1;
+    public static final String REMEMBER_ME_CODE = "1";
 
     public static final Integer RANDOM_CODE_LENGTH = 6;
 
@@ -47,5 +47,10 @@ public class PublicConstants {
     public static final Integer MOMENT_TOP_CODE = 1;
 
     public static final Integer MAX_SORT_NUMBER = 9999;
+
+    public static final String EXPORT_FAVORITES_CODE = "1";
+    public static final String EXPORT_MOMENT_CODE = "1";
+    public static final String EXPORT_TASK_CODE = "1";
+    public static final String EXPORT_SEARCH_CODE = "1";
 
 }
