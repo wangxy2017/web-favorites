@@ -198,6 +198,7 @@
                 type: "GET",
                 url: "file/tree",
                 dataType: "json",
+                headers:{"Authorization": localStorage.getItem("token")},
                 success: function (result) {
                     if (result.code == 0) {
                         // 渲染文件夹树结构
@@ -218,6 +219,7 @@
                                         url: "file/move",
                                         data: {"ids": ids.join(","), "pid": obj.data.id},
                                         dataType: "json",
+                                        headers:{"Authorization": localStorage.getItem("token")},
                                         success: function (result) {
                                             if (result.code == 0) {
                                                 layer.msg('操作成功', {icon: 6});
@@ -241,6 +243,7 @@
                 type: "GET",
                 url: "file/capacity",
                 dataType: "json",
+                headers:{"Authorization": localStorage.getItem("token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var data = result.data;
@@ -259,6 +262,7 @@
                     type: "GET",
                     url: "file/count",
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0 && result.data.count > 0) {
@@ -310,6 +314,7 @@
                     url: "file/deleteMore",
                     data: {"ids": ids.join(",")},
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.msg('删除成功', {icon: 6});
@@ -337,6 +342,7 @@
                 url: "file/back",
                 data: {"pid": $("#parent").val()},
                 dataType: "json",
+                headers:{"Authorization": localStorage.getItem("token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var pid = result.data ? result.data : null;
@@ -360,6 +366,7 @@
                         "filename": value
                     },
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         if (result.code == 0) {
                             table.reload('fileList');
@@ -389,6 +396,7 @@
                         url: "file/rename",
                         data: {"id": data.id, "filename": value},
                         dataType: "json",
+                        headers:{"Authorization": localStorage.getItem("token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 layer.msg('修改成功', {icon: 6});
@@ -408,6 +416,7 @@
                         url: "file/delete",
                         data: {"id": data.id},
                         dataType: "json",
+                        headers:{"Authorization": localStorage.getItem("token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 obj.del(); //移除当前行
@@ -429,6 +438,7 @@
                         type: "GET",
                         url: "file/exists/" + data.id,
                         dataType: "json",
+                        headers:{"Authorization": localStorage.getItem("token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -493,6 +503,7 @@
                 type: "GET",
                 url: "file/exists/" + id,
                 dataType: "json",
+                headers:{"Authorization": localStorage.getItem("token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -522,6 +533,7 @@
                     url: "file/view",
                     data: {"id": id},
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.open({
@@ -679,6 +691,7 @@
                 type: "GET",
                 url: "login/out",
                 dataType: "json",
+                headers:{"Authorization": localStorage.getItem("token")},
                 success: function (result) {
                     if (result.code == 0) {
                         window.location.href = "login.html";

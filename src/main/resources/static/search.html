@@ -289,6 +289,7 @@
                     type: "GET",
                     url: "login/out",
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         if (result.code == 0) {
                             window.location.href = "login.html";
@@ -307,6 +308,7 @@
                     type: "GET",
                     url: "search/data",
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         if(result.code == 0){
                             var html = '';
@@ -343,6 +345,7 @@
                         type: "GET",
                         url: "search/delete/" + id,
                         dataType: "json",
+                        headers:{"Authorization": localStorage.getItem("token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -380,6 +383,7 @@
                     data: JSON.stringify(data.field),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#searchTypeFrom'));
@@ -492,7 +496,8 @@
 						type: "GET",
 						dataType: "jsonp", //指定服务器返回的数据类型
 						jsonp: "cb",
-						success: function(data) {
+						headers:{"Authorization": localStorage.getItem("token")},
+                        success: function(data) {
 							var html = '';
 							$.each(data.s, function(index, item) {
 								html += '<li>' + item + '</li>';
