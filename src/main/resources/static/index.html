@@ -745,6 +745,7 @@
             , acceptMime: 'file/xml'
             , exts: 'xml'
             , url: 'favorites/import' //上传接口
+            , headers:{"Authorization": localStorage.getItem("token")}
             , before: function(obj){
                 layer.close(indexMap.get('#importOrExport')); //关闭弹层
                 layer.load(); //上传loading
