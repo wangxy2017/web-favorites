@@ -1329,17 +1329,8 @@
 
         // 登出
         $("#logout").click(function () {
-            $.ajax({
-                type: "GET",
-                url: "login/out",
-                dataType: "json",
-                headers:{"Authorization": localStorage.getItem("token")},
-                success: function (result) {
-                    if (result.code == 0) {
-                        window.location.href = "login.html";
-                    }
-                }
-            });
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
         });
 
         // 加载数据

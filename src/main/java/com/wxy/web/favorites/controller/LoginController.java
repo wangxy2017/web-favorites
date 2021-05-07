@@ -141,9 +141,4 @@ public class LoginController {
             return ApiResponse.error("账号或邮箱不存在");
         }
     }
-
-    @GetMapping("/out")
-    public ApiResponse logout() {
-        return ApiResponse.success();
-    }
 }
