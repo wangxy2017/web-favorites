@@ -2,14 +2,8 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
-import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.model.Favorites;
-import com.wxy.web.favorites.model.SecretKey;
-import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.service.CategoryService;
-import com.wxy.web.favorites.service.FavoritesService;
-import com.wxy.web.favorites.service.SecretKeyService;
-import com.wxy.web.favorites.service.UserService;
+import com.wxy.web.favorites.model.*;
+import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -53,9 +48,15 @@ public class LoginController {
     @Autowired
     private TokenUtils tokenUtils;
 
+    @Autowired
+    private VerificationService verificationService;
+
     @GetMapping("/email/code")
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
+        Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30));
+        Verification verification = new Verification(null, email, code, expTime, 1);
+        verificationService.save(verification);
         log.info("登录邮箱：{}，登录验证码：{}", email, code);
         emailUtils.sendSimpleMail(email, "网络收藏夹|登录", "您正在登录账号，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
@@ -63,7 +64,8 @@ public class LoginController {
 
     @PostMapping("/emailLogin")
     public ApiResponse emailLogin(@RequestParam String email, @RequestParam String code) {
-        String loginEmailCode = "";
+        Verification verification = verificationService.findCode(email, 1);
+        String loginEmailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
         if (StringUtils.isNotBlank(code) && code.equals(loginEmailCode)) {
             // 查询email是否注册，如果没有注册，先注册账号
             User user = userService.findByEmail(email);

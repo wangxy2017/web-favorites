@@ -3,8 +3,10 @@ package com.wxy.web.favorites.controller;
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.model.Verification;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
+import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.SpringUtils;
@@ -12,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -28,6 +33,9 @@ public class UserController {
 
     @Autowired
     private SpringUtils springUtils;
+
+    @Autowired
+    private VerificationService verificationService;
 
     @GetMapping("/info")
     public ApiResponse info() {
@@ -59,6 +67,9 @@ public class UserController {
     @GetMapping("/email/code")
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
+        Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30));
+        Verification verification = new Verification(null, email, code, expTime, 2);
+        verificationService.save(verification);
         emailUtils.sendSimpleMail(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
@@ -67,7 +78,8 @@ public class UserController {
     public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
         if (StringUtils.isNotBlank(newEmail) && StringUtils.isNotBlank(code)) {
             User user1 = userService.findByEmail(newEmail);
-            String emailCode = "";
+            Verification verification = verificationService.findCode(newEmail, 2);
+            String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (user1 == null && code.equals(emailCode)) {
                 User user = springUtils.getCurrentUser();
                 user.setEmail(newEmail);

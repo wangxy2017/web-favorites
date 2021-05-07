@@ -1170,11 +1170,12 @@
                 $.ajax({
                     type: "GET",
                     url: "user/email/code",
+                    headers:{"Authorization": localStorage.getItem("token")},
                     data: {"email": email}
                 });
             }else{
                 $("#newEmail").focus().addClass("layui-form-danger");
-                 layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
+                layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
             }
         };
 
