@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.util;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.exception.NoLoginException;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +29,6 @@ public class TokenUtils {
     @Value("${token.token-prefix}")
     private String tokenPrefix;
 
-    private static final String TOKEN_DELIMITER = "/";
-
     public String createToken(Integer userId) {
         return createToken(userId, TimeUnit.SECONDS.toMillis(tokenExpiredSeconds));
     }
@@ -37,7 +36,7 @@ public class TokenUtils {
     public String createToken(Integer userId, long time) {
         try {
             long exp = System.currentTimeMillis() + time;
-            String encrypt = AESUtils.encrypt(userId + TOKEN_DELIMITER + exp, tokenSecretKey);
+            String encrypt = AESUtils.encrypt(userId + PublicConstants.TOKEN_DELIMITER + exp, tokenSecretKey);
             return tokenPrefix + " " + encrypt;
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,7 +49,7 @@ public class TokenUtils {
             if (StringUtils.isNotBlank(token) && token.startsWith(tokenPrefix)) {
                 String message = token.substring(tokenPrefix.length() + 1);
                 String decrypt = AESUtils.decrypt(message, tokenSecretKey);
-                String[] split = decrypt.split(TOKEN_DELIMITER);
+                String[] split = decrypt.split(PublicConstants.TOKEN_DELIMITER);
                 boolean exp = Long.parseLong(split[1]) < System.currentTimeMillis();
                 if (StringUtils.isNotBlank(split[0]) && !exp) {
                     return Integer.valueOf(split[0]);

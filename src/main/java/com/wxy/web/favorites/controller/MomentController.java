@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.MomentService;
@@ -24,6 +25,7 @@ public class MomentController {
 
     /**
      * 新增
+     *
      * @param moment
      * @return
      */
@@ -38,6 +40,7 @@ public class MomentController {
 
     /**
      * 修改
+     *
      * @param moment
      * @return
      */
@@ -85,7 +88,7 @@ public class MomentController {
                 momentService.save(moment);
             }
             // 设置新置顶
-            moment1.setIsTop(1);
+            moment1.setIsTop(PublicConstants.MOMENT_TOP_CODE);
             momentService.save(moment1);
             return ApiResponse.success();
         }

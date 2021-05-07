@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.service;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.UserFileRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
@@ -75,7 +76,7 @@ public class UserFileService {
 
     public void createFile(List<UserFile> list, String base) throws IOException {
         for (UserFile file : list) {
-            if (Integer.valueOf(1).equals(file.getIsDir())) {
+            if (PublicConstants.DIR_CODE.equals(file.getIsDir())) {
                 // 创建文件夹
                 File director = new File(base + File.separator + file.getFilename());
                 if (director.exists()) {
@@ -108,7 +109,7 @@ public class UserFileService {
             long totalSize = 0L;
             List<String> pathList = new ArrayList<>();
             for (UserFile file : deletingFiles) {
-                if (!Integer.valueOf(1).equals(file.getIsDir())) {
+                if (!PublicConstants.DIR_CODE.equals(file.getIsDir())) {
                     totalSize += file.getSize();
                     pathList.add(file.getPath());
                 }
@@ -125,7 +126,7 @@ public class UserFileService {
     }
 
     private void addDeletingFile(List<UserFile> deletingFiles, UserFile userFile) {
-        if (Integer.valueOf(1).equals(userFile.getIsDir())) {
+        if (PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
             List<UserFile> children = userFileRepository.findByPid(userFile.getId());
             for (UserFile child : children) {
                 addDeletingFile(deletingFiles, child);

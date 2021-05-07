@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
@@ -104,7 +105,7 @@ public class FileController {
     public void download(HttpServletResponse response, @PathVariable Integer id) {
         try {
             UserFile userFile = userFileService.findById(id);
-            if (userFile.getId() != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
+            if (userFile.getId() != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
                 File file = new File(userFile.getPath());
                 if (file.exists()) {
                     response.setContentType("application/force-download");
@@ -188,7 +189,7 @@ public class FileController {
     @PostMapping("/deleteMore")
     public ApiResponse deleteMore(@RequestParam String ids) {
         User user = springUtils.getCurrentUser();
-        String[] split = ids.split(",");
+        String[] split = ids.split(PublicConstants.ID_DELIMITER);
         for (String s : split) {
             userFileService.deleteById(Integer.valueOf(s), user.getId());
         }
@@ -210,7 +211,7 @@ public class FileController {
      */
     @PostMapping("/move")
     public ApiResponse move(@RequestParam String ids, @RequestParam(required = false) Integer pid) {
-        for (String id : ids.split(",")) {
+        for (String id : ids.split(PublicConstants.ID_DELIMITER)) {
             UserFile file = userFileService.findById(Integer.valueOf(id));
             file.setPid(pid);
             userFileService.save(file);
@@ -263,7 +264,7 @@ public class FileController {
         List<Map<String, Object>> list = new ArrayList<>();
         List<UserFile> files = userFileService.findByPid(pid);
         for (UserFile f : files) {
-            if (Integer.valueOf(1).equals(f.getIsDir())) {
+            if (PublicConstants.DIR_CODE.equals(f.getIsDir())) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("title", f.getFilename());
                 map.put("id", f.getId());

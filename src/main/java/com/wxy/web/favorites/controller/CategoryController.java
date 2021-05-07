@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
@@ -27,7 +28,7 @@ public class CategoryController {
 
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
-        if (!"默认分类".equals(category.getName())) {
+        if (!PublicConstants.DEFAULT_CATEGORY_NAME.equals(category.getName())) {
             User user = springUtils.getCurrentUser();
             category.setUserId(user.getId());
             categoryService.save(category);
@@ -55,7 +56,7 @@ public class CategoryController {
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
-        if (!Integer.valueOf(1).equals(category.getIsSystem())) {
+        if (PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
             categoryService.deleteById(id);
             favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();

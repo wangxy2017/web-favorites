@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
@@ -13,7 +14,6 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +64,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? "images/book.svg" : icon);
+        favorites.setIcon(StringUtils.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         // 拼音首字母
@@ -182,7 +182,7 @@ public class FavoritesController {
             SAXReader reader = new SAXReader();
             Document document = reader.read(in);
             Element root = document.getRootElement();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
             if (root.element("MOMENTS") != null) {
                 root.element("MOMENTS").elements("MOMENT").forEach(m -> {
                     try {
@@ -209,8 +209,8 @@ public class FavoritesController {
             SAXReader reader = new SAXReader();
             Document document = reader.read(in);
             Element root = document.getRootElement();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+            SimpleDateFormat sdf1 = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
             Date today = sdf.parse(sdf.format(new Date()));
             if (root.element("TASKS") != null) {
                 root.element("TASKS").elements("TASK").forEach(t -> {
@@ -267,7 +267,7 @@ public class FavoritesController {
                                 PinYinUtils.toPinyinS(f.elementText("NAME")),
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
-                                sort >= 0 && sort < 9999 ? sort : null,
+                                sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
                                 Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
@@ -277,7 +277,7 @@ public class FavoritesController {
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < 9999 ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
+                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort <PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
                 });
             }
         } catch (Exception e) {
@@ -403,11 +403,11 @@ public class FavoritesController {
         // 查询近一年用户未完成的日程
         if ("1".equals(t)) {
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
             String startDate = sdf.format(calendar.getTime());
             calendar.add(Calendar.YEAR, 1);
             String endDate = sdf.format(calendar.getTime());
-            taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < 4).collect(Collectors.toList());
+            taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
         }
         // 查询用户搜索引擎
         if ("1".equals(s)) {
@@ -431,7 +431,7 @@ public class FavoritesController {
                 if (c.getSort() != null) {
                     category.addElement("SORT").setText(String.valueOf(c.getSort()));
                 }
-                if (Integer.valueOf(1).equals(c.getBookmark())) {
+                if (PublicConstants.BOOKMARK_STYLE_CODE.equals(c.getBookmark())) {
                     category.addElement("BOOKMARK").setText("true");
                 }
                 Element list = category.addElement("LIST");
@@ -443,7 +443,7 @@ public class FavoritesController {
                     if (f.getSort() != null) {
                         favorites.addElement("SORT").setText(String.valueOf(f.getSort()));
                     }
-                    if (Integer.valueOf(1).equals(f.getStar())) {
+                    if (PublicConstants.FAVORITES_STAR_CODE.equals(f.getStar())) {
                         favorites.addElement("STAR").setText("true");
                     }
                     if (StringUtils.isNotBlank(f.getShortcut())) {
@@ -463,7 +463,7 @@ public class FavoritesController {
         }
         if (!CollectionUtils.isEmpty(momentList)) {
             Element moments = root.addElement("MOMENTS");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
             momentList.forEach(m -> {
                 Element moment = moments.addElement("MOMENT");
                 moment.addElement("CONTENT").setText(m.getContent());
@@ -484,14 +484,14 @@ public class FavoritesController {
         }
         if (!CollectionUtils.isEmpty(taskList)) {
             Element tasks = root.addElement("TASKS");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+            SimpleDateFormat sdf1 = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
             taskList.forEach(t -> {
                 Element task = tasks.addElement("TASK");
                 task.addElement("CONTENT").setText(t.getContent());
                 task.addElement("DATE").setText(sdf.format(t.getTaskDate()));
                 task.addElement("LEVEL").setText(String.valueOf(t.getLevel()));
-                if (Integer.valueOf(1).equals(t.getIsAlarm())) {
+                if (PublicConstants.TASK_ALARM_CODE.equals(t.getIsAlarm())) {
                     task.addElement("ALARM").setText("true");
                     task.addElement("TIME").setText(sdf1.format(t.getAlarmTime()));
                 }

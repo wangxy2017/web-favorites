@@ -36,6 +36,7 @@ spring:
           ssl:
             enable: true
 app:
+  verification-expired-minutes: 30
   star-limit: 30 #标记个数限制
   search-limit: 100 #搜索个数限制
   favorites-limit: 40 #显示收藏个数限制

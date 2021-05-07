@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.schedule;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.TaskService;
@@ -38,15 +39,15 @@ public class TaskNoticeJob {
     public void run() {
         log.info("任务通知程序开始执行...");
         // 查询此刻任务
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_MINUTE_PATTERN);
         List<Task> taskList = taskService.findByAlarmTime(sdf.format(new Date()) + ":00");
         // 邮件通知
-        List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < 4).collect(Collectors.toList());
+        List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
         noticeList.forEach(t -> {
             User user = userService.findById(t.getUserId());
             emailUtils.sendHtmlMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
             // 改变状态
-            t.setLevel(4);
+            t.setLevel(PublicConstants.TASK_LEVEL_4);
         });
         taskService.saveAll(noticeList);
     }
