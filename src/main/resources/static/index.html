@@ -1232,7 +1232,8 @@
                 // 记录访问时间
                 $.ajax({
                     type: "GET",
-                    url: "favorites/visit/" + $(obj).attr("data-id")
+                    url: "favorites/visit/" + $(obj).attr("data-id"),
+                    headers:{"Authorization": localStorage.getItem("login_user_token")}
                 });
             }else{
                 layer.msg('此链接无效', {icon: 7});
