@@ -29,7 +29,7 @@
             type: "GET",
             url: "moment/" + momentId,
             dataType: "json",
-            headers:{"Authorization": localStorage.getItem("token")},
+            headers:{"Authorization": localStorage.getItem("user_token")},
             success: function (result) {
                 if (result.code == 0 && result.data) {
                     editor.txt.html(result.data.content);

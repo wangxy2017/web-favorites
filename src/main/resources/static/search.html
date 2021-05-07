@@ -285,7 +285,7 @@
 
             // 登出
             $("#logout").click(function () {
-                localStorage.removeItem("token");
+                localStorage.removeItem("user_token");
                 window.location.href = "login.html";
             });
 
@@ -299,7 +299,7 @@
                     type: "GET",
                     url: "search/data",
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("token")},
+                    headers:{"Authorization": localStorage.getItem("user_token")},
                     success: function (result) {
                         if(result.code == 0){
                             var html = '';
@@ -336,7 +336,7 @@
                         type: "GET",
                         url: "search/delete/" + id,
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("token")},
+                        headers:{"Authorization": localStorage.getItem("user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -374,7 +374,7 @@
                     data: JSON.stringify(data.field),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("token")},
+                    headers:{"Authorization": localStorage.getItem("user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#searchTypeFrom'));
@@ -487,7 +487,7 @@
 						type: "GET",
 						dataType: "jsonp", //指定服务器返回的数据类型
 						jsonp: "cb",
-						headers:{"Authorization": localStorage.getItem("token")},
+						headers:{"Authorization": localStorage.getItem("user_token")},
                         success: function(data) {
 							var html = '';
 							$.each(data.s, function(index, item) {
