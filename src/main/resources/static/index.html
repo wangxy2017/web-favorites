@@ -1697,6 +1697,7 @@
             $.ajax({
                 type: "POST",
                 url: "user/style",
+                headers:{"Authorization": localStorage.getItem("user_token")},
                 data: {"viewStyle": data.elem.checked? 1 : 0}
             });
         });
