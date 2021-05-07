@@ -491,15 +491,19 @@
                 url: url,
                 headers:{"Authorization": localStorage.getItem("token")},
                 xhrFields: { responseType: "arraybuffer" },
-            }).done((result) => {
-                var a = document.createElement('a');
-                a.download = filename;
-                a.style.display = 'none';
-                var blob = new Blob([result]);
-                a.href = URL.createObjectURL(blob);
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                success: function(result){
+                    var a = document.createElement('a');
+                    a.download = filename;
+                    a.style.display = 'none';
+                    var blob = new Blob([result]);
+                    a.href = URL.createObjectURL(blob);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
+                error: function(){
+                    layer.msg('下载失败', {icon: 5});
+                }
             });
         };
 
