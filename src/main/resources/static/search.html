@@ -285,8 +285,12 @@
 
             // 登出
             $("#logout").click(function () {
-                localStorage.removeItem("login_user_token");
-                window.location.href = "login.html";
+                layer.confirm('确认退出吗？', function(index){
+                    layer.close(index);
+
+                    localStorage.removeItem("login_user_token");
+                    window.location.href = "login.html";
+                });
             });
 
             window.imgRender = function(){

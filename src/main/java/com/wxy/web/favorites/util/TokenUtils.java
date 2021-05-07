@@ -58,6 +58,6 @@ public class TokenUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        throw new NoLoginException();
+        return null;
     }
 }

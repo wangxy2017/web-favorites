@@ -32,8 +32,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = request.getHeader(tokenUtils.getTokenHeader());
         if (StringUtils.isNotBlank(token)) {
             Integer userId = tokenUtils.checkToken(token);
-            request.setAttribute("user_id", userId);
-            return true;
+            if (userId != null) {
+                request.setAttribute("user_id", userId);
+                return true;
+            }
         }
         throw new NoLoginException();
     }
