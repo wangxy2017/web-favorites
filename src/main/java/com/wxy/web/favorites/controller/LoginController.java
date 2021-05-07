@@ -18,6 +18,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,6 +49,9 @@ public class LoginController {
 
     @Autowired
     private AppConfig recommendsConfig;
+
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @GetMapping("/email/code")
     public ApiResponse code(@RequestParam String email) {
@@ -92,7 +96,7 @@ public class LoginController {
                 favoritesService.saveAll(favorites);
             }
             // 生成token
-            String token = TokenUtils.createToken(user.getId());
+            String token = tokenUtils.createToken(user.getId(), TimeUnit.DAYS.toMillis(14));
             return ApiResponse.success(token);
         } else {
             return ApiResponse.error("验证码错误");
@@ -105,7 +109,12 @@ public class LoginController {
         if (user1 != null) {
             SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
-                String token = TokenUtils.createToken(user1.getId());
+                String token;
+                if ("1".equals(remember)) {
+                    token = tokenUtils.createToken(user1.getId(), TimeUnit.DAYS.toMillis(14));
+                } else {
+                    token = tokenUtils.createToken(user1.getId());
+                }
                 return ApiResponse.success(token);
             } else {
                 return ApiResponse.error("用户名或密码错误");

@@ -21,15 +21,18 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    private TokenUtils tokenUtils;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getRequestURI().equals("/")) {
             response.sendRedirect("index.html");
         }
-        String token = request.getHeader(TokenUtils.TOKEN_HEAD);
-        if(StringUtils.isNotBlank(token)){
-            Integer userId = TokenUtils.checkToken(token);
-            request.setAttribute("user_id",userId);
+        String token = request.getHeader(tokenUtils.getTokenHeader());
+        if (StringUtils.isNotBlank(token)) {
+            Integer userId = tokenUtils.checkToken(token);
+            request.setAttribute("user_id", userId);
             return true;
         }
         throw new NoLoginException();

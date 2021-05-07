@@ -49,6 +49,9 @@ public class RegisterController {
     @Autowired
     private AppConfig recommendsConfig;
 
+    @Autowired
+    private TokenUtils tokenUtils;
+
     /**
      * 注册
      *
@@ -81,7 +84,7 @@ public class RegisterController {
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 生成token
-                String token = TokenUtils.createToken(user1.getId());
+                String token = tokenUtils.createToken(user1.getId());
                 return ApiResponse.success(token);
             } else {
                 return ApiResponse.error("验证码错误");

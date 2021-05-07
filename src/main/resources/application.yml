@@ -57,4 +57,8 @@ app:
     - 京东,https://www.jd.com/
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
-  secret-key: B!D&LL5lyk62lnHi #加密密钥
+token:
+  token-secret-key: ycrd^a^KbRI!BRBN
+  token-expired-seconds: 7200
+  token-header: Authorization
+  token-prefix: Bearer
