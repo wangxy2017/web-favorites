@@ -154,6 +154,7 @@
         table.render({
             elem: '#fileList'
             , url: 'file/list/' //数据接口
+            , headers:{"Authorization": localStorage.getItem("token")}
             , page: false //开启分页
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
@@ -455,6 +456,7 @@
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
+            , headers: {"Authorization": localStorage.getItem("token")}
             , data: {
                 "pid": function () {
                     return $("#parent").val();

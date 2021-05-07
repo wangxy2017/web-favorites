@@ -14,13 +14,9 @@ import com.wxy.web.favorites.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,16 +53,13 @@ public class LoginController {
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
         log.info("登录邮箱：{}，登录验证码：{}", email, code);
-        HttpSession session = springUtils.getRequest().getSession();
-        session.setAttribute("login_email_code", code);
         emailUtils.sendSimpleMail(email, "网络收藏夹|登录", "您正在登录账号，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
 
     @PostMapping("/emailLogin")
     public ApiResponse emailLogin(@RequestParam String email, @RequestParam String code) {
-        HttpSession session = springUtils.getRequest().getSession();
-        String loginEmailCode = (String) session.getAttribute("login_email_code");
+        String loginEmailCode = "";
         if (StringUtils.isNotBlank(code) && code.equals(loginEmailCode)) {
             // 查询email是否注册，如果没有注册，先注册账号
             User user = userService.findByEmail(email);
@@ -98,24 +91,9 @@ public class LoginController {
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
             }
-            // 设置session
-            session.setAttribute("login_user", user);
-            // 移除验证码
-            session.removeAttribute("login_email_code");
-            // 存入cookie
-            String tokenValue = null;
-            try {
-                tokenValue = AESUtils.encrypt(user.getUsername() + "&&" + user.getPassword(), appConfig.getSecretKey());
-            } catch (Exception e) {
-                log.error("token加密失败！！！", e);
-            }
-            if (tokenValue != null) {
-                Cookie token = new Cookie("token", tokenValue);
-                token.setPath("/");
-                token.setMaxAge(60 * 60 * 24 * 14);
-                springUtils.getResponse().addCookie(token);
-            }
-            return ApiResponse.success();
+            // 生成token
+            String token = TokenUtils.createToken(user.getId());
+            return ApiResponse.success(token);
         } else {
             return ApiResponse.error("验证码错误");
         }
@@ -127,23 +105,8 @@ public class LoginController {
         if (user1 != null) {
             SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
-                HttpServletRequest request = springUtils.getRequest();
-                request.getSession().setAttribute("login_user", user1);
-                if ("1".equals(remember)) {
-                    String tokenValue = null;
-                    try {
-                        tokenValue = AESUtils.encrypt(user1.getUsername() + "&&" + user1.getPassword(), appConfig.getSecretKey());
-                    } catch (Exception e) {
-                        log.error("token加密失败！！！", e);
-                    }
-                    if (tokenValue != null) {
-                        Cookie token = new Cookie("token", tokenValue);
-                        token.setPath("/");
-                        token.setMaxAge(60 * 60 * 24 * 14);
-                        springUtils.getResponse().addCookie(token);
-                    }
-                }
-                return ApiResponse.success();
+                String token = TokenUtils.createToken(user1.getId());
+                return ApiResponse.success(token);
             } else {
                 return ApiResponse.error("用户名或密码错误");
             }
@@ -172,17 +135,6 @@ public class LoginController {
 
     @GetMapping("/out")
     public ApiResponse logout() {
-        HttpServletRequest request = springUtils.getRequest();
-        request.getSession().removeAttribute("login_user");
-        // 清除cookie
-        if (request.getCookies() != null) {
-            for (Cookie c : request.getCookies()) {
-                Cookie cookie = new Cookie(c.getName(), null);
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                springUtils.getResponse().addCookie(cookie);
-            }
-        }
         return ApiResponse.success();
     }
 }

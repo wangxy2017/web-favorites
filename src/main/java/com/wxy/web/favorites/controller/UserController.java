@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -61,8 +59,6 @@ public class UserController {
     @GetMapping("/email/code")
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
-        HttpSession session = springUtils.getRequest().getSession();
-        session.setAttribute("email_update_code", code);
         emailUtils.sendSimpleMail(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
@@ -70,14 +66,12 @@ public class UserController {
     @PostMapping("/email")
     public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
         if (StringUtils.isNotBlank(newEmail) && StringUtils.isNotBlank(code)) {
-            HttpSession session = springUtils.getRequest().getSession();
-            String emailCode = (String) session.getAttribute("email_update_code");
             User user1 = userService.findByEmail(newEmail);
+            String emailCode = "";
             if (user1 == null && code.equals(emailCode)) {
                 User user = springUtils.getCurrentUser();
                 user.setEmail(newEmail);
                 userService.save(user);
-                session.removeAttribute("email_update_code");
                 return ApiResponse.success();
             }
         }

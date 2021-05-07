@@ -344,6 +344,7 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
+                        localStorage.setItem("token", result.data);
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -422,6 +423,7 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
+                        localStorage.setItem("token", result.data);
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});

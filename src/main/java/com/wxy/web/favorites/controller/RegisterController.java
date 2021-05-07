@@ -10,18 +10,13 @@ import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.EmailUtils;
-import com.wxy.web.favorites.util.PinYinUtils;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,8 +58,7 @@ public class RegisterController {
     @PostMapping
     public ApiResponse register(@RequestBody User user) {
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
-            HttpSession session = springUtils.getRequest().getSession();
-            String code = (String) session.getAttribute("register_email_code");
+            String code  ="";
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 String randomKey = RandomUtil.randomString(16);
                 user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + randomKey).getBytes()));
@@ -86,11 +80,9 @@ public class RegisterController {
                             null, null, null, null, null,null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
-                // 设置session
-                session.setAttribute("login_user", user1);
-                // 移除验证码
-                session.removeAttribute("register_email_code");
-                return ApiResponse.success();
+                // 生成token
+                String token = TokenUtils.createToken(user1.getId());
+                return ApiResponse.success(token);
             } else {
                 return ApiResponse.error("验证码错误");
             }
@@ -112,8 +104,6 @@ public class RegisterController {
     public ApiResponse code(@RequestParam String email) {
         String code = RandomUtil.randomNumbers(6);
         log.info("注册邮箱：{}，注册验证码：{}", email, code);
-        HttpSession session = springUtils.getRequest().getSession();
-        session.setAttribute("register_email_code", code);
         emailUtils.sendSimpleMail(email, "网络收藏夹|注册", "您正在注册账号，验证码为：" + code + "，30分钟内有效。");
         return ApiResponse.success();
     }
