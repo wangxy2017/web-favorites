@@ -876,7 +876,8 @@
             var task = $("#task").is(":checked")?"1":"0";
             var search = $("#search").is(":checked")?"1":"0";
             layer.close(indexMap.get('#importOrExport'));
-            window.location.href = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task + "&s=" + search;
+            var url = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task + "&s=" + search;
+            downloadFile('export.xml', url);
         });
 
         $("#cancelPwd").click(function () {
@@ -890,6 +891,23 @@
         $("#cancelAddFavorites").click(function () {
             layer.close(indexMap.get('#add-favorites'));
         });
+
+         window.downloadFile = function(filename, url){
+            $.ajax({
+                url: url,
+                headers:{"Authorization": localStorage.getItem("token")},
+                xhrFields: { responseType: "arraybuffer" },
+            }).done((result) => {
+                var a = document.createElement('a');
+                a.download = filename;
+                a.style.display = 'none';
+                var blob = new Blob([result]);
+                a.href = URL.createObjectURL(blob);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        };
 
         // 搜索项绑定点击事件
         $(document).on('click', '.search-items li', function() {

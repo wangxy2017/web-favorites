@@ -267,7 +267,7 @@
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0 && result.data.count > 0) {
-                            window.location.href = "file/downloadAll";
+                            downloadFile('备份.zip', 'file/downloadAll');
                         } else {
                             layer.msg('暂无可备份文件', {icon: 5});
                         }
@@ -443,7 +443,7 @@
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
-                                window.location.href = "file/download/" + data.id;
+                                downloadFile(data.filename, "file/download/" + data.id);
                             } else {
                                 layer.msg('文件已损坏', {icon: 5});
                             }
@@ -452,6 +452,7 @@
                 }
             }
         });
+
         //上传文件
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
@@ -484,6 +485,23 @@
                 element.progress('progress', n + '%');
             }
         });
+
+        window.downloadFile = function(filename, url){
+            $.ajax({
+                url: url,
+                headers:{"Authorization": localStorage.getItem("token")},
+                xhrFields: { responseType: "arraybuffer" },
+            }).done((result) => {
+                var a = document.createElement('a');
+                a.download = filename;
+                a.style.display = 'none';
+                var blob = new Blob([result]);
+                a.href = URL.createObjectURL(blob);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        };
 
         window.copyText = function(value){
             var input = document.createElement('input');
