@@ -154,7 +154,7 @@
         table.render({
             elem: '#fileList'
             , url: 'file/list/' //数据接口
-            , headers:{"Authorization": localStorage.getItem("user_token")}
+            , headers:{"Authorization": localStorage.getItem("login_user_token")}
             , page: false //开启分页
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
@@ -199,7 +199,7 @@
                 type: "GET",
                 url: "file/tree",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         // 渲染文件夹树结构
@@ -220,7 +220,7 @@
                                         url: "file/move",
                                         data: {"ids": ids.join(","), "pid": obj.data.id},
                                         dataType: "json",
-                                        headers:{"Authorization": localStorage.getItem("user_token")},
+                                        headers:{"Authorization": localStorage.getItem("login_user_token")},
                                         success: function (result) {
                                             if (result.code == 0) {
                                                 layer.msg('操作成功', {icon: 6});
@@ -244,7 +244,7 @@
                 type: "GET",
                 url: "file/capacity",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var data = result.data;
@@ -263,7 +263,7 @@
                     type: "GET",
                     url: "file/count",
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0 && result.data.count > 0) {
@@ -315,7 +315,7 @@
                     url: "file/deleteMore",
                     data: {"ids": ids.join(",")},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.msg('删除成功', {icon: 6});
@@ -343,7 +343,7 @@
                 url: "file/back",
                 data: {"pid": $("#parent").val()},
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var pid = result.data ? result.data : null;
@@ -367,7 +367,7 @@
                         "filename": value
                     },
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             table.reload('fileList');
@@ -397,7 +397,7 @@
                         url: "file/rename",
                         data: {"id": data.id, "filename": value},
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("user_token")},
+                        headers:{"Authorization": localStorage.getItem("login_user_token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 layer.msg('修改成功', {icon: 6});
@@ -417,7 +417,7 @@
                         url: "file/delete",
                         data: {"id": data.id},
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("user_token")},
+                        headers:{"Authorization": localStorage.getItem("login_user_token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 obj.del(); //移除当前行
@@ -439,7 +439,7 @@
                         type: "GET",
                         url: "file/exists/" + data.id,
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("user_token")},
+                        headers:{"Authorization": localStorage.getItem("login_user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -457,7 +457,7 @@
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
-            , headers: {"Authorization": localStorage.getItem("user_token")}
+            , headers: {"Authorization": localStorage.getItem("login_user_token")}
             , data: {
                 "pid": function () {
                     return $("#parent").val();
@@ -489,7 +489,7 @@
         window.downloadFile = function(filename, url){
             $.ajax({
                 url: url,
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 xhrFields: { responseType: "arraybuffer" },
                 success: function(result){
                     var a = document.createElement('a');
@@ -527,7 +527,7 @@
                 type: "GET",
                 url: "file/exists/" + id,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -557,7 +557,7 @@
                     url: "file/view",
                     data: {"id": id},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.open({
@@ -711,7 +711,7 @@
 
         // 登出
         $("#logout").click(function () {
-            localStorage.removeItem("user_token");
+            localStorage.removeItem("login_user_token");
             window.location.href = "login.html";
         });
     });

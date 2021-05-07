@@ -340,11 +340,11 @@
                 url: "login/emailLogin",
                 data: data.field,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        localStorage.setItem("user_token", result.data);
+                        localStorage.setItem("login_user_token", result.data);
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -367,11 +367,11 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        localStorage.setItem("user_token", result.data);
+                        localStorage.setItem("login_user_token", result.data);
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -393,7 +393,7 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -419,11 +419,11 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("user_token")},
+                headers:{"Authorization": localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        localStorage.setItem("user_token", result.data);
+                        localStorage.setItem("login_user_token", result.data);
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -448,7 +448,7 @@
                     url: 'register/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "用户已注册";
@@ -464,7 +464,7 @@
                     url: 'register/email/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": localStorage.getItem("user_token")},
+                    headers:{"Authorization": localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "邮箱已被使用";
