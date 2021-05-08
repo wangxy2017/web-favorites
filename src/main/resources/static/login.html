@@ -340,7 +340,6 @@
                 url: "login/emailLogin",
                 data: data.field,
                 dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -367,7 +366,6 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -393,7 +391,6 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -419,7 +416,6 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -448,7 +444,6 @@
                     url: 'register/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "用户已注册";
@@ -464,7 +459,6 @@
                     url: 'register/email/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "邮箱已被使用";
