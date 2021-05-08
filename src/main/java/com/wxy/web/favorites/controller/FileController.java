@@ -52,7 +52,7 @@ public class FileController {
     @GetMapping("/exists/{id}")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file.getId() != null && StringUtils.isNotBlank(file.getPath())) {
+        if (file!= null && StringUtils.isNotBlank(file.getPath())) {
             File disk = new File(file.getPath());
             if (disk.exists()) {
                 return ApiResponse.success();
@@ -105,7 +105,7 @@ public class FileController {
     public void download(HttpServletResponse response, @PathVariable Integer id) {
         try {
             UserFile userFile = userFileService.findById(id);
-            if (userFile.getId() != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
+            if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
                 File file = new File(userFile.getPath());
                 if (file.exists()) {
                     response.setContentType("application/force-download");
@@ -222,7 +222,7 @@ public class FileController {
     @GetMapping("/view")
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file.getId() != null) {
+        if (file != null) {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
             if (StringUtils.isNotBlank(suffix) && appConfig.getFileSuffixes().contains(suffix)) {
                 StringBuilder sb = new StringBuilder();

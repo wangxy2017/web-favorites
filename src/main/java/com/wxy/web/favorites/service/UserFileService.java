@@ -42,7 +42,7 @@ public class UserFileService {
     }
 
     public UserFile findById(Integer id) {
-        return userFileRepository.getOne(id);
+        return userFileRepository.findById(id).orElse(null);
     }
 
     public List<UserFile> findByPid(Integer pid) {
@@ -101,8 +101,8 @@ public class UserFileService {
     }
 
     public void deleteById(Integer id, Integer userId) {
-        UserFile userFile = userFileRepository.getOne(id);
-        if (userFile.getId() != null) {
+        UserFile userFile = userFileRepository.findById(id).orElse(null);
+        if (userFile != null) {
             List<UserFile> deletingFiles = new ArrayList<>();
             addDeletingFile(deletingFiles, userFile);
 

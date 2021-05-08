@@ -56,7 +56,7 @@ public class CategoryController {
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
-        if (PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
+        if (!PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
             categoryService.deleteById(id);
             favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();

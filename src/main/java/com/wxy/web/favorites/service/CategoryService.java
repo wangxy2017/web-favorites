@@ -31,7 +31,7 @@ public class CategoryService {
     }
 
     public Category findById(Integer id) {
-        return categoryRepository.getOne(id);
+        return categoryRepository.findById(id).orElse(null);
     }
 
     public void deleteById(Integer id) {

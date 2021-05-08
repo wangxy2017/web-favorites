@@ -37,8 +37,6 @@ public class PublicConstants {
 
     public static final String DEFAULT_DELIMITER = ",";
 
-    public static final String TOKEN_DELIMITER = "/";
-
     public static final Integer DIR_CODE = 1;
     public static final Integer SYSTEM_CATEGORY_CODE = 1;
     public static final Integer BOOKMARK_STYLE_CODE = 1;
