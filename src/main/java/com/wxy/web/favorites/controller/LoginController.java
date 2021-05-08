@@ -4,11 +4,13 @@ import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.*;
+import com.wxy.web.favorites.security.JwtUtil;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +49,10 @@ public class LoginController {
     private AppConfig recommendsConfig;
 
     @Autowired
-    private TokenUtils tokenUtils;
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private VerificationService verificationService;
@@ -99,7 +104,7 @@ public class LoginController {
                 favoritesService.saveAll(favorites);
             }
             // 生成token
-            String token = tokenUtils.createToken(user.getId(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+            String token = jwtUtil.generateToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
             return ApiResponse.success(token);
         } else {
             return ApiResponse.error("验证码错误");
@@ -110,13 +115,12 @@ public class LoginController {
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
-            SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
-            if (user1.getPassword().equals(DigestUtils.md5DigestAsHex((user.getPassword() + secretKey.getRandomKey()).getBytes()))) {
+            if (passwordEncoder.matches(user.getPassword(),user1.getPassword())) {
                 String token;
                 if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
-                    token = tokenUtils.createToken(user1.getId(), TimeUnit.DAYS.toMillis(14));
+                    token = jwtUtil.generateToken(user1.getUsername());
                 } else {
-                    token = tokenUtils.createToken(user1.getId());
+                    token = jwtUtil.generateToken(user1.getUsername());
                 }
                 return ApiResponse.success(token);
             } else {

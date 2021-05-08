@@ -521,7 +521,7 @@
                 type: "GET",
                 url: "task/all/" + text,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -756,7 +756,7 @@
                 data: JSON.stringify(postData),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#taskForm'));
@@ -799,7 +799,7 @@
                 type: "GET",
                 url: "task/done/" + id ,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var task_item = $(obj).parent().parent();
@@ -821,7 +821,7 @@
                 type: "GET",
                 url: "task/delete/" + id ,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         layer.msg('删除成功', {icon: 6});

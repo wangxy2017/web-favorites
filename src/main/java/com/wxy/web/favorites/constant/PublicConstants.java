@@ -53,4 +53,8 @@ public class PublicConstants {
     public static final String EXPORT_TASK_CODE = "1";
     public static final String EXPORT_SEARCH_CODE = "1";
 
+    public static final String TOKEN_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "Bearer ";
+
+
 }

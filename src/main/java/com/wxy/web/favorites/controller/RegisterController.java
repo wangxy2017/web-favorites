@@ -5,11 +5,13 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.*;
+import com.wxy.web.favorites.security.JwtUtil;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,10 +50,13 @@ public class RegisterController {
     private AppConfig recommendsConfig;
 
     @Autowired
-    private TokenUtils tokenUtils;
+    private VerificationService verificationService;
 
     @Autowired
-    private VerificationService verificationService;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * 注册
@@ -66,7 +71,7 @@ public class RegisterController {
             String code = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 String randomKey = RandomUtil.randomString(PublicConstants.USER_SECRET_KEY_LENGTH);
-                user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword() + randomKey).getBytes()));
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
                 // 保存secretKey
@@ -86,7 +91,7 @@ public class RegisterController {
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 生成token
-                String token = tokenUtils.createToken(user1.getId());
+                String token = jwtUtil.generateToken(user1.getUsername());
                 return ApiResponse.success(token);
             } else {
                 return ApiResponse.error("验证码错误");

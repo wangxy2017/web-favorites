@@ -198,7 +198,7 @@
                     url: "moment/list",
                     data: {"pageNum": page,"pageSize": 10},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             $.each(result.data.list, function(index, item){
@@ -299,7 +299,7 @@
                     url: "moment/search",
                     data: {"text": text},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         $("#topMoment").hide();
@@ -341,7 +341,7 @@
                 type: "GET",
                 url: "moment/" + id,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var width = parseInt($(window).width()) * 0.9;
@@ -366,7 +366,7 @@
                                 data: JSON.stringify({"content": html,"id": momentId, "text": text}),
                                 contentType: 'application/json;charset=utf-8',
                                 dataType: "json",
-                                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                                 success: function (result) {
                                     layer.closeAll('loading');
                                     if (result.code == 0) {
@@ -392,7 +392,7 @@
                 type: "POST",
                 url: "moment/top/" + id,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         layer.msg('操作成功', {icon: 6});
@@ -410,7 +410,7 @@
                     type: "GET",
                     url: "moment/delete/" + id,
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             window.location.reload();
@@ -429,7 +429,7 @@
                     type: "DELETE",
                     url: "moment/top/" + id ,
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             loadTopMoment();
@@ -465,7 +465,7 @@
                         data: JSON.stringify({"content": html, "text": text}),
                         contentType: 'application/json;charset=utf-8',
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("login_user_token")},
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -500,7 +500,7 @@
                 type: "GET",
                 url: "moment/top",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0 && result.data) {
                         var moment = result.data;
@@ -529,7 +529,7 @@
                 type: "GET",
                 url: "moment/count",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0 && result.data == 0) {
                         $("#noData").show();

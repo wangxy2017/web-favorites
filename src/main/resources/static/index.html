@@ -745,7 +745,7 @@
             , acceptMime: 'file/xml'
             , exts: 'xml'
             , url: 'favorites/import' //上传接口
-            , headers:{"Authorization": localStorage.getItem("login_user_token")}
+            , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
             , before: function(obj){
                 layer.close(indexMap.get('#importOrExport')); //关闭弹层
                 layer.load(); //上传loading
@@ -779,7 +779,7 @@
                     type: "DELETE",
                     url: "password/" + passwordId,
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0) {
@@ -809,7 +809,7 @@
                     url: "favorites/url",
                     data: {"url": url},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         $("#name_input").removeClass("layui-disabled").removeAttr("disabled",true);
                         $("#url_loading").hide();
@@ -847,7 +847,7 @@
                 type: "GET",
                 url: "password/fid/" + $("#favoritesId").val(),
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         let data = result.data;
@@ -895,7 +895,7 @@
         window.downloadFile = function(filename, url){
             $.ajax({
                 url: url,
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 xhrFields: { responseType: "arraybuffer" },
                 success: function(result){
                     var a = document.createElement('a');
@@ -981,7 +981,7 @@
                 type: "GET",
                 url: "favorites/shortcut?key=" + name,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     $("#search_name").val("");
@@ -1005,7 +1005,7 @@
                 url: "favorites/search",
                 data: {"name": name},
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     $("#searchDiv").empty();
@@ -1193,7 +1193,7 @@
                 $.ajax({
                     type: "GET",
                     url: "user/email/code",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     data: {"email": email}
                 });
             }else{
@@ -1233,7 +1233,7 @@
                 $.ajax({
                     type: "GET",
                     url: "favorites/visit/" + $(obj).attr("data-id"),
-                    headers:{"Authorization": localStorage.getItem("login_user_token")}
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
                 });
             }else{
                 layer.msg('此链接无效', {icon: 7});
@@ -1254,7 +1254,7 @@
                 type: "GET",
                 url: "category/" + $(obj).parent().attr("data-id"),
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         let data = result.data;
@@ -1288,7 +1288,7 @@
                     url: 'category/check/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.tips('分类已存在', elem, {tips: 3});
@@ -1305,7 +1305,7 @@
                         data: JSON.stringify({"name": value}),
                         contentType: 'application/json;charset=utf-8',
                         dataType: "json",
-                        headers:{"Authorization": localStorage.getItem("login_user_token")},
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -1371,7 +1371,7 @@
                 url: "favorites/list",
                 data: {"pageNum":page, "pageSize":4},
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         // 加载数据
@@ -1429,7 +1429,7 @@
                 type: "GET",
                 url: "category/list",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var html = '';
@@ -1449,7 +1449,7 @@
                 type: "GET",
                 url: "favorites/star",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     $("#starDiv").empty();
                     if(result.code == 0 && result.data.length > 0){
@@ -1484,7 +1484,7 @@
                 url: "favorites/more",
                 data: {"categoryId": categoryId},
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -1521,7 +1521,7 @@
                     type: "GET",
                     url: "favorites/delete/" + data.id,
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-favorites'));
@@ -1546,7 +1546,7 @@
                     url: "category/clean",
                     data: {"id": data.id},
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-category'));
@@ -1570,7 +1570,7 @@
                     type: "GET",
                     url: "category/delete/" + data.id,
                     dataType: "json",
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#update-category'));
@@ -1600,7 +1600,7 @@
                 type: "GET",
                 url: "favorites/" + $(obj).parent().attr("data-id"),
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         let data = result.data;
@@ -1644,7 +1644,7 @@
                     url: 'register/email/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code != 0) {
                             msg = "邮箱已存在";
@@ -1664,7 +1664,7 @@
                         url: 'favorites/shortcut?key=' + value,
                         async: false, // 使用同步的方法
                         dataType: 'json',
-                        headers:{"Authorization": localStorage.getItem("login_user_token")},
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             if (result.code == 0 && result.data.id != $("#favoritesId").val()) {
                                 msg = "指令已存在";
@@ -1682,7 +1682,7 @@
                     url: 'category/check/' + value,
                     async: false, // 使用同步的方法
                     dataType: 'json',
-                    headers:{"Authorization": localStorage.getItem("login_user_token")},
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0 && result.data.id != categoryId) {
                             msg = "分类已存在";
@@ -1702,7 +1702,7 @@
             $.ajax({
                 type: "POST",
                 url: "user/style",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 data: {"viewStyle": data.elem.checked? 1 : 0}
             });
         });
@@ -1715,7 +1715,7 @@
                 data: JSON.stringify({"id": $("#favoritesId").val(),"star": data.elem.checked? 1 : 0}),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -1749,7 +1749,7 @@
                 data: JSON.stringify({"id": categoryId,"bookmark": data.elem.checked? 1 : 0}),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -1785,7 +1785,7 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#add-favorites'));
@@ -1808,7 +1808,7 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -1837,7 +1837,7 @@
                 url: "user/email",
                 data: data.field,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#editEmail'));
@@ -1860,7 +1860,7 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#update-favorites'));
@@ -1883,7 +1883,7 @@
                 data: JSON.stringify(data.field),
                 contentType: 'application/json;charset=utf-8',
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#update-category'));
@@ -1905,7 +1905,7 @@
                 url: "user/password",
                 data: data.field,
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#changePwd'));
@@ -1952,7 +1952,7 @@
                 type: "GET",
                 url: "user/info",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     $(".lGDtb").fadeOut();
                     if (result.code == 0) {
@@ -1979,7 +1979,7 @@
                 type: "GET",
                 url: "category/catalog",
                 dataType: "json",
-                headers:{"Authorization": localStorage.getItem("login_user_token")},
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var html = '';
