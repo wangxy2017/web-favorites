@@ -32,9 +32,6 @@ public class RegisterController {
     private UserService userService;
 
     @Autowired
-    private SecretKeyService secretKeyService;
-
-    @Autowired
     private CategoryService categoryService;
 
     @Autowired
@@ -74,9 +71,6 @@ public class RegisterController {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
-                // 保存secretKey
-                SecretKey secretKey = new SecretKey(null, user1.getId(), randomKey);
-                secretKeyService.save(secretKey);
                 // 创建默认分类
                 Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user1.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null);
                 categoryService.save(category);

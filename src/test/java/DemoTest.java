@@ -2,11 +2,9 @@ import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.WebFavoritesApplication;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
-import com.wxy.web.favorites.dao.SecretKeyRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
-import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.util.PinYinUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
 
 /**
  * @Author HL
@@ -41,6 +39,9 @@ public class DemoTest {
     @Autowired
     private SecretKeyRepository secretKeyRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     /**
      * 批量插入测试数据
      */
@@ -48,7 +49,7 @@ public class DemoTest {
     public void test() {
         for (int k = 0; k < 100; k++) {
             String key = RandomUtil.randomString(16);
-            User user = userRepository.save(new User(null, "test" + k, DigestUtils.md5DigestAsHex(("test" + k + key).getBytes()), "test" + k + "@qq.com", null, null,null,null));
+            User user = userRepository.save(new User(null, "test" + k, passwordEncoder.encode("test" + k), "test" + k + "@qq.com", null, null,null,null));
             secretKeyRepository.save(new SecretKey(null, user.getId(), key));
             for (int i = 0; i < 100; i++) {
                 Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null,null));

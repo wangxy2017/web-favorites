@@ -3,10 +3,8 @@ package com.wxy.web.favorites.controller;
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
-import com.wxy.web.favorites.model.SecretKey;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
-import com.wxy.web.favorites.service.SecretKeyService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.ApiResponse;
@@ -14,7 +12,7 @@ import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -28,9 +26,6 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private SecretKeyService secretKeyService;
-
-    @Autowired
     private EmailUtils emailUtils;
 
     @Autowired
@@ -42,6 +37,9 @@ public class UserController {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/info")
     public ApiResponse info() {
         User user = springUtils.getCurrentUser();
@@ -52,9 +50,8 @@ public class UserController {
     @PostMapping("/password")
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
         User user = springUtils.getCurrentUser();
-        SecretKey secretKey = secretKeyService.findByUserId(user.getId());
-        if (user.getPassword().equals(DigestUtils.md5DigestAsHex((oldPassword + secretKey.getRandomKey()).getBytes()))) {
-            user.setPassword(DigestUtils.md5DigestAsHex((newPassword + secretKey.getRandomKey()).getBytes()));
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
             return ApiResponse.success();
         } else {

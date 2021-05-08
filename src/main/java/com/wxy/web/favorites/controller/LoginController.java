@@ -31,9 +31,6 @@ public class LoginController {
     private UserService userService;
 
     @Autowired
-    private SecretKeyService secretKeyService;
-
-    @Autowired
     private CategoryService categoryService;
 
     @Autowired
@@ -81,13 +78,10 @@ public class LoginController {
                 String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
                 user = new User();
                 user.setUsername(email);
-                user.setPassword(DigestUtils.md5DigestAsHex((tempPwd + randomKey).getBytes()));
+                user.setPassword(passwordEncoder.encode(tempPwd));
                 user.setEmail(email);
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 user = userService.save(user);
-                // 保存secretKey
-                SecretKey secretKey = new SecretKey(null, user.getId(), randomKey);
-                secretKeyService.save(secretKey);
                 // 创建默认分类
                 Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null);
                 categoryService.save(category);
@@ -136,9 +130,8 @@ public class LoginController {
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
         if (user1 != null) {
             String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
-            SecretKey secretKey = secretKeyService.findByUserId(user1.getId());
             // 重置用户密码
-            user1.setPassword(DigestUtils.md5DigestAsHex((tempPwd + secretKey.getRandomKey()).getBytes()));
+            user1.setPassword(passwordEncoder.encode(tempPwd));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
             emailUtils.sendSimpleMail(user1.getEmail(), "网络收藏夹|重置密码",
