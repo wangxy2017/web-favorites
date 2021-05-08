@@ -25,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private AjaxAuthenticationEntryPoint ajaxAuthenticationEntryPoint;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService);
@@ -45,7 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers("/login/**", "/register/**")
                 .permitAll().anyRequest().authenticated()
-                .and().exceptionHandling().and().sessionManagement()
+                .and().exceptionHandling()
+                .authenticationEntryPoint(ajaxAuthenticationEntryPoint)
+                .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         ;

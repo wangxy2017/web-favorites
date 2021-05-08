@@ -45,6 +45,7 @@ public class UserController {
     @GetMapping("/info")
     public ApiResponse info() {
         User user = springUtils.getCurrentUser();
+        user.setPassword(null);
         return ApiResponse.success(user);
     }
 

@@ -115,10 +115,10 @@ public class LoginController {
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
-            if (passwordEncoder.matches(user.getPassword(),user1.getPassword())) {
+            if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token;
                 if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
-                    token = jwtUtil.generateToken(user1.getUsername());
+                    token = jwtUtil.generateToken(user1.getUsername(),TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
                 } else {
                     token = jwtUtil.generateToken(user1.getUsername());
                 }

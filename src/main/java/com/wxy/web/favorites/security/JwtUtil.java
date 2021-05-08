@@ -23,7 +23,12 @@ public class JwtUtil {
     private long tokenExpiredSeconds;
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Date extractExpiration(String token) {
