@@ -1,7 +1,5 @@
 package com.wxy.web.favorites.security;
 
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.util.ApiResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -12,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author wangxiaoyuan
@@ -23,6 +22,7 @@ public class AjaxAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         ApiResponse response = new ApiResponse(1001, "未登录", null);
+        httpServletResponse.setContentType("application/json; charset=UTF-8");
         httpServletResponse.getWriter().write(JSONUtil.toJsonStr(response));
     }
 }

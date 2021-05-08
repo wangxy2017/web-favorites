@@ -37,9 +37,6 @@ public class DemoTest {
     private FavoritesRepository favoritesRepository;
 
     @Autowired
-    private SecretKeyRepository secretKeyRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     /**
@@ -50,7 +47,6 @@ public class DemoTest {
         for (int k = 0; k < 100; k++) {
             String key = RandomUtil.randomString(16);
             User user = userRepository.save(new User(null, "test" + k, passwordEncoder.encode("test" + k), "test" + k + "@qq.com", null, null,null,null));
-            secretKeyRepository.save(new SecretKey(null, user.getId(), key));
             for (int i = 0; i < 100; i++) {
                 Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null,null));
                 for (int j = 0; j < 100; j++) {
