@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
@@ -55,7 +56,7 @@ public class UserController {
             userService.save(user);
             return ApiResponse.success();
         } else {
-            return ApiResponse.error("身份验证错误");
+            return ApiResponse.error(ErrorConstants.INVALID_PASSWORD_MSG);
         }
     }
 

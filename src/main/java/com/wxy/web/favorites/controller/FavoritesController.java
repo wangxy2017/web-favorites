@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -172,7 +174,7 @@ public class FavoritesController {
             favoritesService.save(favorites1);
             return ApiResponse.success();
         }
-        return ApiResponse.error("非法操作");
+        return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
     }
 
     private void parseMomentList(InputStream in) {
@@ -414,8 +416,7 @@ public class FavoritesController {
             searchTypeList = searchTypeService.findByUserId(user.getId());
         }
         HttpServletResponse response = springUtils.getResponse();
-        response.setContentType("application/force-download");// 设置强制下载不打开
-        response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("export.xml", "UTF-8"));// 设置文件名
+        response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
         // 写入输出流
         writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList);
     }
@@ -498,7 +499,7 @@ public class FavoritesController {
             });
         }
         OutputFormat format = OutputFormat.createPrettyPrint();
-        format.setEncoding("UTF-8");
+        format.setEncoding(StandardCharsets.UTF_8.name());
         XMLWriter writer = new XMLWriter(out, format);
         writer.setEscapeText(true);
         writer.write(document);

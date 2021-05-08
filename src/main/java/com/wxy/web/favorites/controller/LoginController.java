@@ -2,16 +2,25 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
-import com.wxy.web.favorites.model.*;
+import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.model.Favorites;
+import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.model.Verification;
 import com.wxy.web.favorites.security.JwtUtil;
-import com.wxy.web.favorites.service.*;
-import com.wxy.web.favorites.util.*;
+import com.wxy.web.favorites.service.CategoryService;
+import com.wxy.web.favorites.service.FavoritesService;
+import com.wxy.web.favorites.service.UserService;
+import com.wxy.web.favorites.service.VerificationService;
+import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.PinYinUtils;
+import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -101,7 +110,7 @@ public class LoginController {
             String token = jwtUtil.generateToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
             return ApiResponse.success(token);
         } else {
-            return ApiResponse.error("验证码错误");
+            return ApiResponse.error(ErrorConstants.INVALID_VERIFICATION_MSG);
         }
     }
 
@@ -112,16 +121,16 @@ public class LoginController {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token;
                 if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
-                    token = jwtUtil.generateToken(user1.getUsername(),TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+                    token = jwtUtil.generateToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
                 } else {
                     token = jwtUtil.generateToken(user1.getUsername());
                 }
                 return ApiResponse.success(token);
             } else {
-                return ApiResponse.error("用户名或密码错误");
+                return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
-            return ApiResponse.error("请先注册账号");
+            return ApiResponse.error(ErrorConstants.INVALID_USERNAME_MSG);
         }
     }
 
@@ -138,7 +147,7 @@ public class LoginController {
                     String.format("您的新密码：%s，请牢记。", tempPwd));
             return ApiResponse.success();
         } else {
-            return ApiResponse.error("账号或邮箱不存在");
+            return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_EMAIL_MSG);
         }
     }
 }

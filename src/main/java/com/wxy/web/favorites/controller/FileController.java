@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
@@ -108,9 +109,7 @@ public class FileController {
             if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
                 File file = new File(userFile.getPath());
                 if (file.exists()) {
-                    response.setContentType("application/force-download");
-                    response.setHeader("Content-Disposition", "attachment;filename="
-                            + URLEncoder.encode(userFile.getFilename(), "UTF-8"));
+                    response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
                     BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
                     OutputStream out = response.getOutputStream();
                     byte[] buf = new byte[1024 * 1024 * 10];
@@ -134,9 +133,6 @@ public class FileController {
             String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
             File file = userFileService.packageFileByUserId(user.getId(), tempPath);
             if (file != null) {
-                response.setContentType("application/x-zip-compressed");
-                response.setHeader("Content-Disposition", "attachment;filename="
-                        + URLEncoder.encode("文件备份.zip", "UTF-8"));
                 ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
                 out.setMethod(ZipEntry.DEFLATED);
                 out.setLevel(7);
@@ -164,7 +160,7 @@ public class FileController {
             userService.save(user1);
             return ApiResponse.success();
         }
-        return ApiResponse.error("剩余空间不足");
+        return ApiResponse.error(ErrorConstants.NO_SPACE_LEFT_MSG);
     }
 
     @GetMapping("/back")
@@ -233,7 +229,7 @@ public class FileController {
                         sb.append(tempStr).append("\n");
                     }
                 } catch (IOException e) {
-                    sb.append("文件获取失败");
+                    sb.append(ErrorConstants.FILE_READ_FAILED_MSG);
                     log.error("文件读取异常", e);
                 }
                 return ApiResponse.success(sb.toString());

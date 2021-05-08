@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.*;
@@ -88,10 +89,10 @@ public class RegisterController {
                 String token = jwtUtil.generateToken(user1.getUsername());
                 return ApiResponse.success(token);
             } else {
-                return ApiResponse.error("验证码错误");
+                return ApiResponse.error(ErrorConstants.INVALID_VERIFICATION_MSG);
             }
         } else {
-            return ApiResponse.error("用户名或邮箱已存在");
+            return ApiResponse.error(ErrorConstants.USERNAME_OR_EMAIL_EXISTED_MSG);
         }
     }
 

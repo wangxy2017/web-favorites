@@ -1,6 +1,10 @@
 package com.wxy.web.favorites.security;
 
+import cn.hutool.http.ContentType;
+import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
+import com.wxy.web.favorites.constant.ErrorConstants;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.util.ApiResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -21,8 +25,9 @@ public class AjaxAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        ApiResponse response = new ApiResponse(1001, "未登录", null);
-        httpServletResponse.setContentType("application/json; charset=UTF-8");
+        ApiResponse response = new ApiResponse(ErrorConstants.NO_LOGIN_CODE, ErrorConstants.NO_LOGIN_MSG, null);
+        httpServletResponse.setStatus(HttpStatus.HTTP_OK);
+        httpServletResponse.setContentType(PublicConstants.CONTENT_TYPE_JSON);
         httpServletResponse.getWriter().write(JSONUtil.toJsonStr(response));
     }
 }

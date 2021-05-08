@@ -54,5 +54,14 @@ public class PublicConstants {
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
 
+    public static final int SUCCESS_CODE = 0;
+    public static final String SUCCESS_MSG = "SUCCESS";
+
+    public static final int ERROR_CODE = -1;
+    public static final String ERROR_MSG = "ERROR";
+
+    public static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
+    public static final String CONTENT_TYPE_STREAM = "application/octet-stream";
+
 
 }

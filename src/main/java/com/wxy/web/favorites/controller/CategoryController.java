@@ -1,8 +1,8 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -61,7 +61,7 @@ public class CategoryController {
             favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();
         }
-        return ApiResponse.error("系统分类无法删除");
+        return ApiResponse.error(ErrorConstants.SYSTEM_CATEGORY_NO_DELETE_MSG);
     }
 
     @PostMapping("/clean")
@@ -92,6 +92,6 @@ public class CategoryController {
             categoryService.save(category1);
             return ApiResponse.success();
         }
-        return ApiResponse.error("非法操作");
+        return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
     }
 }
