@@ -456,13 +456,9 @@
 					if (search_history.indexOf(content) < 0) search_history.push(content);
 					localStorage.setItem("search_history", JSON.stringify(search_history));
 					// 跳转页面
-					var default_url = $(".search-type .search-type-li").eq(0).attr("data-search");
-					var selected_url = $(".search-type .search-type-li.search-type-selected").attr("data-search");
-					if(selected_url){
-					    openUrl(selected_url + content);
-					}else if(default_url){
-					    openUrl(default_url + content);
-					}
+					var search_url = $(".search-type .search-type-li.search-type-selected").attr("data-search");
+					search_url = typeof search_url === "undefined" ? "https://www.baidu.com/s?wd=" : search_url;
+					openUrl(search_url + content);
 				} else {
 					window.location.reload();
 				}
@@ -495,7 +491,6 @@
 						type: "GET",
 						dataType: "jsonp", //指定服务器返回的数据类型
 						jsonp: "cb",
-						headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function(data) {
 							var html = '';
 							$.each(data.s, function(index, item) {
