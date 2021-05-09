@@ -64,4 +64,5 @@ public class PublicConstants {
     public static final String CONTENT_TYPE_STREAM = "application/octet-stream";
 
 
+    public static final String FAVORITES_STAR_LIMITED_MSG = "标记数量已达上限";
 }

@@ -167,7 +167,7 @@ public class FavoritesController {
                 User user = springUtils.getCurrentUser();
                 List<Favorites> list = favoritesService.findStarFavorites(user.getId());
                 if (list.size() >= appConfig.getStarLimit() && !list.contains(favorites1)) {
-                    return ApiResponse.error("最多标记" + appConfig.getStarLimit() + "个网址");
+                    return ApiResponse.error(PublicConstants.FAVORITES_STAR_LIMITED_MSG);
                 }
             }
             favorites1.setStar(favorites.getStar());

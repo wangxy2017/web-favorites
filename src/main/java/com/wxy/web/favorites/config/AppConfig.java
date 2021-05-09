@@ -25,6 +25,8 @@ public class AppConfig {
 
     private List<String> fileSuffixes;
 
+    private Integer fileCompressLevel;
+
     private List<String> recommends;
 
     private Integer verificationExpiredMinutes ;

@@ -135,7 +135,7 @@ public class FileController {
             if (file != null) {
                 ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
                 out.setMethod(ZipEntry.DEFLATED);
-                out.setLevel(7);
+                out.setLevel(appConfig.getFileCompressLevel());
                 // 压缩文件
                 ZipUtils.compressFile(out, file);
                 // 删除临时文件

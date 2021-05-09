@@ -43,6 +43,7 @@ app:
   search-type-json: search.json #搜索类型数据
   init-capacity: 50 #初始容量(M)
   file-repository: ./repository #文件仓库
+  file-compress-level: 7
   file-suffixes:
     - txt
     - properties
