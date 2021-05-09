@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.schedule;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +31,9 @@ public class TaskCancelJob {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         // 查询昨日未完成的任务，将状态改为取消
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
         List<Task> undoTaskList = taskService.findUndoTask(sdf.format(calendar.getTime()));
-        undoTaskList.forEach(t -> t.setLevel(5));
+        undoTaskList.forEach(t -> t.setLevel(PublicConstants.TASK_LEVEL_5));
         taskService.saveAll(undoTaskList);
     }
 }

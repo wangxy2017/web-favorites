@@ -31,7 +31,7 @@ public class SearchTypeService {
     }
 
     public SearchType findById(Integer id) {
-        return searchTypeRepository.getOne(id);
+        return searchTypeRepository.findById(id).orElse(null);
     }
 
     public void deleteById(Integer id) {

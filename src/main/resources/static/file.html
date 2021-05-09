@@ -154,6 +154,7 @@
         table.render({
             elem: '#fileList'
             , url: 'file/list/' //数据接口
+            , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
             , page: false //开启分页
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
@@ -198,6 +199,7 @@
                 type: "GET",
                 url: "file/tree",
                 dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         // 渲染文件夹树结构
@@ -218,6 +220,7 @@
                                         url: "file/move",
                                         data: {"ids": ids.join(","), "pid": obj.data.id},
                                         dataType: "json",
+                                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                                         success: function (result) {
                                             if (result.code == 0) {
                                                 layer.msg('操作成功', {icon: 6});
@@ -241,6 +244,7 @@
                 type: "GET",
                 url: "file/capacity",
                 dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var data = result.data;
@@ -259,10 +263,11 @@
                     type: "GET",
                     url: "file/count",
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0 && result.data.count > 0) {
-                            window.location.href = "file/downloadAll";
+                            downloadFile('备份.zip', 'file/downloadAll');
                         } else {
                             layer.msg('暂无可备份文件', {icon: 5});
                         }
@@ -310,6 +315,7 @@
                     url: "file/deleteMore",
                     data: {"ids": ids.join(",")},
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.msg('删除成功', {icon: 6});
@@ -337,6 +343,7 @@
                 url: "file/back",
                 data: {"pid": $("#parent").val()},
                 dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
                         var pid = result.data ? result.data : null;
@@ -360,6 +367,7 @@
                         "filename": value
                     },
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             table.reload('fileList');
@@ -389,6 +397,7 @@
                         url: "file/rename",
                         data: {"id": data.id, "filename": value},
                         dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 layer.msg('修改成功', {icon: 6});
@@ -408,6 +417,7 @@
                         url: "file/delete",
                         data: {"id": data.id},
                         dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             if (result.code == 0) {
                                 obj.del(); //移除当前行
@@ -429,10 +439,11 @@
                         type: "GET",
                         url: "file/exists/" + data.id,
                         dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
-                                window.location.href = "file/download/" + data.id;
+                                downloadFile(data.filename, "file/download/" + data.id);
                             } else {
                                 layer.msg('文件已损坏', {icon: 5});
                             }
@@ -441,10 +452,12 @@
                 }
             }
         });
+
         //上传文件
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
+            , headers: {"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
             , data: {
                 "pid": function () {
                     return $("#parent").val();
@@ -473,6 +486,27 @@
             }
         });
 
+        window.downloadFile = function(filename, url){
+            $.ajax({
+                url: url,
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                xhrFields: { responseType: "arraybuffer" },
+                success: function(result){
+                    var a = document.createElement('a');
+                    a.download = filename;
+                    a.style.display = 'none';
+                    var blob = new Blob([result]);
+                    a.href = URL.createObjectURL(blob);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
+                error: function(){
+                    layer.msg('下载失败', {icon: 5});
+                }
+            });
+        };
+
         window.copyText = function(value){
             var input = document.createElement('input');
             input.setAttribute('readonly', 'readonly');
@@ -493,6 +527,7 @@
                 type: "GET",
                 url: "file/exists/" + id,
                 dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
@@ -522,6 +557,7 @@
                     url: "file/view",
                     data: {"id": id},
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
                             layer.open({
@@ -675,15 +711,11 @@
 
         // 登出
         $("#logout").click(function () {
-            $.ajax({
-                type: "GET",
-                url: "login/out",
-                dataType: "json",
-                success: function (result) {
-                    if (result.code == 0) {
-                        window.location.href = "login.html";
-                    }
-                }
+            layer.confirm('确认退出吗？', function(index){
+                layer.close(index);
+
+                localStorage.removeItem("login_user_token");
+                window.location.href = "login.html";
             });
         });
     });

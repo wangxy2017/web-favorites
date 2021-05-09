@@ -59,7 +59,7 @@ public class FavoritesService {
     }
 
     public Favorites findById(Integer id) {
-        return favoritesRepository.getOne(id);
+        return favoritesRepository.findById(id).orElse(null);
     }
 
     public Favorites findByShortcut(String shortcut,Integer userId) {

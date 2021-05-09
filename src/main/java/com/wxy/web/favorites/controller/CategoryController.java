@@ -1,7 +1,8 @@
 package com.wxy.web.favorites.controller;
 
+import com.wxy.web.favorites.constant.ErrorConstants;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -27,7 +28,7 @@ public class CategoryController {
 
     @PostMapping
     public ApiResponse save(@RequestBody Category category) {
-        if (!"默认分类".equals(category.getName())) {
+        if (!PublicConstants.DEFAULT_CATEGORY_NAME.equals(category.getName())) {
             User user = springUtils.getCurrentUser();
             category.setUserId(user.getId());
             categoryService.save(category);
@@ -55,12 +56,12 @@ public class CategoryController {
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
-        if (!Integer.valueOf(1).equals(category.getIsSystem())) {
+        if (!PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
             categoryService.deleteById(id);
             favoritesService.deleteAll(favoritesService.findByCategoryId(id));
             return ApiResponse.success();
         }
-        return ApiResponse.error("系统分类无法删除");
+        return ApiResponse.error(ErrorConstants.SYSTEM_CATEGORY_NO_DELETE_MSG);
     }
 
     @PostMapping("/clean")
@@ -91,6 +92,6 @@ public class CategoryController {
             categoryService.save(category1);
             return ApiResponse.success();
         }
-        return ApiResponse.error("非法操作");
+        return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
     }
 }

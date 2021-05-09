@@ -27,6 +27,6 @@ public class AppConfig {
 
     private List<String> recommends;
 
-    private String secretKey;
+    private Integer verificationExpiredMinutes ;
 
 }

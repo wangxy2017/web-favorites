@@ -15,10 +15,4 @@ public class GlobalExceptionHandler {
         log.error("系统异常：{}", e.getMessage(), e);
         return new ApiResponse(500, "系统错误", null);
     }
-
-    @ExceptionHandler(value = NoLoginException.class)
-    @ResponseBody
-    public ApiResponse NoLoginExceptionHandle(Exception e) {
-        return new ApiResponse(1001, "未登录", null);
-    }
 }

@@ -29,6 +29,7 @@
             type: "GET",
             url: "moment/" + momentId,
             dataType: "json",
+            headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
             success: function (result) {
                 if (result.code == 0 && result.data) {
                     editor.txt.html(result.data.content);

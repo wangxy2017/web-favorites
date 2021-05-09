@@ -36,7 +36,7 @@ public class MomentService {
     }
 
     public Moment findById(Integer id) {
-        return momentRepository.getOne(id);
+        return momentRepository.findById(id).orElse(null);
     }
 
     public void deleteById(Integer id) {

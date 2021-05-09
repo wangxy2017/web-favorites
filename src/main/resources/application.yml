@@ -28,7 +28,7 @@ spring:
   mail: #邮件配置
     username:
     password:
-    host:
+    host: smtp.qq.com
     port: 465
     properties:
       mail:
@@ -36,6 +36,7 @@ spring:
           ssl:
             enable: true
 app:
+  verification-expired-minutes: 30
   star-limit: 30 #标记个数限制
   search-limit: 100 #搜索个数限制
   favorites-limit: 40 #显示收藏个数限制
@@ -57,4 +58,6 @@ app:
     - 京东,https://www.jd.com/
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
-  secret-key: B!D&LL5lyk62lnHi #加密密钥
+jwt:
+  token-secret-key: gK8G#mueFVaSxMcr
+  token-expired-seconds: 7200

@@ -285,15 +285,11 @@
 
             // 登出
             $("#logout").click(function () {
-                $.ajax({
-                    type: "GET",
-                    url: "login/out",
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.code == 0) {
-                            window.location.href = "login.html";
-                        }
-                    }
+                layer.confirm('确认退出吗？', function(index){
+                    layer.close(index);
+
+                    localStorage.removeItem("login_user_token");
+                    window.location.href = "login.html";
                 });
             });
 
@@ -307,6 +303,7 @@
                     type: "GET",
                     url: "search/data",
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if(result.code == 0){
                             var html = '';
@@ -343,6 +340,7 @@
                         type: "GET",
                         url: "search/delete/" + id,
                         dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
@@ -380,6 +378,7 @@
                     data: JSON.stringify(data.field),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
                         layer.close(indexMap.get('#searchTypeFrom'));
@@ -492,7 +491,8 @@
 						type: "GET",
 						dataType: "jsonp", //指定服务器返回的数据类型
 						jsonp: "cb",
-						success: function(data) {
+						headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function(data) {
 							var html = '';
 							$.each(data.s, function(index, item) {
 								html += '<li>' + item + '</li>';

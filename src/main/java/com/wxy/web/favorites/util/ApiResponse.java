@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.util;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,18 +12,23 @@ public class ApiResponse {
     Object data;
 
     public static ApiResponse success() {
-        return new ApiResponse(0, "success", null);
+        return new ApiResponse(PublicConstants.SUCCESS_CODE, PublicConstants.SUCCESS_MSG, null);
     }
 
     public static ApiResponse success(Object data) {
-        return new ApiResponse(0, "success", data);
+        return new ApiResponse(PublicConstants.SUCCESS_CODE, PublicConstants.SUCCESS_MSG, data);
     }
 
     public static ApiResponse error() {
-        return new ApiResponse(-1, "error", null);
+        return new ApiResponse(PublicConstants.ERROR_CODE, PublicConstants.ERROR_MSG, null);
     }
 
     public static ApiResponse error(String msg) {
-        return new ApiResponse(-1, msg, null);
+        return new ApiResponse(PublicConstants.ERROR_CODE, msg, null);
     }
+
+    public static ApiResponse error(Integer code, String msg) {
+        return new ApiResponse(code, msg, null);
+    }
+
 }

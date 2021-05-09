@@ -1,6 +1,8 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
@@ -51,7 +53,7 @@ public class FileController {
     @GetMapping("/exists/{id}")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file.getId() != null && StringUtils.isNotBlank(file.getPath())) {
+        if (file!= null && StringUtils.isNotBlank(file.getPath())) {
             File disk = new File(file.getPath());
             if (disk.exists()) {
                 return ApiResponse.success();
@@ -104,12 +106,10 @@ public class FileController {
     public void download(HttpServletResponse response, @PathVariable Integer id) {
         try {
             UserFile userFile = userFileService.findById(id);
-            if (userFile.getId() != null && !Integer.valueOf(1).equals(userFile.getIsDir())) {
+            if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
                 File file = new File(userFile.getPath());
                 if (file.exists()) {
-                    response.setContentType("application/force-download");
-                    response.setHeader("Content-Disposition", "attachment;filename="
-                            + URLEncoder.encode(userFile.getFilename(), "UTF-8"));
+                    response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
                     BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
                     OutputStream out = response.getOutputStream();
                     byte[] buf = new byte[1024 * 1024 * 10];
@@ -133,9 +133,6 @@ public class FileController {
             String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
             File file = userFileService.packageFileByUserId(user.getId(), tempPath);
             if (file != null) {
-                response.setContentType("application/x-zip-compressed");
-                response.setHeader("Content-Disposition", "attachment;filename="
-                        + URLEncoder.encode("文件备份.zip", "UTF-8"));
                 ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
                 out.setMethod(ZipEntry.DEFLATED);
                 out.setLevel(7);
@@ -163,7 +160,7 @@ public class FileController {
             userService.save(user1);
             return ApiResponse.success();
         }
-        return ApiResponse.error("剩余空间不足");
+        return ApiResponse.error(ErrorConstants.NO_SPACE_LEFT_MSG);
     }
 
     @GetMapping("/back")
@@ -188,7 +185,7 @@ public class FileController {
     @PostMapping("/deleteMore")
     public ApiResponse deleteMore(@RequestParam String ids) {
         User user = springUtils.getCurrentUser();
-        String[] split = ids.split(",");
+        String[] split = ids.split(PublicConstants.ID_DELIMITER);
         for (String s : split) {
             userFileService.deleteById(Integer.valueOf(s), user.getId());
         }
@@ -210,7 +207,7 @@ public class FileController {
      */
     @PostMapping("/move")
     public ApiResponse move(@RequestParam String ids, @RequestParam(required = false) Integer pid) {
-        for (String id : ids.split(",")) {
+        for (String id : ids.split(PublicConstants.ID_DELIMITER)) {
             UserFile file = userFileService.findById(Integer.valueOf(id));
             file.setPid(pid);
             userFileService.save(file);
@@ -221,7 +218,7 @@ public class FileController {
     @GetMapping("/view")
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file.getId() != null) {
+        if (file != null) {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
             if (StringUtils.isNotBlank(suffix) && appConfig.getFileSuffixes().contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
@@ -232,7 +229,7 @@ public class FileController {
                         sb.append(tempStr).append("\n");
                     }
                 } catch (IOException e) {
-                    sb.append("文件获取失败");
+                    sb.append(ErrorConstants.FILE_READ_FAILED_MSG);
                     log.error("文件读取异常", e);
                 }
                 return ApiResponse.success(sb.toString());
@@ -263,7 +260,7 @@ public class FileController {
         List<Map<String, Object>> list = new ArrayList<>();
         List<UserFile> files = userFileService.findByPid(pid);
         for (UserFile f : files) {
-            if (Integer.valueOf(1).equals(f.getIsDir())) {
+            if (PublicConstants.DIR_CODE.equals(f.getIsDir())) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("title", f.getFilename());
                 map.put("id", f.getId());
