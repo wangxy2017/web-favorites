@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
@@ -112,7 +113,7 @@ public class RegisterController {
         Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_REGISTER);
         verificationService.save(verification);
         log.info("注册邮箱：{}，注册验证码：{}", email, code);
-        emailUtils.sendSimpleMail(email, "网络收藏夹|注册", "您正在注册账号，验证码为：" + code + "，" + appConfig.getVerificationExpiredMinutes() + "分钟内有效。");
+        emailUtils.sendSimpleMail(email, EmailConstants.REGISTER_TITLE, String.format(EmailConstants.REGISTER_CONTENT,code,appConfig.getVerificationExpiredMinutes()));
         return ApiResponse.success();
     }
 

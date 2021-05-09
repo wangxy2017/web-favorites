@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
@@ -70,7 +71,7 @@ public class LoginController {
         Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_LOGIN);
         verificationService.save(verification);
         log.info("登录邮箱：{}，登录验证码：{}", email, code);
-        emailUtils.sendSimpleMail(email, "网络收藏夹|登录", "您正在登录账号，验证码为：" + code + "，" + appConfig.getVerificationExpiredMinutes() + "分钟内有效。");
+        emailUtils.sendSimpleMail(email, EmailConstants.LOGIN_TITLE, String.format(EmailConstants.LOGIN_CONTENT, code, appConfig.getVerificationExpiredMinutes()));
         return ApiResponse.success();
     }
 
@@ -143,8 +144,8 @@ public class LoginController {
             user1.setPassword(passwordEncoder.encode(tempPwd));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
-            emailUtils.sendSimpleMail(user1.getEmail(), "网络收藏夹|重置密码",
-                    String.format("您的新密码：%s，请牢记。", tempPwd));
+            emailUtils.sendSimpleMail(user1.getEmail(), EmailConstants.PASSWORD_RESET_TITLE,
+                    String.format(EmailConstants.PASSWORD_RESET_CONTENT, tempPwd));
             return ApiResponse.success();
         } else {
             return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_EMAIL_MSG);

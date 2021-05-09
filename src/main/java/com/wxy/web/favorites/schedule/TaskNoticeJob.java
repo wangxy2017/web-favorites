@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.schedule;
 
+import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.model.User;
@@ -45,7 +46,7 @@ public class TaskNoticeJob {
         List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
         noticeList.forEach(t -> {
             User user = userService.findById(t.getUserId());
-            emailUtils.sendHtmlMail(user.getEmail(), "网络收藏夹|日程通知", t.getContent());
+            emailUtils.sendHtmlMail(user.getEmail(), EmailConstants.TASK_NOTICE_TITLE, t.getContent());
             // 改变状态
             t.setLevel(PublicConstants.TASK_LEVEL_4);
         });

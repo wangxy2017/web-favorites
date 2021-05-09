@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.User;
@@ -74,7 +75,7 @@ public class UserController {
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
         Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_UPDATE);
         verificationService.save(verification);
-        emailUtils.sendSimpleMail(email, "网络收藏夹|绑定邮箱", "您正在绑定邮箱，验证码为：" + code + "，" + appConfig.getVerificationExpiredMinutes() + "分钟内有效。");
+        emailUtils.sendSimpleMail(email, EmailConstants.BINDING_EMAIL_TITLE, String.format(EmailConstants.BINDING_EMAIL_CONTENT,code,appConfig.getVerificationExpiredMinutes()));
         return ApiResponse.success();
     }
 
