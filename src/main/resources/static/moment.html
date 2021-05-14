@@ -142,7 +142,7 @@
 
             .search-div .search-icon {
                 position: absolute;
-                top: 7px;
+                top: 8px;
                 left: 6px;
                 font-size: 14px;
                 color: #999;
@@ -241,6 +241,7 @@
             var _conss = $('.search-div');//点击的容器范围
             if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
                 $("#search_close").hide();
+                $("#search_text").parent().css({"width":"100px"});
             }
         });
 
@@ -261,8 +262,6 @@
         }).on("focus", function () {
            $("#search_close").show();
            $(this).parent().css({"width":"200px"});
-        }).on("blur", function(){
-           $(this).parent().css({"width":"100px"});
         });
 
         $("#search_icon").click(function(){
@@ -485,7 +484,7 @@
 
         // 登出
         $("#logout").click(function () {
-            layer.confirm('确认退出吗？', function(index){
+            layer.confirm('确认退出系统吗？', function(index){
                 layer.close(index);
 
                 localStorage.removeItem("login_user_token");
