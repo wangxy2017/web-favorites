@@ -251,7 +251,7 @@
             $("#momentList").show();
             $("#searchList").empty();
             $(this).hide();
-            $("#search_text").val("").blur();
+            $("#search_text").val("").blur().parent().css({"width":"100px"});
             $("#noData").hide();
         });
 
