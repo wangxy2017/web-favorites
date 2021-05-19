@@ -312,7 +312,7 @@
 <div class="footer">
     © 2020 网络收藏夹 || 网络收藏夹版权所有
 </div>
-<form class="layui-form" action="" id="taskForm" style="display: none;">
+<form class="layui-form" action="" id="taskForm" lay-filter="taskForm" style="display: none;">
     <input type="hidden" name="taskDate" id="taskDate">
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">日程内容</label>
@@ -333,13 +333,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">邮件提醒</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="isAlarm" lay-filter="isAlarm" lay-skin="switch" value="1">
+            <input type="checkbox" id="isAlarm" name="isAlarm" lay-filter="isAlarm" lay-skin="switch" value="1">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">提醒时间</label>
         <div class="layui-input-block">
-            <select name="alarmTime" id="alarmTime">
+            <select name="alarmTime" id="alarmTime" lay-filter="alarmTime">
                 <option value="">请选择时间</option>
                 <option value="08:00">08:00</option>
                 <option value="08:30">08:30</option>
@@ -738,6 +738,13 @@
             }else{
                 $("#alarmTime").removeAttr("lay-verify");
             }
+        });
+
+        form.on('select(alarmTime)', function(data){
+          if(data.value && !$("#isAlarm").is(':checked')){
+            $("#isAlarm").prop("checked", true);
+            form.render('checkbox', 'taskForm');
+          }
         });
 
         // 监听提交
