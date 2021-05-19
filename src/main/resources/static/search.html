@@ -33,14 +33,15 @@
 				border-radius: 4px;
 				height: 40px;
 				position: relative;
-				display: flex;
-				box-sizing: border-box;
 			}
 
 			.search-form button {
-				height: 100%;
-                border-radius: 0;
-                line-height: 100%;
+			    position: absolute;
+                right: -1px;
+                top: -1px;
+				height: 42px;
+                border-radius: 0 4px 4px 0;
+                line-height: 42px;
 			}
 
 			.search-close {
@@ -56,14 +57,13 @@
 			.search-form input {
 				height: 100%;
 				border: none;
-				border-radius: 4px;
-				padding-right: 30px;
+				padding-right: 112px;
 			}
 
 			.search-items {
 				position: absolute;
 				width: calc(100% - 84px);
-				top: 42px;
+				top: 44px;
 				left: 0;
 				border: 1px solid #009688;
 				border-radius: 4px;
@@ -205,7 +205,7 @@
             <input class="layui-input" type="text" id="search_content" value="" />
             <button class="layui-btn layui-btn-lg" type="button" id="search_btn">搜索</button>
             <ul class="search-items layui-anim layui-anim-fadein"></ul>
-            <i class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" id="search_close"></i>
+            <i class="layui-icon layui-icon-close-fill search-close" id="search_close"></i>
         </div>
         <ul class="search-type"></ul>
     </div>
