@@ -58,7 +58,16 @@
             cursor: pointer;
         }
 
-        legend {
+        .category{
+            margin: 10px 0 20px;
+        }
+
+        .category .title{
+            margin-left: 20px;
+            padding: 0 10px;
+            font-size: 20px;
+            font-weight: 300;
+            border-left: 6px solid #009688;
             cursor: pointer;
         }
 
@@ -1377,8 +1386,8 @@
                         var html = '';
                         $.each(result.data.list, function (i, c) {
                             var bookmarkClass = c.bookmark==1?"bookmark":"";
-                            html += '<fieldset class="layui-elem-field ' + bookmarkClass + '" data-id="' + c.id + '">';
-                            html += '   <legend onclick="editCategory(this)">' + c.name + '</legend>';
+                            html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
+                            html += '   <div class="title" onclick="editCategory(this)">' + c.name + '</div>';
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
                                 $.each(c.favorites, function (j, f) {
@@ -1408,7 +1417,7 @@
                                 html += '</li>';
                             }
                             html += '   </ul>';
-                            html += '</fieldset>';
+                            html += '</div>';
                         });
                         $("#main").append(html);
                         imgRender();
@@ -1453,8 +1462,8 @@
                     $("#starDiv").empty();
                     if(result.code == 0 && result.data.length > 0){
                         var html = '';
-                        html += '<fieldset class="layui-elem-field layui-field-title">';
-                        html += '   <legend style="font-size:16px;">常用网址</legend>';
+                        html += '<div class="category">';
+                        html += '   <div class="title" style="font-size:16px;">常用网址</div>';
                         html += '   <ul class="favorites">';
                         $.each(result.data, function (i, f) {
                             html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
@@ -1466,7 +1475,7 @@
                             html += '   </li>';
                         });
                         html += '   </ul>';
-                        html += '</fieldset>';
+                        html += '</div>';
 
                         $("#starDiv").append(html);
                         imgRender();
@@ -1497,7 +1506,7 @@
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
-                        $("fieldset[data-id='" + categoryId + "']").find(".favorites").empty().append(html);
+                        $("div[data-id='" + categoryId + "']").find(".favorites").empty().append(html);
                         imgRender();
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -1754,9 +1763,9 @@
                     if (result.code == 0) {
                         layer.msg("操作成功", {icon: 6});
                         if(data.elem.checked){
-                             $("fieldset[data-id=" + categoryId + "]").addClass("bookmark");
+                             $("div[data-id=" + categoryId + "]").addClass("bookmark");
                         }else{
-                             $("fieldset[data-id=" + categoryId + "]").removeClass("bookmark");
+                             $("div[data-id=" + categoryId + "]").removeClass("bookmark");
                         }
                     } else {
                         layer.msg(result.msg, {icon: 5});
@@ -1937,7 +1946,7 @@
             $("#main").show();
             $("#searchDiv").empty();
             // 定位到锚点
-            var offsetTop = $("fieldset[data-id="+id+"]").get(0).offsetTop;
+            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
             $("#layuiBody").animate({scrollTop: offsetTop}, 200);
         };
 
