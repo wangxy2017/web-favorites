@@ -19,10 +19,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author wangxiaoyuan
@@ -165,7 +163,7 @@ public class UserFileService {
     public PageInfo<UserFile> findPageList(Integer userId, String name, Integer pid, Integer pageNum, Integer pageSize) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.ASC, "filename"));
-        orders.add(new Sort.Order(Sort.Direction.DESC, "updateTime"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         Page<UserFile> page;
         if (StringUtils.isNotBlank(name) && pid == null) {
@@ -174,6 +172,19 @@ public class UserFileService {
             page = userFileRepository.findByUserIdAndPid(userId, pid, pageable);
         }
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+    }
+
+    public List<UserFile> findFloorsByPid(Integer pid) {
+        List<UserFile> floors = new ArrayList<>();
+        while (pid != null) {
+            UserFile userFile = userFileRepository.findById(pid).orElse(null);
+            if (userFile != null) {
+                floors.add(userFile);
+                pid = userFile.getPid();
+            }
+        }
+        Collections.reverse(floors);
+        return floors;
     }
 }
 

@@ -86,6 +86,10 @@
                 display: block;
             }
 
+            .layui-breadcrumb a {
+                color: #303133!important;
+            }
+
     </style>
 </head>
 <body>
@@ -114,8 +118,13 @@
             <div class="layui-progress-bar" lay-percent="100%"></div>
         </div>
         <div style="margin-top: 10px;color:#303133">
-            搜索文件：<input class="layui-input" id="searchName" autocomplete="off"
-                        style="display: inline-block;width: 180px;height: 30px;margin-right: 10px;">
+            <div class="layui-inline">
+                搜索文件：<input class="layui-input" id="searchName" autocomplete="off"
+                            style="display: inline-block;width: 180px;height: 30px;margin-right: 10px;">
+            </div>
+            <div class="layui-inline" style="height: 30px;line-height: 30px;">
+                当前路径：<span class="layui-breadcrumb" lay-separator=">" lay-filter="floors" id="floors"></span>
+            </div>
         </div>
         <!-- 数据表格 -->
         <table id="fileList" lay-filter="fileList"></table>
@@ -157,7 +166,12 @@
             elem: '#fileList'
             , url: 'file/list/' //数据接口
             , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
-            , page: {layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']} //开启分页
+            , page: {
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                , limits: [10, 20, 30, 40, 50]
+                , prev: '上一页'
+                , next: '下一页'
+            }
             , request: {
                 pageName: 'pageNum' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
@@ -168,11 +182,18 @@
                     "msg": res.msg, //解析提示文本
                     "count": res.data.page.total,
                     "data": res.data.page.list, //解析数据列表
-                    "parent": res.data.parent
+                    "parent": res.data.parent,
+                    "floors": res.data.floors
                 };
             }
             , done: function (res, curr, count) {
                 $("#parent").val(res.parent);
+                var html = '';
+                $(res.floors).each(function(index,item){
+                    html += '<a href="javascript:position('+ item.id +')">'+ item.filename +'</a>';
+                });
+                $("#floors").empty().append('<a href="">根目录</a>').append(html);
+                element.render('breadcrumb','floors');
             }
             , cols: [[ //表头
                 {type: 'checkbox'}
@@ -340,7 +361,7 @@
         // 搜索
         $('#searchName').bind('keypress', function (event) {
             if (event.key === "Enter") {
-                table.reload('fileList', {where: {"name": $(this).val(), "pid": null}});
+                table.reload('fileList', {page: {curr: 1}, where: {"name": $(this).val(), "pid": null}});
             }
         });
 
@@ -553,6 +574,11 @@
                 }
             });
         };
+
+        window.position = function (id) {
+            table.reload('fileList', {where: {"pid": id}});
+        }
+
         // 跳转
         window.goto = function (obj) {
             var that = $(obj);

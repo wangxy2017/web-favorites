@@ -75,9 +75,11 @@ public class FileController {
                             @RequestParam(required = false) Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<UserFile> page = userFileService.findPageList(user.getId(), name, pid, pageNum, pageSize);
+        List<UserFile> floors  = userFileService.findFloorsByPid(pid);
         HashMap<String, Object> data = new HashMap<>();
         data.put("parent", pid);
         data.put("page", page);
+        data.put("floors", floors);
         return ApiResponse.success(data);
     }
 
