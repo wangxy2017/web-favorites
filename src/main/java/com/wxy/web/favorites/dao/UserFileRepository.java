@@ -1,6 +1,8 @@
 package com.wxy.web.favorites.dao;
 
 import com.wxy.web.favorites.model.UserFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +16,7 @@ public interface UserFileRepository extends JpaRepository<UserFile, Integer> {
 
     List<UserFile> findByUserIdAndPidIsNull(Integer userId);
 
-    List<UserFile> findByUserIdAndFilenameLike(Integer userId,String filename);
+    Page<UserFile> findByUserIdAndFilenameLike(Integer userId, String name, Pageable pageable);
+
+    Page<UserFile> findByUserIdAndPid(Integer userId, Integer pid, Pageable pageable);
 }

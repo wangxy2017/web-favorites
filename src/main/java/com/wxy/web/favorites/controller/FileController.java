@@ -8,18 +8,17 @@ import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.util.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -53,7 +52,7 @@ public class FileController {
     @GetMapping("/exists/{id}")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file!= null && StringUtils.isNotBlank(file.getPath())) {
+        if (file != null && StringUtils.isNotBlank(file.getPath())) {
             File disk = new File(file.getPath());
             if (disk.exists()) {
                 return ApiResponse.success();
@@ -70,23 +69,15 @@ public class FileController {
      * @return
      */
     @GetMapping("/list")
-    public ApiResponse list(@RequestParam(required = false) String name, @RequestParam(required = false) Integer pid) {
+    public ApiResponse list(@RequestParam(required = false) String name,
+                            @RequestParam(required = false) Integer pid,
+                            @RequestParam(required = false) Integer pageNum,
+                            @RequestParam(required = false) Integer pageSize) {
         User user = springUtils.getCurrentUser();
-        List<UserFile> list;
-        if (StringUtils.isNoneBlank(name)) {
-            list = userFileService.searchFiles(user.getId(), "%" + name + "%");
-        } else {
-            if (pid == null) {
-                list = userFileService.findRootList(user.getId());
-            } else {
-                list = userFileService.findByPid(pid);
-            }
-        }
-        // 排序
-        list.sort(Comparator.comparing(UserFile::getFilename));
+        PageInfo<UserFile> page = userFileService.findPageList(user.getId(), name, pid, pageNum, pageSize);
         HashMap<String, Object> data = new HashMap<>();
         data.put("parent", pid);
-        data.put("list", list);
+        data.put("page", page);
         return ApiResponse.success(data);
     }
 

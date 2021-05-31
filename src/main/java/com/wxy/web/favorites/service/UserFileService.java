@@ -6,8 +6,13 @@ import com.wxy.web.favorites.dao.UserFileRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
+import com.wxy.web.favorites.util.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -51,10 +56,6 @@ public class UserFileService {
 
     public List<UserFile> findRootList(Integer userId) {
         return userFileRepository.findByUserIdAndPidIsNull(userId);
-    }
-
-    public List<UserFile> searchFiles(Integer userId, String filename) {
-        return userFileRepository.findByUserIdAndFilenameLike(userId, filename);
     }
 
     public File packageFileByUserId(Integer userId, String tempPath) throws IOException {
@@ -159,6 +160,20 @@ public class UserFileService {
             }
         }
         throw new IOException();
+    }
+
+    public PageInfo<UserFile> findPageList(Integer userId, String name, Integer pid, Integer pageNum, Integer pageSize) {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "filename"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "updateTime"));
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
+        Page<UserFile> page;
+        if (StringUtils.isNotBlank(name) && pid == null) {
+            page = userFileRepository.findByUserIdAndFilenameLike(userId, "%" + name + "%", pageable);
+        } else {
+            page = userFileRepository.findByUserIdAndPid(userId, pid, pageable);
+        }
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 }
 
