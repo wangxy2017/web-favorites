@@ -14,10 +14,14 @@ server:
       - text/plain
     min-response-size: 2048
 spring:
-  servlet: #网关请求大小配置
+  servlet: #上传文件大小限制
     multipart:
       max-file-size: 512MB
       max-request-size: 512MB
+    undertow: #undertow容器配置
+      buffer-size: 512
+      io-threads: 4
+      worker-threads: 160
   datasource: #数据源
     platform: h2
     driverClassName: org.h2.Driver
@@ -68,5 +72,5 @@ app: #系统参数配置
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
 jwt: #jwt令牌配置
-  token-secret-key: gK8G#mueFVaSxMcr
+  token-secret-key:
   token-expired-seconds: 7200
