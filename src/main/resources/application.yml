@@ -1,7 +1,7 @@
 server:
-  port: 9020 #端口
-  compression:
-    enabled: true #开启压缩功能
+  port: 9020 #配置端口
+  compression: #配置数据压缩
+    enabled: true
     mime-types:
       - image/svg+xml
       - image/x-icon
@@ -14,16 +14,24 @@ server:
       - text/plain
     min-response-size: 2048
 spring:
-  servlet: #网关请求配置大小
+  servlet: #网关请求大小配置
     multipart:
       max-file-size: 512MB
       max-request-size: 512MB
   datasource: #数据源
+    platform: h2
+    driverClassName: org.h2.Driver
     url: jdbc:h2:file:./db/h2
+    username:
+    password:
+    hikari: #连接池配置
+      idle-timeout: 60000
+      maximum-pool-size: 60
+      minimum-idle: 10
   jpa: #jpa配置
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
   mail: #邮件配置
     username:
@@ -35,7 +43,7 @@ spring:
         smtp:
           ssl:
             enable: true
-app:
+app: #系统参数配置
   verification-expired-minutes: 30
   star-limit: 30 #标记个数限制
   search-limit: 100 #搜索个数限制
@@ -59,6 +67,6 @@ app:
     - 京东,https://www.jd.com/
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
-jwt:
+jwt: #jwt令牌配置
   token-secret-key: gK8G#mueFVaSxMcr
   token-expired-seconds: 7200
