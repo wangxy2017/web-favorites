@@ -833,7 +833,7 @@
 
         $("#url_input").on('input',function(){
             var url = $(this).val();
-            if(url.startsWith("https://") || url.startsWith("http://")){
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 $("#name_input").val("").addClass("layui-disabled").attr("disabled",true);
                 $("#url_loading").show();
                 // 请求后台解析url
@@ -1088,7 +1088,7 @@
                     var name = $(this).val().trim();
                     if (name == "") { //退出搜索模式
                         $("#search_close").click();
-                    } else if(name.startsWith("打开")||name.startsWith("Open")) { //搜索快捷指令
+                    } else if(name.indexOf("打开") == 0 || name.indexOf("Open") == 0) { //搜索快捷指令
                         searchShortcut(name);
                     } else {// 搜索文本
                         searchFavorites(name);
@@ -1257,11 +1257,15 @@
         window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
             var schema = $(obj).attr("data-schema");
-            if(url.startsWith("https://") || url.startsWith("http://")){
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 if(!isEmpty(schema)&&isMobile()){
                     url = schema + url.substring(url.indexOf("://"));
                 }
-                window.open(url,'_blank');
+                try{
+                    window.open(url, '_blank');
+                }catch(err){
+                    window.location.href = url;
+                }
                 // 记录访问时间
                 $.ajax({
                     type: "GET",
@@ -1688,7 +1692,7 @@
             },
             shortcut: function (value, item) {
                 if(value !== ""){
-                    if(!value.startsWith("打开") && !value.startsWith("Open")){
+                    if(!value.indexOf("打开") == 0 && !value.indexOf("Open") == 0){
                         return '指令请以"打开"或"Open"开头';
                     }
                     var msg;

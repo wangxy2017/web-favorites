@@ -647,81 +647,81 @@
         };
         // 判断后缀
         window.suffix = function (url) {
-            if (url.endsWith(".bat"))
+            var suffix = url.substring(url.lastIndexOf("."));
+            if (suffix === ".bat")
                 return "images/bat.svg";
-            else if (url.endsWith(".xls") || url.endsWith(".xlsx"))
+            else if (suffix === ".xls" || suffix === ".xlsx")
                 return "images/excel.svg";
-            else if (url.endsWith(".exe"))
+            else if (suffix === ".exe")
                 return "images/exe.svg";
-            else if (url.endsWith(".md"))
+            else if (suffix === ".md")
                 return "images/markdown.svg";
-            else if (url.endsWith(".mp3") || url.endsWith(".wma"))
+            else if (suffix === ".mp3" || suffix === ".wma")
                 return "images/music.svg";
-            else if (url.endsWith(".pdf"))
+            else if (suffix === ".pdf")
                 return "images/pdf.svg";
-            else if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".ico"))
+            else if (suffix === ".png" || suffix === ".jpg" || suffix === ".ico")
                 return "images/photo.svg";
-            else if (url.endsWith(".gif"))
+            else if (suffix === ".gif")
                 return "images/gif.svg";
-            else if (url.endsWith(".svg"))
+            else if (suffix === ".svg")
                 return "images/svg.svg";
-            else if (url.endsWith(".ppt") || url.endsWith(".pptx"))
+            else if (suffix === ".ppt" || suffix === ".pptx")
                 return "images/ppt.svg";
-            else if (url.endsWith(".sh"))
+            else if (suffix === ".sh")
                 return "images/shell.svg";
-            else if (url.endsWith(".tar.gz") || url.endsWith(".tar") || url.endsWith(".tgz") || url.endsWith(".tar.xz"))
+            else if (suffix === ".gz" || suffix === ".tar" || suffix ===".tgz" || suffix === ".xz")
                 return "images/tar.svg";
-            else if (url.endsWith(".txt"))
+            else if (suffix === ".txt")
                 return "images/txt.svg";
-            else if (url.endsWith(".properties"))
+            else if (suffix === ".properties")
                 return "images/properties.svg";
-            else if (url.endsWith(".yml"))
+            else if (suffix === ".yml")
                 return "images/yml.svg";
-            else if (url.endsWith(".mp4") || url.endsWith(".avi") || url.endsWith(".flv") || url.endsWith(".rmvb"))
+            else if (suffix === ".mp4" || suffix === ".avi" || suffix === ".flv" || suffix === ".rmvb")
                 return "images/video.svg";
-            else if (url.endsWith(".doc") || url.endsWith(".docx"))
+            else if (suffix === ".doc" || suffix === ".docx")
                 return "images/word.svg";
-            else if (url.endsWith(".xml"))
+            else if (suffix === ".xml")
                 return "images/xml.svg";
-            else if (url.endsWith(".zip") || url.endsWith(".rar") || url.endsWith(".war") || url.endsWith(".7z"))
+            else if (suffix === ".zip" || suffix === ".rar" || suffix === ".war" || suffix === ".7z")
                 return "images/zip.svg";
-            else if (url.endsWith(".sql"))
+            else if (suffix === ".sql")
                 return "images/sql.svg";
-            else if (url.endsWith(".db"))
+            else if (suffix === ".db")
                 return "images/database.svg";
-            else if (url.endsWith(".java"))
+            else if (suffix === ".java")
                 return "images/java.svg";
-            else if (url.endsWith(".py"))
+            else if (suffix === ".py")
                 return "images/python.svg";
-            else if (url.endsWith(".php"))
+            else if (suffix === ".php")
                 return "images/php.svg";
-            else if (url.endsWith(".json"))
+            else if (suffix === ".json")
                 return "images/json.svg";
-            else if (url.endsWith(".css"))
+            else if (suffix === ".css")
                 return "images/css.svg";
-            else if (url.endsWith(".js"))
+            else if (suffix === ".js")
                 return "images/js.svg";
-            else if (url.endsWith(".html"))
+            else if (suffix === ".html")
                 return "images/html.svg";
-            else if (url.endsWith(".jar"))
+            else if (suffix === ".jar")
                 return "images/jar.svg";
-            else if (url.endsWith(".apk"))
+            else if (suffix === ".apk")
                 return "images/apk.svg";
-            else if (url.endsWith(".desktop"))
+            else if (suffix === ".desktop")
                 return "images/desktop.svg";
-            else if (url.endsWith(".lnk") || url.endsWith(".url"))
+            else if (suffix === ".lnk" || suffix === ".url")
                 return "images/link.svg";
-            else if (url.endsWith(".rpm"))
+            else if (suffix === ".rpm")
                 return "images/rpm.svg";
-            else if (url.endsWith(".iso"))
+            else if (suffix === ".iso")
                 return "images/iso.svg";
-            else if (url.endsWith(".dll"))
+            else if (suffix === ".dll")
                 return "images/dll.svg";
-            else if (url.endsWith(".bak"))
+            else if (suffix === ".bak")
                 return "images/bak.svg";
             else
                 return "images/unknown.svg";
-
         }
         // 格式化时间
         window.dateFormat = function(fmt, date) {

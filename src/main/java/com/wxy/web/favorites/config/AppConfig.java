@@ -23,7 +23,7 @@ public class AppConfig {
 
     private String fileRepository;
 
-    private List<String> fileSuffixes;
+    private String fileSuffixes;
 
     private Integer fileCompressLevel;
 

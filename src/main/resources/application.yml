@@ -56,14 +56,7 @@ app: #系统参数配置
   init-capacity: 50 #初始容量(M)
   file-repository: ./repository #文件仓库
   file-compress-level: 7
-  file-suffixes:
-    - txt
-    - properties
-    - xml
-    - sh
-    - bat
-    - sql
-    - json
+  file-suffixes: txt,properties,yml,xml,sh,bat,sql,json
   recommends:
     - bilibili,https://www.bilibili.com/
     - 淘宝,https://www.taobao.com/

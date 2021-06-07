@@ -510,8 +510,12 @@
 			});
 
 			window.openUrl = function(url) {
-				if (url.startsWith("https://") || url.startsWith("http://")) {
-					window.open(url, '_blank');
+				if (url.indexOf("https://") == 0 || url.indexOf("http://") == 0) {
+					try{
+					    window.open(url, '_blank');
+					}catch(err){
+					    window.location.href = url;
+					}
 				} else {
 					alert("此链接无效");
 				}

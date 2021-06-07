@@ -75,7 +75,7 @@ public class FileController {
                             @RequestParam(required = false) Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<UserFile> page = userFileService.findPageList(user.getId(), name, pid, pageNum, pageSize);
-        List<UserFile> floors  = userFileService.findFloorsByPid(pid);
+        List<UserFile> floors = userFileService.findFloorsByPid(pid);
         HashMap<String, Object> data = new HashMap<>();
         data.put("parent", pid);
         data.put("page", page);
@@ -213,7 +213,7 @@ public class FileController {
         UserFile file = userFileService.findById(id);
         if (file != null) {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
-            if (StringUtils.isNotBlank(suffix) && appConfig.getFileSuffixes().contains(suffix)) {
+            if (StringUtils.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));

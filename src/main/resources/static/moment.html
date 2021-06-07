@@ -303,6 +303,7 @@
                         layer.closeAll('loading');
                         $("#topMoment").hide();
                         $("#momentList").hide();
+                        $("#searchList").empty();
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
                             $.each(result.data, function(index, item){
@@ -322,7 +323,7 @@
                                 html += '    </div>';
                                 html += '</li>';
                             });
-                            $("#searchList").empty().append(html);
+                            $("#searchList").append(html);
                             $("#noData").hide();
                             hideBigText("#searchList");
                         }else{
