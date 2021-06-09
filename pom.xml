@@ -95,13 +95,6 @@
             <artifactId>TinyPinyin</artifactId>
             <version>2.0.3.RELEASE</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

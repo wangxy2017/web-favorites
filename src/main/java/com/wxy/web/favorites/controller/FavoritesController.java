@@ -121,9 +121,65 @@ public class FavoritesController {
         return ApiResponse.success(favorites);
     }
 
+    /**
+     * 查看回收站
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/recycle")
+    public ApiResponse recycle(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        User user = springUtils.getCurrentUser();
+        PageInfo<Favorites> page = favoritesService.findRecycleByPage(user.getId(), pageNum, pageSize);
+        return ApiResponse.success(page);
+    }
+
+    /**
+     * 清空回收站
+     *
+     * @return
+     */
+    @PostMapping("/recycle/clean")
+    public ApiResponse CleanRecycle() {
+        User user = springUtils.getCurrentUser();
+        favoritesService.cleanRecycle(user.getId());
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/recycle/delete/{id}")
+    public ApiResponse deleteFromRecycle(@PathVariable Integer id) {
+        favoritesService.deleteById(id);
+        return ApiResponse.success();
+    }
+
+    /**
+     * 还原
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/recover/{id}")
+    public ApiResponse recover(@PathVariable Integer id) {
+        User user = springUtils.getCurrentUser();
+        favoritesService.recover(id, user.getId());
+        return ApiResponse.success();
+    }
+
+    /**
+     * 逻辑删除
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
-        favoritesService.deleteById(id);
+        Favorites favorites = favoritesService.findById(id);
+        if (favorites != null) {
+            favorites.setDeleteFlag(PublicConstants.DELETE_CODE);
+            favorites.setDeleteTime(new Date());
+            favoritesService.save(favorites);
+        }
         return ApiResponse.success();
     }
 
@@ -269,7 +325,7 @@ public class FavoritesController {
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null);
+                                Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -278,7 +334,7 @@ public class FavoritesController {
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort <PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
+                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1));
                 });
             }
         } catch (Exception e) {

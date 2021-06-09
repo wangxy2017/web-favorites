@@ -2,11 +2,9 @@ import com.wxy.web.favorites.WebFavoritesApplication;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
@@ -17,10 +15,9 @@ import java.util.List;
  * @Date 2020/3/30 14:21
  * @Description TODO
  **/
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebFavoritesApplication.class)
 @Slf4j
 @Transactional
+@SpringBootTest(classes = WebFavoritesApplication.class)
 public class TaskServiceTest {
 
     @Autowired

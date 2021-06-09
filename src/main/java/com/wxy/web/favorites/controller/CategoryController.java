@@ -1,8 +1,10 @@
 package com.wxy.web.favorites.controller;
 
+import com.sun.org.apache.bcel.internal.generic.FADD;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -11,6 +13,7 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -53,20 +56,43 @@ public class CategoryController {
         return ApiResponse.error();
     }
 
+    /**
+     * 删除分类
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/delete/{id}")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
         if (!PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
             categoryService.deleteById(id);
-            favoritesService.deleteAll(favoritesService.findByCategoryId(id));
+            // 收藏移动至回收站
+            List<Favorites> favoritesList = favoritesService.findByCategoryId(id);
+            favoritesList.forEach(favorites -> {
+                favorites.setDeleteFlag(PublicConstants.DELETE_CODE);
+                favorites.setDeleteTime(new Date());
+            });
+            favoritesService.saveAll(favoritesList);
             return ApiResponse.success();
         }
         return ApiResponse.error(ErrorConstants.SYSTEM_CATEGORY_NO_DELETE_MSG);
     }
 
+    /**
+     * 清空收藏
+     *
+     * @param id
+     * @return
+     */
     @PostMapping("/clean")
     public ApiResponse clean(@RequestParam Integer id) {
-        favoritesService.deleteAll(favoritesService.findByCategoryId(id));
+        List<Favorites> favoritesList = favoritesService.findByCategoryId(id);
+        favoritesList.forEach(favorites -> {
+            favorites.setDeleteFlag(PublicConstants.DELETE_CODE);
+            favorites.setDeleteTime(new Date());
+        });
+        favoritesService.saveAll(favoritesList);
         return ApiResponse.success();
     }
 

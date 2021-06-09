@@ -61,6 +61,13 @@ public class Favorites {
     @Column(name = "visit_time", columnDefinition = "datetime comment '最近访问时间'")
     private Date visitTime;
 
+    @Column(name = "delete_flag", columnDefinition = "int(1) comment '是否删除：0-否 1-是'")
+    private Integer deleteFlag;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "delete_time", columnDefinition = "datetime comment '逻辑删除时间'")
+    private Date deleteTime;
+
     @Transient
     private Password password;
 }

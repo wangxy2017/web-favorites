@@ -410,7 +410,8 @@
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
                     <dd><a href="javascript:;" id="changeEmail">修改邮箱</a></dd>
-                    <dd><a href="javascript:;" id="importOrExportBtn">导入/备份</a></dd>
+                    <dd><a href="javascript:;" id="importOrExportBtn">导入与备份</a></dd>
+                    <dd><a href="javascript:;" id="recycle">系统回收站</a></dd>
                     <dd><a href="javascript:;" id="logout">安全退出</a></dd>
                 </dl>
             </li>
@@ -2043,6 +2044,20 @@
               ,offset: 'catalog'
               ,maxHeight: 600
             });
+        });
+
+        // 回收站
+        $("#recycle").click(function() {
+            var width = parseInt($(window).width()) * 0.9;
+            width = (width >= 800? 800 : width) + 'px';
+            var index = layer.open({
+                type: 2,
+                area: [width,'500px'],
+                title: false,
+                closeBtn: 0,
+                content: 'recycle.html'
+            });
+            indexMap.set('#importOrExport',index);
         });
 
         // 页面加载完成执行

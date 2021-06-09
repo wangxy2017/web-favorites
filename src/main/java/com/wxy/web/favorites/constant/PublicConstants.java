@@ -35,6 +35,8 @@ public class PublicConstants {
 
     public static final String ID_DELIMITER = ",";
 
+    public static final Integer DELETE_CODE = 1;
+
     public static final String DEFAULT_DELIMITER = ",";
 
     public static final Integer DIR_CODE = 1;

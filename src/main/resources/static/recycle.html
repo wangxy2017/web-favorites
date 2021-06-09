@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|回收站</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+<div class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">收藏</li>
+    </ul>
+    <div class="layui-tab-content" style="text-align: center;">
+        <!-- 数据表格 -->
+        <table id="favoritesList" lay-filter="favoritesList"></table>
+        <!-- 操作 -->
+        <script type="text/html" id="operates">
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="recover">还原</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+</div>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['element', 'layer', 'table'], function() {
+        var element = layui.element;
+        var layer = layui.layer;
+        var table = layui.table;
+
+        //加载数据
+        table.render({
+            elem: '#favoritesList'
+            , url: 'favorites/recycle/' //数据接口
+            , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            , page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , prev: '上一页'
+                , next: '下一页'
+                , limit: 5
+            }
+            , request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total,
+                    "data": res.data.list //解析数据列表
+                };
+            }
+            , cols: [[ //表头
+                {type: 'numbers', align: 'center'}
+                , {
+                    field: 'name', title: '名称', minWidth: 200, align: 'center'
+                }
+                , {
+                    field: 'url', title: '地址', align: 'center', templet: function (d) {
+                        return '<a class="layui-blue" href="javascript:openUrl(\'' + d.url + '\');">' + d.url + '</a>'
+                    }
+                }, {
+                    field: 'deleteTime', title: '删除时间', align: 'center'
+                }
+                , {title: '操作', align: 'center', width: 120, toolbar: '#operates', fixed: 'right'}
+            ]]
+        });
+
+        //监听工具条
+        table.on('tool(favoritesList)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'recover') { //还原
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/recover/" + data.id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            obj.del(); //移除当前行
+                            layer.msg('操作成功', {icon: 6});
+                        } else {
+                            layer.msg('操作失败', {icon: 5});
+                        }
+                    }
+                });
+            } else if (layEvent === 'del') { //删除
+                $.ajax({
+                    type: "POST",
+                    url: "favorites/recycle/delete/" + data.id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            obj.del(); //移除当前行
+                            layer.msg('删除成功', {icon: 6});
+                        } else {
+                            layer.msg('删除失败', {icon: 5});
+                        }
+                    }
+                });
+            }
+        });
+
+        // 打开新窗口
+        window.openUrl = function (url) {
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                try{
+                    parent.window.open(url, '_blank');
+                }catch(err){
+                    parent.window.location.href = url;
+                }
+            }else{
+                layer.msg('此链接无效', {icon: 7});
+            }
+        };
+    });
+</script>
+</body>
+</html>
