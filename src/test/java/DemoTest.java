@@ -1,5 +1,6 @@
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.WebFavoritesApplication;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.dao.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -60,5 +63,11 @@ public class DemoTest {
     public void test1() {
         List<Favorites> list = favoritesRepository.findAll();
         log.info("查询结果：{}", list.size());
+    }
+
+    @Test
+    public void test2() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+        favoritesRepository.cleanRecycleBeforeTime(sdf.parse("2021-06-10 01:45:03"));
     }
 }

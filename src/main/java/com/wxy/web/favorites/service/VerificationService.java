@@ -1,9 +1,13 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * @author wangxiaoyuan
@@ -23,8 +27,9 @@ public class VerificationService {
         return verificationRepository.save(verification);
     }
 
-    public void cleanBeforeTime(String time) {
-        verificationRepository.deleteByExpiredTimeBefore(time);
+    public void cleanBeforeTime(String time) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+        verificationRepository.deleteByExpiredTimeBefore(sdf.parse(time));
     }
 
     public void deleteById(Integer id){

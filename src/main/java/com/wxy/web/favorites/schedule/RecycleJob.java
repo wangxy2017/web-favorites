@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -28,12 +29,18 @@ public class RecycleJob {
      */
     @Scheduled(cron = "0 1 0 * * ?")
     public void run() {
-        log.info("回收站清理任务开始执行...");
-        if (appConfig.getRecycleSaveDays() != null && appConfig.getRecycleSaveDays() > 0) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -appConfig.getRecycleSaveDays());
-            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
-            favoritesService.cleanRecycleBeforeTime(sdf.format(calendar.getTime()));
+        try {
+            log.info("回收站清理任务开始执行...");
+            if (appConfig.getRecycleSaveDays() != null && appConfig.getRecycleSaveDays() > 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, -appConfig.getRecycleSaveDays());
+                SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+
+                favoritesService.cleanRecycleBeforeTime(sdf.format(calendar.getTime()));
+
+            }
+        } catch (Exception e) {
+            log.error("回收站清理任务执行失败：{}", e.getMessage(), e);
         }
     }
 }

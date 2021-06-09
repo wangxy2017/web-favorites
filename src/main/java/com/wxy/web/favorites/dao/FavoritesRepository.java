@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -37,5 +38,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
 
     @Query("delete from Favorites f where f.deleteFlag = 1 and f.deleteTime < :time")
     @Modifying
-    void cleanRecycleBeforeTime(String time);
+    void cleanRecycleBeforeTime(Date time);
 }

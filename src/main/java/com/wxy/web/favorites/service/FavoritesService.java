@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,7 +124,8 @@ public class FavoritesService {
     }
 
 
-    public void cleanRecycleBeforeTime(String time) {
-        favoritesRepository.cleanRecycleBeforeTime(time);
+    public void cleanRecycleBeforeTime(String time) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+        favoritesRepository.cleanRecycleBeforeTime(sdf.parse(time));
     }
 }
