@@ -69,7 +69,6 @@ public class RegisterController {
             Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_REGISTER);
             String code = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
-                String randomKey = RandomUtil.randomString(PublicConstants.USER_SECRET_KEY_LENGTH);
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
@@ -88,6 +87,8 @@ public class RegisterController {
                 favoritesService.saveAll(favorites);
                 // 生成token
                 String token = jwtUtil.generateToken(user1.getUsername());
+                // 移除验证码
+                verificationService.deleteById(verification.getId());
                 return ApiResponse.success(token);
             } else {
                 return ApiResponse.error(ErrorConstants.INVALID_VERIFICATION_MSG);

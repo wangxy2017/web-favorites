@@ -22,4 +22,12 @@ public class VerificationService {
     public Verification save(Verification verification) {
         return verificationRepository.save(verification);
     }
+
+    public void cleanBeforeTime(String time) {
+        verificationRepository.deleteByExpiredTimeBefore(time);
+    }
+
+    public void deleteById(Integer id){
+        verificationRepository.deleteById(id);
+    }
 }

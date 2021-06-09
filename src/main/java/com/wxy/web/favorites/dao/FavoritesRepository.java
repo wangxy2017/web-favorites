@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -33,4 +34,8 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
     Favorites findByShortcutAndUserIdAndDeleteFlagIsNull(String shortcut, Integer userId);
 
     Page<Favorites> findByUserIdAndDeleteFlag(Integer userId, Integer deleteFlag, Pageable pageable);
+
+    @Query("delete from Favorites f where f.deleteFlag = 1 and f.deleteTime < :time")
+    @Modifying
+    void cleanRecycleBeforeTime(String time);
 }

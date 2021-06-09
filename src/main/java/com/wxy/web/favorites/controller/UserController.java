@@ -89,6 +89,8 @@ public class UserController {
                 User user = springUtils.getCurrentUser();
                 user.setEmail(newEmail);
                 userService.save(user);
+                // 移除验证码
+                verificationService.deleteById(verification.getId());
                 return ApiResponse.success();
             }
         }

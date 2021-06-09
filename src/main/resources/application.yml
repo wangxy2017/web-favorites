@@ -48,6 +48,7 @@ spring:
           ssl:
             enable: true
 app: #系统参数配置
+  recycle-save-days: 30
   verification-expired-minutes: 30
   star-limit: 30 #标记个数限制
   search-limit: 100 #搜索个数限制

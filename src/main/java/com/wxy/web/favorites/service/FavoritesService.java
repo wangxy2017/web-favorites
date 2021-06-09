@@ -119,4 +119,9 @@ public class FavoritesService {
             favoritesRepository.save(favorites);
         }
     }
+
+
+    public void cleanRecycleBeforeTime(String time) {
+        favoritesRepository.cleanRecycleBeforeTime(time);
+    }
 }
