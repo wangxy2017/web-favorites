@@ -14,7 +14,10 @@
     <ul class="layui-tab-title">
         <li class="layui-this">收藏</li>
     </ul>
-    <div class="layui-tab-content" style="text-align: center;">
+    <div class="layui-tab-content">
+        <div class="layui-btn-container" style="text-align: right;">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="cleanRecycle">清空回收站</button>
+        </div>
         <!-- 数据表格 -->
         <table id="favoritesList" lay-filter="favoritesList"></table>
         <!-- 操作 -->
@@ -56,18 +59,19 @@
                 };
             }
             , cols: [[ //表头
-                {type: 'numbers', align: 'center'}
+                {type: 'numbers'}
                 , {
-                    field: 'name', title: '名称', minWidth: 200, align: 'center'
+                    field: 'name', title: '名称', minWidth: 200
                 }
                 , {
-                    field: 'url', title: '地址', align: 'center', templet: function (d) {
+                    field: 'url', title: '地址', templet: function (d) {
                         return '<a class="layui-blue" href="javascript:openUrl(\'' + d.url + '\');">' + d.url + '</a>'
                     }
-                }, {
-                    field: 'deleteTime', title: '删除时间', align: 'center'
                 }
-                , {title: '操作', align: 'center', width: 120, toolbar: '#operates', fixed: 'right'}
+                , {
+                    field: 'deleteTime', title: '删除时间'
+                }
+                , {title: '操作', width: 120, toolbar: '#operates', fixed: 'right'}
             ]]
         });
 
@@ -120,6 +124,27 @@
                 layer.msg('此链接无效', {icon: 7});
             }
         };
+
+        $("#cleanRecycle").click(function(){
+            parent.layer.confirm('确认清空回收站吗?', function(index){
+              parent.layer.close(index);
+
+                $.ajax({
+                    type: "POST",
+                    url: "favorites/recycle/clean/",
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            layer.msg('操作成功', {icon: 6});
+                            table.reload('favoritesList');
+                        } else {
+                            layer.msg('操作失败', {icon: 5});
+                        }
+                    }
+                });
+            });
+        });
     });
 </script>
 </body>
