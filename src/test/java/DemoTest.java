@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +24,6 @@ import java.util.List;
  * @Description TODO
  **/
 @Slf4j
-@Transactional
 @SpringBootTest(classes = WebFavoritesApplication.class)
 public class DemoTest {
 
@@ -68,6 +66,6 @@ public class DemoTest {
     @Test
     public void test2() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
-        favoritesRepository.cleanRecycleBeforeTime(sdf.parse("2021-06-10 01:45:03"));
+        favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse("2021-06-10 01:45:03"));
     }
 }

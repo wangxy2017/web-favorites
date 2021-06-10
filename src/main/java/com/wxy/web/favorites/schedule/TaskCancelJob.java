@@ -19,7 +19,6 @@ import java.util.List;
  **/
 @Component
 @Slf4j
-@Transactional
 public class TaskCancelJob {
 
     @Autowired

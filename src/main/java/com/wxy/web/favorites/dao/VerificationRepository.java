@@ -12,6 +12,7 @@ import java.util.Date;
  **/
 @Repository
 public interface VerificationRepository extends JpaRepository<Verification, Integer> {
+
     Verification findTopByAccountAndActionOrderByExpiredTimeDesc(String account,Integer action);
 
     void deleteByExpiredTimeBefore(Date time);

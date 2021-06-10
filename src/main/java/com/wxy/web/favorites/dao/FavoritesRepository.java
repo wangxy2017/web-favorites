@@ -36,7 +36,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
 
     Page<Favorites> findByUserIdAndDeleteFlag(Integer userId, Integer deleteFlag, Pageable pageable);
 
-    @Query("delete from Favorites f where f.deleteFlag = 1 and f.deleteTime < :time")
-    @Modifying
-    void cleanRecycleBeforeTime(Date time);
+    void deleteByDeleteFlagAndDeleteTimeBefore(Integer deleteFlag, Date time);
 }

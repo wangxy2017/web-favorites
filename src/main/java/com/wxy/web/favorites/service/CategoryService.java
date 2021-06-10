@@ -20,7 +20,6 @@ import java.util.List;
  * @Description
  **/
 @Service
-@Transactional
 public class CategoryService {
 
     @Autowired

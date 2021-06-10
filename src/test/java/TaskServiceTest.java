@@ -16,7 +16,6 @@ import java.util.List;
  * @Description TODO
  **/
 @Slf4j
-@Transactional
 @SpringBootTest(classes = WebFavoritesApplication.class)
 public class TaskServiceTest {
 

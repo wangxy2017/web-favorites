@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
  * @Description
  **/
 @Service
-@Transactional
 public class UserFileService {
 
     @Autowired

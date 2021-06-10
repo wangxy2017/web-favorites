@@ -15,7 +15,6 @@ import java.util.Calendar;
 
 @Component
 @Slf4j
-@Transactional
 public class RecycleJob {
 
     @Autowired
