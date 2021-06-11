@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.controller;
 
-import com.sun.org.apache.bcel.internal.generic.FADD;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
