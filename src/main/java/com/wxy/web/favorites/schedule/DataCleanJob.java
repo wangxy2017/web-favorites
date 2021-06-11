@@ -26,7 +26,7 @@ public class DataCleanJob {
     /**
      * 清理大于30天的数据
      */
-    @Scheduled(cron = "0 2 0 * * ? ")
+    @Scheduled(cron = "${cron.data-clean-job}")
     public void run() {
         try {
             log.info("验证码清理任务开始执行...");

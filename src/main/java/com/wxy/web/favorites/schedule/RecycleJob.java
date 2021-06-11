@@ -26,7 +26,7 @@ public class RecycleJob {
     /**
      * 清理大于30天的数据
      */
-    @Scheduled(cron = "0 1 0 * * ?")
+    @Scheduled(cron = "${cron.recycle-job}")
     public void run() {
         try {
             log.info("回收站清理任务开始执行...");

@@ -35,7 +35,7 @@ public class TaskNoticeJob {
     @Autowired
     private EmailUtils emailUtils;
 
-    @Scheduled(cron = "0 0,30 8-18 * * ?")
+    @Scheduled(cron = "${cron.task-notice-job}")
     public void run() {
         log.info("任务通知程序开始执行...");
         // 查询此刻任务

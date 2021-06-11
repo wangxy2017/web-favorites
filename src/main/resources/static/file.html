@@ -194,6 +194,10 @@
                 });
                 $("#floors").empty().append('<a href="">根目录</a>').append(html);
                 element.render('breadcrumb','floors');
+                // 解决无数据table样式错乱
+                if(count == 0){
+                    $("th[data-key='1-0-4']").css("border-right", "0");
+                }
             }
             , cols: [[ //表头
                 {type: 'checkbox'}

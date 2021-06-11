@@ -24,7 +24,7 @@ public class TaskCancelJob {
     @Autowired
     private TaskService taskService;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "${cron.task-cancel-job}")
     public void run() {
         log.info("任务取消程序开始执行...");
         Calendar calendar = Calendar.getInstance();
