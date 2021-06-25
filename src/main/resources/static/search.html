@@ -511,15 +511,20 @@
 
 			window.openUrl = function(url) {
 				if (url.indexOf("https://") == 0 || url.indexOf("http://") == 0) {
-					try{
-					    window.open(url, '_blank');
-					}catch(err){
-					    window.location.href = url;
-					}
+					newWin(url);
 				} else {
 					alert("此链接无效");
 				}
 			};
+
+			window.newWin = function(url) {
+              var a = document.createElement('a');
+              a.setAttribute('href', url);
+              a.setAttribute('target', '_blank');
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            };
         });
 </script>
 </body>

@@ -121,14 +121,19 @@
         // 打开新窗口
         window.openUrl = function (url) {
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
-                try{
-                    parent.window.open(url, '_blank');
-                }catch(err){
-                    parent.window.location.href = url;
-                }
+                newWin(url);
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
+        };
+
+        window.newWin = function(url) {
+          var a = parent.document.createElement('a');
+          a.setAttribute('href', url);
+          a.setAttribute('target', '_blank');
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
         };
 
         $("#cleanRecycle").click(function(){

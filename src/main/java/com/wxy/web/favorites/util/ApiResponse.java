@@ -1,11 +1,13 @@
 package com.wxy.web.favorites.util;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.wxy.web.favorites.constant.PublicConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@JsonPropertyOrder(value = "code,msg,data")
 public class ApiResponse {
     Integer code;
     String msg;

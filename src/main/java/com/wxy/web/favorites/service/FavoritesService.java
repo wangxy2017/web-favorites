@@ -73,9 +73,10 @@ public class FavoritesService {
     public List<Favorites> searchFavorites(Integer userId, String searchName) {
         Pageable pageable = PageRequest.of(0, appConfig.getSearchLimit());
         // 构造自定义查询条件
-        Specification<Favorites> queryCondition = (Specification<Favorites>) (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<Favorites> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
+            predicateList.add(criteriaBuilder.isNull(root.get("deleteFlag")));
             if (StringUtils.isNotBlank(searchName)) {
                 predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + searchName + "%")));
             }

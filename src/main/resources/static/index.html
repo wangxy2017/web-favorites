@@ -1262,11 +1262,7 @@
                 if(!isEmpty(schema)&&isMobile()){
                     url = schema + url.substring(url.indexOf("://"));
                 }
-                try{
-                    window.open(url, '_blank');
-                }catch(err){
-                    window.location.href = url;
-                }
+                newWin(url);
                 // 记录访问时间
                 $.ajax({
                     type: "GET",
@@ -1276,6 +1272,15 @@
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
+        };
+
+        window.newWin = function(url) {
+          var a = document.createElement('a');
+          a.setAttribute('href', url);
+          a.setAttribute('target', '_blank');
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
         };
 
         // 编辑分类
