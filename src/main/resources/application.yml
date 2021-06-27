@@ -66,7 +66,7 @@ app: #系统参数配置
     - 腾讯视频,https://v.qq.com/
     - 今日头条,https://www.toutiao.com/
 jwt: #jwt令牌配置
-  token-secret-key: wdmhm7iJvRf2n#hc
+  token-secret-key:
   token-expired-seconds: 7200
 cron: #定时任务
   task-notice-job: '0 0,30 8-20 * * ?'

@@ -1,8 +1,10 @@
 package com.wxy.web.favorites.security;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    @Value("${jwt.token-secret-key}")
+    @Value("${jwt.token-secret-key:}")
     private String tokenSecretKey;
 
     @Value("${jwt.token-expired-seconds:7200}")
@@ -41,7 +43,7 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(StringUtils.isNoneBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -62,7 +64,7 @@ public class JwtUtil {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + time))
-                .signWith(SignatureAlgorithm.HS256, tokenSecretKey).compact();
+                .signWith(SignatureAlgorithm.HS256, StringUtils.isNoneBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
