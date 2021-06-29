@@ -21,7 +21,7 @@ public class Favorites {
 
     @Id
     @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "name", nullable = false, columnDefinition = "varchar(500) comment '名称'")
@@ -30,7 +30,7 @@ public class Favorites {
     @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")
     private String icon;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(500) comment '地址'")
+    @Column(name = "url", nullable = false, columnDefinition = "varchar(1000) comment '地址'")
     private String url;
 
     @Column(name = "category_id", nullable = false, columnDefinition = "int(10) comment '分类ID'")
@@ -39,7 +39,7 @@ public class Favorites {
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "pinyin", columnDefinition = "varchar(500) comment '拼音'")
+    @Column(name = "pinyin", columnDefinition = "varchar(5000) comment '拼音'")
     private String pinyin;
 
     @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")

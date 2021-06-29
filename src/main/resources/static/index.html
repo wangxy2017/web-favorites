@@ -382,6 +382,21 @@
 		#slideBtn:hover {
 		    opacity: .8;
 		}
+
+		.url_loading {
+		    color: #009688;
+		    font-size: 22px;
+		    font-weight: bold;
+		    margin-top: 6px;
+		}
+
+		.forgot-icon {
+            margin-top: 8px;
+            display: inline-block;
+            font-size: 20px;
+            color: #5e6d82;
+            cursor: pointer;
+		}
     </style>
 </head>
 <body class="layui-layout-body">
@@ -483,7 +498,7 @@
             <input type="text" name="name" id="name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
-        <i id="url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="color: #009688;font-size: 22px;font-weight: bold;margin-top: 6px;display: none;"></i>
+        <i id="url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
@@ -506,16 +521,17 @@
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
+            <input type="text" name="url" id="edit_url_input" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="edit_name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
                    class="layui-input">
         </div>
+        <i id="edit_url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
@@ -604,6 +620,7 @@
             <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入旧密码"
                    autocomplete="off" class="layui-input">
         </div>
+        <i class="layui-icon layui-icon-about forgot-icon" title="忘记密码在登录页面找回密码"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">新密码</label>
@@ -832,10 +849,38 @@
             });
         });
 
+        $("#edit_url_input").on('input',function(){
+            var url = $(this).val();
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                $("#edit_name_input").addClass("layui-disabled").attr("disabled",true);
+                $("#edit_url_loading").show();
+                // 请求后台解析url
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/url",
+                    data: {"url": url},
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        $("#edit_name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#edit_url_loading").hide();
+
+                        if (result.code == 0 && result.data != "") {
+                            $("#edit_name_input").val(result.data);
+                        }
+                    },
+                    error: function(){
+                        $("#edit_name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#edit_url_loading").hide();
+                    }
+                });
+            }
+        });
+
         $("#url_input").on('input',function(){
             var url = $(this).val();
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
-                $("#name_input").val("").addClass("layui-disabled").attr("disabled",true);
+                $("#name_input").addClass("layui-disabled").attr("disabled",true);
                 $("#url_loading").show();
                 // 请求后台解析url
                 $.ajax({
@@ -848,7 +893,7 @@
                         $("#name_input").removeClass("layui-disabled").removeAttr("disabled",true);
                         $("#url_loading").hide();
 
-                        if (result.code == 0) {
+                        if (result.code == 0 && result.data != "") {
                             $("#name_input").val(result.data);
                         }
                     },
