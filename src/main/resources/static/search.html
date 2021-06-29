@@ -99,6 +99,8 @@
 				flex-wrap: wrap;
 				margin-top: 30px;
 				margin-bottom: 30px;
+				max-height: 300px;
+                overflow: auto;
 			}
 
 			.search-type li {
@@ -218,14 +220,14 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" required lay-verify="required|name" placeholder="请输入引擎名称" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required|name" placeholder="请输入搜索名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入引擎地址" autocomplete="off"
+            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入搜索地址" autocomplete="off"
                    class="layui-input">
             <span style="color: #999!important;font-size: 12px;padding: 5px 0;display: block;">示例：https://www.bing.com/search?q=</span>
         </div>
@@ -330,7 +332,7 @@
 			window.deleteSearchType = function(event){
 			    event.stopPropagation();
 
-			    layer.confirm('确认删除搜索引擎吗?', function(index){
+			    layer.confirm('确认删除搜索吗?', function(index){
                     layer.close(index);
                     layer.load();
 
@@ -356,7 +358,7 @@
 			window.addSearchType = function(){
 			    var index = layer.open({
                     type: 1,
-                    title: "添加搜索引擎",
+                    title: "添加搜索",
                     area: '400px',
                     content: $('#searchTypeFrom')
                 });

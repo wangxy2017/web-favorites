@@ -181,9 +181,10 @@
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/layui.js"></script>
 <script>
-    layui.use(['layer','flow'], function() {
+    layui.use(['layer','flow','util'], function() {
         var layer = layui.layer;
         var flow = layui.flow;
+        var util = layui.util;
 
         // 加载数据
         flow.load({
@@ -235,6 +236,14 @@
             if(result != undefined && result.code == "1001"){
                 window.location.href= "login.html";
             }
+        });
+
+        // 固定块
+        util.fixbar({
+            top: true
+            ,scrollElem: '#center'
+            ,bgcolor: '#393D49'
+            ,css: {right: 40, bottom: 60}
         });
 
         // 点击空白关闭
