@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.util.PageInfo;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,9 @@ import java.util.List;
  **/
 @Service
 public class CategoryService {
+
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -37,8 +40,8 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public Category findByName(String name,Integer userId){
-        return  categoryRepository.findByNameAndUserId(name,userId);
+    public Category findByName(String name, Integer userId) {
+        return categoryRepository.findByNameAndUserId(name, userId);
     }
 
     public List<Category> findByUserId(Integer userId) {
@@ -49,7 +52,13 @@ public class CategoryService {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "sort"));
         orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
-        return categoryRepository.findByUserId(userId,Sort.by(orders));
+        List<Category> list = categoryRepository.findByUserId(userId, Sort.by(orders));
+        int index = 0;
+        for (Category c : list) {
+            c.setPage(index / appConfig.getIndexPageSize() + 1);
+            index++;
+        }
+        return list;
     }
 
     public Category findDefaultCategory(Integer userId) {

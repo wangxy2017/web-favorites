@@ -80,7 +80,7 @@ public class RegisterController {
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
                 // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user1.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null);
+                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user1.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null,null);
                 categoryService.save(category);
                 // 推荐收藏
                 List<Favorites> favorites = recommendsConfig.getRecommends().stream().map(s -> {

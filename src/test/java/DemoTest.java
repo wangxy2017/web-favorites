@@ -58,7 +58,7 @@ public class DemoTest {
             User user = userRepository.save(new User(null, "test" + k, passwordEncoder.encode("test" + k), "test" + k + "@qq.com", null, null, null, null));
             // 批量创建分类
             for (int i = 0; i < 100; i++) {
-                Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null));
+                Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null,null));
                 // 批量创建收藏
                 for (int j = 0; j < 100; j++) {
                     favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null));

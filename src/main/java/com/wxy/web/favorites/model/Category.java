@@ -38,4 +38,7 @@ public class Category {
 
     @Transient
     private List<Favorites> favorites;
+
+    @Transient
+    private Integer page;
 }

@@ -11,6 +11,8 @@ import java.util.List;
 @Data
 public class AppConfig {
 
+    private Integer indexPageSize;
+
     private Integer recycleSaveDays;
 
     private Integer starLimit;

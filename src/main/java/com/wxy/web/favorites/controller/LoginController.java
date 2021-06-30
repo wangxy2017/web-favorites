@@ -93,7 +93,7 @@ public class LoginController {
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 user = userService.save(user);
                 // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null);
+                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null,null);
                 categoryService.save(category);
                 // 推荐收藏
                 Integer userId = user.getId();
