@@ -243,7 +243,7 @@
             top: true
             ,scrollElem: '#center'
             ,bgcolor: '#393D49'
-            ,css: {right: 40, bottom: 60}
+            ,css: {right: 50, bottom: 60}
         });
 
         // 点击空白关闭
@@ -259,6 +259,7 @@
         $("#search_close").click(function () {
             $("#topMoment").show();
             $("#momentList").show();
+            $(".layui-flow-more").show();
             $("#searchList").empty();
             $(this).hide();
             $("#search_text").val("").blur().parent().css({"width":"100px"});
@@ -312,6 +313,7 @@
                         layer.closeAll('loading');
                         $("#topMoment").hide();
                         $("#momentList").hide();
+                        $(".layui-flow-more").hide();
                         $("#searchList").empty();
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
