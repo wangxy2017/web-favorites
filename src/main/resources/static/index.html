@@ -2114,7 +2114,7 @@
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
-                $("#loadingDiv").fadeIn(500,function(){
+                $("#loadingDiv").fadeIn("normal",function(){
                     var count = page - currentPage;
                     for (var i=0;i<count;i++){
                         loadList(++currentPage);
