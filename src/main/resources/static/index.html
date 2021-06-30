@@ -773,7 +773,6 @@
             elem: '#main'
             ,scrollElem: '#layuiBody'
             ,mb: 400
-            ,end: ' '
             ,done: function(page, next){
               var lis = [];
               if(page == 1||page>currentPage){
@@ -785,6 +784,9 @@
                         dataType: "json",
                         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
+                            if(page == 1){
+                                $("#loadingDiv").fadeOut();
+                            }
                             if (result.code == 0) {
                                 // 加载数据
                                 $.each(result.data.list, function (i, c) {
@@ -1134,7 +1136,7 @@
         $("#search_close").click(function () {
             $("#starDiv").show();
             $("#main").show();
-            $(".layui-flow-more").show();
+            
             $("#searchDiv").empty();
             $(this).hide();
             $("#search_name").val("").blur();
@@ -1166,7 +1168,7 @@
         // 搜索文本
         window.searchFavorites = function(name){
             $("#main").hide();
-            $(".layui-flow-more").hide();
+            
             $("#starDiv").hide();
             layer.load();
             $.ajax({
@@ -2110,7 +2112,7 @@
             // 退出搜索模式
             $("#starDiv").show();
             $("#main").show();
-            $(".layui-flow-more").show();
+            
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
@@ -2119,7 +2121,6 @@
                     for (var i=0;i<count;i++){
                         loadList(++currentPage);
                     }
-                    $("#loadingDiv").fadeOut();
                     // 定位到锚点
                     var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
                     $("#layuiBody").animate({scrollTop: offsetTop}, 200);

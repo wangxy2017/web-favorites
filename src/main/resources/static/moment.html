@@ -191,7 +191,6 @@
             elem: '#momentList'
             ,scrollElem: '#center'
             ,mb: 400
-            ,end: ' '
             ,done: function(page, next){
               var lis = [];
               $.ajax({
@@ -201,6 +200,9 @@
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
+                        if(page == 1){
+                            layer.closeAll('loading');
+                        }
                         if (result.code == 0) {
                             $.each(result.data.list, function(index, item){
                                 var html = '';
@@ -259,7 +261,7 @@
         $("#search_close").click(function () {
             $("#topMoment").show();
             $("#momentList").show();
-            $(".layui-flow-more").show();
+            
             $("#searchList").empty();
             $(this).hide();
             $("#search_text").val("").blur().parent().css({"width":"100px"});
@@ -313,7 +315,7 @@
                         layer.closeAll('loading');
                         $("#topMoment").hide();
                         $("#momentList").hide();
-                        $(".layui-flow-more").hide();
+                        
                         $("#searchList").empty();
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
@@ -534,6 +536,8 @@
         };
 
         $(function(){
+            // 加载动画
+            layer.load();
             loadTopMoment();
             // 暂无数据
             $.ajax({
