@@ -256,6 +256,10 @@
           height: 30px;
           text-align: center;
           font-size: 10px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
 
         .ljZkoB {
@@ -397,6 +401,15 @@
             color: #5e6d82;
             cursor: pointer;
 		}
+
+		#loadingDiv {
+		    z-index: 9999999;
+		    position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+		}
     </style>
 </head>
 <body class="layui-layout-body">
@@ -443,12 +456,14 @@
         <div id="starDiv"></div>
         <div id="main"></div>
         <div id="searchDiv"></div>
-        <div class="lGDtb" style="display: none;position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);">
-            <div class="ljZkoB"></div>
-            <div class="gPySoS"></div>
-            <div class="dVkzjP"></div>
-            <div class="UdOCq"></div>
-            <div class="bnWJxh"></div>
+        <div id="loadingDiv">
+            <div class="lGDtb">
+                <div class="ljZkoB"></div>
+                <div class="gPySoS"></div>
+                <div class="dVkzjP"></div>
+                <div class="UdOCq"></div>
+                <div class="bnWJxh"></div>
+            </div>
         </div>
     </div>
     <div class="layui-footer" style="left: 0;">
@@ -2042,7 +2057,7 @@
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
-                    $(".lGDtb").fadeOut();
+                    $("#loadingDiv").fadeOut();
                     if (result.code == 0) {
                         var user = result.data;
                         $("#username").text(user.username.substring(0, 4));
@@ -2113,7 +2128,7 @@
         // 页面加载完成执行
         $(function () {
             // 执行加载动画
-            $(".lGDtb").fadeIn();
+            $("#loadingDiv").fadeIn();
             // 加载用户信息
             loadUserInfo();
             // 加载常用网址
