@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -25,7 +26,7 @@ public class TaskCancelJob {
     private TaskService taskService;
 
     @Scheduled(cron = "${cron.task-cancel-job}")
-    public void run() {
+    public void run() throws ParseException {
         log.info("任务取消程序开始执行...");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);

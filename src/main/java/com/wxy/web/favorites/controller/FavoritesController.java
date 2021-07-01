@@ -435,7 +435,7 @@ public class FavoritesController {
     public void export(@RequestParam(required = false) String f,
                        @RequestParam(required = false) String m,
                        @RequestParam(required = false) String t,
-                       @RequestParam(required = false) String s) throws IOException {
+                       @RequestParam(required = false) String s) throws IOException, ParseException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
         List<Task> taskList = new ArrayList<>();

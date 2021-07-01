@@ -1,12 +1,15 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.TaskRepository;
 import com.wxy.web.favorites.model.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,16 +40,20 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public List<Task> findAllByUserId(String startDate, String endDate, Integer userId) {
-        return taskRepository.findAllByUserId(startDate,endDate,userId);
+    public List<Task> findAllByUserId(String startDate, String endDate, Integer userId) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+        return taskRepository.findAllByUserIdAndTaskDateBetween(userId,sdf.parse(startDate),sdf.parse(endDate));
     }
 
-    public List<Task> findByAlarmTime(String alarmTime) {
-        return taskRepository.findByAlarmTime(alarmTime);
+    public List<Task> findByAlarmTime(String alarmTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+        return taskRepository.findByAlarmTime(sdf.parse(alarmTime));
     }
 
-    public List<Task> findUndoTask(String taskDate) {
-        return taskRepository.findUndoTask(taskDate);
+    public List<Task> findUndoTask(String taskDate) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+        List<Integer> levels = Arrays.asList(PublicConstants.TASK_LEVEL_0, PublicConstants.TASK_LEVEL_1, PublicConstants.TASK_LEVEL_2, PublicConstants.TASK_LEVEL_3);
+        return taskRepository.findByTaskDateAndLevelIn(sdf.parse(taskDate),levels);
     }
 }
 

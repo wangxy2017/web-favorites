@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Index;
 import java.util.Date;
 import java.util.List;
 
@@ -12,12 +13,9 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    @Query("select t from Task t where t.userId = :userId and to_char(t.taskDate,'yyyy-MM-dd') between :startDate and :endDate")
-    List<Task> findAllByUserId(String startDate, String endDate, Integer userId);
+    List<Task> findAllByUserIdAndTaskDateBetween( Integer userId,Date startDate, Date endDate);
 
-    @Query("select t from Task t where to_char(t.alarmTime,'yyyy-MM-dd HH24:MI:SS') = :alarmTime")
-    List<Task> findByAlarmTime(String alarmTime);
+    List<Task> findByAlarmTime(Date alarmTime);
 
-    @Query("select t from Task t where to_char(t.taskDate,'yyyy-MM-dd') = :taskDate and t.level in (0,1,2,3)")
-    List<Task> findUndoTask(String taskDate);
+    List<Task> findByTaskDateAndLevelIn(Date taskDate, List<Integer> levels);
 }

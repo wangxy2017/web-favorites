@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ public class TaskNoticeJob {
     private EmailUtils emailUtils;
 
     @Scheduled(cron = "${cron.task-notice-job}")
-    public void run() {
+    public void run() throws ParseException {
         log.info("任务通知程序开始执行...");
         // 查询此刻任务
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_MINUTE_PATTERN);

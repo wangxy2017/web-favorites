@@ -9,6 +9,7 @@ import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class TaskController {
     }
 
     @GetMapping("/all/{date}")
-    public ApiResponse findAll(@PathVariable String date) {
+    public ApiResponse findAll(@PathVariable String date) throws ParseException {
         User user = springUtils.getCurrentUser();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
