@@ -209,7 +209,7 @@
             <ul class="search-items layui-anim layui-anim-fadein"></ul>
             <i class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" id="search_close" style="display:none;"></i>
         </div>
-        <ul class="search-type"></ul>
+        <ul class="search-type" id="searchTypeList"></ul>
     </div>
 </div>
 <div class="footer">
@@ -276,6 +276,48 @@
                 }
             });
 
+            // 加载数据
+            flow.load({
+                elem: '#searchTypeList'
+                ,scrollElem: '#searchTypeList'
+                ,mb: 50
+                ,done: function(page, next){
+                  var lis = [];
+                  if(page == 1){
+                    $.getJSON("search.json",function(result){
+                        $.each(result, function(i, item){
+                          var html = '';
+                            html += '<li class="search-type-li" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                '</span></li>';
+                            lis.push(html);
+                        });
+                      });
+                  }
+                    $.ajax({
+                        type: "GET",
+                        url: "search/data",
+                        data: {"pageNum": page,"pageSize": 20},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if(result.code == 0){
+                                $.each(result.data.list, function(index, item) {
+                                    var html = '';
+                                    html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                        '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
+                                    lis.push(html);
+                                });
+                                $("#addBtn").remove();
+                                var addBtn = '<li id="addBtn" onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
+                                lis.push(addBtn);
+                                next(lis.join(''), page < result.data.pages);
+                                imgRender();
+                            }
+                        }
+                    });
+                }
+            });
+
             // 根据数组的下标，删除该下标的元素
             Array.prototype.remove = function(val) {
                 var index = this.indexOf(val);
@@ -300,33 +342,8 @@
             };
 
             window.loadData = function(){
-                $.ajax({
-                    type: "GET",
-                    url: "search/data",
-                    dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        if(result.code == 0){
-                            var html = '';
-                            $.each(result.data.systemList, function(index, item) {
-                                html += '<li class="search-type-li" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
-                                    '</span></li>';
-                            });
-                            $.each(result.data.userList, function(index, item) {
-                                html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
-                                    '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
-                            });
-                            html += '<li onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
-                            $(".search-type").empty().append(html);
-                            imgRender();
-                        }
-                    }
-                });
-            };
 
-			$(function() {
-			    loadData();
-			});
+            };
 
             // 删除搜索引擎
 			window.deleteSearchType = function(event){

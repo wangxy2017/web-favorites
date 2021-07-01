@@ -735,7 +735,7 @@
         var util = layui.util;
 
         var limit = 40;// 显示个数限制
-        var indexPageSize = 4;// 分页大小
+        var indexPageSize = 10;// 分页大小
 
         var currentPage = 1;
 
@@ -1139,7 +1139,7 @@
         $("#search_close").click(function () {
             $("#starDiv").show();
             $("#main").show();
-            
+
             $("#searchDiv").empty();
             $(this).hide();
             $("#search_name").val("").blur();
@@ -1171,7 +1171,7 @@
         // 搜索文本
         window.searchFavorites = function(name){
             $("#main").hide();
-            
+
             $("#starDiv").hide();
             layer.load();
             $.ajax({
@@ -2115,7 +2115,7 @@
             // 退出搜索模式
             $("#starDiv").show();
             $("#main").show();
-            
+
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
@@ -2178,7 +2178,8 @@
                     if (result.code == 0) {
                         var html = '';
                         $.each(result.data, function (i, c) {
-                            html += '<li><a href="javascript:;" onclick="position(' + c.id + ',' + c.page + ')"><cite>' + c.name + '</cite></a></li>';
+                            var page = parseInt(i / indexPageSize) + 1;
+                            html += '<li><a href="javascript:;" onclick="position(' + c.id + ',' + page + ')"><cite>' + c.name + '</cite></a></li>';
                         });
                         $("#catalogList").empty().append(html);
                         // 绑定点击事件

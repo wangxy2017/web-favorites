@@ -52,13 +52,7 @@ public class CategoryService {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "sort"));
         orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
-        List<Category> list = categoryRepository.findByUserId(userId, Sort.by(orders));
-        int index = 0;
-        for (Category c : list) {
-            c.setPage(index / appConfig.getIndexPageSize() + 1);
-            index++;
-        }
-        return list;
+        return categoryRepository.findByUserId(userId, Sort.by(orders));
     }
 
     public Category findDefaultCategory(Integer userId) {

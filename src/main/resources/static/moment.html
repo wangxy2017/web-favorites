@@ -199,7 +199,7 @@
               $.ajax({
                     type: "GET",
                     url: "moment/list",
-                    data: {"pageNum": page,"pageSize": 10},
+                    data: {"pageNum": page,"pageSize": 20},
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {

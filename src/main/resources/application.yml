@@ -51,7 +51,6 @@ spring:
           ssl:
             enable: true
 app: #系统参数配置
-  index-page-size: 4 #首页分页大小
   recycle-save-days: 30 #回收站保存时间
   verification-expired-minutes: 30 #验证码过期时间
   star-limit: 30 #标记个数限制
