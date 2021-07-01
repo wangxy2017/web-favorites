@@ -140,17 +140,19 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ApiResponse upload(@RequestParam("file") MultipartFile file, @RequestParam(required = false) Integer pid) throws IOException {
+    public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
-        User user1 = userService.findById(user.getId());
-        long restSize = Optional.ofNullable(user1.getCapacity()).orElse(0L) - Optional.ofNullable(user1.getUsedSize()).orElse(0L);
-        if (restSize > file.getSize()) {
-            String path = userFileService.writeFile(file.getInputStream());
-            String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-            UserFile userFile = new UserFile(null, user1.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
-            userFileService.save(userFile);
-            user1.setUsedSize(Optional.ofNullable(user1.getUsedSize()).orElse(0L) + file.getSize());
-            userService.save(user1);
+        long restSize = Optional.ofNullable(user.getCapacity()).orElse(0L) - Optional.ofNullable(user.getUsedSize()).orElse(0L);
+        long fileSize = Arrays.stream(files).mapToLong(MultipartFile::getSize).sum();
+        if (restSize > fileSize) {
+            for (MultipartFile file : files) {
+                String path = userFileService.writeFile(file.getInputStream());
+                String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
+                UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
+                userFileService.save(userFile);
+                user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
+                userService.save(user);
+            }
             return ApiResponse.success();
         }
         return ApiResponse.error(ErrorConstants.NO_SPACE_LEFT_MSG);
