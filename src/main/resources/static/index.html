@@ -741,6 +741,9 @@
 
         var indexMap = new Map();// 弹出层索引容器
 
+        // 执行加载动画
+        $("#loadingDiv").fadeIn();
+
         // 点击空白关闭
         $(document).on("click", function(e) {
             var _conss = $('.search-div');//点击的容器范围
@@ -2215,8 +2218,6 @@
 
         // 页面加载完成执行
         $(function () {
-            // 执行加载动画
-            $("#loadingDiv").fadeIn();
             // 加载用户信息
             loadUserInfo();
             // 加载常用网址

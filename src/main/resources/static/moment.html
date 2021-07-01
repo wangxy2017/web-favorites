@@ -186,6 +186,9 @@
         var flow = layui.flow;
         var util = layui.util;
 
+        // 加载动画
+        layer.load();
+
         // 加载数据
         flow.load({
             elem: '#momentList'
@@ -536,8 +539,6 @@
         };
 
         $(function(){
-            // 加载动画
-            layer.load();
             loadTopMoment();
             // 暂无数据
             $.ajax({
