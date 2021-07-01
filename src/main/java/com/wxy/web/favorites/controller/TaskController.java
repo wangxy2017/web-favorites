@@ -5,6 +5,7 @@ import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.TaskService;
 import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.util.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -63,25 +64,15 @@ public class TaskController {
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
         int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        List<Task> list = taskService.findAllByUserId(date + "-01", date + "-" + lastDay, user.getId());
-        // 按每天分组
-        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
-        Map<String, List<Task>> listMap = list.stream().collect(Collectors.groupingBy(t -> sdf.format(t.getTaskDate())));
-        List<Map<String, Object>> dataList = listMap.entrySet().stream().map(entry -> {
-            List<Task> tasks = entry.getValue();
-            Map<Integer, Long> levelCountList = tasks.stream().collect(Collectors.groupingBy(Task::getLevel, Collectors.counting()));
-            Map<String, Object> map = new HashMap<>();
-            map.put("date", entry.getKey());
-            map.put("redTasks", Optional.ofNullable(levelCountList.get(PublicConstants.TASK_LEVEL_0)).orElse(0L));
-            map.put("orangeTasks", Optional.ofNullable(levelCountList.get(PublicConstants.TASK_LEVEL_1)).orElse(0L));
-            map.put("greenTasks", Optional.ofNullable(levelCountList.get(PublicConstants.TASK_LEVEL_2)).orElse(0L));
-            map.put("blueTasks", Optional.ofNullable(levelCountList.get(PublicConstants.TASK_LEVEL_3)).orElse(0L));
-            map.put("grayTasks", Optional.ofNullable(levelCountList.get(PublicConstants.TASK_LEVEL_4)).orElse(0L));
-            map.put("totalTasks", tasks.size());
-            map.put("taskList", tasks);
-            return map;
-        }).collect(Collectors.toList());
+        List<Map<String,Object>> dataList = taskService.taskCountByDayBetween(user.getId(),date + "-01", date + "-" + lastDay);
         return ApiResponse.success(dataList);
+    }
+
+    @GetMapping("/list")
+    public ApiResponse findPageList(@RequestParam String date,@RequestParam Integer pageNum,@RequestParam Integer pageSize) throws ParseException {
+        User user = springUtils.getCurrentUser();
+        PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(),date,pageNum,pageSize);
+        return ApiResponse.success(page);
     }
 
 }
