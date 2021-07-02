@@ -384,10 +384,11 @@
 <script src="layui/calendar.js"></script>
 <script src="layui/layui.js"></script>
 <script>
-    layui.use(['layer', 'form', 'laydate'], function() {
+    layui.use(['layer', 'form', 'laydate', 'flow'], function() {
         var layer = layui.layer;
         var form = layui.form;
         var laydate = layui.laydate;
+        var flow = layui.flow;
 
         var indexMap = new Map();// 弹出层索引容器
 
@@ -531,71 +532,130 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        var today = getToday();
+                        var today = getToday();// 获取今天日期，与任务日期比较，判断是历史任务还是未来任务。
                         $(result.data).each(function(index,item){
                             var html = '';
                             var date = item.date;
-                            if(dateCompare(date,today) >= 0){
+                            if(dateCompare(date,today) >= 0){// 未来任务，显示任务个数
                                 html += '<div class="task-count">';
-                                if(item.blueTasks > 0){
+                                if(item.blueTasks && item.blueTasks > 0){
                                     html += '<span class="layui-badge layui-bg-blue">' + item.blueTasks + '</span>';
                                 }
-                                if(item.greenTasks > 0){
+                                if(item.greenTasks && item.greenTasks > 0){
                                     html += '<span class="layui-badge layui-bg-green">' + item.greenTasks + '</span>';
                                 }
-                                if(item.orangeTasks > 0){
+                                if(item.orangeTasks && item.orangeTasks > 0){
                                     html += '<span class="layui-badge layui-bg-orange">' + item.orangeTasks + '</span>';
                                 }
-                                if(item.redTasks > 0){
+                                if(item.redTasks && item.redTasks > 0){
                                     html += '<span class="layui-badge layui-bg-red">' + item.redTasks + '</span>';
                                 }
-                                if(item.grayTasks > 0){
+                                if(item.grayTasks && item.grayTasks > 0){
                                     html += '<span class="layui-badge layui-bg-gray">' + item.grayTasks + '</span>';
                                 }
                                 html += '</div>';
-                                html += '<div class="layui-anim layui-anim-fadein task-view">';
-                                html += '   <div class="task-header">';
-                                html += '	    <span>' + date + '</span>';
-                                html += '	</div>';
-                                html += '	<div class="task-list">';
-                                $(item.taskList).each(function(i,t){
-                                    html += '   <div class="task-item">';
-                                    html += getLabel(t.level);
-                                    html += '	    <span class="content">' + t.content + '</span>';
-                                    if(t.level < 4){
-                                        html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
-                                        if(t.isAlarm){
-                                            html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
-                                        }
-                                        html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
-                                        html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
-                                        html += '   </div>';
-                                    }
-                                    html += '   </div>';
-                                });
-                                html += '   </div>';
-                                html += '   <div class="layui-btn-container">';
-                                html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
-                                html += '   </div>';
-                                html += '</div>';
-                            }else{// 昨天
+                            }else{// 历史任务，显示历史图标
                                 html += '<span class="layui-badge layui-bg-gray task-history">历史</span>';
-                                html += '<div class="layui-anim layui-anim-fadein task-view">';
-                                html += '   <div class="task-header">';
-                                html += '	    <span>' + date + '</span>';
-                                html += '	</div>';
-                                html += '	<div class="task-list">';
-                                $(item.taskList).each(function(i,t){
-                                    html += '   <div class="task-item">';
-                                    html += getLabel(t.level);
-                                    html += '	    <span class="content">' + t.content + '</span>';
-                                    html += '   </div>';
-                                });
-                                html += '   </div>';
-                                html += '</div>';
                             }
-                            $("#" + date).append(html).hover(function(){// 任务列表显示
+                            // 监听日历hover事件，初始化任务面板
+                            $("#" + date).append(html).hover(function(){
                                 var taskView = $(this).find('.task-view');
+                                if(!taskView[0]){
+                                    if(dateCompare(date,today) >= 0){// 创建未来任务面板
+                                        var html = '';
+                                        html += '<div class="layui-anim layui-anim-fadein task-view">';
+                                        html += '   <div class="task-header">';
+                                        html += '	    <span>' + date + '</span>';
+                                        html += '	</div>';
+                                        html += '	<div class="task-list" id="task' + date + '">';
+                                        html += '   </div>';
+                                        html += '   <div class="layui-btn-container">';
+                                        html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
+                                        html += '   </div>';
+                                        html += '</div>';
+                                        taskView = $(this).append(html).find('.task-view');
+                                        // 初始化数据
+                                        flow.load({
+                                            elem: '#task' + date
+                                            ,scrollElem: '#task' + date
+                                            ,mb: 50
+                                            ,done: function(page, next){
+                                              var lis = [];
+                                              $.ajax({
+                                                type: "GET",
+                                                url: "task/list",
+                                                async: false,
+                                                data: {"date": date, "pageNum": page,"pageSize": 20},
+                                                dataType: "json",
+                                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                                success: function (result) {
+                                                    if (result.code == 0) {
+                                                        $(result.data.list).each(function(i,t){
+                                                            var html = '';
+                                                            html += '   <div class="task-item">';
+                                                            html += getLabel(t.level);
+                                                            html += '	    <span class="content">' + t.content + '</span>';
+                                                            if(t.level < 4){
+                                                                html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
+                                                                if(t.isAlarm){
+                                                                    html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
+                                                                }
+                                                                html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
+                                                                html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                                                html += '   </div>';
+                                                            }
+                                                            html += '   </div>';
+                                                            lis.push(html);
+                                                        });
+                                                        next(lis.join(''), page < result.data.pages);
+                                                    }
+                                                }
+                                              });
+                                            }
+                                        });
+                                    }else{// 创建历史任务面板
+                                        var html = '';
+                                        html += '<div class="layui-anim layui-anim-fadein task-view">';
+                                        html += '   <div class="task-header">';
+                                        html += '	    <span>' + date + '</span>';
+                                        html += '	</div>';
+                                        html += '	<div class="task-list">';
+                                        html += '   </div>';
+                                        html += '</div>';
+                                        taskView = $(this).append(html).find('.task-view');
+                                        // 初始化数据
+                                        flow.load({
+                                            elem: '#task' + date
+                                            ,scrollElem: '#task' + date
+                                            ,mb: 50
+                                            ,done: function(page, next){
+                                              var lis = [];
+                                              $.ajax({
+                                                type: "GET",
+                                                url: "task/list",
+                                                async: false,
+                                                data: {"date": date, "pageNum": page,"pageSize": 20},
+                                                dataType: "json",
+                                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                                success: function (result) {
+                                                    if (result.code == 0) {
+                                                         $(result.data.list).each(function(i,t){
+                                                            var html = '';
+                                                            html += '   <div class="task-item">';
+                                                            html += getLabel(t.level);
+                                                            html += '	    <span class="content">' + t.content + '</span>';
+                                                            html += '   </div>';
+                                                            lis.push(html);
+                                                        });
+                                                        next(lis.join(''), page < result.data.pages);
+                                                    }
+                                                }
+                                              });
+                                            }
+                                        });
+                                    }
+                                }
+                                // 初始化面板后，计算面板显示位置
                                 var tWidth = parseInt(taskView.width());
                                 var tHeight = parseInt(taskView.height());
                                 var top = $(this).offset().top;
@@ -631,9 +691,9 @@
                                 taskView.show();
                             },function(){
                                 $(this).find('.task-view').hide();
-                            }).find(".task-new-mask").remove();
+                            }).find(".task-new-mask").remove();// 移除添加任务按钮：如果是历史时间，不需要按钮。如果是未来时间且有任务，则在任务面板添加。所以这里不需要。
                         });
-                        // 闹钟hover事件
+                        // 监听闹钟hover事件
                         $(".alarm-icon").hover(function(){
                             var that = this;
                             layer.tips($(that).attr("data-time").substring(11), that, {tips: 4});

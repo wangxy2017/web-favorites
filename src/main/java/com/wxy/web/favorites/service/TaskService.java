@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author wangxiaoyuan
@@ -76,7 +74,44 @@ public class TaskService {
     public List<Map<String, Object>> taskCountByDayBetween(Integer userId, String startDate, String endDate) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
         List<Map<String, Object>> mapList = taskRepository.taskCountByDayBetween(userId, sdf.parse(startDate), sdf.parse(endDate));
-        return null;
+        Map<String, List<Map<String, Object>>> groupList = mapList.stream().collect(Collectors.groupingBy(map -> sdf.format(map.get("taskDate"))));
+        return groupList.entrySet().stream().map(entry -> {
+            int redTasks = 0;
+            int orangeTasks = 0;
+            int greenTasks = 0;
+            int blueTasks = 0;
+            int grayTasks = 0;
+            int cancelTasks = 0;
+            int totalTasks = 0;
+            for (Map<String, Object> map : entry.getValue()) {
+                int level = Integer.parseInt(map.get("level").toString());
+                int count = Integer.parseInt(map.get("count").toString());
+                if (PublicConstants.TASK_LEVEL_0.equals(level)) {
+                    redTasks = count;
+                } else if (PublicConstants.TASK_LEVEL_1.equals(level)) {
+                    orangeTasks = count;
+                } else if (PublicConstants.TASK_LEVEL_2.equals(level)) {
+                    greenTasks = count;
+                } else if (PublicConstants.TASK_LEVEL_3.equals(level)) {
+                    blueTasks = count;
+                } else if (PublicConstants.TASK_LEVEL_4.equals(level)) {
+                    grayTasks = count;
+                } else if (PublicConstants.TASK_LEVEL_5.equals(level)) {
+                    cancelTasks = count;
+                }
+                totalTasks += count;
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("date", entry.getKey());
+            map.put("redTasks", redTasks);
+            map.put("orangeTasks", orangeTasks);
+            map.put("greenTasks", greenTasks);
+            map.put("blueTasks", blueTasks);
+            map.put("grayTasks", grayTasks);
+            map.put("cancelTasks", cancelTasks);
+            map.put("totalTasks", totalTasks);
+            return map;
+        }).collect(Collectors.toList());
     }
 }
 
