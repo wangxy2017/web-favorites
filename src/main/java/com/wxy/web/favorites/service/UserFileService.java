@@ -116,7 +116,8 @@ public class UserFileService {
             pathList.forEach(p -> new File(p).delete());
             // 更新容量
             User user = userRepository.getOne(userId);
-            user.setUsedSize(user.getUsedSize() - totalSize);
+            long size = user.getUsedSize() - totalSize;
+            user.setUsedSize(size < 0 ? 0 : size);// 容量计算误差修正
             userRepository.save(user);
             // 数据删除
             userFileRepository.deleteAll(deletingFiles);
