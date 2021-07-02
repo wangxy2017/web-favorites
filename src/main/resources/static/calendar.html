@@ -598,7 +598,7 @@
                                                             if(t.level < 4){
                                                                 html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
                                                                 if(t.isAlarm){
-                                                                    html += '   <img class="alarm-icon" src="images/alarm.svg" alt="" data-time="' + t.alarmTime + '">';
+                                                                    html += '   <img class="alarm-icon" src="images/alarm.svg" data-time="' + t.alarmTime.substring(11) + '">';
                                                                 }
                                                                 html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
                                                                 html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
@@ -692,13 +692,14 @@
                             },function(){
                                 $(this).find('.task-view').hide();
                             }).find(".task-new-mask").remove();// 移除添加任务按钮：如果是历史时间，不需要按钮。如果是未来时间且有任务，则在任务面板添加。所以这里不需要。
-                        });
-                        // 监听闹钟hover事件
-                        $(".alarm-icon").hover(function(){
-                            var that = this;
-                            layer.tips($(that).attr("data-time").substring(11), that, {tips: 4});
-                        },function(){
-                            layer.closeAll('tips');
+                            // 监听闹钟hover事件
+                            var tipIndex;
+                            $("#" + date).on('mouseenter','.alarm-icon',function(e){
+                                var that = $(e.target);
+                                tipIndex = layer.tips(that.attr("data-time"), that, {tips: 4});
+                            }).on('mouseleave','.alarm-icon',function(e){
+                                layer.close(tipIndex);
+                            });
                         });
                     } else {
                         layer.msg("数据加载失败", {icon: 5});
