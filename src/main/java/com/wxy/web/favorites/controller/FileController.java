@@ -142,18 +142,23 @@ public class FileController {
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
-        long restSize = Optional.ofNullable(user.getCapacity()).orElse(0L) - Optional.ofNullable(user.getUsedSize()).orElse(0L);
-        long fileSize = Arrays.stream(files).mapToLong(MultipartFile::getSize).sum();
-        if (restSize > fileSize) {
+        if (Optional.ofNullable(user.getCapacity()).orElse(0L) > 0) {
+            long restSize = user.getCapacity() - Optional.ofNullable(user.getUsedSize()).orElse(0L);
+            long totalSize = 0;
             for (MultipartFile file : files) {
-                String path = userFileService.writeFile(file.getInputStream());
-                String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-                UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
-                userFileService.save(userFile);
-                user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
-                userService.save(user);
+                totalSize += file.getSize();
             }
-            return ApiResponse.success();
+            if (restSize > totalSize) {
+                for (MultipartFile file : files) {
+                    String path = userFileService.writeFile(file.getInputStream());
+                    String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
+                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
+                    userFileService.save(userFile);
+                    user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
+                    userService.save(user);
+                }
+                return ApiResponse.success();
+            }
         }
         return ApiResponse.error(ErrorConstants.NO_SPACE_LEFT_MSG);
     }
