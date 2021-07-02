@@ -497,23 +497,16 @@
                     return $("#parent").val();
                 }
             }
+            , multiple: true
             , accept: 'file'
             , before: function(obj){
                  layer.load(1);
             }
-            , done: function(res){
+            , allDone: function(obj){
                 layer.closeAll('loading');
-                if(res.code == 0){
-                    layer.msg('上传成功', {icon: 6});
-                    table.reload('fileList');
-                    loadCapacity();
-                }else{
-                    layer.msg('上传失败', {icon: 5});
-                }
-            }
-            , error: function () {
-                layer.closeAll('loading');
-                layer.msg('上传失败', {icon: 5});
+                layer.msg('上传成功:'+obj.successful+',上传失败:'+obj.aborted, {icon: 6});
+                table.reload('fileList');
+                loadCapacity();
             }
             , progress: function (n, elem) {
                 element.progress('progress', n + '%');
