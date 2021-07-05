@@ -154,7 +154,8 @@ public class FileController {
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
                     UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
                     userFileService.save(userFile);
-                    user.setUsedSize(Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize());
+                    long newSize = Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize();
+                    user.setUsedSize(newSize > user.getCapacity() ? user.getCapacity() : newSize);// 容量误差修正
                     userService.save(user);
                 }
                 return ApiResponse.success();
