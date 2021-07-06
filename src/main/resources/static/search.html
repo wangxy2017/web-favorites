@@ -284,6 +284,7 @@
                 ,done: function(page, next){
                   var lis = [];
                   if(page == 1){
+                    $.ajaxSettings.async = false;
                     $.getJSON("search.json",function(result){
                         $.each(result, function(i, item){
                           var html = '';
@@ -291,7 +292,8 @@
                                 '</span></li>';
                             lis.push(html);
                         });
-                      });
+                    });
+                    $.ajaxSettings.async = true;
                   }
                     $.ajax({
                         type: "GET",
