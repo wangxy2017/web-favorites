@@ -411,6 +411,12 @@
             bottom: 0;
             display:none;
 		}
+
+		.url-copy-btn {
+		    margin-top: 7px;
+		    border-color: #FF5722!important;
+		    color: #FF5722!important;
+		}
     </style>
 </head>
 <body class="layui-layout-body">
@@ -540,6 +546,7 @@
             <input type="text" name="url" id="edit_url_input" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
                    class="layui-input">
         </div>
+        <button type="button" id="edit_url_input_copy" class="layui-btn layui-btn-primary layui-btn-xs url-copy-btn" data-clipboard-target="#edit_url_input">复制</button>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
@@ -2163,9 +2170,14 @@
             var clipboard = new ClipboardJS('#accountCopy');
             clipboard.on('success', function(e) {layer.msg("复制成功");});
             clipboard.on('error', function(e) {layer.msg("复制失败");});
+
             var clipboard1 = new ClipboardJS('#passwordCopy');
             clipboard1.on('success', function(e) {layer.msg("复制成功");});
             clipboard1.on('error', function(e) {layer.msg("复制失败");});
+
+            var clipboard2 = new ClipboardJS('#edit_url_input_copy');
+            clipboard2.on('success', function(e) {layer.msg("复制成功");});
+            clipboard2.on('error', function(e) {layer.msg("复制失败");});
         };
 
         window.initCatalog = function(){
