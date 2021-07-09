@@ -553,6 +553,9 @@
                                 if(item.grayTasks && item.grayTasks > 0){
                                     html += '<span class="layui-badge layui-bg-gray">' + item.grayTasks + '</span>';
                                 }
+                                if(item.cancelTasks && item.cancelTasks > 0){
+                                    html += '<span class="layui-badge-rim">' + item.cancelTasks + '</span>';
+                                }
                                 html += '</div>';
                             }else{// 历史任务，显示历史图标
                                 html += '<span class="layui-badge layui-bg-gray task-history">历史</span>';
@@ -878,7 +881,7 @@
                     if (result.code == 0) {
                         var task_item = $(obj).parent().parent();
                         layer.msg('操作成功', {icon: 6});
-                        task_item.find('.task-level').replaceWith('<span class="layui-badge-rim task-level">完成</span>');
+                        task_item.find('.task-level').replaceWith('<span class="layui-badge layui-bg-gray task-level">完成</span>');
                         task_item.find('.task-action').remove();
                         task_item.find('.alarm-icon').remove();
                     } else {
