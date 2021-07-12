@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @Service
+@Transactional
 public class TaskService {
 
     @Autowired
@@ -43,6 +45,11 @@ public class TaskService {
 
     public void deleteById(Integer id) {
         taskRepository.deleteById(id);
+    }
+
+    public void cleanByDate(Integer userId, String taskDate) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+        taskRepository.deleteByUserIdAndTaskDate(userId,sdf.parse(taskDate));
     }
 
     public List<Task> findAllByUserId(String startDate, String endDate, Integer userId) throws ParseException {
@@ -71,7 +78,7 @@ public class TaskService {
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 
-    public List<Map<String, Object>> taskCountByDayBetween(Integer userId, String startDate, String endDate) throws ParseException {
+    public List<Map<String, Object>> countByDayBetween(Integer userId, String startDate, String endDate) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
         List<Map<String, Object>> mapList = taskRepository.taskCountByDayBetween(userId, sdf.parse(startDate), sdf.parse(endDate));
         Map<String, List<Map<String, Object>>> groupList = mapList.stream().collect(Collectors.groupingBy(map -> sdf.format(map.get("taskDate"))));

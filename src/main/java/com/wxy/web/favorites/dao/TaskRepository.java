@@ -21,6 +21,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     List<Task> findByAlarmTime(Date alarmTime);
 
+    void deleteByUserIdAndTaskDate(Integer userId,Date taskDate);
+
     List<Task> findByTaskDateAndLevelIn(Date taskDate, List<Integer> levels);
 
     @Query(value = "select task_date taskDate,count(id) count,level from t_task where user_id = :id and task_date between :startDate and :endDate group by level,task_date order by task_date,level",nativeQuery = true)

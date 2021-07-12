@@ -47,6 +47,13 @@ public class TaskController {
         return ApiResponse.success();
     }
 
+    @GetMapping("/clean/{date}")
+    public ApiResponse cleanByDate(@PathVariable String date) throws ParseException {
+        User user = springUtils.getCurrentUser();
+        taskService.cleanByDate(user.getId(), date);
+        return ApiResponse.success();
+    }
+
     @GetMapping("/done/{id}")
     public ApiResponse done(@PathVariable Integer id) {
         Task task = taskService.findById(id);
@@ -65,14 +72,14 @@ public class TaskController {
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
         int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        List<Map<String,Object>> dataList = taskService.taskCountByDayBetween(user.getId(),date + "-01", date + "-" + lastDay);
+        List<Map<String, Object>> dataList = taskService.countByDayBetween(user.getId(), date + "-01", date + "-" + lastDay);
         return ApiResponse.success(dataList);
     }
 
     @GetMapping("/list")
-    public ApiResponse findPageList(@RequestParam String date,@RequestParam Integer pageNum,@RequestParam Integer pageSize) throws ParseException {
+    public ApiResponse findPageList(@RequestParam String date, @RequestParam Integer pageNum, @RequestParam Integer pageSize) throws ParseException {
         User user = springUtils.getCurrentUser();
-        PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(),date,pageNum,pageSize);
+        PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(), date, pageNum, pageSize);
         return ApiResponse.success(page);
     }
 

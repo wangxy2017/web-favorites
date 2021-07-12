@@ -572,11 +572,13 @@
                                     html += '	</div>';
                                     html += '	<div class="task-list" id="task' + date + '">';
                                     html += '   </div>';
+                                    html += '   <div class="layui-btn-container">';
                                     if(dateCompare(date,today) >= 0){
-                                        html += '   <div class="layui-btn-container">';
-                                        html += '       <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
-                                        html += '   </div>';
+                                        html += '   <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
+                                    }else{
+                                        html += '   <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" onclick="cleanTask(\'' + item.date + '\')">清除历史</button>';
                                     }
+                                    html += '   </div>';
                                     html += '</div>';
                                     taskView = $(this).append(html).find('.task-view');
                                     // 初始化数据
@@ -828,6 +830,28 @@
                 content: $('#taskForm')
             });
             indexMap.set('#taskForm',index);
+        };
+
+        // 清除任务
+        window.cleanTask = function(text){
+            layer.confirm('确认清除历史任务吗？', function(index){
+                layer.close(index);
+
+                 $.ajax({
+                    type: "GET",
+                    url: "task/clean/" + text ,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            layer.msg('操作成功', {icon: 6});
+                            $("#task"+text).empty();
+                        } else {
+                            layer.msg('操作失败', {icon: 5});
+                        }
+                    }
+                });
+            });
         };
 
         // 完成任务
