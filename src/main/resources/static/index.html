@@ -1232,9 +1232,9 @@
             // 2.在选择模式时，按下回车跳转超链接，输入值，退出选择模式
             // 3.不在选择模式时，输入框有值，按下回车查询，输入框没有值，按下回车退出查询模式
             if (event.key === "Enter") {
-                $(".search-items").hide();
+                var hidden = $(".search-items").is(":hidden");
                 var activeLi = $(".favorites-li.active:visible")[0];
-                if(typeof activeLi !== "undefined"){
+                if(typeof activeLi !== "undefined" && hidden){
                     $(activeLi).click();
                 }else{
                     var name = $(this).val().trim();
@@ -1245,6 +1245,9 @@
                     } else {// 搜索文本
                         searchFavorites(name);
                     }
+                }
+                if(!hidden){
+                    $(".search-items").hide();
                 }
             } else if (event.key === "ArrowDown") {
                 // 判断搜索选项是否隐藏，如果隐藏，则进入选择模式
