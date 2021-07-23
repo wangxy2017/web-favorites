@@ -457,14 +457,9 @@ public class FavoritesController {
         if (PublicConstants.EXPORT_MOMENT_CODE.equals(m)) {
             momentList = momentService.findByUserId(user.getId());
         }
-        // 查询近一年用户未完成的日程
+        // 查询用户未完成的日程
         if (PublicConstants.EXPORT_TASK_CODE.equals(t)) {
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
-            String startDate = sdf.format(calendar.getTime());
-            calendar.add(Calendar.YEAR, 1);
-            String endDate = sdf.format(calendar.getTime());
-            taskList = taskService.findAllByUserId(startDate, endDate, user.getId()).stream().filter(task -> task.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
+            taskList = taskService.findUndoTaskByUserId(user.getId());
         }
         // 查询用户搜索引擎
         if (PublicConstants.EXPORT_SEARCH_CODE.equals(s)) {

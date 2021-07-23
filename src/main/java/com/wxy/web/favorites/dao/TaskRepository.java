@@ -29,4 +29,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Map<String,Object>> taskCountByDayBetween(Integer id,Date startDate,Date endDate);
 
     int countByUserId(Integer userId);
+
+    List<Task> findByUserIdAndLevelIn(Integer userId, List<Integer> levels);
 }

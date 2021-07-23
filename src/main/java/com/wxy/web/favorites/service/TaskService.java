@@ -120,5 +120,10 @@ public class TaskService {
             return map;
         }).collect(Collectors.toList());
     }
+
+    public List<Task> findUndoTaskByUserId(Integer userId) {
+        List<Integer> levels = Arrays.asList(PublicConstants.TASK_LEVEL_0, PublicConstants.TASK_LEVEL_1, PublicConstants.TASK_LEVEL_2, PublicConstants.TASK_LEVEL_3);
+        return taskRepository.findByUserIdAndLevelIn(userId,levels);
+    }
 }
 
