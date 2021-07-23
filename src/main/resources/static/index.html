@@ -494,13 +494,17 @@
             <div style="margin: 20px 0;color: #999;line-height: 32px;">请将 "export.xml" 文件上传至服务器</div>
         </div>
         <div class="layui-tab-item">
-            <button style="margin-top: 30px;" type="button" class="layui-btn" id="export">备份收藏夹</button>
-            <div class="layui-form" style="margin: 20px 0;line-height: 32px;">
-                <span>备份数据：</span>
-                <input type="checkbox" id="favorites" name="favorites" title="收藏" lay-skin="primary" checked>
-                <input type="checkbox" id="moment" name="moment" title="瞬间" lay-skin="primary" checked>
-                <input type="checkbox" id="task" name="task" title="日程" lay-skin="primary" checked>
-                <input type="checkbox" id="search" name="search" title="搜索" lay-skin="primary" checked>
+            <button style="margin-top: 30px;margin-bottom: 20px;" type="button" class="layui-btn" id="export">备份收藏夹</button>
+            <div class="layui-form" lay-filter="userData">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备份数据：</label>
+                    <div class="layui-input-block" style="text-align: left;">
+                        <input type="checkbox" id="favorites" name="favorites" title="收藏(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="moment" name="moment" title="瞬间(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="task" name="task" title="日程(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="search" name="search" title="搜索(0)" lay-skin="primary" checked>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2166,6 +2170,25 @@
             });
         };
 
+        window.loadUserData = function(){
+            $.ajax({
+                type: "GET",
+                url: "user/data",
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    if (result.code == 0) {
+                        var user = result.data;
+                        $("#favorites").attr("title","收藏("+ user.favorites +")");
+                        $("#moment").attr("title","瞬间("+ user.moments +")");
+                        $("#task").attr("title","日程("+ user.tasks +")");
+                        $("#search").attr("title","搜索("+ user.searchTypes +")");
+                        form.render('checkbox','userData');
+                    }
+                }
+            });
+        };
+
         window.initClipboard = function(){
             var clipboard = new ClipboardJS('#accountCopy');
             clipboard.on('success', function(e) {layer.msg("复制成功");});
@@ -2241,6 +2264,8 @@
             initClipboard();
             // 初始化目录
             initCatalog();
+            // 加载用户数据
+            loadUserData();
         });
     });
 </script>

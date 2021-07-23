@@ -33,4 +33,7 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
     Page<Favorites> findByUserIdAndDeleteFlag(Integer userId, Integer deleteFlag, Pageable pageable);
 
     void deleteByDeleteFlagAndDeleteTimeBefore(Integer deleteFlag, Date time);
+
+    long countByUserId(Integer userId);
+
 }

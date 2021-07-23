@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -95,5 +96,12 @@ public class UserController {
             }
         }
         return ApiResponse.error();
+    }
+
+    @GetMapping("/data")
+    public ApiResponse getUserData(){
+        User user = springUtils.getCurrentUser();
+        Map<String,Object> userData = userService.getUserData(user.getId());
+        return ApiResponse.success(userData);
     }
 }

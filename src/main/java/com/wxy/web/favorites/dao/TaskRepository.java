@@ -27,4 +27,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query(value = "select task_date taskDate,count(id) count,level from t_task where user_id = :id and task_date between :startDate and :endDate group by level,task_date order by task_date,level",nativeQuery = true)
     List<Map<String,Object>> taskCountByDayBetween(Integer id,Date startDate,Date endDate);
+
+    int countByUserId(Integer userId);
 }
