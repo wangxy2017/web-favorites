@@ -721,7 +721,7 @@
             $('#calendar .day-item').each(function(index) {
                 var day;
                 if (index < firstDayWeekDay) {
-                    var num = preMonthDays - (firstDayWeekDay - index);
+                    var num = preMonthDays - (firstDayWeekDay - index - 1);
                     day = preMonth + '-' + (num < 10 ? '0' : '') + num;
                     $(this).attr("id", day).addClass('last-month').find('.date').text(num);
                 } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
