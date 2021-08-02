@@ -696,13 +696,13 @@
             // 画格子
             var html = '';
             html += '<div class="week-list">';
+            html += '	<div class="week-item">周日</div>';
             html += '	<div class="week-item">周一</div>';
             html += '	<div class="week-item">周二</div>';
             html += '	<div class="week-item">周三</div>';
             html += '	<div class="week-item">周四</div>';
             html += '	<div class="week-item">周五</div>';
             html += '	<div class="week-item">周六</div>';
-            html += '	<div class="week-item">周日</div>';
             html += '</div>';
             for (var i = 0; i < 6; i++) {
                 html += '<div class="day-list">';
@@ -719,10 +719,9 @@
             var nowDay = parseInt(today.substring(8));
             var nowMonth = today.substring(0,7);
             $('#calendar .day-item').each(function(index) {
-                index = index + 1;
                 var day;
                 if (index < firstDayWeekDay) {
-                    var num = preMonthDays - (firstDayWeekDay - index - 1);
+                    var num = preMonthDays - (firstDayWeekDay - index);
                     day = preMonth + '-' + (num < 10 ? '0' : '') + num;
                     $(this).attr("id", day).addClass('last-month').find('.date').text(num);
                 } else if (index >= firstDayWeekDay && index <= currMonthBlock) {
