@@ -5,6 +5,7 @@ import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
  * 2021/5/7 13:41
  **/
 @Service
+@Transactional
 public class VerificationService {
 
     @Autowired

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Slf4j
+@Transactional
 public class TaskNoticeJob {
 
     @Autowired

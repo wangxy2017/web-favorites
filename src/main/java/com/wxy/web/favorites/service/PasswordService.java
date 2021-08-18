@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @Description
  **/
 @Service
+@Transactional
 public class PasswordService {
 
     @Autowired

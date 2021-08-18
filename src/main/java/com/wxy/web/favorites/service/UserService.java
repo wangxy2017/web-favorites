@@ -17,6 +17,7 @@ import java.util.Map;
  * @Description
  **/
 @Service
+@Transactional
 public class UserService {
 
     @Autowired

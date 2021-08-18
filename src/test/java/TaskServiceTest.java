@@ -21,6 +21,7 @@ import java.util.Map;
  **/
 @Slf4j
 @SpringBootTest(classes = WebFavoritesApplication.class)
+@Transactional
 public class TaskServiceTest {
 
     @Autowired

@@ -21,6 +21,7 @@ import java.util.List;
  * @Description
  **/
 @Service
+@Transactional
 public class MomentService {
 
     @Autowired
