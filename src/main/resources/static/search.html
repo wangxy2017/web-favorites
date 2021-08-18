@@ -26,6 +26,7 @@
 				display: flex;
                 line-height: 32px;
                 justify-content: center;
+                cursor: pointer;
 			}
 
 			.search-form {
@@ -190,6 +191,14 @@
                 margin-top: 20px;
                 margin-right: 20px;
 			}
+
+			.tips-icon {
+                margin-top: 8px;
+                display: inline-block;
+                font-size: 20px;
+                color: #5e6d82;
+                cursor: pointer;
+            }
 		</style>
 </head>
 <body>
@@ -199,7 +208,7 @@
 </div>
 <div class="center" id="center">
     <div class="main">
-        <div class="logo">
+        <div class="logo" onclick="window.location.reload();">
             <i class="layui-icon layui-icon-search" style="font-size: 28px;color: #009688;margin-right: 6px;"></i>
             <h1 style="color: #009688;">聚合搜索</h1>
         </div>
@@ -220,24 +229,25 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" required lay-verify="required|name" placeholder="请输入搜索名称" autocomplete="off"
+            <input type="text" name="name" required lay-verify="required|name" placeholder="请输入引擎名称" autocomplete="off"
                    class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入搜索地址" autocomplete="off"
+            <input type="text" name="url" required lay-verify="required|url" placeholder="请输入引擎地址" autocomplete="off"
                    class="layui-input">
         </div>
-        <div class="layui-form-mid layui-word-aux" style="margin-left: 110px;font-size: 12px;">示例：https://www.bing.com/search?q=</div>
+        <i class="layui-icon layui-icon-about tips-icon" title="示例：https://www.bing.com/search?q=hello"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">图标</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="icon" required lay-verify="required|url" placeholder="请输入图标地址" autocomplete="off"
+            <input type="text" name="icon" required lay-verify="required|url" placeholder="请输入引擎图标" autocomplete="off"
                    class="layui-input">
         </div>
+        <i class="layui-icon layui-icon-about tips-icon" title="请填写网络图片地址"></i>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -351,7 +361,7 @@
 			window.deleteSearchType = function(event){
 			    event.stopPropagation();
 
-			    layer.confirm('确认删除搜索吗?', function(index){
+			    layer.confirm('确认删除搜索引擎吗?', function(index){
                     layer.close(index);
                     layer.load();
 
@@ -377,7 +387,7 @@
 			window.addSearchType = function(){
 			    var index = layer.open({
                     type: 1,
-                    title: "添加搜索",
+                    title: "添加搜索引擎",
                     area: '400px',
                     content: $('#searchTypeFrom')
                 });
@@ -392,6 +402,7 @@
 			//监听提交
             form.on('submit(addSearchType)', function(data){
                 layer.load();
+                data.field.url = data.field.url.replace("=hello","");
                 $.ajax({
                     type: "POST",
                     url: "search",
