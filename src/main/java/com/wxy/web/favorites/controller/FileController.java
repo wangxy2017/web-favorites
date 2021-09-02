@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -52,11 +53,21 @@ public class FileController {
     @GetMapping("/exists/{id}")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNotBlank(file.getPath())) {
-            File disk = new File(file.getPath());
-            if (disk.exists()) {
-                return ApiResponse.success();
+        if (file != null && StringUtils.isNotBlank(file.getPath()) && new File(file.getPath()).exists()) {
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
+    @GetMapping("/share/{id}")
+    public ApiResponse share(@PathVariable Integer id) {
+        UserFile file = userFileService.findById(id);
+        if (file != null && StringUtils.isNotBlank(file.getPath()) && new File(file.getPath()).exists()) {
+            if (StringUtils.isBlank(file.getShareId())) {
+                file.setShareId(UUID.randomUUID().toString().replaceAll("-", ""));
+                userFileService.save(file);
             }
+            return ApiResponse.success(file.getShareId());
         }
         return ApiResponse.error();
     }
@@ -95,14 +106,33 @@ public class FileController {
         return ApiResponse.error();
     }
 
+    @GetMapping("/share/download/{shareId}")
+    public void shareDownload(HttpServletResponse response, @PathVariable String shareId) {
+        UserFile userFile = userFileService.findByShareId(shareId);
+        if (userFile != null) {
+            download(response, userFile.getId());
+        }
+    }
+
+    @GetMapping("/share/cancel/{id}")
+    public ApiResponse shareCancel(HttpServletResponse response, @PathVariable Integer id) {
+        UserFile userFile = userFileService.findById(id);
+        if (userFile != null) {
+            userFile.setShareId(null);
+            userFileService.save(userFile);
+        }
+        return ApiResponse.success();
+    }
+
     @GetMapping("/download/{id}")
     public void download(HttpServletResponse response, @PathVariable Integer id) {
         try {
             UserFile userFile = userFileService.findById(id);
-            if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir())) {
+            if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath())) {
                 File file = new File(userFile.getPath());
                 if (file.exists()) {
                     response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
+                    response.addHeader("Content-Disposition","attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
                     BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
                     OutputStream out = response.getOutputStream();
                     byte[] buf = new byte[1024 * 1024 * 10];
@@ -152,7 +182,7 @@ public class FileController {
                 for (MultipartFile file : files) {
                     String path = userFileService.writeFile(file.getInputStream());
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, file.getSize(), null);
+                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, null, file.getSize(), null);
                     userFileService.save(userFile);
                     long newSize = Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize();
                     user.setUsedSize(newSize > user.getCapacity() ? user.getCapacity() : newSize);// 容量误差修正
@@ -166,14 +196,7 @@ public class FileController {
 
     @GetMapping("/back")
     public ApiResponse goBack(@RequestParam(required = false) Integer pid) {
-        Integer data = null;
-        if (pid != null) {
-            UserFile file = userFileService.findById(pid);
-            if (file != null) {
-                data = file.getPid();
-            }
-        }
-        return ApiResponse.success(data);
+        return ApiResponse.success(Optional.ofNullable(userFileService.findById(pid)).map(UserFile::getPid).orElse(null));
     }
 
     @PostMapping("/delete")
@@ -196,7 +219,7 @@ public class FileController {
     @PostMapping("/folder")
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
         User user = springUtils.getCurrentUser();
-        UserFile file = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, 1, 0L, null);
+        UserFile file = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, null, 1, 0L, null);
         userFileService.save(file);
         return ApiResponse.success();
     }

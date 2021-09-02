@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/", "/login/**", "/register/**")
+        http.csrf().disable().authorizeRequests().antMatchers("/", "/login/**", "/register/**", "/file/share/download/**")
                 .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(ajaxAuthenticationEntryPoint)
@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/login.html", "/index.html", "/search.html", "/moment.html",
-                "/calendar.html", "/wangEditor.html", "/file.html","/recycle.html", "/layui/**", "/images/**",
-                "/favicon.ico","/search.json");
+                "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/layui/**", "/images/**",
+                "/favicon.ico", "/search.json");
     }
 }

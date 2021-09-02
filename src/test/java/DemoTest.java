@@ -76,7 +76,7 @@ public class DemoTest {
             }
             // 批量创建文件
             for (int i = 0; i < 100; i++) {
-                userFileRepository.save(new UserFile(null,user.getId(),null,new Date(),new Date(),"测试"+i,null,PublicConstants.DIR_CODE,null,null));
+                userFileRepository.save(new UserFile(null,user.getId(),null,new Date(),new Date(),"测试"+i,null,null,PublicConstants.DIR_CODE,null,null));
             }
             // 批量创建任务
             for (int i = 0; i < 100; i++) {

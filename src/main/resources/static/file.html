@@ -554,7 +554,7 @@
             layer.load(1);
             $.ajax({
                 type: "GET",
-                url: "file/exists/" + id,
+                url: "file/share/" + id,
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
@@ -562,11 +562,30 @@
                     if (result.code == 0) {
                         var url = window.location.href;
                         var path = url.substring(0,url.lastIndexOf("/"));
-                        var content = path + "/file/download/" + id;
-                        layer.alert(content, {title: "复制以下链接分享", btn: "复制"}, function(index){
-                            copyText(content);
+                        var text = path + "/file/share/download/" + result.data;
+                        layer.open({
+                          title: '复制以下链接分享'
+                          ,content: text
+                          ,btn: ['复制', '取消分享']
+                          ,yes: function(index, layero){
+                            copyText(text);
                             layer.msg("复制成功");
                             layer.close(index);
+                          }
+                          ,btn2: function(index, layero){
+                            $.ajax({
+                                type: "GET",
+                                url: "file/share/cancel/" + id,
+                                dataType: "json",
+                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                success: function (result) {
+                                    if (result.code == 0) {
+                                        layer.msg("操作成功");
+                                    }
+                                }
+                            });
+                            layer.close(index);
+                          }
                         });
                     } else {
                         layer.msg('文件已损坏', {icon: 5});

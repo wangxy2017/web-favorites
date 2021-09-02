@@ -20,7 +20,6 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author wangxiaoyuan
@@ -186,6 +185,10 @@ public class UserFileService {
         }
         Collections.reverse(floors);
         return floors;
+    }
+
+    public UserFile findByShareId(String shareId) {
+        return userFileRepository.findByShareId(shareId);
     }
 }
 
