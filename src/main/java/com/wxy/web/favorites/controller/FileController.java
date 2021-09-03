@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -107,11 +108,10 @@ public class FileController {
     }
 
     @GetMapping("/share/download/{shareId}")
-    public void shareDownload(HttpServletResponse response, @PathVariable String shareId) {
+    public void shareDownload(HttpServletResponse response, @PathVariable String shareId) throws IOException {
         UserFile userFile = userFileService.findByShareId(shareId);
-        if (userFile != null) {
-            download(response, userFile.getId());
-        }
+        Assert.notNull(userFile, "资源不存在");
+        download(response, userFile.getId());
     }
 
     @GetMapping("/share/cancel/{id}")
@@ -125,48 +125,38 @@ public class FileController {
     }
 
     @GetMapping("/download/{id}")
-    public void download(HttpServletResponse response, @PathVariable Integer id) {
-        try {
-            UserFile userFile = userFileService.findById(id);
-            if (userFile != null && !PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath())) {
-                File file = new File(userFile.getPath());
-                if (file.exists()) {
-                    response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
-                    response.addHeader("Content-Disposition","attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
-                    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                    OutputStream out = response.getOutputStream();
-                    byte[] buf = new byte[1024 * 1024 * 10];
-                    int len;
-                    while ((len = bis.read(buf)) != -1) {
-                        out.write(buf, 0, len);
-                    }
-                    bis.close();
-                    out.close();
-                }
-            }
-        } catch (IOException e) {
-            log.error("文件下载失败", e);
+    public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
+        UserFile userFile = userFileService.findById(id);
+        Assert.notNull(userFile, "资源不存在");
+        Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath()), "数据异常");
+        File file = new File(userFile.getPath());
+        Assert.isTrue(file.exists(), "文件被物理删除");
+        response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
+        response.addHeader("Content-Disposition", "attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        OutputStream out = response.getOutputStream();
+        byte[] buf = new byte[1024 * 1024 * 10];
+        int len;
+        while ((len = bis.read(buf)) != -1) {
+            out.write(buf, 0, len);
         }
+        bis.close();
+        out.close();
     }
 
     @GetMapping("/downloadAll")
-    public void downloadAll(HttpServletResponse response) {
-        try {
-            User user = springUtils.getCurrentUser();
-            String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
-            File file = userFileService.packageFileByUserId(user.getId(), tempPath);
-            if (file != null) {
-                ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-                out.setMethod(ZipEntry.DEFLATED);
-                out.setLevel(appConfig.getFileCompressLevel());
-                // 压缩文件
-                ZipUtils.compressFile(out, file);
-                // 删除临时文件
-                file.delete();
-            }
-        } catch (IOException e) {
-            log.error("文件备份失败", e);
-        }
+    public void downloadAll(HttpServletResponse response) throws IOException {
+        User user = springUtils.getCurrentUser();
+        String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
+        File file = userFileService.packageFileByUserId(user.getId(), tempPath);
+        Assert.notNull(file, "资源不存在");
+        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+        out.setMethod(ZipEntry.DEFLATED);
+        out.setLevel(appConfig.getFileCompressLevel());
+        // 压缩文件
+        ZipUtils.compressFile(out, file);
+        // 删除临时文件
+        file.delete();
     }
 
     @PostMapping("/upload")
