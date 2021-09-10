@@ -15,4 +15,7 @@ public class EmailConstants {
     public static final String BINDING_EMAIL_CONTENT = "您正在绑定邮箱，验证码为：%s，%d分钟内有效。";
 
     public static final String TASK_NOTICE_TITLE = "网络收藏夹|日程通知";
+
+    public static final String EMAIL_REGISTER_TITLE = "网络收藏夹|注册";
+    public static final String EMAIL_REGISTER_CONTENT = "欢迎您使用邮箱注册账号，您的账号为：%s，密码为：%s，登录后请及时修改密码。";
 }

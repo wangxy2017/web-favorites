@@ -29,8 +29,6 @@ public class PublicConstants {
 
     public static final Integer RANDOM_CODE_LENGTH = 6;
 
-    public static final Integer USER_SECRET_KEY_LENGTH = 16;
-
     public static final Integer TEMP_PASSWORD_LENGTH = 8;
 
     public static final String ID_DELIMITER = ",";

@@ -84,7 +84,6 @@ public class LoginController {
             User user = userService.findByEmail(email);
             if (user == null) {
                 // 注册用户
-                String randomKey = RandomUtil.randomString(PublicConstants.USER_SECRET_KEY_LENGTH);
                 String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
                 user = new User();
                 user.setUsername(email);
@@ -93,7 +92,7 @@ public class LoginController {
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 user = userService.save(user);
                 // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null,null);
+                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null, null);
                 categoryService.save(category);
                 // 推荐收藏
                 Integer userId = user.getId();
@@ -106,6 +105,8 @@ public class LoginController {
                             null, null, null, null, null, null, null, null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
+                // 发送邮件
+                emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.EMAIL_REGISTER_TITLE, String.format(EmailConstants.EMAIL_REGISTER_CONTENT, user.getUsername(), tempPwd));
             }
             // 生成token
             String token = jwtUtil.generateToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
