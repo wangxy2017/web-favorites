@@ -59,7 +59,7 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public Map<String, Object> getUserData(Integer userId) {
+    public Map<String, Object> findUserData(Integer userId) {
         Map<String,Object> data = new HashMap<>();
         data.put("favorites",favoritesRepository.countByUserId(userId));
         data.put("moments",momentRepository.countByUserId(userId));

@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.service;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.UserFileRepository;
@@ -55,15 +56,16 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndPidIsNull(userId);
     }
 
-    public File packageFileByUserId(Integer userId, String tempPath) throws IOException {
+    public File findFileByUserId(Integer userId, String tempPath) throws IOException {
         // 查询用户文件
         List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
         if (!CollectionUtils.isEmpty(files)) {
             File root = new File(tempPath + File.separator + userId);
             if (root.exists()) {
-                root.delete();
+                Assert.isTrue(root.delete(), "删除根目录文件失败");
+            } else {
+                Assert.isTrue(root.mkdirs(), "创建根目录文件失败");
             }
-            root.mkdirs();
             // 打包
             createFile(files, root.getPath());
             return root;
@@ -72,15 +74,16 @@ public class UserFileService {
         }
     }
 
-    public void createFile(List<UserFile> list, String base) throws IOException {
+    private void createFile(List<UserFile> list, String base) throws IOException {
         for (UserFile file : list) {
             if (PublicConstants.DIR_CODE.equals(file.getIsDir())) {
                 // 创建文件夹
                 File director = new File(base + File.separator + file.getFilename());
                 if (director.exists()) {
-                    director.delete();
+                    Assert.isTrue(director.delete(), "删除文件夹失败");
+                } else {
+                    Assert.isTrue(director.mkdirs(), "创建文件夹失败");
                 }
-                director.mkdirs();
                 // 查询文件夹下的文件并创建
                 List<UserFile> children = userFileRepository.findByPid(file.getId());
                 createFile(children, director.getPath());
@@ -89,9 +92,10 @@ public class UserFileService {
                 if (disk.exists()) {
                     File out = new File(base + File.separator + file.getFilename());
                     if (out.exists()) {
-                        out.delete();
+                        Assert.isTrue(out.delete(), "删除文件失败");
+                    } else {
+                        Assert.isTrue(out.createNewFile(), "创建文件失败");
                     }
-                    out.createNewFile();
                     FileCopyUtils.copy(disk, out);
                 }
             }
@@ -113,7 +117,7 @@ public class UserFileService {
                 }
             }
             // 物理删除
-            pathList.forEach(p -> new File(p).delete());
+            pathList.forEach(p -> Assert.isTrue(new File(p).delete(), "删除文件失败"));
             // 更新容量
             User user = userRepository.getOne(userId);
             long size = user.getUsedSize() - totalSize;
@@ -134,7 +138,7 @@ public class UserFileService {
         deletingFiles.add(userFile);
     }
 
-    public String writeFile(InputStream input) throws IOException {
+    public String saveFile(InputStream input) throws IOException {
         String sequence = "1234567890qwertyuiopasdfghjklzxcvbnm";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10; i++) {

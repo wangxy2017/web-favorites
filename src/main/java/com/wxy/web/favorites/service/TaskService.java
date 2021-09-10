@@ -47,7 +47,7 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public void cleanByDate(Integer userId, String taskDate) throws ParseException {
+    public void deleteAllByDate(Integer userId, String taskDate) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
         taskRepository.deleteByUserIdAndTaskDate(userId,sdf.parse(taskDate));
     }

@@ -50,7 +50,7 @@ public class TaskController {
     @GetMapping("/clean/{date}")
     public ApiResponse cleanByDate(@PathVariable String date) throws ParseException {
         User user = springUtils.getCurrentUser();
-        taskService.cleanByDate(user.getId(), date);
+        taskService.deleteAllByDate(user.getId(), date);
         return ApiResponse.success();
     }
 

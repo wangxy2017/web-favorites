@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -36,7 +35,7 @@ public class RecycleJob {
                 calendar.add(Calendar.DATE, -appConfig.getRecycleSaveDays());
                 SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
 
-                favoritesService.cleanRecycleBeforeTime(sdf.format(calendar.getTime()));
+                favoritesService.deleteAllFromRecycleWithBeforeTime(sdf.format(calendar.getTime()));
 
             }
         } catch (Exception e) {

@@ -109,7 +109,7 @@ public class MomentController {
     @GetMapping("/search")
     public ApiResponse search(@RequestParam String text) {
         User user = springUtils.getCurrentUser();
-        List<Moment> list = momentService.searchMoment(user.getId(), text);
+        List<Moment> list = momentService.findMoment(user.getId(), text);
         return ApiResponse.success(list);
     }
 

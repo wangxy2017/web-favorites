@@ -101,7 +101,7 @@ public class UserController {
     @GetMapping("/data")
     public ApiResponse getUserData(){
         User user = springUtils.getCurrentUser();
-        Map<String,Object> userData = userService.getUserData(user.getId());
+        Map<String,Object> userData = userService.findUserData(user.getId());
         return ApiResponse.success(userData);
     }
 }

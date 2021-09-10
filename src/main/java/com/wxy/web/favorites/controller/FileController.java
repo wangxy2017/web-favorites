@@ -148,7 +148,7 @@ public class FileController {
     public void downloadAll(HttpServletResponse response) throws IOException {
         User user = springUtils.getCurrentUser();
         String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
-        File file = userFileService.packageFileByUserId(user.getId(), tempPath);
+        File file = userFileService.findFileByUserId(user.getId(), tempPath);
         Assert.notNull(file, "资源不存在");
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
         out.setMethod(ZipEntry.DEFLATED);
@@ -170,7 +170,7 @@ public class FileController {
             }
             if (restSize > totalSize) {
                 for (MultipartFile file : files) {
-                    String path = userFileService.writeFile(file.getInputStream());
+                    String path = userFileService.saveFile(file.getInputStream());
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
                     UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, null, file.getSize(), null);
                     userFileService.save(userFile);

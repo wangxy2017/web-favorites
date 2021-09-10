@@ -143,7 +143,7 @@ public class FavoritesController {
     @PostMapping("/recycle/clean")
     public ApiResponse CleanRecycle() {
         User user = springUtils.getCurrentUser();
-        favoritesService.cleanRecycle(user.getId());
+        favoritesService.deleteAllFromRecycle(user.getId());
         return ApiResponse.success();
     }
 
@@ -162,7 +162,7 @@ public class FavoritesController {
     @GetMapping("/recover/{id}")
     public ApiResponse recover(@PathVariable Integer id) {
         User user = springUtils.getCurrentUser();
-        favoritesService.recover(id, user.getId());
+        favoritesService.updateDeleteFlag(id, user.getId());
         return ApiResponse.success();
     }
 
@@ -193,7 +193,7 @@ public class FavoritesController {
     public ApiResponse search(@RequestParam String name) {
         User user = springUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
-        List<Favorites> list = favoritesService.searchFavorites(user.getId(), name);
+        List<Favorites> list = favoritesService.findFavorites(user.getId(), name);
         return ApiResponse.success(list);
     }
 

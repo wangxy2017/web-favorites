@@ -72,7 +72,7 @@ public class FavoritesService {
         return favoritesRepository.findByShortcutAndUserIdAndDeleteFlagIsNull(shortcut, userId);
     }
 
-    public List<Favorites> searchFavorites(Integer userId, String searchName) {
+    public List<Favorites> findFavorites(Integer userId, String searchName) {
         Pageable pageable = PageRequest.of(0, appConfig.getSearchLimit());
         // 构造自定义查询条件
         Specification<Favorites> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
@@ -100,7 +100,7 @@ public class FavoritesService {
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 
-    public void cleanRecycle(Integer userId) {
+    public void deleteAllFromRecycle(Integer userId) {
         Favorites favorites = new Favorites();
         favorites.setUserId(userId);
         favorites.setDeleteFlag(1);
@@ -108,7 +108,7 @@ public class FavoritesService {
         favoritesRepository.deleteAll(all);
     }
 
-    public void recover(Integer id, Integer userId) {
+    public void updateDeleteFlag(Integer id, Integer userId) {
         Favorites favorites = favoritesRepository.findById(id).orElse(null);
         if (favorites != null) {
             Category category = categoryRepository.findById(favorites.getCategoryId()).orElse(null);
@@ -123,7 +123,7 @@ public class FavoritesService {
     }
 
 
-    public void cleanRecycleBeforeTime(String time) throws ParseException {
+    public void deleteAllFromRecycleWithBeforeTime(String time) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
         favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse(time));
     }

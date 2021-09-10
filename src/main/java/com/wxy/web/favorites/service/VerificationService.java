@@ -29,7 +29,7 @@ public class VerificationService {
         return verificationRepository.save(verification);
     }
 
-    public void cleanBeforeTime(String time) throws ParseException {
+    public void deleteBeforeTime(String time) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
         verificationRepository.deleteByExpiredTimeBefore(sdf.parse(time));
     }

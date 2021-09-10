@@ -60,7 +60,7 @@ public class MomentService {
         return momentRepository.findByUserId(userId);
     }
 
-    public List<Moment> searchMoment(Integer userId, String text) {
+    public List<Moment> findMoment(Integer userId, String text) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
