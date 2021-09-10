@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "t_user_file", indexes = {
+        @Index(columnList = "pid"),
         @Index(name = "user_id_pid_filename", columnList = "user_id"),
         @Index(name = "user_id_pid_filename", columnList = "pid"),
         @Index(name = "user_id_pid_filename", columnList = "filename")})

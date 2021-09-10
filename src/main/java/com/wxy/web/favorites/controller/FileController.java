@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
+import com.sun.istack.NotNull;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -148,7 +149,7 @@ public class FileController {
     public void downloadAll(HttpServletResponse response) throws IOException {
         User user = springUtils.getCurrentUser();
         String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
-        File file = userFileService.findFileByUserId(user.getId(), tempPath);
+        File file = userFileService.packageFile(user.getId(), tempPath);
         Assert.notNull(file, "资源不存在");
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
         out.setMethod(ZipEntry.DEFLATED);
@@ -255,13 +256,21 @@ public class FileController {
     @GetMapping("/tree")
     public ApiResponse tree() {
         List<Map<String, Object>> list = new ArrayList<>();
-        // 根目录
-        Map<String, Object> map = new HashMap<>();
-        map.put("title", "全部文件");
-        map.put("id", null);
-        map.put("children", getFolderTreeData(null));
-        list.add(map);
-        return ApiResponse.success(list);
+        List<UserFile> root = userFileService.findRootList(springUtils.getCurrentUser().getId());
+        for (UserFile file : root) {
+            Map<String, Object> element = new HashMap<>();
+            element.put("title", file.getFilename());
+            element.put("id", file.getId());
+            element.put("children", getFolderTreeData(file.getId()));
+            list.add(element);
+        }
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        Map<String, Object> element = new HashMap<>();
+        element.put("title", "全部文件");
+        element.put("id", null);
+        element.put("children", list);
+        list1.add(element);
+        return ApiResponse.success(list1);
     }
 
     /**
@@ -271,6 +280,7 @@ public class FileController {
      * @return
      */
     private List<Map<String, Object>> getFolderTreeData(Integer pid) {
+        Assert.isNull(pid, "pid不能为null");
         List<Map<String, Object>> list = new ArrayList<>();
         List<UserFile> files = userFileService.findByPid(pid);
         for (UserFile f : files) {

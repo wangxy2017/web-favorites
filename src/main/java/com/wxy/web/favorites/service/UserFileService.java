@@ -56,7 +56,7 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndPidIsNull(userId);
     }
 
-    public File findFileByUserId(Integer userId, String tempPath) throws IOException {
+    public File packageFile(Integer userId, String tempPath) throws IOException {
         // 查询用户文件
         List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
         if (!CollectionUtils.isEmpty(files)) {

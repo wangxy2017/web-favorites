@@ -108,15 +108,21 @@ public class DemoTest {
         log.info("批量插入数据完成！！！");
     }
 
+    /**
+     * 查询所有书签
+     */
     @Test
     public void test1() {
         List<Favorites> list = favoritesRepository.findAll();
         log.info("查询结果：{}", list.size());
     }
 
+    /**
+     * 查询所有用户
+     */
     @Test
-    public void test2() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
-        favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse("2021-06-10 01:45:03"));
+    public void test2() {
+        List<User> list = userRepository.findAll();
+        log.info("查询结果：{}",list);
     }
 }
