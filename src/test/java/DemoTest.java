@@ -10,11 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author HL
@@ -54,34 +59,51 @@ public class DemoTest {
      * 批量插入测试数据
      */
     @Test
-    public void test() {
-        // 批量创建用户
-        for (int k = 0; k < 100; k++) {
-            User user = userRepository.save(new User(null, "test" + k, passwordEncoder.encode("test" + k), "test" + k + "@qq.com", null, null, null, null));
-            // 批量创建分类
-            for (int i = 0; i < 100; i++) {
-                Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null,null));
-                // 批量创建收藏
-                for (int j = 0; j < 100; j++) {
-                    favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null));
+    public void test() throws InterruptedException {
+        int concurrent = 20;
+        int userCount = 100;
+        int categoryCount = 100;
+        int favoritesCount = 100;
+        int momentCount = 100;
+        int searchTypeCount = 100;
+        int userFileCount = 100;
+        int taskCount = 100;
+        ExecutorService service = Executors.newFixedThreadPool(concurrent);
+        for (int l = 0; l < concurrent; l++) {
+            service.execute(() -> {
+                long id = Thread.currentThread().getId();
+                // 批量创建用户
+                for (int k = 0; k < userCount; k++) {
+                    User user = userRepository.save(new User(null, id + "test" + k, passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8))), id + "test" + k + "@qq.com", null, null, null, null));
+                    // 批量创建分类
+                    for (int i = 0; i < categoryCount; i++) {
+                        Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null, null));
+                        // 批量创建收藏
+                        for (int j = 0; j < favoritesCount; j++) {
+                            favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null));
+                        }
+                    }
+                    // 批量创建瞬间
+                    for (int i = 0; i < momentCount; i++) {
+                        momentRepository.save(new Moment(null, "测试" + i, "测试" + i, user.getId(), new Date(), null));
+                    }
+                    // 批量创建搜索
+                    for (int i = 0; i < searchTypeCount; i++) {
+                        searchTypeRepository.save(new SearchType(null, "百度搜索" + i, "https://www.baidu.com/favicon.ico", "https://www.bing.com/search?q=", user.getId()));
+                    }
+                    // 批量创建文件
+                    for (int i = 0; i < userFileCount; i++) {
+                        userFileRepository.save(new UserFile(null, user.getId(), null, new Date(), new Date(), "测试" + i, null, null, PublicConstants.DIR_CODE, null, null));
+                    }
+                    // 批量创建任务
+                    for (int i = 0; i < taskCount; i++) {
+                        taskRepository.save(new Task(null, "测试" + i, new Date(), null, null, user.getId(), new Date(), PublicConstants.TASK_LEVEL_0));
+                    }
                 }
-            }
-            // 批量创建瞬间
-            for (int i = 0; i < 100; i++) {
-                momentRepository.save(new Moment(null,"测试"+i,"测试"+i,user.getId(),new Date(),null));
-            }
-            // 批量创建搜索
-            for (int i = 0; i < 100; i++) {
-                searchTypeRepository.save(new SearchType(null,"百度搜索"+i,"https://www.baidu.com/favicon.ico","https://www.bing.com/search?q=",user.getId()));
-            }
-            // 批量创建文件
-            for (int i = 0; i < 100; i++) {
-                userFileRepository.save(new UserFile(null,user.getId(),null,new Date(),new Date(),"测试"+i,null,null,PublicConstants.DIR_CODE,null,null));
-            }
-            // 批量创建任务
-            for (int i = 0; i < 100; i++) {
-                taskRepository.save(new Task(null,"测试"+i,new Date(),null,null,user.getId(),new Date(),PublicConstants.TASK_LEVEL_0));
-            }
+            });
+        }
+        while (!service.isShutdown()) {
+            TimeUnit.SECONDS.sleep(10);
         }
         log.info("批量插入数据完成！！！");
     }
