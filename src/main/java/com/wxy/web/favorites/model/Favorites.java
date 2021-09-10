@@ -12,8 +12,12 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "t_favorites", indexes = {
-        @Index(columnList = "user_id"),
-        @Index(columnList = "category_id")})
+        @Index(columnList = "name"),
+        @Index(columnList = "pinyin"),
+        @Index(columnList = "pinyin_s"),
+        @Index(columnList = "shortcut"),
+        @Index(name = "user_id_category_id", columnList = "user_id"),
+        @Index(name = "user_id_category_id", columnList = "category_id")})
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
@@ -39,7 +43,7 @@ public class Favorites {
     @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "pinyin", columnDefinition = "varchar(5000) comment '拼音'")
+    @Column(name = "pinyin", columnDefinition = "varchar(3000) comment '拼音'")
     private String pinyin;
 
     @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")

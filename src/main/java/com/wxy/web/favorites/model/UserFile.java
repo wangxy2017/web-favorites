@@ -12,7 +12,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "t_user_file",indexes = {@Index(columnList = "user_id")})
+@Table(name = "t_user_file", indexes = {
+        @Index(name = "user_id_pid_filename", columnList = "user_id"),
+        @Index(name = "user_id_pid_filename", columnList = "pid"),
+        @Index(name = "user_id_pid_filename", columnList = "filename")})
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
@@ -29,11 +32,11 @@ public class UserFile {
     @Column(name = "pid", columnDefinition = "int(10) comment '父id'")
     private Integer pid;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
     private Date createTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "update_time", columnDefinition = "datetime comment '修改时间'")
     private Date updateTime;
 

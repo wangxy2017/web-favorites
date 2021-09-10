@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "t_task", indexes = {@Index(columnList = "user_id")})
+@Table(name = "t_task", indexes = {@Index(columnList = "user_id"),@Index(columnList = "alarm_time")})
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

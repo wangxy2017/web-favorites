@@ -15,7 +15,7 @@ import java.util.Date;
  **/
 @Data
 @Entity
-@Table(name = "t_verification")
+@Table(name = "t_verification", indexes = {@Index(columnList = "account")})
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
