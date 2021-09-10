@@ -264,6 +264,7 @@
 <script src="layui/layui.js"></script>
 <script src="layui/particles.min.js"></script>
 <script src="layui/qrcode.min.js"></script>
+<script src="layui/md5.min.js"></script>
 <script>
     //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
     layui.use(['element', 'form', 'layer'], function () {
@@ -359,6 +360,8 @@
         //监听提交
         form.on('submit(login)', function (data) {
             layer.load();
+            // md5加密
+            data.field.password = md5(data.field.password);
             $.ajax({
                 type: "POST",
                 url: "login?remember=" + data.field.remember,
@@ -409,6 +412,8 @@
 
         form.on('submit(register)', function (data) {
             layer.load();
+            // md5加密
+            data.field.password = md5(data.field.password);
             $.ajax({
                 type: "POST",
                 url: "register",

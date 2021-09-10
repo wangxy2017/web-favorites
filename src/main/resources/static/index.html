@@ -417,6 +417,11 @@
 		    border-color: #FF5722!important;
 		    color: #FF5722!important;
 		}
+
+		.backupList .layui-form-checkbox{
+            width: 104px;
+            overflow: hidden;
+		}
     </style>
 </head>
 <body class="layui-layout-body">
@@ -498,7 +503,7 @@
             <div class="layui-form" lay-filter="userData">
                 <div class="layui-form-item">
                     <label class="layui-form-label">备份数据：</label>
-                    <div class="layui-input-block" style="text-align: left;">
+                    <div class="layui-input-block backupList" style="text-align: left;">
                         <input type="checkbox" id="favorites" name="favorites" title="收藏(0)" lay-skin="primary" checked>
                         <input type="checkbox" id="moment" name="moment" title="瞬间(0)" lay-skin="primary" checked>
                         <input type="checkbox" id="task" name="task" title="日程(0)" lay-skin="primary" checked>
@@ -735,6 +740,7 @@
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
+<script src="layui/md5.min.js"></script>
 <script>
     //JavaScript代码区域
     layui.use(['element', 'layer', 'form', 'upload','flow','util'], function () {
@@ -2096,7 +2102,7 @@
             $.ajax({
                 type: "POST",
                 url: "user/password",
-                data: data.field,
+                data: {"oldPassword":md5(data.field.oldPassword),"newPassword":md5(data.field.newPassword)},
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {

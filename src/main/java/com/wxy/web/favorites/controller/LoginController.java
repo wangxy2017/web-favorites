@@ -22,8 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +89,7 @@ public class LoginController {
                 String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
                 user = new User();
                 user.setUsername(email);
-                user.setPassword(passwordEncoder.encode(tempPwd));
+                user.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(tempPwd.getBytes(StandardCharsets.UTF_8))));
                 user.setEmail(email);
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 user = userService.save(user);
@@ -142,7 +144,7 @@ public class LoginController {
         if (user1 != null) {
             String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
             // 重置用户密码
-            user1.setPassword(passwordEncoder.encode(tempPwd));
+            user1.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(tempPwd.getBytes(StandardCharsets.UTF_8))));
             userService.save(user1);
             // 将临时密码发送至用户邮箱
             emailUtils.sendSimpleMail(user1.getEmail(), EmailConstants.PASSWORD_RESET_TITLE,
