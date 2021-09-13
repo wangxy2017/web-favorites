@@ -31,6 +31,8 @@ public class AppConfig {
 
     private List<String> recommends;
 
-    private Integer verificationExpiredMinutes ;
+    private Integer verificationExpiredMinutes;
+
+    private Integer verificationResendSeconds;
 
 }

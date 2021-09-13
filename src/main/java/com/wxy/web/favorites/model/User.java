@@ -1,11 +1,13 @@
 package com.wxy.web.favorites.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -37,7 +39,7 @@ public class User {
 
     @Column(name = "used_size", columnDefinition = "bigint(20) comment '已使用大小'")
     private Long usedSize;
-
+    
     @Transient
     private String code;
 }

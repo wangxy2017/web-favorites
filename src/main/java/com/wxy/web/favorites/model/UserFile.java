@@ -47,7 +47,7 @@ public class UserFile {
     @Column(name = "path", columnDefinition = "varchar(500) comment '路径'")
     private String path;
 
-    @Column(name = "share_id", columnDefinition = "varchar(64) comment '分享id'")
+    @Column(name = "share_id", unique = true, columnDefinition = "varchar(64) comment '分享id'")
     private String shareId;
 
     @Column(name = "is_dir", columnDefinition = "int(1) comment '置顶: 0-否 1-是'")

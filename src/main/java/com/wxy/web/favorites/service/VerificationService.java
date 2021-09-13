@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.service;
 
+import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.Verification;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author wangxiaoyuan
@@ -17,6 +19,9 @@ import java.text.SimpleDateFormat;
 @Service
 @Transactional
 public class VerificationService {
+
+    @Autowired
+    private AppConfig appConfig;
 
     @Autowired
     private VerificationRepository verificationRepository;
@@ -34,7 +39,12 @@ public class VerificationService {
         verificationRepository.deleteByExpiredTimeBefore(sdf.parse(time));
     }
 
-    public void deleteById(Integer id){
+    public void deleteById(Integer id) {
         verificationRepository.deleteById(id);
+    }
+
+    public boolean sendEnable(String account, Integer action) {
+        Verification verification = verificationRepository.findTopByAccountAndActionOrderByExpiredTimeDesc(account, action);
+        return verification == null || verification.getSendTime().getTime() + TimeUnit.SECONDS.toMillis(appConfig.getVerificationResendSeconds()) < System.currentTimeMillis();
     }
 }

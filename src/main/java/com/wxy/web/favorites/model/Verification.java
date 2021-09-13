@@ -38,4 +38,8 @@ public class Verification {
 
     @Column(name = "action", nullable = false, columnDefinition = "int(1) comment '动作：0-注册 1-邮箱登录 2-修改邮箱'")
     private Integer action;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "send_time", nullable = false, columnDefinition = "datetime comment '发送时间'")
+    private Date sendTime;
 }
