@@ -140,10 +140,24 @@ public class LoginController {
         }
     }
 
+    @GetMapping("/forgot/code")
+    public ApiResponse forgotCode(@RequestParam String email) {
+        Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_FORGOT), "发送验证码太频繁");
+        String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
+        Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
+        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_FORGOT, new Date());
+        verificationService.save(verification);
+        log.info("忘记密码邮箱：{}，忘记密码验证码：{}", email, code);
+        emailUtils.sendSimpleMail(email, EmailConstants.FORGOT_TITLE, String.format(EmailConstants.FORGOT_CONTENT, code, appConfig.getVerificationExpiredMinutes()));
+        return ApiResponse.success();
+    }
+
     @PostMapping("/forgot")
     public ApiResponse forgot(@RequestBody User user) {
+        Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_EMAIL_FORGOT);
+        String forgotEmailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
         User user1 = userService.findByUsernameAndEmail(user.getUsername(), user.getEmail());
-        if (user1 != null) {
+        if (forgotEmailCode != null && user1 != null) {
             String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
             // 重置用户密码
             user1.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(tempPwd.getBytes(StandardCharsets.UTF_8))));

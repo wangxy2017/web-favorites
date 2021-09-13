@@ -23,6 +23,7 @@ public class PublicConstants {
     public static final Integer VERIFICATION_REGISTER = 0;
     public static final Integer VERIFICATION_EMAIL_LOGIN = 1;
     public static final Integer VERIFICATION_EMAIL_UPDATE = 2;
+    public static final Integer VERIFICATION_EMAIL_FORGOT = 3;
 
     public static final Integer REMEMBER_ME_DAYS = 14;
     public static final String REMEMBER_ME_CODE = "1";
