@@ -2109,11 +2109,10 @@
                     layer.closeAll('loading');
                     layer.close(indexMap.get('#changePwd'));
                     if (result.code == 0) {
-                        layer.msg('修改成功', {icon: 6});
-                        // 退出
-                        setTimeout(function () {
-                            $("#logout").trigger("click");
-                        }, 1000);
+                        layer.msg('修改成功', {icon: 6, time: 1000}, function(){
+                            localStorage.removeItem("login_user_token");
+                            window.location.href = "login.html";
+                        });
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }
