@@ -389,7 +389,8 @@
         $("#newFolder").click(function () {
             layer.prompt({
                 title: '新建文件夹',
-                maxlength: 100,
+                placeholder:"输入文件夹名称",
+                maxlength: 100
             }, function (value, index, elem) {
                 $.ajax({
                     type: "POST",
