@@ -73,6 +73,38 @@
             color: #5fb878;
         }
 
+        .pwdValid{
+            display: none;
+            align-items: baseline;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .pwdValid span{
+            display: inline-block;
+            height: 5px;
+            width: 40px;
+            background: #e2e2e2;
+            margin-right: 5px;
+        }
+
+        .pwdValid span.active{
+            background: #5fb878;
+        }
+
+        .pwdValid em {
+            font-style: normal;
+        }
+
+        .pwdValid em.prev{
+            margin-right: 10px;
+        }
+
+        .pwdValid em.name{
+            margin-left: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -178,6 +210,13 @@
                                placeholder="输入6~16个字符，区分大小写"
                                autocomplete="off"
                                class="layui-input">
+                        <div id="pwdValid" class="pwdValid">
+                            <em class="prev">密码强度：</em>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <em class="name">低</em>
+                        </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -462,6 +501,28 @@
                     return '输入6~16个字符，区分大小写';
                 }
             }
+        });
+
+        // 验证强度
+        $("#password").keyup(function(){
+             $("#pwdValid").css("display","flex");
+             var val = $(this).val();
+             var lvTxt = ['', '低', '中', '高'];
+             var lv = 0;
+             if (val.match(/[a-z]/g)) { lv++; } //验证是否包含字母
+             if (val.match(/[0-9]/g)) { lv++; } // 验证是否包含数字
+             if (val.match(/(.[^a-z0-9])/g)) { lv++; } //验证是否包含字母，数字，字符
+             if (val.length < 6) { lv = 0; } //如果密码长度小于6位，提示消息为空
+             if (lv > 3) { lv = 3; }
+
+             $("#pwdValid").find("span").each(function(index){
+                if(index < lv) {
+                    $(this).addClass("active");
+                }else{
+                    $(this).removeClass("active");
+                }
+             });
+             $("#pwdValid").find(".name").text(lvTxt[lv]);
         });
 
         // 发送验证码
