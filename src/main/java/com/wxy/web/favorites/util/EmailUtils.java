@@ -31,7 +31,7 @@ public class EmailUtils {
             message.setText(mailContent);
             javaMailSender.send(message);
         } catch (Exception e) {
-            log.error("邮件发送失败：mailTo = {}, mailHead = {}, mailContent = {}", mailTo, mailHead, mailContent, e);
+            log.error("邮件发送失败：mailTo = {}, mailHead = {}, mailContent = {}", mailTo, mailHead, mailContent);
         }
     }
 
@@ -46,7 +46,7 @@ public class EmailUtils {
             messageHelper.setText(mailContent, true);
             javaMailSender.send(mimeMailMessage);
         } catch (Exception e) {
-            log.error("邮件发送失败：mailTo = {}, mailHead = {}, mailContent = {}", mailTo, mailHead, mailContent, e);
+            log.error("邮件发送失败：mailTo = {}, mailHead = {}, mailContent = {}", mailTo, mailHead, mailContent);
         }
     }
 

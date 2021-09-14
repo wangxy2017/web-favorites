@@ -4,6 +4,7 @@ import com.wxy.web.favorites.constant.PublicConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 public class JwtUtil {
 
     @Value("${jwt.token-secret-key:}")
@@ -28,7 +30,7 @@ public class JwtUtil {
         try {
             return extractClaim(token, Claims::getSubject);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("token解析失败");
         }
         return null;
     }
