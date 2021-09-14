@@ -38,7 +38,7 @@ spring:
   jpa: #jpa配置
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.H2Dialect
   mail: #邮件配置
     username:
@@ -58,7 +58,7 @@ app: #系统参数配置
   search-limit: 100 #搜索个数限制
   favorites-limit: 40 #显示收藏个数限制
   search-type-json: search.json #搜索类型数据
-  init-capacity: 50 #初始容量(M)
+  init-capacity: 100 #初始容量(M)
   file-repository: ./repository #文件仓库
   file-compress-level: 7 #文件压缩等级
   file-suffixes: txt,properties,yml,xml,sh,bat,sql,json #可查看文件
