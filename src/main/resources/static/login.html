@@ -298,17 +298,38 @@
         var form = layui.form;
         var layer = layui.layer;
 
-        var qrcode = null;
-
         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
         particlesJS.load('particles-js', 'layui/particles.json');
 
         // 刷新二维码
-        var refreshCode = 1;
         $("#refreshCode").click(function(){
-            var content = "该功能暂未开通" + refreshCode++;
-            // 如果没有生成二维码，则初始化二维码
-            if(qrcode == null){
+            // 初始化二维码
+            var sid = uuid();
+            initQrCode(sid);
+            initWebSocket(sid);
+        });
+
+        window.uuid = function() {
+            var s = [];
+            var hexDigits = "0123456789abcdef";
+            for (var i = 0; i < 36; i++) {
+                s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+            }
+            s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+            s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+            s[8] = s[13] = s[18] = s[23] = "-";
+
+            var uuid = s.join("");
+            return uuid;
+        };
+
+        var qrcode;
+        window.initQrCode = function(sid){
+            var url = window.location.href;
+            var path = url.substring(0,url.lastIndexOf("/"));
+            var content = path + "/qrLogin.html?sid=" + sid;
+            console.log(content);
+            if(!qrcode){
                 qrcode = new QRCode("qrcode", {
                     text: content,
                     width: 180,
@@ -321,7 +342,7 @@
                 qrcode.clear();
                 qrcode.makeCode(content);
             }
-        });
+        };
 
         // 邮箱登录
         window.emailLogin = function(obj){
@@ -345,17 +366,44 @@
             $("#emailLogin").hide();
             $("#qrcodeDiv").show();
             $(obj).parent().hide().next().show();
-            // 如果没有生成二维码，则初始化二维码
-            if(qrcode == null){
-                qrcode = new QRCode("qrcode", {
-                    text: "该功能暂未开通",
-                    width: 180,
-                    height: 180,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-            }
+            // 初始化二维码
+            var sid = uuid();
+            initQrCode(sid);
+            initWebSocket(sid);
+        };
+
+        var socket;
+        window.initWebSocket = function(sid){
+           if(typeof(WebSocket) == "undefined") {
+               console.log("您的浏览器不支持WebSocket");
+           }else{
+               console.log("您的浏览器支持WebSocket");
+               if(socket){ socket.close(); }
+               var url = window.location.href;
+               var url1 = url.substring(url.indexOf("//") + 2);
+               var path = url1.substring(0, url1.indexOf("/"));
+               socket = new WebSocket("ws://" + path + "/websocket/" + sid);
+               //打开事件
+               socket.onopen = function() {
+                   console.log("Socket 已打开");
+               };
+               //获得消息事件
+               socket.onmessage = function(msg) {
+                   var result = JSON.parse(msg.data);
+                   if(result.code == 0){
+                       localStorage.setItem("login_user_token", result.data);
+                       window.location.href = "index.html";
+                   }
+               };
+               //关闭事件
+               socket.onclose = function() {
+                   console.log("Socket已关闭");
+               };
+               //发生了错误事件
+               socket.onerror = function() {
+                   alert("Socket发生了错误");
+               }
+           }
         };
 
         //监听提交

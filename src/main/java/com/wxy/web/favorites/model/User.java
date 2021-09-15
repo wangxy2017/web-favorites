@@ -45,4 +45,7 @@ public class User {
     
     @Transient
     private String code;
+
+    @Transient
+    private String sid;
 }

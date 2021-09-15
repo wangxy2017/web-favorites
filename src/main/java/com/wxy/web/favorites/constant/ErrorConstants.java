@@ -24,4 +24,6 @@ public class ErrorConstants {
     public static final String INVALID_PASSWORD_MSG = "密码错误";
 
     public static final String USERNAME_OR_EMAIL_EXISTED_MSG = "用户名或邮箱已存在";
+
+    public static final String QRCODE_INVALID_MSG = "二维码已失效";
 }

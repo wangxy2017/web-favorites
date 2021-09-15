@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|扫码登录</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style>
+        .loginFooter{
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            height: 44px;
+            line-height: 44px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="loginBox">
+    <div>网络收藏夹</div>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名:</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required lay-verify="required" placeholder="请输入用户名"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码:</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="loginDone">
+    <div>登录成功</div>
+    <button type="button" class="layui-btn" id="confirm">确认</button>
+</div>
+<div class="loginFooter">
+    © 2020 网络收藏夹 || 网络收藏夹版权所有
+</div>
+<script src="layui/jquery-3.1.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script src="layui/md5.min.js"></script>
+<script>
+    layui.use(['form','layer'], function(){
+        var form = layui.form;
+        var layer = layui.layer;
+
+        //监听提交
+        form.on('submit(login)', function (data) {
+            var url = window.location.href;
+            if(url.lastIndexOf("sid=") == -1){
+                layer.msg("缺少必要参数：sid");
+                return false;
+            }
+            layer.load();
+            // sid
+            var sid = url.substring(url.lastIndexOf("sid=") + 4);
+            data.field.sid = sid;
+            // md5加密
+            data.field.password = md5(data.field.password);
+            $.ajax({
+                type: "POST",
+                url: "login/qrLogin",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        $("#loginBox").hide();
+                        $("#loginDone").show();
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                },
+                error: function () {
+                    layer.closeAll('loading');
+                    layer.msg("服务器异常", {icon: 2});
+                }
+            });
+            return false;
+        });
+
+        $("#confirm").click(function(){
+            $("#loginBox").show();
+            $("#loginDone").hide();
+        });
+    });
+
+</script>
+</body>
+</html>
