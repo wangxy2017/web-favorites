@@ -128,7 +128,6 @@
             var password = localStorage.getItem("qr_login_password");
             var url = window.location.href;
             var sid = url.lastIndexOf("sid=") == -1 ? null : url.substring(url.lastIndexOf("sid=") + 4);
-            console.log(username,password,sid);
             if(username&&password&&sid){
                 $.ajax({
                     type: "POST",

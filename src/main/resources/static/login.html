@@ -328,7 +328,6 @@
             var url = window.location.href;
             var path = url.substring(0,url.lastIndexOf("/"));
             var content = path + "/qrLogin.html?sid=" + sid;
-            console.log(content);
             if(!qrcode){
                 qrcode = new QRCode("qrcode", {
                     text: content,
