@@ -35,4 +35,6 @@ public class AppConfig {
 
     private Integer verificationResendSeconds;
 
+    private Integer errorCountLimit;
+
 }

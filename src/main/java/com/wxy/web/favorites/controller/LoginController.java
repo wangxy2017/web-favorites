@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -133,11 +134,22 @@ public class LoginController {
                 }
                 return ApiResponse.success(token);
             } else {
+                // 记录失败次数
+                updateErrorCount(user1);
                 return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
             return ApiResponse.error(ErrorConstants.INVALID_USERNAME_MSG);
         }
+    }
+
+    private void updateErrorCount(User user) {
+        user.setErrorCount(Optional.ofNullable(user.getErrorCount()).orElse(0) + 1);
+        if (user.getErrorCount() > appConfig.getErrorCountLimit()) {
+            emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.SAFE_NOTICE_TITLE, String.format(EmailConstants.SAFE_NOTICE_CONTENT, user.getUsername()));
+            user.setErrorCount(0);
+        }
+        userService.save(user);
     }
 
     @GetMapping("/forgot/code")

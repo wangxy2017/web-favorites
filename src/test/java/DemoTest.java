@@ -74,7 +74,7 @@ public class DemoTest {
                 long id = Thread.currentThread().getId();
                 // 批量创建用户
                 for (int k = 0; k < userCount; k++) {
-                    User user = userRepository.save(new User(null, id + "test" + k, passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8))), id + "test" + k + "@qq.com", null, null, null, null));
+                    User user = userRepository.save(new User(null, id + "test" + k, passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8))), id + "test" + k + "@qq.com", null, null, null, null, null));
                     // 批量创建分类
                     for (int i = 0; i < categoryCount; i++) {
                         Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null, null));
@@ -123,6 +123,6 @@ public class DemoTest {
     @Test
     public void test2() {
         List<User> list = userRepository.findAll();
-        log.info("查询结果：{}",list);
+        log.info("查询结果：{}", list);
     }
 }

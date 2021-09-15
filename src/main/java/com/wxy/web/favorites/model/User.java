@@ -39,6 +39,9 @@ public class User {
 
     @Column(name = "used_size", columnDefinition = "bigint(20) comment '已使用大小'")
     private Long usedSize;
+
+    @Column(name = "error_count", columnDefinition = "int(10) comment '登录失败次数'")
+    private Integer errorCount;
     
     @Transient
     private String code;
