@@ -135,11 +135,11 @@ public class LoginController {
                 } else {
                     token = jwtUtil.generateToken(user1.getUsername());
                 }
-                updateErrorCount(user1,true);
+                updateErrorCount(user1, true);
                 return ApiResponse.success(token);
             } else {
                 // 记录失败次数
-                updateErrorCount(user1,false);
+                updateErrorCount(user1, false);
                 return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
@@ -149,6 +149,9 @@ public class LoginController {
 
     @PostMapping("/qrLogin")
     public ApiResponse qrLogin(@RequestBody User user) {
+        if (StringUtils.isBlank(user.getSid())) {
+            return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
+        }
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
@@ -162,7 +165,7 @@ public class LoginController {
                 return ApiResponse.success();
             } else {
                 // 记录失败次数
-                updateErrorCount(user1,false);
+                updateErrorCount(user1, false);
                 return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
@@ -170,17 +173,19 @@ public class LoginController {
         }
     }
 
-    private void updateErrorCount(User user,boolean success) {
-        if(success){
+    private void updateErrorCount(User user, boolean success) {
+        int errorCount = Optional.ofNullable(user.getErrorCount()).orElse(0);
+        if (success && errorCount > 0) {
             user.setErrorCount(0);
-        }else{
-            user.setErrorCount(Optional.ofNullable(user.getErrorCount()).orElse(0) + 1);
+            userService.save(user);
+        } else if (!success) {
+            user.setErrorCount(errorCount + 1);
             if (user.getErrorCount() > appConfig.getErrorCountLimit()) {
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.SAFE_NOTICE_TITLE, String.format(EmailConstants.SAFE_NOTICE_CONTENT, user.getUsername()));
                 user.setErrorCount(0);
             }
+            userService.save(user);
         }
-        userService.save(user);
     }
 
     @GetMapping("/forgot/code")

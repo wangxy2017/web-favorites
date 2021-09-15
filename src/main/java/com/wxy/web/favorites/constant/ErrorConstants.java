@@ -26,4 +26,5 @@ public class ErrorConstants {
     public static final String USERNAME_OR_EMAIL_EXISTED_MSG = "用户名或邮箱已存在";
 
     public static final String QRCODE_INVALID_MSG = "二维码已失效";
+    public static final String SID_NOT_FOUND = "缺少必要参数：sid";
 }
