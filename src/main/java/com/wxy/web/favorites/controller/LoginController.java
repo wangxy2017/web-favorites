@@ -152,6 +152,9 @@ public class LoginController {
         if (StringUtils.isBlank(user.getSid())) {
             return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
         }
+        if (!WebSocketServer.checkSid(user.getSid())) {
+            return ApiResponse.error(ErrorConstants.QRCODE_INVALID_MSG);
+        }
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {

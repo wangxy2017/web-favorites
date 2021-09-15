@@ -11,6 +11,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Predicate;
 
 @ServerEndpoint("/websocket/{sid}")
 @Component
@@ -100,6 +101,10 @@ public class WebSocketServer {
                 item.sendMessage(message);
             }
         }
+    }
+
+    public static boolean checkSid(String sid) {
+        return webSocketSet.stream().map(item -> item.sid).anyMatch(Predicate.isEqual(sid));
     }
 
     public static synchronized int getOnlineCount() {

@@ -21,8 +21,13 @@
         .loginBox{
             max-width: 360px;
             width: 80%;
-            margin: 0 auto;
-            margin-top: 150px;
+            z-index: 999;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 10px;
         }
 
         .loginBox .title{
@@ -39,7 +44,12 @@
         .loginDone{
             display: none;
             text-align: center;
-            margin-top: 240px;
+            z-index: 999;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
         }
 
         .loginDone .info{
@@ -69,7 +79,7 @@
             margin-left: 0;
         }
 
-        .layui-form-checked[lay-skin=primary] i{
+        .layui-form-checkbox[lay-skin=primary] i{
             top: 1px;
         }
 
