@@ -27,4 +27,7 @@ public class ErrorConstants {
 
     public static final String QRCODE_INVALID_MSG = "二维码已失效";
     public static final String SID_NOT_FOUND = "缺少必要参数：sid";
+
+    public static final String RESOURCE_NOT_FOUND = "资源不存在";
+    public static final String FILE_IS_DELETED = "文件被物理删除";
 }

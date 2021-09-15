@@ -1,7 +1,6 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
-import com.sun.istack.NotNull;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -111,7 +110,7 @@ public class FileController {
     @GetMapping("/share/download/{shareId}")
     public void shareDownload(HttpServletResponse response, @PathVariable String shareId) throws IOException {
         UserFile userFile = userFileService.findByShareId(shareId);
-        Assert.notNull(userFile, "资源不存在");
+        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
         download(response, userFile.getId());
     }
 
@@ -128,10 +127,10 @@ public class FileController {
     @GetMapping("/download/{id}")
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
-        Assert.notNull(userFile, "资源不存在");
+        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
         Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath()), "数据异常");
         File file = new File(userFile.getPath());
-        Assert.isTrue(file.exists(), "文件被物理删除");
+        Assert.isTrue(file.exists(), ErrorConstants.FILE_IS_DELETED);
         response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
         response.addHeader("Content-Disposition", "attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
@@ -150,7 +149,7 @@ public class FileController {
         User user = springUtils.getCurrentUser();
         String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
         File file = userFileService.packageFile(user.getId(), tempPath);
-        Assert.notNull(file, "资源不存在");
+        Assert.notNull(file, ErrorConstants.RESOURCE_NOT_FOUND);
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
         out.setMethod(ZipEntry.DEFLATED);
         out.setLevel(appConfig.getFileCompressLevel());
@@ -256,21 +255,12 @@ public class FileController {
     @GetMapping("/tree")
     public ApiResponse tree() {
         List<Map<String, Object>> list = new ArrayList<>();
-        List<UserFile> root = userFileService.findRootList(springUtils.getCurrentUser().getId());
-        for (UserFile file : root) {
-            Map<String, Object> element = new HashMap<>();
-            element.put("title", file.getFilename());
-            element.put("id", file.getId());
-            element.put("children", getFolderTreeData(file.getId()));
-            list.add(element);
-        }
-        List<Map<String, Object>> list1 = new ArrayList<>();
         Map<String, Object> element = new HashMap<>();
         element.put("title", "全部文件");
         element.put("id", null);
-        element.put("children", list);
-        list1.add(element);
-        return ApiResponse.success(list1);
+        element.put("children", getFolderTreeData(null));
+        list.add(element);
+        return ApiResponse.success(list);
     }
 
     /**
@@ -280,7 +270,6 @@ public class FileController {
      * @return
      */
     private List<Map<String, Object>> getFolderTreeData(Integer pid) {
-        Assert.isNull(pid, "pid不能为null");
         List<Map<String, Object>> list = new ArrayList<>();
         List<UserFile> files = userFileService.findByPid(pid);
         for (UserFile f : files) {

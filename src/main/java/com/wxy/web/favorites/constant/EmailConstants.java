@@ -23,6 +23,6 @@ public class EmailConstants {
     public static final String FORGOT_CONTENT = "您正在使用忘记密码功能重置密码，验证码为：%s，%d分钟内有效。";
 
     public static final String SAFE_NOTICE_TITLE = "网络收藏夹|安全告警";
-    public static final String SAFE_NOTICE_CONTENT = "您的账号(%s)检测到被非法程序暴力破解，请及时修改密码，如已修改，请忽略。";
+    public static final String SAFE_NOTICE_CONTENT = "系统检测到您的账号(%s)被非法程序暴力破解，请及时修改密码，如已修改，请忽略。";
 
 }
