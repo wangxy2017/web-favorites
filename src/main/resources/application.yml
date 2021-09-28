@@ -14,8 +14,9 @@ server:
       - text/plain
     min-response-size: 2048
 spring:
-  servlet: #上传文件大小限制
-    multipart:
+  servlet:
+    multipart: #上传文件大小限制
+      location: ${java.io.tmpdir}
       max-file-size: 512MB
       max-request-size: 512MB
     undertow: #undertow容器配置
