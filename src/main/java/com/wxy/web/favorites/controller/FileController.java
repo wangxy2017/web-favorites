@@ -242,6 +242,7 @@ public class FileController {
                     while ((tempStr = reader.readLine()) != null) {
                         sb.append(tempStr).append("\n");
                     }
+                    reader.close();
                 } catch (IOException e) {
                     sb.append(ErrorConstants.FILE_READ_FAILED_MSG);
                     log.error("文件读取异常", e);

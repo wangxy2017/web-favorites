@@ -1420,7 +1420,10 @@
             var schema = $(obj).attr("data-schema");
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 if(!isEmpty(schema)&&isMobile()){
-                    url = schema + url.substring(url.indexOf("://"));
+                    layer.confirm('是否打开app？', function(index){
+                        url = schema + url.substring(url.indexOf("://"));
+                        layer.close(index);
+                    });
                 }
                 newWin(url);
                 // 记录访问时间

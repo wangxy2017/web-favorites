@@ -489,6 +489,8 @@
         });
 
         //上传文件
+        var successful = 0;
+        var aborted = 0;
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             , url: 'file/upload/' //上传接口
@@ -503,11 +505,24 @@
             , before: function(obj){
                  layer.load(1);
             }
+            , done: function(res, index, upload){
+                if(res.code == 0){
+                    successful++;
+                }else{
+                    aborted++;
+                }
+            }
             , allDone: function(obj){
                 layer.closeAll('loading');
-                layer.msg('上传成功:'+obj.successful+',上传失败:'+obj.aborted, {icon: 6});
+                if(successful == 0){
+                    layer.msg('上传失败', {icon: 5});
+                }else{
+                    layer.msg('上传成功:' + successful+', 上传失败:' + aborted, {icon: 6});
+                }
                 table.reload('fileList');
                 loadCapacity();
+                successful = 0;
+                aborted = 0;
             }
             , progress: function (n, elem) {
                 element.progress('progress', n + '%');
@@ -618,7 +633,7 @@
                                 area:['800px','600px'],
                                 type: 1,
                                 title: '文件内容',
-                                content: '<div style="white-space: pre-line;padding: 10px;user-select: text;">' + result.data + '</div>'
+                                content: '<xmp style="padding: 10px;user-select: text;margin: 0">' + result.data + '</xmp>'
                             });
                         } else {
                             layer.msg('暂不支持文件查看', {icon: 5});

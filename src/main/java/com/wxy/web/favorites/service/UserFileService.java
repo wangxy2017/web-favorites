@@ -158,6 +158,9 @@ public class UserFileService {
                     out.write(buffer, 0, i);
                     i = bin.read(buffer);
                 }
+                input.close();
+                bin.close();
+                out.close();
                 return file.getPath();
             }
         }

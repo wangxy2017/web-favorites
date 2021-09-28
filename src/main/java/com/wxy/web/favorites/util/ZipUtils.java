@@ -27,7 +27,7 @@ public class ZipUtils {
      * @param base
      * @throws IOException
      */
-    public static void compress(ZipOutputStream out, File sourceFile, String base) throws IOException {
+    private static void compress(ZipOutputStream out, File sourceFile, String base) throws IOException {
         //如果路径为目录（文件夹）
         if (sourceFile.isDirectory()) {
             //取出文件夹中的文件（或子文件夹）
