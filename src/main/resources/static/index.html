@@ -1433,12 +1433,19 @@
             var schema = $(obj).attr("data-schema");
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 if(!isEmpty(schema)&&isMobile()){
-                    layer.confirm('是否打开app？', function(index){
+                    layer.confirm('是否打开app？', {
+                      btn: ['确认', '取消']
+                    }, function(index, layero){
                         url = schema + url.substring(url.indexOf("://"));
+                        newWin(url);
+                        layer.close(index);
+                    }, function(index){
+                        newWin(url);
                         layer.close(index);
                     });
+                }else{
+                    newWin(url);
                 }
-                newWin(url);
                 // 记录访问时间
                 $.ajax({
                     type: "GET",
