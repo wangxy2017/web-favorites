@@ -6,8 +6,8 @@ package com.wxy.web.favorites.constant;
  **/
 public class ErrorConstants {
 
-    public static final int NO_LOGIN_CODE = 1001;
-    public static final String NO_LOGIN_MSG = "未登录";
+    public static final int NO_LOGIN_CODE = 401;
+    public static final String NO_LOGIN_MSG = "token过期，请重新登录";
 
     public static final String SYSTEM_CATEGORY_NO_DELETE_MSG = "系统分类无法删除";
 
