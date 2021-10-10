@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.service;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.UserFileRepository;
@@ -20,7 +21,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author wangxiaoyuan
@@ -139,13 +143,8 @@ public class UserFileService {
     }
 
     public String saveFile(InputStream input) throws IOException {
-        String sequence = "1234567890qwertyuiopasdfghjklzxcvbnm";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            char c = sequence.charAt(new Random().nextInt(sequence.length()));
-            sb.append(c).append(File.separator);
-        }
-        File folder = new File(appConfig.getFileRepository() + File.separator + sb);
+        String path = StringUtils.join(RandomUtil.randomString(appConfig.getFileDeepLevel()).toCharArray(), File.separatorChar);
+        File folder = new File(appConfig.getFileRepository() + File.separator + path);
         if (!folder.exists()) {
             boolean bool = folder.mkdirs();
             if (bool) {
