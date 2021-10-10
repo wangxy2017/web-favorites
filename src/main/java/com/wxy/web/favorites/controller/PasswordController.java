@@ -5,6 +5,7 @@ import com.wxy.web.favorites.model.Password;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.PasswordService;
 import com.wxy.web.favorites.util.ApiResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class PasswordController {
     @PostMapping
     public ApiResponse save(@RequestBody Password password) {
         Favorites favorites = favoritesService.findById(password.getFavoritesId());
-        if (favorites != null) {
+        if (favorites != null && (StringUtils.isNotBlank(password.getAccount()) || StringUtils.isNotBlank(password.getPassword()))) {
             Password save = passwordService.save(password);
             return ApiResponse.success(save);
         }

@@ -60,6 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
                 "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/layui/**", "/images/**",
-                "/favicon.ico", "/search.json");
+                "/favicon.ico", "/search.json", "/notice.json");
     }
 }

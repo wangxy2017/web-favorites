@@ -34,7 +34,7 @@
             vertical-align: middle;
         }
 
-        .search-div {
+        .search-input {
             z-index: 999;
             position: absolute;
             top: 16px;
@@ -43,7 +43,7 @@
             height: 30px;
         }
 
-        .search-div input {
+        .search-input input {
             height: 100%;
             font-size: 12px;
             border: none;
@@ -52,7 +52,7 @@
             padding-right: 26px;
         }
 
-        .search-div .search-close {
+        .search-input .search-close {
             position: absolute;
             top: 4px;
             right: 4px;
@@ -435,6 +435,28 @@
             border: solid 1px #e9f7f6;
             border-radius:5px;
         }
+
+        #notice {
+            display:none;
+            z-index: 999;
+            position: absolute;
+            top: 16px;
+            left: 320px;
+            min-width: 58px;
+            height: 30px;
+            color: #fff;
+            line-height: 30px;
+            font-size: 12px;
+            padding: 0 15px;
+            border-radius: 2px;
+            cursor: pointer;
+            overflow: hidden;
+            background-image: linear-gradient(to right,#359FD4,#36B5C8,#25D8AB);
+        }
+
+        #notice cite{
+            font-style: normal;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -443,11 +465,15 @@
         <div class="layui-logo" style="width: 150px;cursor: pointer;" onclick="window.location.reload();">
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
-        <div class="search-div">
+        <div class="search-input">
             <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
             <ul class="search-items layui-anim layui-anim-fadein"></ul>
+        </div>
+        <div id="notice" onclick="showNotice('click')">
+            <cite>系统公告</cite>
+            <span class="layui-badge-dot"></span>
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
             <div class="layui-input-inline">
@@ -633,7 +659,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">登录账号</label>
         <div class="layui-input-inline" style="width: 160px;">
-            <input type="text" name="account" id="account" required lay-verify="required" placeholder="请输入账号" autocomplete="off"
+            <input type="text" name="account" id="account" placeholder="请输入账号" autocomplete="off"
                    class="layui-input">
         </div>
         <div class="layui-inline">
@@ -643,7 +669,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">登录密码</label>
         <div class="layui-input-inline" style="width: 160px;">
-            <input type="text" name="password" id="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+            <input type="text" name="password" id="password" placeholder="请输入密码" autocomplete="off"
                    class="layui-input">
         </div>
         <div class="layui-inline">
@@ -776,7 +802,7 @@
 
         // 点击空白关闭
         $(document).on("click", function(e) {
-            var _conss = $('.search-div');//点击的容器范围
+            var _conss = $('.search-input');//点击的容器范围
             if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
                 $(".search-items").hide();
                 $("#search_close").hide();
@@ -2023,6 +2049,9 @@
 
         // 保存密码
         form.on('submit(savePwd)', function (data) {
+            if(!data.field.account && !data.field.password){
+                return false;
+            }
             layer.load();
             $.ajax({
                 type: "POST",
@@ -2038,9 +2067,6 @@
                         //给表单赋值
                         form.val("setting-pwd", {
                             "id": data.id
-                            , "favoritesId": data.favoritesId
-                            , "account": data.account
-                            , "password": data.password
                         });
                         layer.msg("保存成功", {icon: 6});
                     } else {
@@ -2308,6 +2334,47 @@
             });
         };
 
+        window.showNotice = function(type){
+            // 查询公告
+            $.ajax({
+                type: "GET",
+                url: "notice.json",
+                dataType: "json",
+                success: function (data) {
+                    if (data.title && data.content) {
+                        // 显示按钮
+                        if(parseInt($(window).width()) >= 550){
+                            $("#notice cite").text(data.title);
+                            $("#notice").show();
+                        }
+                        if(type == "ready" && localStorage.getItem("notShowNotice")){
+                            return false;
+                        }
+                        // 弹出公告
+                        var width = parseInt($(window).width()) * 0.9;
+                        width = (width >= 970 ? 970 : width) + 'px';
+                        var index = layer.open({
+                            title: '公告'
+                            ,content: data.content
+                            ,area: [width, '400px']
+                            ,btn: ['知道了']
+                            ,yes: function(index, layero){
+                                layer.close(index);
+                                localStorage.setItem("notShowNotice", true);
+                            }
+                        });
+                        indexMap.set('#showNotice',index);
+                    }else{
+                        if(type == "click"){
+                            layer.alert('暂无公告！', {icon: 0});
+                        }else{
+                            $("#notice").hide();
+                        }
+                    }
+                }
+            });
+        };
+
         // 页面加载完成执行
         $(function () {
             // 加载用户信息
@@ -2324,6 +2391,8 @@
             loadUserData();
             // 初始化title
             initTitle();
+            // 显示公告
+            showNotice('ready');
         });
     });
 </script>

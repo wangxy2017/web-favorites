@@ -1,7 +1,4 @@
 package com.wxy.web.favorites;
-/**
- * Created by jiangjiacheng on 2019/6/4.
- */
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

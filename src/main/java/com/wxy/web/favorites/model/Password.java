@@ -20,10 +20,10 @@ public class Password {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "account", nullable = false, columnDefinition = "varchar(100) comment '账号'")
+    @Column(name = "account", columnDefinition = "varchar(100) comment '账号'")
     private String account;
 
-    @Column(name = "password", nullable = false, columnDefinition = "varchar(100) comment '密码'")
+    @Column(name = "password", columnDefinition = "varchar(100) comment '密码'")
     private String password;
 
     @Column(name = "favorites_id", unique = true, nullable = false, columnDefinition = "int(10) comment '收藏ID'")
