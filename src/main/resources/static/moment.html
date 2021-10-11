@@ -504,7 +504,7 @@
             layer.confirm('确认退出系统吗？', function(index){
                 layer.close(index);
 
-                localStorage.removeItem("login_user_token");
+                localStorage.clear();
                 window.location.href = "login.html";
             });
         });

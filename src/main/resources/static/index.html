@@ -1609,7 +1609,7 @@
             layer.confirm('确认退出系统吗？', function(index){
                 layer.close(index);
 
-                localStorage.removeItem("login_user_token");
+                localStorage.clear();
                 window.location.href = "login.html";
             });
         });
@@ -2159,7 +2159,7 @@
                     layer.close(indexMap.get('#changePwd'));
                     if (result.code == 0) {
                         layer.msg('修改成功', {icon: 6, time: 1000}, function(){
-                            localStorage.removeItem("login_user_token");
+                            localStorage.clear();
                             window.location.href = "login.html";
                         });
                     } else {
