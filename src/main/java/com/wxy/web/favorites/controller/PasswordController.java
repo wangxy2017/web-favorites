@@ -23,8 +23,8 @@ public class PasswordController {
     public ApiResponse save(@RequestBody Password password) {
         Favorites favorites = favoritesService.findById(password.getFavoritesId());
         if (favorites != null && (StringUtils.isNotBlank(password.getAccount()) || StringUtils.isNotBlank(password.getPassword()))) {
-            Password save = passwordService.save(password);
-            return ApiResponse.success(save);
+            Password password1 = passwordService.save(password);
+            return ApiResponse.success(password1.getId());
         }
         return ApiResponse.error();
     }

@@ -66,5 +66,7 @@ public class PublicConstants {
 
     public static final String DEFAULT_TOKEN_SECRET_KEY = "wdmhm7iJvRf2n#hc";
 
+    public static final String DEFAULT_AES_SECRET_KEY = "4sn2UaVa96pj4n#V";
+
     public static final String FAVORITES_STAR_LIMITED_MSG = "标记数量已达上限";
 }

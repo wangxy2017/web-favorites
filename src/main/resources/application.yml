@@ -80,5 +80,7 @@ cron: #定时任务
   recycle-job: '0 1 0 * * ?'
   data-clean-job: '0 2 0 * * ?'
   backup-job: '0 3 0 * * ?'
-backup:
+backup: #数据库备份文件地址
   zip-file-path: ./backup/h2.zip
+aes: #aes密钥
+  secret-key:
