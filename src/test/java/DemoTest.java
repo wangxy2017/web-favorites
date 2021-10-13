@@ -1,4 +1,3 @@
-import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.WebFavoritesApplication;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.*;
@@ -13,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -75,6 +72,7 @@ public class DemoTest {
                 // 批量创建用户
                 for (int k = 0; k < userCount; k++) {
                     User user = userRepository.save(new User(null, id + "test" + k, passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8))), id + "test" + k + "@qq.com", null, null, null, null, null, null));
+                    log.info("创建用户：{}", user);
                     // 批量创建分类
                     for (int i = 0; i < categoryCount; i++) {
                         Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null, null));
@@ -102,8 +100,9 @@ public class DemoTest {
                 }
             });
         }
-        while (!service.isShutdown()) {
-            TimeUnit.SECONDS.sleep(10);
+        service.shutdown();// 调用停止命令，等待所有任务执行完成
+        while (!service.isTerminated()) {
+            TimeUnit.SECONDS.sleep(1);
         }
         log.info("批量插入数据完成！！！");
     }

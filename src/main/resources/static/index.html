@@ -2186,22 +2186,14 @@
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
-                $("#loadingDiv").fadeIn("normal",function(){
-                    var count = page - currentPage;
-                    for (var i=0;i<count;i++){
-                        loadList(++currentPage);
-                    }
-                    $("#loadingDiv").fadeOut();
-                    // 定位到锚点
-                    var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
-                    $("#layuiBody").animate({scrollTop: offsetTop}, 200);
-                });
-            }else{
-                // 定位到锚点
-                var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
-                $("#layuiBody").animate({scrollTop: offsetTop}, 200);
+                var count = page - currentPage;
+                for (var i=0;i<count;i++){
+                    loadList(++currentPage);
+                }
             }
-
+            // 定位到锚点
+            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
+            $("#layuiBody").animate({scrollTop: offsetTop}, 200);
         };
 
         window.imgRender = function(){
