@@ -591,7 +591,6 @@
                                           $.ajax({
                                             type: "GET",
                                             url: "task/list",
-                                            async: false,
                                             data: {"date": date, "pageNum": page,"pageSize": 20},
                                             dataType: "json",
                                             headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},

@@ -1538,7 +1538,7 @@
                 $.ajax({
                     type: "GET",
                     url: 'category/check/' + value,
-                    async: false, // 使用同步的方法
+                    async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
@@ -1613,63 +1613,6 @@
                 window.location.href = "login.html";
             });
         });
-
-        // 加载数据
-        window.loadList = function (page) {
-            $.ajax({
-                type: "GET",
-                async: false,
-                url: "favorites/list",
-                data: {"pageNum":page, "pageSize":indexPageSize},
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    if (result.code == 0) {
-                        // 加载数据
-                        var html = '';
-                        $.each(result.data.list, function (i, c) {
-                            var bookmarkClass = c.bookmark==1?"bookmark":"";
-                            html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                            html += '   <div class="title" onclick="editCategory(this)">' + c.name + '</div>';
-                            html += '   <ul class="favorites">';
-                            if(c.favorites.length > 0) {
-                                $.each(c.favorites, function (j, f) {
-                                    html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
-                                    html += '       <div class="favorites-bg">';
-                                    html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                    html += '       </div>';
-                                    html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
-                                    html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                    html += '   </li>';
-                                    if(j == limit - 1){
-                                        html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
-                                        html += '   <div class="favorites-bg">';
-                                        html += '       <img src="images/more.svg"/>';
-                                        html += '   </div>';
-                                        html += '   <p title="显示更多">显示更多</p>';
-                                        html += '</li>';
-                                        return false;
-                                    }
-                                });
-                            } else {
-                                html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
-                                html += '   <div class="favorites-bg">';
-                                html += '       <img src="images/add.svg"/>';
-                                html += '   </div>';
-                                html += '   <p title="添加网址">添加网址</p>';
-                                html += '</li>';
-                            }
-                            html += '   </ul>';
-                            html += '</div>';
-                        });
-                        $("#main").append(html);
-                    }
-                },
-                error: function(){
-                    layer.msg("服务器异常", {icon: 2});
-                }
-            });
-        };
 
         // 加载分类
         window.loadCategoryList = function () {
@@ -1890,7 +1833,7 @@
                 $.ajax({
                     type: "GET",
                     url: 'register/email/' + value,
-                    async: false, // 使用同步的方法
+                    async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
@@ -1910,7 +1853,7 @@
                     $.ajax({
                         type: "GET",
                         url: 'favorites/shortcut?key=' + value,
-                        async: false, // 使用同步的方法
+                        async: false,
                         dataType: 'json',
                         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
@@ -1928,7 +1871,7 @@
                 $.ajax({
                     type: "GET",
                     url: 'category/check/' + value,
-                    async: false, // 使用同步的方法
+                    async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
@@ -2186,14 +2129,71 @@
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
-                var count = page - currentPage;
-                for (var i=0;i<count;i++){
-                    loadList(++currentPage);
-                }
+                $("#loadingDiv").fadeIn();
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/position",
+                    data: {"currentPage":currentPage, "pageSize":indexPageSize, "page": page},
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            // 加载数据
+                            var html = '';
+                            $.each(result.data.list, function (i, c) {
+                                var bookmarkClass = c.bookmark==1?"bookmark":"";
+                                html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
+                                html += '   <div class="title" onclick="editCategory(this)">' + c.name + '</div>';
+                                html += '   <ul class="favorites">';
+                                if(c.favorites.length > 0) {
+                                    $.each(c.favorites, function (j, f) {
+                                        html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                                        html += '       <div class="favorites-bg">';
+                                        html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                        html += '       </div>';
+                                        html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                        html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                                        html += '   </li>';
+                                        if(j == limit - 1){
+                                            html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
+                                            html += '   <div class="favorites-bg">';
+                                            html += '       <img src="images/more.svg"/>';
+                                            html += '   </div>';
+                                            html += '   <p title="显示更多">显示更多</p>';
+                                            html += '</li>';
+                                            return false;
+                                        }
+                                    });
+                                } else {
+                                    html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
+                                    html += '   <div class="favorites-bg">';
+                                    html += '       <img src="images/add.svg"/>';
+                                    html += '   </div>';
+                                    html += '   <p title="添加网址">添加网址</p>';
+                                    html += '</li>';
+                                }
+                                html += '   </ul>';
+                                html += '</div>';
+                            });
+                            $("#main").append(html);
+                            currentPage = result.data.currentPage;
+                            // 定位到锚点
+                            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
+                            $("#layuiBody").animate({scrollTop: offsetTop}, 200);
+                            // 定位后结束动画
+                            $("#loadingDiv").fadeOut();
+                        }
+                    },
+                    error: function(){
+                        $("#loadingDiv").fadeOut();
+                        layer.msg("服务器异常", {icon: 2});
+                    }
+                });
+            }else{
+                // 定位到锚点
+                var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
+                $("#layuiBody").animate({scrollTop: offsetTop}, 200);
             }
-            // 定位到锚点
-            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
-            $("#layuiBody").animate({scrollTop: offsetTop}, 200);
         };
 
         window.imgRender = function(){

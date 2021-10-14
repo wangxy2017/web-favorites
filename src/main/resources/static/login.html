@@ -518,7 +518,7 @@
                 $.ajax({
                     type: "GET",
                     url: 'register/' + value,
-                    async: false, // 使用同步的方法
+                    async: false,
                     dataType: 'json',
                     success: function (result) {
                         if (result.code != 0) {
@@ -533,7 +533,7 @@
                 $.ajax({
                     type: "GET",
                     url: 'register/email/' + value,
-                    async: false, // 使用同步的方法
+                    async: false,
                     dataType: 'json',
                     success: function (result) {
                         if (result.code != 0) {

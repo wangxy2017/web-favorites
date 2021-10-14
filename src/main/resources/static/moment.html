@@ -127,6 +127,7 @@
                 border: none;
                 background-color: #161a1d;
                 color: #b2b2b2;
+                padding-left: 26px;
                 padding-right: 26px;
             }
 
@@ -263,7 +264,7 @@
         $("#search_close").click(function () {
             $("#topMoment").show();
             $("#momentList").show();
-            
+
             $("#searchList").empty();
             $(this).hide();
             $("#search_text").val("").blur().parent().css({"width":"100px"});

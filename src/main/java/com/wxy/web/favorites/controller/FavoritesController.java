@@ -109,6 +109,26 @@ public class FavoritesController {
         return ApiResponse.success(page);
     }
 
+    @GetMapping("/position")
+    public ApiResponse position(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam Integer page) {
+        User user = springUtils.getCurrentUser();
+        List<Category> list = new ArrayList<>();
+        int count = page - currentPage;
+        int pageNum = currentPage + 1;
+        for (int i = 0; i < count; i++) {
+            // 查询用户分类
+            List<Category> list1 = categoryService.findPageByUserId(user.getId(), pageNum++, pageSize).getList();
+            for (Category c : list1) {
+                c.setFavorites(favoritesService.findLimitByCategoryId(c.getId()));
+            }
+            list.addAll(list1);
+        }
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("currentPage", pageNum - 1);
+        dataMap.put("list", list);
+        return ApiResponse.success(dataMap);
+    }
+
     /**
      * 显示更多
      *
@@ -334,7 +354,7 @@ public class FavoritesController {
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1,null));
+                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1, null));
                 });
             }
         } catch (Exception e) {
