@@ -4,14 +4,17 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.util.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,20 @@ public class CategoryService {
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         Page<Category> page = categoryRepository.findByUserId(userId, pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+    }
+
+    public List<Category> findCategories(Integer userId, String searchName) {
+        Pageable pageable = PageRequest.of(0, appConfig.getCategorySearchLimit());
+        // 构造自定义查询条件
+        Specification<Category> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicateList = new ArrayList<>();
+            predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
+            if (StringUtils.isNotBlank(searchName)) {
+                predicateList.add(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"));
+            }
+            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+        };
+        return categoryRepository.findAll(queryCondition, pageable).getContent();
     }
 }
 

@@ -56,7 +56,8 @@ app: #系统参数配置
   verification-expired-minutes: 30 #验证码过期时间
   verification-resend-seconds: 60 #验证码重发时间
   star-limit: 30 #标记个数限制
-  search-limit: 100 #搜索个数限制
+  favorites-search-limit: 100 #搜索收藏个数限制
+  category-search-limit: 30 #搜索分类个数限制
   favorites-limit: 40 #显示收藏个数限制
   search-type-json: search.json #搜索类型数据
   init-capacity: 100 #初始容量(M)

@@ -852,7 +852,7 @@
                                     var html = '';
                                     var bookmarkClass = c.bookmark==1?"bookmark":"";
                                     html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                                    html += '   <div class="title" onclick="editCategory(this)">' + c.name + '</div>';
+                                    html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
                                     html += '   <ul class="favorites">';
                                     if(c.favorites.length > 0) {
                                         $.each(c.favorites, function (j, f) {
@@ -1239,10 +1239,19 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     $("#searchDiv").empty();
-                    if (result.code == 0 && result.data.length > 0) {
+                    if (result.code == 0 && (result.data.favoritesList.length > 0 || result.data.categoryList.length > 0)) {
                         var html = '';
                         html += '<ul class="favorites">';
-                        $.each(result.data, function (i, f) {
+                        $.each(result.data.categoryList, function (i, c) {
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" onclick="showFavorites(this)">';
+                            html += '   <div class="favorites-bg">';
+                            html += '       <img src="images/category.svg"/>';
+                            html += '   </div>';
+                            html += '   <p class="myToolTip" title="' + c.name + '">' + c.name + '</p>';
+                            html += '   <i onclick="editCategory(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '</li>';
+                        });
+                        $.each(result.data.favoritesList, function (i, f) {
                             html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
@@ -1260,6 +1269,43 @@
                         if (input_history == null || input_history.length >= 5) input_history = [];
                         if (input_history.indexOf(name) < 0) input_history.push(name);
                         localStorage.setItem("input_history", JSON.stringify(input_history));
+                    }else{
+                        $("#notFoundDiv").show();
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg('服务器异常', {icon: 2});
+                }
+            });
+        };
+
+        window.showFavorites = function(obj){
+            layer.load();
+            $.ajax({
+                type: "GET",
+                url: "category/favorites/" + $(obj).attr("data-id"),
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    $("#searchDiv").empty();
+                    if (result.code == 0 && result.data.length > 0) {
+                        var html = '';
+                        html += '<ul class="favorites">';
+                        $.each(result.data, function (i, f) {
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                            html += '   <div class="favorites-bg">';
+                            html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '   </div>';
+                            html += '   <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '</li>';
+                        });
+                        html += '</ul>';
+                        $("#searchDiv").append(html);
+                        imgRender();
+                        $("#notFoundDiv").hide();
                     }else{
                         $("#notFoundDiv").show();
                     }
@@ -1493,7 +1539,8 @@
         };
 
         // 编辑分类
-        window.editCategory = function (obj) {
+        window.editCategory = function (obj, e) {
+            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
             var index = layer.open({
                 type: 1,
                 title: "修改分类",
@@ -2152,7 +2199,7 @@
                             $.each(result.data.list, function (i, c) {
                                 var bookmarkClass = c.bookmark==1?"bookmark":"";
                                 html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                                html += '   <div class="title" onclick="editCategory(this)">' + c.name + '</div>';
+                                html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
                                 html += '   <ul class="favorites">';
                                 if(c.favorites.length > 0) {
                                     $.each(c.favorites, function (j, f) {

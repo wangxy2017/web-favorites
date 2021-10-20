@@ -55,6 +55,12 @@ public class CategoryController {
         return ApiResponse.error();
     }
 
+    @GetMapping("/favorites/{categoryId}")
+    public ApiResponse favorites(@PathVariable Integer categoryId) {
+        List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
+        return ApiResponse.success(favorites);
+    }
+
     /**
      * 删除分类
      *

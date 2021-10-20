@@ -73,7 +73,7 @@ public class FavoritesService {
     }
 
     public List<Favorites> findFavorites(Integer userId, String searchName) {
-        Pageable pageable = PageRequest.of(0, appConfig.getSearchLimit());
+        Pageable pageable = PageRequest.of(0, appConfig.getFavoritesSearchLimit());
         // 构造自定义查询条件
         Specification<Favorites> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();

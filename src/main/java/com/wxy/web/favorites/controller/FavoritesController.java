@@ -213,8 +213,12 @@ public class FavoritesController {
     public ApiResponse search(@RequestParam String name) {
         User user = springUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
-        List<Favorites> list = favoritesService.findFavorites(user.getId(), name);
-        return ApiResponse.success(list);
+        List<Favorites> favoritesList = favoritesService.findFavorites(user.getId(), name);
+        List<Category> categoryList = categoryService.findCategories(user.getId(), name);
+        Map<String, Object> data = new HashMap<>();
+        data.put("favoritesList", favoritesList);
+        data.put("categoryList", categoryList);
+        return ApiResponse.success(data);
     }
 
     @GetMapping("/star")

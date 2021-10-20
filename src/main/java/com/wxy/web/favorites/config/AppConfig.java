@@ -17,7 +17,9 @@ public class AppConfig {
 
     private Integer starLimit;
 
-    private Integer searchLimit;
+    private Integer favoritesSearchLimit;
+
+    private Integer categorySearchLimit;
 
     private Integer favoritesLimit;
 
