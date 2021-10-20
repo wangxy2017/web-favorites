@@ -57,14 +57,14 @@ public class DemoTest {
      */
     @Test
     public void test() throws InterruptedException {
-        int concurrent = 20;
-        int userCount = 100;
-        int categoryCount = 100;
-        int favoritesCount = 100;
-        int momentCount = 100;
-        int searchTypeCount = 100;
-        int userFileCount = 100;
-        int taskCount = 100;
+        int concurrent = 1;
+        int userCount = 1;
+        int categoryCount = 1000;
+        int favoritesCount = 1000;
+        int momentCount = 10000;
+        int searchTypeCount = 1000;
+        int userFileCount = 1000;
+        int taskCount = 10000;
         ExecutorService service = Executors.newFixedThreadPool(concurrent);
         for (int l = 0; l < concurrent; l++) {
             service.execute(() -> {

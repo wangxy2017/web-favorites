@@ -369,11 +369,15 @@
                           area: [width, '500px'],
                           btn: ['确认', '取消'],
                           yes: function(index, layero){
+                            var text = subWindow.editor.txt.text();
+                            if(text.length>20000){
+                                layer.msg('最多输入20000个字符');
+                                return false;
+                            }
                             layer.load();
                             var frameId = $(layero).find("iframe").attr('id');
                             var subWindow = document.getElementById(frameId).contentWindow;
                             var html = subWindow.editor.txt.html();
-                            var text = subWindow.editor.txt.text();
                             var momentId = subWindow.momentId;
                             // 保存数据
                             $.ajax({

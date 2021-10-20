@@ -1623,13 +1623,22 @@
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        var html = '';
+                        var oHtml = '';
+                        var lHtml = '';
                         $.each(result.data, function (i, c) {
-                            html += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
+                            oHtml += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
+                            lHtml += '<li><a href="javascript:;" onclick="position(' + c.id + ',' + (parseInt(i / indexPageSize) + 1) + ')"><cite>' + c.name + '</cite></a></li>';
                         });
-                        $("select[name='categoryId']").empty().append(html);
+                        $("select[name='categoryId']").empty().append(oHtml);
+                        $("#catalogList").empty().append(lHtml);
+
                         form.render('select','update-favorites');
                         form.render('select','add-favorites');
+
+                        $("#catalogList a").on('click',function(){
+                            $("#catalogList a.layui-this").removeClass("layui-this");
+                            $(this).addClass("layui-this");
+                        });
                     }
                 }
             });
@@ -2251,30 +2260,6 @@
             clipboard2.on('error', function(e) {layer.msg("复制失败");});
         };
 
-        window.initCatalog = function(){
-            $.ajax({
-                type: "GET",
-                url: "category/catalog",
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    if (result.code == 0) {
-                        var html = '';
-                        $.each(result.data, function (i, c) {
-                            var page = parseInt(i / indexPageSize) + 1;
-                            html += '<li><a href="javascript:;" onclick="position(' + c.id + ',' + page + ')"><cite>' + c.name + '</cite></a></li>';
-                        });
-                        $("#catalogList").empty().append(html);
-                        // 绑定点击事件
-                        $("#catalogList a").on('click',function(){
-                            $("#catalogList a.layui-this").removeClass("layui-this");
-                            $(this).addClass("layui-this");
-                        });
-                    }
-                }
-            });
-        };
-
         $("#slideBtn").click(function(){
             layer.open({
               title: '目录'
@@ -2282,7 +2267,7 @@
               ,type: 1
               ,skin: 'catalog'
               ,offset: 'catalog'
-              ,maxHeight: 600
+              ,maxHeight: 500
             });
         });
 
@@ -2376,8 +2361,6 @@
             loadCategoryList();
             // 初始化剪贴板插件
             initClipboard();
-            // 初始化目录
-            initCatalog();
             // 加载用户数据
             loadUserData();
             // 初始化title

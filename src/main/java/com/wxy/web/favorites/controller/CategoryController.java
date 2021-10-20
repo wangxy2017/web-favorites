@@ -102,13 +102,6 @@ public class CategoryController {
         return ApiResponse.success(list);
     }
 
-    @GetMapping("/catalog")
-    public ApiResponse catalog() {
-        User user = springUtils.getCurrentUser();
-        List<Category> list = categoryService.findCatalog(user.getId());
-        return ApiResponse.success(list);
-    }
-
     @PostMapping("/bookmark")
     public ApiResponse bookmark(@RequestBody Category category) {
         Category category1 = categoryService.findById(category.getId());
