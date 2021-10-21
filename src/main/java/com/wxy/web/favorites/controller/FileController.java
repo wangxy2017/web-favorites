@@ -20,7 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -238,7 +239,7 @@ public class FileController {
             if (StringUtils.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
                 try (FileChannel channel = new RandomAccessFile(file.getPath(), "r").getChannel()) {
-                    ByteBuffer buffer = ByteBuffer.allocate(16);
+                    ByteBuffer buffer = ByteBuffer.allocate(1024);
                     while (channel.read(buffer) != -1) {
                         buffer.flip();
                         sb.append(StandardCharsets.UTF_8.decode(buffer));
