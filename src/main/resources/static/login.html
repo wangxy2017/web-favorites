@@ -298,6 +298,8 @@
         var form = layui.form;
         var layer = layui.layer;
 
+        var socketPort = 8888;
+
         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
         particlesJS.load('particles-js', 'layui/particles.json');
 
@@ -378,10 +380,7 @@
            }else{
                console.log("您的浏览器支持WebSocket");
                if(socket){ socket.close(); }
-               var url = window.location.href;
-               var url1 = url.substring(url.indexOf("//") + 2);
-               var path = url1.substring(0, url1.indexOf("/"));
-               socket = new WebSocket("ws://" + path + "/websocket/" + sid);
+               socket = new WebSocket("ws://" + window.location.host.split(':')[0] + ":" + socketPort + "/websocket?sid=" + sid);
                //打开事件
                socket.onopen = function() {
                    console.log("Socket 已打开");

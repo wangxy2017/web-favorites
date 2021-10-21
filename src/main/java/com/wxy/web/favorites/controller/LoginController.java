@@ -2,7 +2,6 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.wxy.web.favorites.WebSocketServer;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
@@ -20,6 +19,9 @@ import com.wxy.web.favorites.util.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
 import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.websocket.ChannelSupervise;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,18 +154,16 @@ public class LoginController {
         if (StringUtils.isBlank(user.getSid())) {
             return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
         }
-        if (!WebSocketServer.checkSid(user.getSid())) {
+        Channel channel = ChannelSupervise.findChannel(user.getSid());
+        if (channel == null) {
             return ApiResponse.error(ErrorConstants.QRCODE_INVALID_MSG);
         }
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token = jwtUtil.generateToken(user1.getUsername());
-                try {
-                    WebSocketServer.sendInfo(JSONObject.toJSONString(ApiResponse.success(token)), user.getSid());
-                } catch (IOException e) {
-                    return ApiResponse.error(ErrorConstants.QRCODE_INVALID_MSG);
-                }
+                TextWebSocketFrame tws = new TextWebSocketFrame(JSONObject.toJSONString(ApiResponse.success(token)));
+                channel.writeAndFlush(tws);
                 updateErrorCount(user1, true);
                 return ApiResponse.success();
             } else {
