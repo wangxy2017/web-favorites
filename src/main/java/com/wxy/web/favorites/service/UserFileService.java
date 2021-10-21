@@ -124,9 +124,9 @@ public class UserFileService {
                     pathList.add(file.getPath());
                 }
             }
-            // 物理删除
+            // 物理删除文件(目录不删)
             for (String path : pathList) {
-                Files.delete(Paths.get(path));
+                Files.deleteIfExists(Paths.get(path));
             }
             // 更新容量
             User user = userRepository.getOne(userId);
