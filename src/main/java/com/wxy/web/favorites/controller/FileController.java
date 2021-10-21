@@ -148,15 +148,16 @@ public class FileController {
     public void downloadAll(HttpServletResponse response) throws IOException {
         User user = springUtils.getCurrentUser();
         String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
-        File file = userFileService.packageFile(user.getId(), tempPath);
-        Assert.notNull(file, ErrorConstants.RESOURCE_NOT_FOUND);
-        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-        out.setMethod(ZipEntry.DEFLATED);
-        out.setLevel(appConfig.getFileCompressLevel());
-        // 压缩文件
-        ZipUtils.compressFile(out, file);
+        Path packageFile = userFileService.packageFile(user.getId(), tempPath);
+        Assert.notNull(packageFile, ErrorConstants.RESOURCE_NOT_FOUND);
+        try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream())) {
+            out.setMethod(ZipEntry.DEFLATED);
+            out.setLevel(appConfig.getFileCompressLevel());
+            // 压缩文件
+            ZipUtils.compressFile(out, packageFile.toFile());
+        }
         // 删除临时文件
-        file.delete();
+        userFileService.cleanHistory(packageFile);
     }
 
     @PostMapping("/upload")

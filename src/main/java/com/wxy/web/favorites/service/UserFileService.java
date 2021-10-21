@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.service;
 
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -18,14 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,47 +62,62 @@ public class UserFileService {
         return userFileRepository.findByUserIdAndPidIsNull(userId);
     }
 
-    public File packageFile(Integer userId, String tempPath) throws IOException {
+    /**
+     * 将用户所有文件，按照层级结构，打包到临时目录
+     *
+     * @param userId
+     * @param tempPath
+     * @return
+     * @throws IOException
+     */
+    public Path packageFile(Integer userId, String tempPath) throws IOException {
         // 查询用户文件
-        List<UserFile> files = userFileRepository.findByUserIdAndPidIsNull(userId);
-        if (!CollectionUtils.isEmpty(files)) {
-            File root = new File(tempPath + File.separator + userId);
-            if (root.exists()) {
-                Assert.isTrue(root.delete(), "删除根目录文件失败");
-            } else {
-                Assert.isTrue(root.mkdirs(), "创建根目录文件失败");
-            }
-            // 打包
-            createFile(files, root.getPath());
+        List<UserFile> rootList = userFileRepository.findByUserIdAndPidIsNull(userId);
+        if (!CollectionUtils.isEmpty(rootList)) {
+            Path root = Paths.get(tempPath, String.valueOf(userId));
+            // 打包前，删除历史打包
+            cleanHistory(root);
+            createFile(rootList, root);
             return root;
         } else {
             return null;
         }
     }
 
-    private void createFile(List<UserFile> list, String base) throws IOException {
-        for (UserFile file : list) {
-            if (PublicConstants.DIR_CODE.equals(file.getIsDir())) {
-                // 创建文件夹
-                File director = new File(base + File.separator + file.getFilename());
-                if (director.exists()) {
-                    Assert.isTrue(director.delete(), "删除文件夹失败");
-                } else {
-                    Assert.isTrue(director.mkdirs(), "创建文件夹失败");
+    public void cleanHistory(Path base) throws IOException {
+        if(Files.exists(base)){
+            Files.walkFileTree(base, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
                 }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
+    private void createFile(List<UserFile> list, Path base) throws IOException {
+        if (Files.notExists(base)) {
+            Files.createDirectories(base);
+        }
+        for (UserFile file : list) {
+            if (PublicConstants.DIR_CODE.equals(file.getIsDir())) {// 如果是文件夹，则创建文件夹
+                Path director = Paths.get(base.toString(), file.getFilename());
+                Files.createDirectories(director);
                 // 查询文件夹下的文件并创建
                 List<UserFile> children = userFileRepository.findByPid(file.getId());
-                createFile(children, director.getPath());
-            } else {
-                File disk = new File(file.getPath());
-                if (disk.exists()) {
-                    File out = new File(base + File.separator + file.getFilename());
-                    if (out.exists()) {
-                        Assert.isTrue(out.delete(), "删除文件失败");
-                    } else {
-                        Assert.isTrue(out.createNewFile(), "创建文件失败");
-                    }
-                    FileCopyUtils.copy(disk, out);
+                createFile(children, director);
+            } else {// 如果是文件，则拷贝文件到临时目录
+                Path source = Paths.get(file.getPath());
+                if (Files.exists(source)) {
+                    Path target = Paths.get(base.toString(), file.getFilename());
+                    Files.copy(source, target);
                 }
             }
         }
