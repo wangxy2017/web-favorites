@@ -20,7 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,12 +111,11 @@ public class UserFileService {
         }
     }
 
-    public void deleteById(Integer id, Integer userId) {
+    public void deleteById(Integer id, Integer userId) throws IOException {
         UserFile userFile = userFileRepository.findById(id).orElse(null);
         if (userFile != null) {
             List<UserFile> deletingFiles = new ArrayList<>();
             addDeletingFile(deletingFiles, userFile);
-
             long totalSize = 0L;
             List<String> pathList = new ArrayList<>();
             for (UserFile file : deletingFiles) {
@@ -121,7 +125,9 @@ public class UserFileService {
                 }
             }
             // 物理删除
-            pathList.forEach(p -> Assert.isTrue(new File(p).delete(), "删除文件失败"));
+            for (String path : pathList) {
+                Files.delete(Paths.get(path));
+            }
             // 更新容量
             User user = userRepository.getOne(userId);
             long size = user.getUsedSize() - totalSize;
@@ -143,27 +149,13 @@ public class UserFileService {
     }
 
     public String saveFile(InputStream input) throws IOException {
-        String path = StringUtils.join(RandomUtil.randomString(appConfig.getFileDeepLevel()).toCharArray(), File.separatorChar);
-        File folder = new File(appConfig.getFileRepository() + File.separator + path);
-        if (!folder.exists()) {
-            boolean bool = folder.mkdirs();
-            if (bool) {
-                File file = new File(folder.getPath() + File.separator + UUID.randomUUID().toString().replaceAll("-", ""));
-                BufferedInputStream bin = new BufferedInputStream(input);
-                FileOutputStream out = new FileOutputStream(file);
-                byte[] buffer = new byte[1024 * 1024 * 10];
-                int i = bin.read(buffer);
-                while (i != -1) {
-                    out.write(buffer, 0, i);
-                    i = bin.read(buffer);
-                }
-                input.close();
-                bin.close();
-                out.close();
-                return file.getPath();
-            }
+        Path folder = Paths.get(appConfig.getFileRepository(), StringUtils.join(RandomUtil.randomString(appConfig.getFileDeepLevel()).toCharArray(), File.separatorChar));
+        if (Files.notExists(folder)) {
+            Files.createDirectories(folder);
         }
-        throw new IOException();
+        Path file = Paths.get(folder.toString(), UUID.randomUUID().toString().replaceAll("-", ""));
+        Files.copy(input, file);
+        return file.toString();
     }
 
     public PageInfo<UserFile> findPageList(Integer userId, String name, Integer pid, Integer pageNum, Integer pageSize) {

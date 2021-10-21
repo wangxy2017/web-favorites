@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -54,7 +56,7 @@ public class FileController {
     @GetMapping("/exists/{id}")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNotBlank(file.getPath()) && new File(file.getPath()).exists()) {
+        if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -63,7 +65,7 @@ public class FileController {
     @GetMapping("/share/{id}")
     public ApiResponse share(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNotBlank(file.getPath()) && new File(file.getPath()).exists()) {
+        if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
             if (StringUtils.isBlank(file.getShareId())) {
                 file.setShareId(UUID.randomUUID().toString().replaceAll("-", ""));
                 userFileService.save(file);
@@ -190,14 +192,14 @@ public class FileController {
     }
 
     @PostMapping("/delete")
-    public ApiResponse delete(@RequestParam Integer id) {
+    public ApiResponse delete(@RequestParam Integer id) throws IOException {
         User user = springUtils.getCurrentUser();
         userFileService.deleteById(id, user.getId());
         return ApiResponse.success();
     }
 
     @PostMapping("/deleteMore")
-    public ApiResponse deleteMore(@RequestParam String ids) {
+    public ApiResponse deleteMore(@RequestParam String ids) throws IOException {
         User user = springUtils.getCurrentUser();
         String[] split = ids.split(PublicConstants.ID_DELIMITER);
         for (String s : split) {

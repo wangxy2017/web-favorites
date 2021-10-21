@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Component
 @Slf4j
@@ -21,9 +23,9 @@ public class StartRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        File file = new File(appConfig.getFileRepository());
-        if (!file.exists() && file.mkdirs()) {
-            log.info("创建文件仓库：[{}]", file.getAbsolutePath());
+        Path repository = Paths.get(appConfig.getFileRepository());
+        if (!Files.exists(repository) && Files.exists(Files.createDirectory(repository))) {
+            log.info("创建文件仓库：[{}]", repository.toAbsolutePath());
         }
         // 启动websocket
         new NioWebSocketServer(nettyPort).init();
