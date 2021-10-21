@@ -18,10 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -131,19 +135,13 @@ public class FileController {
         UserFile userFile = userFileService.findById(id);
         Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
         Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath()), "数据异常");
-        File file = new File(userFile.getPath());
-        Assert.isTrue(file.exists(), ErrorConstants.FILE_IS_DELETED);
+        Path file = Paths.get(userFile.getPath());
+        Assert.isTrue(Files.exists(file), ErrorConstants.FILE_IS_DELETED);
         response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
         response.addHeader("Content-Disposition", "attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-        OutputStream out = response.getOutputStream();
-        byte[] buf = new byte[1024 * 1024 * 10];
-        int len;
-        while ((len = bis.read(buf)) != -1) {
-            out.write(buf, 0, len);
+        try (ServletOutputStream out = response.getOutputStream()) {
+            Files.copy(file, out);
         }
-        bis.close();
-        out.close();
     }
 
     @GetMapping("/downloadAll")
@@ -238,16 +236,14 @@ public class FileController {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
             if (StringUtils.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
-                    String tempStr;
-                    while ((tempStr = reader.readLine()) != null) {
-                        sb.append(tempStr).append("\n");
+                try (FileChannel channel = new RandomAccessFile(file.getPath(), "r").getChannel()) {
+                    ByteBuffer buffer = ByteBuffer.allocate(16);
+                    while (channel.read(buffer) != -1) {
+                        buffer.flip();
+                        sb.append(StandardCharsets.UTF_8.decode(buffer));
+                        buffer.clear();
                     }
-                    reader.close();
-                } catch (IOException e) {
-                    sb.append(ErrorConstants.FILE_READ_FAILED_MSG);
-                    log.error("文件读取异常", e);
+                } catch (IOException ignored) {
                 }
                 return ApiResponse.success(sb.toString());
             }
