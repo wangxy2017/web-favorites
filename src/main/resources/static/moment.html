@@ -374,30 +374,34 @@
                             var html = subWindow.editor.txt.html();
                             var momentId = subWindow.momentId;
                             var text = subWindow.editor.txt.text();
-                            if(text.length > 20000){
-                                layer.msg('最多输入20000个字符');
-                                return false;
-                            }
-                            // 保存数据
-                            layer.load();
-                            $.ajax({
-                                type: "POST",
-                                url: "moment/update",
-                                data: JSON.stringify({"content": html,"id": momentId, "text": text}),
-                                contentType: 'application/json;charset=utf-8',
-                                dataType: "json",
-                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                                success: function (result) {
-                                    layer.closeAll('loading');
-                                    if (result.code == 0) {
-                                        layer.msg('保存成功', {icon: 6});
-                                        layer.close(index);
-                                        window.location.reload();
-                                    } else {
-                                        layer.msg('保存失败', {icon: 5});
-                                    }
+                            if(html && text){
+                                if(text.length > 20000){
+                                    layer.msg('最多输入20000个字符');
+                                    return false;
                                 }
-                            });
+                                // 保存数据
+                                layer.load();
+                                $.ajax({
+                                    type: "POST",
+                                    url: "moment/update",
+                                    data: JSON.stringify({"content": html,"id": momentId, "text": text}),
+                                    contentType: 'application/json;charset=utf-8',
+                                    dataType: "json",
+                                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                    success: function (result) {
+                                        layer.closeAll('loading');
+                                        if (result.code == 0) {
+                                            layer.msg('保存成功', {icon: 6});
+                                            layer.close(index);
+                                            window.location.reload();
+                                        } else {
+                                            layer.msg('保存失败', {icon: 5});
+                                        }
+                                    }
+                                });
+                            }else{
+                                layer.msg("内容不能为空");
+                            }
                           }
                         });
                     }
@@ -476,9 +480,13 @@
                 var subWindow = document.getElementById(frameId).contentWindow;
                 var html = subWindow.editor.txt.html();
                 var text = subWindow.editor.txt.text();
-                if(html){
-                    layer.load();
+                if(html && text){
+                    if(text.length > 20000){
+                        layer.msg('最多输入20000个字符');
+                        return false;
+                    }
                     // 保存数据
+                    layer.load();
                     $.ajax({
                         type: "POST",
                         url: "moment",
