@@ -156,7 +156,7 @@
         .style-select{
             position: absolute;
             top: 12px;
-            right: 140px;
+            right: 220px;
         }
 
         .style-select .layui-form-switch{
@@ -207,24 +207,38 @@
 
         /* 目录 */
         .catalog {
-            box-shadow: none !important;
+            padding: 10px 10px 30px 10px;
         }
 
         .catalog ul {
-            padding: 10px;
-            min-height: 260px;
-            min-width: 110px;
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .catalog li {
-            line-height: 26px;
-            margin-left: 20px;
-            overflow: visible;
-            list-style-type: disc;
+            height: 20px;
+            line-height: 20px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 400;
+            border-radius: 4px;
+            background: #f2f4f6;
+            color: #6a6a6a;
+            margin-right: 8px;
+            margin-top: 8px;
+            cursor: pointer;
         }
 
-        .catalog li a.layui-this {
-            color: #01AAED;
+        .catalog li:hover{
+            color: #6a6a6a !important;
+            background-color: #e0e0e0 !important;
+            transition: 0.2s;
+        }
+
+        .catalog li.layui-this {
+            color: #6a6a6a !important;
+            background-color: #e0e0e0 !important;
+            transition: 0.2s;
         }
 
         .notFoundDiv {
@@ -403,7 +417,7 @@
 		}
 
 		#loadingDiv {
-		    z-index: 9999999;
+		    z-index: 2147483647;
 		    position: fixed;
             top: 0;
             left: 0;
@@ -481,6 +495,7 @@
             </div>
         </div>
         <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item"><a href="share.html">分享</a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <i class="layui-icon layui-icon-user" id="userImg"></i>
@@ -573,7 +588,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <select name="categoryId" lay-verify="required">
+            <select name="categoryId" lay-verify="required" lay-search>
             </select>
         </div>
     </div>
@@ -607,7 +622,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <select name="categoryId" lay-verify="required">
+            <select name="categoryId" lay-verify="required" lay-search>
             </select>
         </div>
     </div>
@@ -775,7 +790,13 @@
     </div>
 </form>
 <!-- 目录 -->
-<ul id="catalogList" style="display:none;"></ul>
+<div id="catalog" class="catalog" style="display:none;">
+    <div class="layui-inline">
+        搜索分类：<input class="layui-input" id="catalog_search" autocomplete="off"
+                    style="display: inline-block;width: 180px;height: 30px;">
+    </div>
+    <ul id="catalogList"></ul>
+</div>
 <script src="layui/jquery-3.1.1.min.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
@@ -834,7 +855,7 @@
             ,mb: 400
             ,done: function(page, next){
               var lis = [];
-              if(page == 1||page>currentPage){
+              if(page == 1 || page > currentPage){
                     currentPage = page;
                     $.ajax({
                         type: "GET",
@@ -996,6 +1017,19 @@
                     }
                 });
             });
+        });
+
+        var catalogArr = [];
+        $("#catalog_search").on('input',function(){
+            var name = $(this).val();
+            var result = catalogArr.filter(function(x){
+                return x.name.indexOf(name) != -1;
+            });
+            var lHtml = '';
+            $.each(result, function (i, x) {
+                lHtml += '<li onclick="position(' + x.id + ',' + x.page + ')">' + x.name + '</li>';
+            });
+            $("#catalogList").empty().append(lHtml);
         });
 
         $("#edit_url_input").on('input',function(){
@@ -1673,19 +1707,16 @@
                         var oHtml = '';
                         var lHtml = '';
                         $.each(result.data, function (i, c) {
+                            c.page = parseInt(i / indexPageSize) + 1;
                             oHtml += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
-                            lHtml += '<li><a href="javascript:;" onclick="position(' + c.id + ',' + (parseInt(i / indexPageSize) + 1) + ')"><cite>' + c.name + '</cite></a></li>';
+                            lHtml += '<li onclick="position(' + c.id + ',' + c.page + ')">' + c.name + '</li>';
                         });
+                        catalogArr = result.data;
                         $("select[name='categoryId']").empty().append(oHtml);
                         $("#catalogList").empty().append(lHtml);
 
                         form.render('select','update-favorites');
                         form.render('select','add-favorites');
-
-                        $("#catalogList a").on('click',function(){
-                            $("#catalogList a.layui-this").removeClass("layui-this");
-                            $(this).addClass("layui-this");
-                        });
                     }
                 }
             });
@@ -2185,7 +2216,7 @@
             $("#searchDiv").empty();
             // 如果当前页数据还未加载，则先加载数据
             if(page > currentPage){
-                $("#loadingDiv").fadeIn();
+                layer.load();
                 $.ajax({
                     type: "GET",
                     url: "favorites/position",
@@ -2193,6 +2224,7 @@
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
+                        layer.closeAll('loading');
                         if (result.code == 0) {
                             // 加载数据
                             var html = '';
@@ -2236,12 +2268,10 @@
                             // 定位到锚点
                             var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
                             $("#layuiBody").animate({scrollTop: offsetTop}, 200);
-                            // 定位后结束动画
-                            $("#loadingDiv").fadeOut();
                         }
                     },
                     error: function(){
-                        $("#loadingDiv").fadeOut();
+                        layer.closeAll('loading');
                         layer.msg("服务器异常", {icon: 2});
                     }
                 });
@@ -2308,14 +2338,13 @@
         };
 
         $("#slideBtn").click(function(){
-            layer.open({
-              title: '目录'
-              ,content: $("#catalogList")
-              ,type: 1
-              ,skin: 'catalog'
-              ,offset: 'catalog'
-              ,maxHeight: 500
+            var index = layer.open({
+                type: 1,
+                title: "目录",
+                area: ['500px','300px'],
+                content: $("#catalog")
             });
+            indexMap.set('#catalog',index);
         });
 
         // 回收站
