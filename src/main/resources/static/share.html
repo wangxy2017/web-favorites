@@ -142,6 +142,19 @@
                 color: #c2c2c2;
                 margin-top: 20px;
             }
+            
+            /*修改提示框*/
+            #myTitle {
+                z-index: 9999999;
+                position: absolute;
+                color: #ffffff;
+                max-width: 160px;
+                font-size: 14px;
+                padding: 4px;
+                background: rgba(40, 40, 40, 0.8);
+                border: solid 1px #e9f7f6;
+                border-radius:5px;
+            }
 		</style>
 </head>
 <body style="background-color: #F2F2F2;">
@@ -201,7 +214,7 @@
                                 html += '       <div class="bg">';
                                 html += '           <img class="lazy" src="images/book.svg" lay-src="' + item.icon + '">';
                                 html += '       </div>';
-                                html += '       <div class="title"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
+                                html += '       <div class="title myToolTip" title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
                                 html += '   </div>';
                                 html += '   <div class="other-info">';
                                 html += '       <div class="user"><i class="layui-icon layui-icon-username"></i>' + item.username + '</div>';
@@ -232,6 +245,31 @@
         window.imgRender = function(){
             // 触发scroll模拟render
             $("#center").scroll();
+        };
+        
+        window.initTitle = function(){
+            var x = 10;
+            var y = 20;
+            var newTitle = '';
+            $(document).on('mouseover','div.myToolTip',function (e) {
+                newTitle = this.title;
+                this.title = '';
+                $('body').append('<div id="myTitle" >' + newTitle + '</div>');
+                $('#myTitle').css({
+                    'left': (e.pageX + x + 'px'),
+                    'top': (e.pageY + y + 'px')
+                }).show();
+            });
+            $(document).on('mouseout','div.myToolTip',function () {
+                this.title = newTitle;
+                $('#myTitle').remove();
+            });
+            $(document).on('mousemove','div.myToolTip',function (e) {
+                $('#myTitle').css({
+                    'left': (e.pageX + x + 10 + 'px'),
+                    'top': (e.pageY + y - 20 + 'px')
+                }).show();
+            });
         };
 
         window.support = function(obj){
@@ -313,7 +351,8 @@
         });
 
         $(function(){
-
+            // 初始化title
+            initTitle();
         });
     });
 </script>
