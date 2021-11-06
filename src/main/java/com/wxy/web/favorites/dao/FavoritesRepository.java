@@ -36,4 +36,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
 
     long countByUserId(Integer userId);
 
+    Page<Favorites> findByUserIdAndIsShare(Integer userId, Integer shareCode, Pageable pageable);
 }

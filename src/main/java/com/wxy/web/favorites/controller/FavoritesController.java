@@ -158,7 +158,7 @@ public class FavoritesController {
     @GetMapping("/shareList")
     public ApiResponse shareList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
-        PageInfo<Favorites> page = favoritesService.findRecycleByPage(user.getId(), pageNum, pageSize);
+        PageInfo<Favorites> page = favoritesService.findShareByPage(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
 
@@ -195,8 +195,7 @@ public class FavoritesController {
 
     @GetMapping("/no-share/{id}")
     public ApiResponse noShare(@PathVariable Integer id) {
-        User user = springUtils.getCurrentUser();
-        favoritesService.noShare(id, user.getId());
+        favoritesService.noShare(id);
         return ApiResponse.success();
     }
 
@@ -270,6 +269,17 @@ public class FavoritesController {
         return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
     }
 
+    @PostMapping("/share")
+    public ApiResponse shareUpdate(@RequestBody Favorites favorites) {
+        Favorites favorites1 = favoritesService.findById(favorites.getId());
+        if (favorites1 != null) {
+            favorites1.setIsShare(favorites.getIsShare());
+            favoritesService.save(favorites1);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
+    }
+
     private void parseMomentList(InputStream in) {
         Integer userId = springUtils.getCurrentUser().getId();
         try {
@@ -312,7 +322,7 @@ public class FavoritesController {
                     try {
                         Date date = sdf.parse(t.elementText("DATE"));
                         if (date.getTime() >= today.getTime()) {
-                            list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? 1 : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
+                            list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? PublicConstants.TASK_ALARM_CODE : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
                         }
                     } catch (ParseException ignored) {
                     }
@@ -357,13 +367,14 @@ public class FavoritesController {
                     List<Favorites> list1 = new ArrayList<>();
                     c.element("LIST").elements("FAVORITES").forEach(f -> {
                         int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
+                        int support = isInteger(f.elementText("SUPPORT")) ? Integer.parseInt(f.elementText("SUPPORT")) : -1;
                         Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
                                 f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
                                 PinYinUtils.toPinyinS(f.elementText("NAME")),
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? 1 : null, null, null, null, null);
+                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, support > 0 ? support : null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -372,7 +383,7 @@ public class FavoritesController {
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? 1 : null, list1, null));
+                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? PublicConstants.BOOKMARK_STYLE_CODE : null, list1, null));
                 });
             }
         } catch (Exception e) {
@@ -534,6 +545,12 @@ public class FavoritesController {
                     }
                     if (PublicConstants.FAVORITES_STAR_CODE.equals(f.getStar())) {
                         favorites.addElement("STAR").setText("true");
+                    }
+                    if (PublicConstants.SHARE_CODE.equals(f.getIsShare())) {
+                        favorites.addElement("SHARE").setText("true");
+                    }
+                    if (f.getSupport() != null) {
+                        favorites.addElement("SUPPORT").setText(String.valueOf(f.getSupport()));
                     }
                     if (StringUtils.isNotBlank(f.getShortcut())) {
                         favorites.addElement("SHORTCUT").setText(f.getShortcut());

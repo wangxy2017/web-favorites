@@ -71,6 +71,12 @@ public class Favorites {
     @Column(name = "delete_time", columnDefinition = "datetime comment '逻辑删除时间'")
     private Date deleteTime;
 
+    @Column(name = "is_share", columnDefinition = "int(1) comment '是否分享：0-否 1-是'")
+    private Integer isShare;
+
+    @Column(name = "support", columnDefinition = "int(10) comment '关注量'")
+    private Integer support;
+
     @Transient
     private Password password;
 }

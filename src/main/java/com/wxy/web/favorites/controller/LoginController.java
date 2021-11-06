@@ -112,7 +112,7 @@ public class LoginController {
                             , split[1], category.getId(), userId,
                             PinYinUtils.toPinyin(split[0]),
                             PinYinUtils.toPinyinS(split[0]),
-                            null, null, null, null, null, null, null, null);
+                            null, null, null, null, null, null, null, null,null,null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 发送邮件

@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.service;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
@@ -100,6 +101,12 @@ public class FavoritesService {
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 
+    public PageInfo<Favorites> findShareByPage(Integer userId, Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        Page<Favorites> page = favoritesRepository.findByUserIdAndIsShare(userId, PublicConstants.SHARE_CODE, pageable);
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+    }
+
     public void deleteAllFromRecycle(Integer userId) {
         Favorites favorites = new Favorites();
         favorites.setUserId(userId);
@@ -128,7 +135,9 @@ public class FavoritesService {
         favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse(time));
     }
 
-    public void noShare(Integer id, Integer userId) {
-
+    public void noShare(Integer id) {
+        Favorites favorites = favoritesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorConstants.ILLEGAL_OPERATION_MSG));
+        favorites.setIsShare(null);
+        favoritesRepository.save(favorites);
     }
 }

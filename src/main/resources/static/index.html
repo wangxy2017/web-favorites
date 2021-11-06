@@ -688,8 +688,15 @@
         <div class="layui-input-inline" style="width: 210px;">
             <input type="text" name="shortcut" lay-verify="shortcut" placeholder="例如：打开...或Open..." autocomplete="off"
                    class="layui-input">
-            <span style="color: #ff5722;font-size: 12px;padding: 5px 0;display: block;">温馨提示：配合语音输入效果更佳哦</span>
+            <span style="color: #ff5722;font-size: 12px;margin-top: 5px;display: block;">温馨提示：配合语音输入效果更佳哦</span>
         </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">分享</label>
+        <div class="layui-input-inline" style="width: 50px;">
+            <input type="checkbox" name="isShare" lay-skin="switch" value="1" lay-filter="shareSwitch">
+        </div>
+        <div class="layui-form-mid layui-word-aux">分享到公共域</div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -1932,6 +1939,7 @@
                             , "url": data.url
                             , "sort": data.sort
                             , "star": data.star
+                            , "isShare": data.isShare
                             , "shortcut": data.shortcut
                             , "schemaName": data.schemaName
                         });
@@ -2043,6 +2051,36 @@
                         loadStarFavorites();
                         // 退出搜索模式
                         $("#search_close").click();
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                        // 回退
+                        $(data.elem).removeAttr("checked");
+                        $(data.othis).removeClass("layui-form-onswitch");
+                    }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg('服务器异常', {icon: 2});
+                    // 回退
+                    $(data.elem).removeAttr("checked");
+                    $(data.othis).removeClass("layui-form-onswitch");
+                }
+            });
+        });
+
+        form.on('switch(shareSwitch)', function(data){
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "favorites/share",
+                data: JSON.stringify({"id": $("#favoritesId").val(),"isShare": data.elem.checked? 1 : 0}),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        layer.msg("操作成功", {icon: 6});
                     } else {
                         layer.msg(result.msg, {icon: 5});
                         // 回退
