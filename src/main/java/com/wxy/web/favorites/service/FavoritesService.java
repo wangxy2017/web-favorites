@@ -127,4 +127,8 @@ public class FavoritesService {
         SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
         favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse(time));
     }
+
+    public void noShare(Integer id, Integer userId) {
+
+    }
 }

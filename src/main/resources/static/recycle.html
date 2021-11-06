@@ -17,19 +17,30 @@
 <body>
 <div class="layui-tab layui-tab-brief">
     <ul class="layui-tab-title">
-        <li class="layui-this">收藏</li>
+        <li class="layui-this">回收站</li>
+        <li>我的分享</li>
     </ul>
     <div class="layui-tab-content">
-        <div class="layui-btn-container" style="text-align: right;">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="cleanRecycle">清空回收站</button>
+        <div class="layui-tab-item layui-show">
+            <div class="layui-btn-container" style="text-align: right;">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="cleanRecycle">清空回收站</button>
+            </div>
+            <!-- 数据表格 -->
+            <table id="favoritesList" lay-filter="favoritesList"></table>
+            <!-- 操作 -->
+            <script type="text/html" id="operates">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="recover">还原</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
         </div>
-        <!-- 数据表格 -->
-        <table id="favoritesList" lay-filter="favoritesList"></table>
-        <!-- 操作 -->
-        <script type="text/html" id="operates">
-            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="recover">还原</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-        </script>
+        <div class="layui-tab-item">
+            <!-- 数据表格 -->
+            <table id="shareList" lay-filter="shareList"></table>
+            <!-- 操作 -->
+            <script type="text/html" id="shareOperates">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="no-share">取消分享</a>
+            </script>
+        </div>
     </div>
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
@@ -117,6 +128,72 @@
                             layer.msg('删除成功', {icon: 6});
                         } else {
                             layer.msg('删除失败', {icon: 5});
+                        }
+                    }
+                });
+            }
+        });
+
+        //加载数据
+        table.render({
+            elem: '#shareList'
+            , url: 'favorites/shareList/' //数据接口
+            , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            , page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , prev: '上一页'
+                , next: '下一页'
+                , limit: 5
+            }
+            , request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total,
+                    "data": res.data.list //解析数据列表
+                };
+            }
+            , done: function (res, curr, count) {
+                // 解决无数据table样式错乱
+                $("th[data-key='2-0-4'],td[data-key='2-0-4']").css("border-right", "0");
+            }
+            , cols: [[ //表头
+                {type: 'numbers'}
+                , {
+                    field: 'name', title: '名称', minWidth: 200
+                }
+                , {
+                    field: 'url', title: '地址', templet: function (d) {
+                        return '<a class="layui-blue" href="javascript:openUrl(\'' + d.url + '\');">' + d.url + '</a>'
+                    }
+                }
+                , {
+                    field: 'stars', title: '收藏数'
+                }
+                , {title: '操作', width: 120, toolbar: '#shareOperates', fixed: 'right'}
+            ]]
+        });
+
+        //监听工具条
+        table.on('tool(shareList)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'no-share') { //还原
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/no-share/" + data.id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            obj.del(); //移除当前行
+                            layer.msg('操作成功', {icon: 6});
+                        } else {
+                            layer.msg('操作失败', {icon: 5});
                         }
                     }
                 });

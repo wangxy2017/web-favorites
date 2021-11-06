@@ -155,6 +155,13 @@ public class FavoritesController {
         return ApiResponse.success(page);
     }
 
+    @GetMapping("/shareList")
+    public ApiResponse shareList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        User user = springUtils.getCurrentUser();
+        PageInfo<Favorites> page = favoritesService.findRecycleByPage(user.getId(), pageNum, pageSize);
+        return ApiResponse.success(page);
+    }
+
     /**
      * 清空回收站
      *
@@ -183,6 +190,13 @@ public class FavoritesController {
     public ApiResponse recover(@PathVariable Integer id) {
         User user = springUtils.getCurrentUser();
         favoritesService.updateDeleteFlag(id, user.getId());
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/no-share/{id}")
+    public ApiResponse noShare(@PathVariable Integer id) {
+        User user = springUtils.getCurrentUser();
+        favoritesService.noShare(id, user.getId());
         return ApiResponse.success();
     }
 
