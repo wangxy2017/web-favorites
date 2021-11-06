@@ -213,6 +213,7 @@
         .catalog ul {
             display: flex;
             flex-wrap: wrap;
+            margin-top: 6px;
         }
 
         .catalog li {
@@ -470,6 +471,38 @@
 
         #notice cite{
             font-style: normal;
+        }
+
+        /* 目录搜索 */
+        .catalog-search {
+            position: relative;
+            height: 30px;
+        }
+
+        .catalog-search input {
+            height: 100%;
+            font-size: 12px;
+            padding-left: 26px;
+            padding-right: 26px;
+        }
+
+        .catalog-search .catalog-search-close {
+            position: absolute;
+            top: 5px;
+            right: 4px;
+            font-size: 20px;
+            color: #666;
+            display: none;
+            cursor: pointer;
+        }
+
+        .catalog-search .catalog-search-icon {
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            font-size: 14px;
+            color: #999;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -791,9 +824,11 @@
 </form>
 <!-- 目录 -->
 <div id="catalog" class="catalog" style="display:none;">
-    <div class="layui-inline">
-        搜索分类：<input class="layui-input" id="catalog_search" autocomplete="off"
-                    style="display: inline-block;width: 180px;height: 30px;">
+    <div class="catalog-search">
+        <i id="catalog_search_icon" class="layui-icon layui-icon-search catalog-search-icon"></i>
+        <input type="text" id="catalog_search_name" name="catalog_search_name" placeholder="请输入分类名称" autocomplete="off"
+               class="layui-input">
+        <i id="catalog_search_close" class="layui-icon layui-icon-close-fill catalog-search-close layui-anim layui-anim-fadein" style="display:none;"></i>
     </div>
     <ul id="catalogList"></ul>
 </div>
@@ -1020,7 +1055,8 @@
         });
 
         var catalogArr = [];
-        $("#catalog_search").on('input',function(){
+        $("#catalog_search_name").on('input',function(){
+            $("#catalog_search_close").show();
             var name = $(this).val();
             var result = catalogArr.filter(function(x){
                 return x.name.indexOf(name) != -1;
@@ -1030,6 +1066,12 @@
                 lHtml += '<li onclick="position(' + x.id + ',' + x.page + ')">' + x.name + '</li>';
             });
             $("#catalogList").empty().append(lHtml);
+        });
+
+        // 关闭搜索
+        $("#catalog_search_close").click(function () {
+            $("#catalog_search_name").val("").trigger("input");
+            $(this).hide();
         });
 
         $("#edit_url_input").on('input',function(){
