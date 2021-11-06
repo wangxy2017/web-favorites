@@ -207,7 +207,7 @@
 
         /* 目录 */
         .catalog {
-            padding: 10px 10px 30px 10px;
+            padding: 10px 20px 30px 20px;
         }
 
         .catalog ul {
@@ -2266,7 +2266,7 @@
                             $("#main").append(html);
                             currentPage = result.data.currentPage;
                             // 定位到锚点
-                            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
+                            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop - 20;
                             $("#layuiBody").animate({scrollTop: offsetTop}, 200);
                         }
                     },
@@ -2277,7 +2277,7 @@
                 });
             }else{
                 // 定位到锚点
-                var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop;
+                var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop - 20;
                 $("#layuiBody").animate({scrollTop: offsetTop}, 200);
             }
         };
@@ -2338,10 +2338,12 @@
         };
 
         $("#slideBtn").click(function(){
+            var width = parseInt($(window).width()) * 0.9;
+            width = (width >= 500 ? 500 : (width <= 340 ? 340 : width)) + 'px';
             var index = layer.open({
                 type: 1,
                 title: "目录",
-                area: ['500px','300px'],
+                area: [width, '300px'],
                 content: $("#catalog")
             });
             indexMap.set('#catalog',index);
