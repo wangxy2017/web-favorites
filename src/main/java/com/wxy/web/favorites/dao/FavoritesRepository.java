@@ -37,4 +37,9 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
     long countByUserId(Integer userId);
 
     Page<Favorites> findByUserIdAndIsShare(Integer userId, Integer shareCode, Pageable pageable);
+
+    @Query("select new Favorites (f.id,f.name,f.icon,f.url,f.support,u.username) from Favorites f left join User u on u.id = f.userId where f.isShare = 1 and f.deleteFlag is null")
+    Page<Favorites> findShareList(Pageable pageable);
+
+    Favorites findByUserIdAndUrl(Integer userId, String url);
 }

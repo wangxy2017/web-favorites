@@ -79,4 +79,16 @@ public class Favorites {
 
     @Transient
     private Password password;
+
+    @Transient
+    private String username;
+
+    public Favorites(Integer id, String name, String icon, String url,Integer support, String username) {
+        this.id = id;
+        this.name = name;
+        this.icon = icon;
+        this.url = url;
+        this.support = support;
+        this.username = username;
+    }
 }

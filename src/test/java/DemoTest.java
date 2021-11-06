@@ -78,7 +78,7 @@ public class DemoTest {
                         Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null, null));
                         // 批量创建收藏
                         for (int j = 0; j < favoritesCount; j++) {
-                            favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null,null,null));
+                            favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null,null,null,null));
                         }
                     }
                     // 批量创建瞬间

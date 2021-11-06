@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author wangxiaoyuan
@@ -135,9 +136,41 @@ public class FavoritesService {
         favoritesRepository.deleteByDeleteFlagAndDeleteTimeBefore(PublicConstants.DELETE_CODE, sdf.parse(time));
     }
 
-    public void noShare(Integer id) {
+    public void updateShare(Integer id) {
         Favorites favorites = favoritesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorConstants.ILLEGAL_OPERATION_MSG));
         favorites.setIsShare(null);
         favoritesRepository.save(favorites);
+    }
+
+    public PageInfo<Favorites> findShareList(Integer pageNum, Integer pageSize) {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "support"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
+        Page<Favorites> page = favoritesRepository.findShareList(pageable);
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+
+    }
+
+    public boolean saveSupport(Integer userId, Integer id) {
+        Category defaultCategory = categoryRepository.findDefaultCategory(userId);
+        Favorites favorites = favoritesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorConstants.ILLEGAL_OPERATION_MSG));
+        Favorites favorites1 = favoritesRepository.findByUserIdAndUrl(userId, favorites.getUrl());
+        if (favorites1 == null) {
+            Favorites favorites2 = new Favorites();
+            favorites2.setName(favorites.getName());
+            favorites2.setIcon(favorites.getIcon());
+            favorites2.setUrl(favorites.getUrl());
+            favorites2.setCategoryId(defaultCategory.getId());
+            favorites2.setUserId(userId);
+            favorites2.setPinyin(favorites.getPinyin());
+            favorites2.setPinyinS(favorites.getPinyinS());
+            favoritesRepository.save(favorites2);
+            // support + 1
+            favorites.setSupport(Optional.ofNullable(favorites.getSupport()).orElse(0) + 1);
+            favoritesRepository.save(favorites);
+            return true;
+        }
+        return false;
     }
 }

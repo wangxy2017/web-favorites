@@ -195,7 +195,7 @@ public class FavoritesController {
 
     @GetMapping("/no-share/{id}")
     public ApiResponse noShare(@PathVariable Integer id) {
-        favoritesService.noShare(id);
+        favoritesService.updateShare(id);
         return ApiResponse.success();
     }
 
@@ -374,7 +374,7 @@ public class FavoritesController {
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, support > 0 ? support : null, null);
+                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, support > 0 ? support : null, null,null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
