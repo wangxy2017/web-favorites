@@ -854,69 +854,69 @@
             ,scrollElem: '#layuiBody'
             ,mb: 400
             ,done: function(page, next){
-              var lis = [];
-              if(page == 1 || page > currentPage){
-                    currentPage = page;
-                    $.ajax({
-                        type: "GET",
-                        url: "favorites/list",
-                        data: {"pageNum":page, "pageSize":indexPageSize},
-                        dataType: "json",
-                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                        success: function (result) {
-                            if(page == 1){
-                                $("#loadingDiv").fadeOut();
-                            }
-                            if (result.code == 0) {
-                                // 加载数据
-                                $.each(result.data.list, function (i, c) {
-                                    var html = '';
-                                    var bookmarkClass = c.bookmark==1?"bookmark":"";
-                                    html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                                    html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
-                                    html += '   <ul class="favorites">';
-                                    if(c.favorites.length > 0) {
-                                        $.each(c.favorites, function (j, f) {
-                                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
-                                            html += '       <div class="favorites-bg">';
-                                            html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                            html += '       </div>';
-                                            html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
-                                            html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                            html += '   </li>';
-                                            if(j == limit - 1){
-                                                html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
-                                                html += '   <div class="favorites-bg">';
-                                                html += '       <img src="images/more.svg"/>';
-                                                html += '   </div>';
-                                                html += '   <p title="显示更多">显示更多</p>';
-                                                html += '</li>';
-                                                return false;
-                                            }
-                                        });
-                                    } else {
-                                        html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
-                                        html += '   <div class="favorites-bg">';
-                                        html += '       <img src="images/add.svg"/>';
-                                        html += '   </div>';
-                                        html += '   <p title="添加网址">添加网址</p>';
-                                        html += '</li>';
-                                    }
-                                    html += '   </ul>';
-                                    html += '</div>';
-                                    lis.push(html);
-                                });
-                                next(lis.join(''), page < result.data.pages);
-                                imgRender();
-                            }
-                        },
-                        error: function(){
-                            layer.msg("服务器异常", {icon: 2});
-                        }
-                      });
-              }else{
-                next(lis.join(''), false);
+              // 校正page值
+              if(page > 1 && page <= currentPage){
+                page = ++currentPage;
+                next('',true,currentPage);
               }
+              var lis = [];
+              $.ajax({
+                type: "GET",
+                url: "favorites/list",
+                data: {"pageNum":page, "pageSize":indexPageSize},
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    if(page == 1){
+                        $("#loadingDiv").fadeOut();
+                    }
+                    if (result.code == 0) {
+                        // 加载数据
+                        $.each(result.data.list, function (i, c) {
+                            var html = '';
+                            var bookmarkClass = c.bookmark==1?"bookmark":"";
+                            html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
+                            html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
+                            html += '   <ul class="favorites">';
+                            if(c.favorites.length > 0) {
+                                $.each(c.favorites, function (j, f) {
+                                    html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                                    html += '       <div class="favorites-bg">';
+                                    html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                    html += '       </div>';
+                                    html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                    html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                                    html += '   </li>';
+                                    if(j == limit - 1){
+                                        html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
+                                        html += '   <div class="favorites-bg">';
+                                        html += '       <img src="images/more.svg"/>';
+                                        html += '   </div>';
+                                        html += '   <p title="显示更多">显示更多</p>';
+                                        html += '</li>';
+                                        return false;
+                                    }
+                                });
+                            } else {
+                                html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
+                                html += '   <div class="favorites-bg">';
+                                html += '       <img src="images/add.svg"/>';
+                                html += '   </div>';
+                                html += '   <p title="添加网址">添加网址</p>';
+                                html += '</li>';
+                            }
+                            html += '   </ul>';
+                            html += '</div>';
+                            lis.push(html);
+                        });
+                        next(lis.join(''), page < result.data.pages);
+                        imgRender();
+                    }
+                },
+                error: function(){
+                    layer.msg("服务器异常", {icon: 2});
+                }
+              });
             }
         });
 
