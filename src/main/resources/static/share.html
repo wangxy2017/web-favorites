@@ -61,12 +61,14 @@
 			}
 
 			.favorites {
+			    color: #606266;
 			    margin: 0 10px 10px;
                 cursor: pointer;
                 border-radius: 4px;
                 padding: 10px;
                 background: #fff;
-                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+                box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+                border: 1px solid #EBEEF5;
 			}
 
 			.favorites .favorites-info {
@@ -106,6 +108,7 @@
 			.favorites .other-info {
                 display: flex;
                 justify-content: space-between;
+                padding: 8px 0;
 			}
 
 			.other-info .layui-icon {
@@ -121,26 +124,23 @@
 		    }
 
 		    .notFoundDiv {
-                display: none;
                 position: fixed;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .notFoundDiv img {
                 width: 100px;
                 height: 100px;
-                display: block;
-                margin: 0 auto;
             }
 
             .notFoundDiv span{
-                display: block;
-                text-align: center;
-                font-size: 24px;
-                color: #c2c2c2;
-                margin-top: 20px;
+                color: #333;
+                margin: 20px 0;
             }
             
             /*修改提示框*/
@@ -155,9 +155,26 @@
                 border: solid 1px #e9f7f6;
                 border-radius:5px;
             }
+
+            em {
+                font-style: normal;
+            }
+
+            .user em {
+                width: 80px;
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .user, .support {
+                display: flex;
+                align-items: center;
+            }
 		</style>
 </head>
-<body style="background-color: #F2F2F2;">
+<body>
 <div class="header">
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
@@ -171,9 +188,10 @@
     © 2020 网络收藏夹 || 网络收藏夹版权所有
 </div>
 <!-- 找不到结果 -->
-<div id="notFoundDiv" class="notFoundDiv">
+<div id="notFoundDiv" class="notFoundDiv" style="display:none;">
     <img src="images/no_data.svg" alt="">
-    <span>暂无分享记录</span>
+    <span>暂无共享记录，来做第一个共享的人吧...</span>
+    <a href="index.html" class="layui-btn">回到首页</a>
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/layui.js"></script>
@@ -217,8 +235,8 @@
                                 html += '       <div class="title myToolTip" title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
                                 html += '   </div>';
                                 html += '   <div class="other-info">';
-                                html += '       <div class="user"><i class="layui-icon layui-icon-username"></i>' + item.username + '</div>';
-                                html += '       <div class="support" data-id="' + item.id + '" data-support="' + (item.support == null? 0: item.support) + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i>' + transform(item.support == null ?0 : item.support) + '</div>';
+                                html += '       <div class="user"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
+                                html += '       <div class="support" data-id="' + item.id + '" data-support="' + (item.support == null? 0: item.support) + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support == null ?0 : item.support) + '</em></div>';
                                 html += '   </div>';
                                 html += '</div>';
                                 lis.push(html);
@@ -232,6 +250,14 @@
                     }
               });
             }
+        });
+
+        // 固定块
+        util.fixbar({
+            top: true
+            ,scrollElem: '#center'
+            ,bgcolor: '#393D49'
+            ,css: {right: 50, bottom: 60}
         });
 
         // jQuery全局拦截器
@@ -284,11 +310,9 @@
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
+                        layer.msg('收藏成功', {icon: 6});
                         if (result.code == 0) {
-                            layer.msg('收藏成功', {icon: 6});
-                            $(this).text(transform(++support));
-                        }else{
-                            layer.msg('已收藏过此书签', {icon: 5});
+                            $(obj).find("em").text(transform(++support));
                         }
                     }
                 });

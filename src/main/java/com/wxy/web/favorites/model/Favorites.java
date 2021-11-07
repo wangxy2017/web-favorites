@@ -16,7 +16,8 @@ import java.util.Date;
         @Index(columnList = "pinyin"),
         @Index(columnList = "pinyin_s"),
         @Index(columnList = "shortcut"),
-        @Index(columnList = "category_id")})
+        @Index(columnList = "category_id"),
+        @Index(columnList = "is_share")})
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

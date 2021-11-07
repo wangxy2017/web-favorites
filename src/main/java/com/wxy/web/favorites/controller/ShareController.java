@@ -20,9 +20,9 @@ public class ShareController {
 
 
     @GetMapping("/list")
-    public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+    public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize, @RequestParam(required = false) String name) {
         // 查询用户分类
-        PageInfo<Favorites> page = favoritesService.findShareList(pageNum, pageSize);
+        PageInfo<Favorites> page = favoritesService.findShareList(name, pageNum, pageSize);
         return ApiResponse.success(page);
     }
 

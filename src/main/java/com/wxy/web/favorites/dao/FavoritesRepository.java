@@ -38,8 +38,8 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
 
     Page<Favorites> findByUserIdAndIsShare(Integer userId, Integer shareCode, Pageable pageable);
 
-    @Query("select new Favorites (f.id,f.name,f.icon,f.url,f.support,u.username) from Favorites f left join User u on u.id = f.userId where f.isShare = 1 and f.deleteFlag is null")
-    Page<Favorites> findShareList(Pageable pageable);
+    @Query("select new Favorites (f.id,f.name,f.icon,f.url,f.support,u.username) from Favorites f left join User u on u.id = f.userId where f.isShare = 1 and f.deleteFlag is null and ( f.name like :name or f.pinyin like :name or f.pinyinS like :name)")
+    Page<Favorites> findShareList(String name, Pageable pageable);
 
     Favorites findByUserIdAndUrl(Integer userId, String url);
 }

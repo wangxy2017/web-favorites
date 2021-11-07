@@ -142,12 +142,13 @@ public class FavoritesService {
         favoritesRepository.save(favorites);
     }
 
-    public PageInfo<Favorites> findShareList(Integer pageNum, Integer pageSize) {
+    public PageInfo<Favorites> findShareList(String name, Integer pageNum, Integer pageSize) {
+        name = Optional.ofNullable(name).orElse("").toLowerCase();
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "support"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
-        Page<Favorites> page = favoritesRepository.findShareList(pageable);
+        Page<Favorites> page = favoritesRepository.findShareList("%" + name + "%", pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
 
     }
@@ -156,7 +157,7 @@ public class FavoritesService {
         Category defaultCategory = categoryRepository.findDefaultCategory(userId);
         Favorites favorites = favoritesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorConstants.ILLEGAL_OPERATION_MSG));
         Favorites favorites1 = favoritesRepository.findByUserIdAndUrl(userId, favorites.getUrl());
-        if (favorites1 == null) {
+        if (favorites1 == null || PublicConstants.DELETE_CODE.equals(favorites1.getDeleteFlag())) {
             Favorites favorites2 = new Favorites();
             favorites2.setName(favorites.getName());
             favorites2.setIcon(favorites.getIcon());
