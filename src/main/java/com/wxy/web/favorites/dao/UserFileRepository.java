@@ -21,4 +21,6 @@ public interface UserFileRepository extends JpaRepository<UserFile, Integer> {
     Page<UserFile> findByUserIdAndPid(Integer userId, Integer pid, Pageable pageable);
 
     UserFile findByShareId(String shareId);
+
+    UserFile findByPidAndFilename(Integer pid, String filename);
 }

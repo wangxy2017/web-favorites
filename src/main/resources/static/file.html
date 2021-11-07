@@ -123,7 +123,7 @@
                             style="display: inline-block;width: 180px;height: 30px;margin-right: 10px;">
             </div>
             <div class="layui-inline" style="height: 30px;line-height: 30px;">
-                当前路径：<span class="layui-breadcrumb" lay-separator=">" lay-filter="floors" id="floors"></span>
+                当前路径：<span class="layui-breadcrumb" lay-separator="/" lay-filter="floors" id="floors"></span>
             </div>
         </div>
         <!-- 数据表格 -->
@@ -406,7 +406,7 @@
                             table.reload('fileList');
                             loadTree();
                         } else {
-                            layer.msg('新建失败', {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });

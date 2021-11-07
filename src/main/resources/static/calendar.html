@@ -61,8 +61,6 @@
 
 			.week-list {
 				display: flex;
-				border-top: 1px solid #ebeef5;
-                border-left: 1px solid #ebeef5;
 			}
 
 			.week-item {
@@ -74,6 +72,10 @@
 				border-right: 1px solid #ebeef5;
 			}
 
+			.week-item:last-child {
+                border-right: none;
+			}
+
 			.main {
 				margin: 30px auto;
                 width: 98%;
@@ -82,7 +84,6 @@
 
 			.day-list {
 				display: flex;
-                border-left: 1px solid #ebeef5;
 			}
 
 			.day-item {
@@ -96,11 +97,19 @@
 				cursor: pointer;
 			}
 
+			.day-item:last-child {
+                border-right: none;
+			}
+
 			.day-item .task-count {
 				position: absolute;
 				bottom: 4px;
                 left: 4px;
                 line-height: initial;
+			}
+
+			.day-list:last-child .day-item {
+			    border-bottom: none;
 			}
 
 			.task-count .layui-badge {
@@ -155,8 +164,10 @@
 
 			.calendar-header {
 				margin-bottom: 20px;
-                text-align: center;
                 margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
 			}
 
 			.calendar-header .layui-icon {
@@ -169,7 +180,7 @@
 				border-radius: 4px;
 				height: 30px;
 				width: 200px;
-				margin: 0 10px;
+				margin: 0 30px;
 			}
 
 			.date-input input {
@@ -233,21 +244,19 @@
 				border-radius: 50%;
                 background-color: #009688;
                 color: #fff;
-                width: 40px;
-                height: 40px;
+                width: 3em;
+                height: 3em;
                 display: inline-block;
-                line-height: 40px;
+                line-height: 3em;
 			}
 
 			.calendar-header .left,
 			.calendar-header .right {
-				display: inline-block;
-				padding: 4px 6px;
-				vertical-align: middle;
+			    font-size: 2em;
 			}
 
 			.date {
-				font-size: 16px;
+				font-size: 1.2em;
 				font-weight: bold;
 			}
 
@@ -262,6 +271,8 @@
 
 			.calendar-table {
 			    margin-bottom: 70px;
+			    border-radius: 4px;
+			    border: 1px solid #ebeef5;
 			}
 
 			.last-month,.next-month {
@@ -414,7 +425,7 @@
             }
         });
 
-        // 获取某月第一天是周几
+        // 获取某月第一天是星期几
         window.getFirstDayWeekDay = function(text) { // 2021-12
             var split = text.split('-');
             var d = new Date(parseInt(split[0]), parseInt(split[1]) - 1, 1);
@@ -697,13 +708,13 @@
             // 画格子
             var html = '';
             html += '<div class="week-list">';
-            html += '	<div class="week-item">周日</div>';
-            html += '	<div class="week-item">周一</div>';
-            html += '	<div class="week-item">周二</div>';
-            html += '	<div class="week-item">周三</div>';
-            html += '	<div class="week-item">周四</div>';
-            html += '	<div class="week-item">周五</div>';
-            html += '	<div class="week-item">周六</div>';
+            html += '	<div class="week-item">星期日</div>';
+            html += '	<div class="week-item">星期一</div>';
+            html += '	<div class="week-item">星期二</div>';
+            html += '	<div class="week-item">星期三</div>';
+            html += '	<div class="week-item">星期四</div>';
+            html += '	<div class="week-item">星期五</div>';
+            html += '	<div class="week-item">星期六</div>';
             html += '</div>';
             for (var i = 0; i < 6; i++) {
                 html += '<div class="day-list">';

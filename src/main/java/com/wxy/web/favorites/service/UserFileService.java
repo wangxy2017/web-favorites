@@ -200,5 +200,9 @@ public class UserFileService {
     public UserFile findByShareId(String shareId) {
         return userFileRepository.findByShareId(shareId);
     }
+
+    public UserFile findByPidAndFilename(Integer pid, String filename) {
+        return userFileRepository.findByPidAndFilename(pid,filename);
+    }
 }
 

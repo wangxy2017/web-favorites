@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -161,6 +162,17 @@ public class FileController {
         userFileService.cleanHistory(packageFile);
     }
 
+    private String getNoRepeatFilename(Integer pid, String filename) {
+        String firstPart = filename.substring(0, filename.lastIndexOf("."));
+        String secondPart = filename.substring(filename.lastIndexOf("."));
+        String name = filename;
+        int index = 0;
+        while (userFileService.findByPidAndFilename(pid, name) != null) {
+            name = firstPart + "_" + ++index + secondPart;
+        }
+        return name;
+    }
+
     @PostMapping("/upload")
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
@@ -174,7 +186,7 @@ public class FileController {
                 for (MultipartFile file : files) {
                     String path = userFileService.saveFile(file.getInputStream());
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, path, null, null, file.getSize(), null);
+                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), getNoRepeatFilename(pid, filename), path, null, null, file.getSize(), null);
                     userFileService.save(userFile);
                     long newSize = Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize();
                     user.setUsedSize(newSize > user.getCapacity() ? user.getCapacity() : newSize);// 容量误差修正
@@ -210,9 +222,11 @@ public class FileController {
 
     @PostMapping("/folder")
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
+        UserFile file = userFileService.findByPidAndFilename(pid, filename);
+        Assert.isNull(file, "文件夹已存在");
         User user = springUtils.getCurrentUser();
-        UserFile file = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, null, 1, 0L, null);
-        userFileService.save(file);
+        UserFile file1 = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, null, 1, 0L, null);
+        userFileService.save(file1);
         return ApiResponse.success();
     }
 
