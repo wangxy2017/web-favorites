@@ -291,6 +291,7 @@
 
         $("#downloadAll").click(function(){
             layer.confirm('确认备份所有文件吗？', function(index){
+                layer.load(1);
                 $.ajax({
                     type: "GET",
                     url: "file/count",
@@ -300,6 +301,7 @@
                         if (result.code == 0 && result.data.count > 0) {
                             downloadFile('备份.zip', 'file/downloadAll');
                         } else {
+                            layer.closeAll('loading');
                             layer.msg('暂无可备份文件', {icon: 5});
                         }
                     }
@@ -470,6 +472,7 @@
                     layer.confirm('确认下载文件吗？', function(index){
                         layer.close(index);
 
+                        layer.load(1);
                         $.ajax({
                             type: "GET",
                             url: "file/exists/" + data.id,
@@ -479,6 +482,7 @@
                                 if (result.code == 0) {
                                     downloadFile(data.filename, "file/download/" + data.id);
                                 } else {
+                                    layer.closeAll('loading');
                                     layer.msg('文件已损坏', {icon: 5});
                                 }
                             }
@@ -530,7 +534,7 @@
         });
 
         window.downloadFile = function(filename, url){
-            layer.load(1);
+            // 此处不加载动画，只关闭动画，加载动画交给前面的函数执行
             $.ajax({
                 url: url,
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -547,6 +551,7 @@
                     document.body.removeChild(a);
                 },
                 error: function(){
+                    layer.closeAll('loading');
                     layer.msg('下载失败', {icon: 5});
                 }
             });
