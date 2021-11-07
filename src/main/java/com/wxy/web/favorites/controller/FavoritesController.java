@@ -367,14 +367,13 @@ public class FavoritesController {
                     List<Favorites> list1 = new ArrayList<>();
                     c.element("LIST").elements("FAVORITES").forEach(f -> {
                         int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
-                        int support = isInteger(f.elementText("SUPPORT")) ? Integer.parseInt(f.elementText("SUPPORT")) : -1;
                         Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
                                 f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
                                 PinYinUtils.toPinyinS(f.elementText("NAME")),
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, support > 0 ? support : null, null,null);
+                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null,  null, null,null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -548,9 +547,6 @@ public class FavoritesController {
                     }
                     if (PublicConstants.SHARE_CODE.equals(f.getIsShare())) {
                         favorites.addElement("SHARE").setText("true");
-                    }
-                    if (f.getSupport() != null) {
-                        favorites.addElement("SUPPORT").setText(String.valueOf(f.getSupport()));
                     }
                     if (StringUtils.isNotBlank(f.getShortcut())) {
                         favorites.addElement("SHORTCUT").setText(f.getShortcut());
