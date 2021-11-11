@@ -105,6 +105,14 @@
             margin-left: 10px;
         }
 
+        img.verifyCode{
+            position: absolute;
+            right: 6px;
+            top: 2px;
+            height: 34px;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -120,6 +128,7 @@
         <div class="layui-tab-item layui-show">
             <!-- 登录表单 -->
             <form class="layui-form" action="" id="loginForm">
+                <input type="hidden" name="sid" id="sid">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
@@ -132,6 +141,14 @@
                     <label class="layui-form-label">密码</label>
                     <div class="layui-input-block">
                         <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">验证码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="code" id="code" required lay-verify="required" placeholder="请输入验证码"
                                autocomplete="off"
                                class="layui-input">
                     </div>
@@ -303,6 +320,26 @@
         /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
         particlesJS.load('particles-js', 'layui/particles.json');
 
+        var verifyCodeTimer;
+        window.loadVerifyCode = function(){
+            $.ajax({
+                type: "GET",
+                url: 'login/captcha',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 0) {
+                        $("#sid").val(result.data.key);
+                        $("#code").next().remove();
+                        $("#code").after('<img class="verifyCode" src="' + result.data.image + '" alt="验证码" onclick="loadVerifyCode()">');
+                        clearInterval(verifyCodeTimer);
+                        verifyCodeTimer = setInterval(loadVerifyCode, 60000);
+                    }
+                }
+            });
+        };
+
+        loadVerifyCode();
+
         // 刷新二维码
         $("#refreshCode").click(function(){
             // 初始化二维码
@@ -447,6 +484,7 @@
                         window.location.href = "index.html";
                     } else {
                         layer.msg(result.msg, {icon: 5});
+                        loadVerifyCode();
                     }
                 },
                 error: function () {

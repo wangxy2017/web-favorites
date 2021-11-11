@@ -15,10 +15,7 @@ import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.EmailUtils;
-import com.wxy.web.favorites.util.PinYinUtils;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.util.*;
 import com.wxy.web.favorites.websocket.ChannelSupervise;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -112,7 +109,7 @@ public class LoginController {
                             , split[1], category.getId(), userId,
                             PinYinUtils.toPinyin(split[0]),
                             PinYinUtils.toPinyinS(split[0]),
-                            null, null, null, null, null, null, null, null,null,null,null);
+                            null, null, null, null, null, null, null, null, null, null, null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 发送邮件
@@ -128,6 +125,7 @@ public class LoginController {
 
     @PostMapping
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
+        Assert.isTrue(CaptchaUtils.verify(user.getSid(), user.getCode()), "验证码错误");
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
@@ -189,6 +187,11 @@ public class LoginController {
             }
             userService.save(user);
         }
+    }
+
+    @GetMapping("/captcha")
+    public ApiResponse captcha() {
+        return ApiResponse.success(CaptchaUtils.generate());
     }
 
     @GetMapping("/forgot/code")
