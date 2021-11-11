@@ -8,6 +8,7 @@ import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.util.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -171,6 +172,7 @@ public class UserFileService {
     }
 
     public PageInfo<UserFile> findPageList(Integer userId, String name, Integer pid, Integer pageNum, Integer pageSize) {
+        name = SqlUtils.trimAndEscape(name);
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.ASC, "filename"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));

@@ -3,6 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.dao.MomentRepository;
 import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.util.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,10 +62,11 @@ public class MomentService {
     }
 
     public List<Moment> findMoment(Integer userId, String text) {
+        text = SqlUtils.trimAndEscape(text);
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
-        return momentRepository.findByUserIdAndTextLike(userId, "%" + StringUtils.trim(text) + "%", Sort.by(orders));
+        return momentRepository.findByUserIdAndTextLike(userId, "%" + text + "%", Sort.by(orders));
     }
 
     public int countByUserId(Integer userId) {

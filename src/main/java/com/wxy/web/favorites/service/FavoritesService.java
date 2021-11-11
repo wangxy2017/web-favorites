@@ -8,6 +8,7 @@ import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.util.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -75,14 +76,15 @@ public class FavoritesService {
     }
 
     public List<Favorites> findFavorites(Integer userId, String searchName) {
+        String text = SqlUtils.trimAndEscape(searchName);
         Pageable pageable = PageRequest.of(0, appConfig.getFavoritesSearchLimit());
         // 构造自定义查询条件
         Specification<Favorites> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
             predicateList.add(criteriaBuilder.isNull(root.get("deleteFlag")));
-            if (StringUtils.isNotBlank(searchName)) {
-                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + searchName + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + searchName + "%")));
+            if (StringUtils.isNotBlank(text)) {
+                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + text + "%")));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };
@@ -144,6 +146,7 @@ public class FavoritesService {
 
     public PageInfo<Favorites> findShareList(String name, Integer pageNum, Integer pageSize) {
         name = Optional.ofNullable(name).orElse("").toLowerCase();
+        name = SqlUtils.trimAndEscape(name);
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "support"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
