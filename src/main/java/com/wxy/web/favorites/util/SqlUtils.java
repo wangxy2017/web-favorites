@@ -12,6 +12,9 @@ import cn.hutool.core.util.StrUtil;
 public class SqlUtils {
 
     public static String trimAndEscape(String keyword) {
+        if(keyword == null){
+            return "";
+        }
         StringBuilder sb = new StringBuilder(keyword.trim());
         for (int i = 0; i < sb.length(); i++) {
             String c = String.valueOf(sb.charAt(i));
