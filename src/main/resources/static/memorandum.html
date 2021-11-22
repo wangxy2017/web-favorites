@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|备忘录</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style type="text/css">
+			* {
+				user-select: none;
+			}
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 20px;
+				cursor: pointer;
+			}
+
+			.header {
+			    position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                background-color: #0A0E11;
+			}
+
+			.center {
+			    position: fixed;
+                width: 100%;
+                top: 60px;
+                bottom: 44px;
+                overflow: auto;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                height: 44px;
+                line-height: 44px;
+                background-color: #f5f7fa;
+			}
+
+			#logout {
+                margin-top: 20px;
+                margin-right: 20px;
+                float: right;
+			}
+
+			.main {
+                padding: 15px;
+			}
+
+			.search-input {
+                z-index: 999;
+                position: absolute;
+                top: 16px;
+                right: 70px;
+                width: 100px;
+                height: 30px;
+                transition: width .3s ease;
+            }
+
+            .search-input input {
+                height: 100%;
+                font-size: 12px;
+                border: none;
+                background-color: #161a1d;
+                color: #b2b2b2;
+                padding-left: 26px;
+                padding-right: 26px;
+            }
+
+            .search-input .search-close {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                font-size: 20px;
+                color: #666;
+                display: none;
+                cursor: pointer;
+            }
+
+            .search-input .search-icon {
+                position: absolute;
+                top: 8px;
+                left: 6px;
+                font-size: 14px;
+                color: #999;
+                cursor: pointer;
+            }
+		</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <div class="search-input">
+        <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
+        <input type="text" id="search_text" name="search_text" placeholder="快速搜索..." autocomplete="off"
+               class="layui-input">
+        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+    </div>
+    <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
+</div>
+<div class="center" id="center">
+    <div class="main">
+
+    </div>
+</div>
+<div class="footer">
+    © 2020 网络收藏夹 || 网络收藏夹版权所有
+</div>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer','flow','util'], function() {
+        var layer = layui.layer;
+        var flow = layui.flow;
+
+        // 加载动画
+        layer.load();
+
+        // 加载数据
+        flow.load({
+            elem: '#memorandumList'
+            ,scrollElem: '#center'
+            ,mb: 400
+            ,done: function(page, next){
+              var lis = [];
+              $.ajax({
+                    type: "GET",
+                    url: "memorandum/list",
+                    data: {"pageNum": page,"pageSize": 20},
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if(page == 1){
+                            layer.closeAll('loading');
+                        }
+                        if (result.code == 0) {
+                            $.each(result.data.list, function(index, item){
+                                var html = '';
+                                lis.push(html);
+                            });
+                            next(lis.join(''), page < result.data.pages);
+                        }
+                    }
+              });
+            }
+        });
+
+        // jQuery全局拦截器
+        $(document).ajaxSuccess(function(event,xhr,options){
+            var result = xhr.responseJSON;
+            if(result != undefined && result.code == "401"){
+                window.location.href= "login.html";
+            }
+        });
+
+        // 点击空白关闭
+        $(document).on("click", function(e) {
+            var _conss = $('.search-input');//点击的容器范围
+            if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
+                $("#search_close").hide();
+                $("#search_text").parent().css({"width":"100px"});
+            }
+        });
+
+        // 登出
+        $("#logout").click(function () {
+            layer.confirm('确认退出系统吗？', function(index){
+                layer.close(index);
+
+                localStorage.clear();
+                window.location.href = "login.html";
+            });
+        });
+    });
+</script>
+</body>
+</html>

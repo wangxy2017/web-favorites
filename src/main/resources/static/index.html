@@ -504,6 +504,10 @@
             color: #999;
             cursor: pointer;
         }
+
+        .layui-textarea {
+            min-height: 70px;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -551,6 +555,7 @@
             <span id="slideBtn" class="layui-icon layui-icon-right"></span>
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="fastNav">快捷导航</button>
         </div>
         <div id="starDiv"></div>
         <div id="main"></div>
@@ -606,8 +611,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="url" id="url_input" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
-                   class="layui-input">
+            <textarea name="url" id="url_input" required lay-verify="required|url" placeholder="请输入地址"
+                      class="layui-textarea"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
@@ -639,8 +644,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="url" id="edit_url_input" required lay-verify="required|url" placeholder="请输入地址" autocomplete="off"
-                   class="layui-input">
+            <textarea name="url" id="edit_url_input" required lay-verify="required|url" placeholder="请输入地址"
+                      class="layui-textarea"></textarea>
         </div>
         <button type="button" id="edit_url_input_copy" class="layui-btn layui-btn-primary layui-btn-xs url-copy-btn" data-clipboard-target="#edit_url_input">复制</button>
     </div>
@@ -965,21 +970,24 @@
         // 固定块
         util.fixbar({
             top: true
-            ,bar1: '&#xe68d;'
-            ,bar2: '&#xe615;'
-            ,bar3: '&#xe637;'
-            ,bar4: '&#xe681;'
+            ,bar1: '&#xe615;'// 搜索
+            ,bar2: '&#xe60a;'// 备忘录
+            ,bar3: '&#xe68d;'// 瞬间
+            ,bar4: '&#xe637;'// 日历
+            ,bar5: '&#xe681;'// 文件
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
             ,css: {right: 30, bottom: 50}
             ,click: function(type){
                 if(type === 'bar1'){
-                    window.location.href = "moment.html";
-                }else if(type === 'bar2'){
                     window.location.href = "search.html";
+                }else if(type === 'bar2'){
+                    window.location.href = "memorandum.html";
                 }else if(type === 'bar3'){
-                    window.location.href = "calendar.html";
+                    window.location.href = "moment.html";
                 }else if(type === 'bar4'){
+                    window.location.href = "calendar.html";
+                }else if(type === 'bar5'){
                     window.location.href = "file.html";
                 }
             }
@@ -987,12 +995,14 @@
                 if(type === 'top'){
                     layer.tips('回到顶部', ele, {tips: 4});
                 }else if(type === 'bar1'){
-                    layer.tips('瞬间', ele, {tips: 4});
-                }else if(type === 'bar2'){
                     layer.tips('搜索', ele, {tips: 4});
+                }else if(type === 'bar2'){
+                    layer.tips('备忘录', ele, {tips: 4});
                 }else if(type === 'bar3'){
-                    layer.tips('日程', ele, {tips: 4});
+                    layer.tips('瞬间', ele, {tips: 4});
                 }else if(type === 'bar4'){
+                    layer.tips('日程', ele, {tips: 4});
+                }else if(type === 'bar5'){
                     layer.tips('文件', ele, {tips: 4});
                 }
             }
