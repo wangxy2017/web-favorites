@@ -1672,7 +1672,7 @@
 
         // 新增分类
         $("#addCategoryBtn").click(function () {
-            layer.prompt({title: "添加分类", placeholder:"输入分类名称", maxlength: 10}, function (value, index, elem) {
+            layer.prompt({title: "添加分类", placeholder:"输入分类名称", maxlength: 20}, function (value, index, elem) {
                 // 验证
                 var bool = true;
                 $.ajax({
