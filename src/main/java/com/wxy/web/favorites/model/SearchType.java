@@ -16,20 +16,20 @@ import javax.persistence.*;
 public class SearchType {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(20) comment '名称'")
+    @Column(name = "name", columnDefinition = "varchar(20) comment '名称'")
     private String name;
 
-    @Column(name = "icon", nullable = false,columnDefinition = "varchar(500) comment '图标'")
+    @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")
     private String icon;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(500) comment '地址'")
+    @Column(name = "url", columnDefinition = "varchar(500) comment '地址'")
     private String url;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
+    @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
 }

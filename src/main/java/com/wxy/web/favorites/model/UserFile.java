@@ -23,11 +23,11 @@ import java.util.List;
 public class UserFile {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
+    @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
     @Column(name = "pid", columnDefinition = "int(10) comment '父id'")
@@ -41,7 +41,7 @@ public class UserFile {
     @Column(name = "update_time", columnDefinition = "datetime comment '修改时间'")
     private Date updateTime;
 
-    @Column(name = "filename", nullable = false, columnDefinition = "varchar(100) comment '文件名称'")
+    @Column(name = "filename", columnDefinition = "varchar(100) comment '文件名称'")
     private String filename;
 
     @Column(name = "path", columnDefinition = "varchar(500) comment '路径'")

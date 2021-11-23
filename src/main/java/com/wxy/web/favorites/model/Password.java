@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class Password {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
@@ -26,6 +26,6 @@ public class Password {
     @Column(name = "password", columnDefinition = "varchar(100) comment '密码'")
     private String password;
 
-    @Column(name = "favorites_id", unique = true, nullable = false, columnDefinition = "int(10) comment '收藏ID'")
+    @Column(name = "favorites_id", unique = true, columnDefinition = "int(10) comment '收藏ID'")
     private Integer favoritesId;
 }

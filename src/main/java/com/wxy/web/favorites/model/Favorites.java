@@ -24,23 +24,23 @@ import java.util.Date;
 public class Favorites {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "name", nullable = false, columnDefinition = "varchar(500) comment '名称'")
+    @Column(name = "name", columnDefinition = "varchar(500) comment '名称'")
     private String name;
 
     @Column(name = "icon", columnDefinition = "varchar(500) comment '图标'")
     private String icon;
 
-    @Column(name = "url", nullable = false, columnDefinition = "varchar(1000) comment '地址'")
+    @Column(name = "url", columnDefinition = "varchar(1000) comment '地址'")
     private String url;
 
-    @Column(name = "category_id", nullable = false, columnDefinition = "int(10) comment '分类ID'")
+    @Column(name = "category_id", columnDefinition = "int(10) comment '分类ID'")
     private Integer categoryId;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "int(10) comment '用户ID'")
+    @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
     @Column(name = "pinyin", columnDefinition = "varchar(3000) comment '拼音'")
@@ -84,7 +84,7 @@ public class Favorites {
     @Transient
     private String username;
 
-    public Favorites(Integer id, String name, String icon, String url,Integer support, String username) {
+    public Favorites(Integer id, String name, String icon, String url, Integer support, String username) {
         this.id = id;
         this.name = name;
         this.icon = icon;

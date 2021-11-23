@@ -22,24 +22,24 @@ import java.util.Date;
 public class Verification {
 
     @Id
-    @Column(name = "id", nullable = false, columnDefinition = "int(10) comment '主键ID(自增)'")
+    @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "account", nullable = false, columnDefinition = "varchar(100) comment '邮箱'")
+    @Column(name = "account", columnDefinition = "varchar(100) comment '邮箱'")
     private String account;
 
-    @Column(name = "code", nullable = false, columnDefinition = "varchar(100) comment '验证码'")
+    @Column(name = "code", columnDefinition = "varchar(100) comment '验证码'")
     private String code;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Column(name = "expired_time", nullable = false, columnDefinition = "datetime comment '过期时间'")
+    @Column(name = "expired_time", columnDefinition = "datetime comment '过期时间'")
     private Date expiredTime;
 
-    @Column(name = "action", nullable = false, columnDefinition = "int(1) comment '动作：0-注册 1-邮箱登录 2-修改邮箱'")
+    @Column(name = "action", columnDefinition = "int(1) comment '动作：0-注册 1-邮箱登录 2-修改邮箱'")
     private Integer action;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Column(name = "send_time", nullable = false, columnDefinition = "datetime comment '发送时间'")
+    @Column(name = "send_time", columnDefinition = "datetime comment '发送时间'")
     private Date sendTime;
 }
