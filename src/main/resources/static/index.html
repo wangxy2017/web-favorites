@@ -49,6 +49,7 @@
             border: none;
             background-color: #161a1d;
             color: #b2b2b2;
+            padding-left: 24px;
             padding-right: 26px;
         }
 
@@ -428,7 +429,7 @@
 		}
 
 		.url-copy-btn {
-		    margin-top: 7px;
+		    margin-top: 8px;
 		    border-color: #FF5722!important;
 		    color: #FF5722!important;
 		}
@@ -508,6 +509,24 @@
         .layui-textarea {
             min-height: 70px;
         }
+
+        .shortcut-mike {
+            position: absolute;
+            top: 8px;
+            right: -30px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #6a6a6a;
+        }
+
+        .search-mike {
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            font-size: 14px;
+            color: #999;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -517,6 +536,7 @@
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-input">
+            <i class="layui-icon layui-icon-mike search-mike"></i>
             <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
@@ -694,6 +714,7 @@
             <input type="text" name="shortcut" lay-verify="shortcut" placeholder="例如：打开...或Open..." autocomplete="off"
                    class="layui-input">
             <span style="color: #ff5722;font-size: 12px;margin-top: 5px;display: block;">温馨提示：配合语音输入效果更佳哦</span>
+            <i class="layui-icon layui-icon-mike shortcut-mike"></i>
         </div>
     </div>
     <div class="layui-form-item">
