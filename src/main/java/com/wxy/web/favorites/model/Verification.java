@@ -16,6 +16,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "t_verification", indexes = {@Index(columnList = "account")})
+@org.hibernate.annotations.Table(appliesTo = "t_verification",comment="验证码表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

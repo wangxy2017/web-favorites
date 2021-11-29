@@ -9,7 +9,8 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "t_password")
+@Table(name = "t_password",indexes = {@Index(columnList = "favorites_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_password",comment="密码表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

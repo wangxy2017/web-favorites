@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "t_search_type", indexes = {@Index(columnList = "user_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_search_type",comment="搜索引擎")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

@@ -12,12 +12,10 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "t_favorites", indexes = {
-        @Index(columnList = "name"),
-        @Index(columnList = "pinyin"),
-        @Index(columnList = "pinyin_s"),
-        @Index(columnList = "shortcut"),
-        @Index(columnList = "category_id"),
-        @Index(columnList = "is_share")})
+        @Index(name = "idx_user_id_shortcut", columnList = "user_id"),
+        @Index(name = "idx_user_id_shortcut", columnList = "shortcut"),
+        @Index(columnList = "category_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_favorites",comment="收藏表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

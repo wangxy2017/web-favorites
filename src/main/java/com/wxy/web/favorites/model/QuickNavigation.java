@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "t_quick_navigation", indexes = {@Index(columnList = "user_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_quick_navigation",comment="快捷导航")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

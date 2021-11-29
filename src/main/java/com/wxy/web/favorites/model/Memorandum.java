@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "t_memorandum", indexes = {@Index(columnList = "user_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_memorandum",comment="备忘录")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

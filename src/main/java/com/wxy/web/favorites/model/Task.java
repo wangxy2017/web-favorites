@@ -14,6 +14,7 @@ import java.util.Date;
 @Table(name = "t_task", indexes = {
         @Index(columnList = "user_id"),
         @Index(columnList = "alarm_time")})
+@org.hibernate.annotations.Table(appliesTo = "t_task",comment="日程表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

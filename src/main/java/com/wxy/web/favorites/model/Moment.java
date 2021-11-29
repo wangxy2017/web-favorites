@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "t_moment", indexes = {@Index(columnList = "user_id")})
+@org.hibernate.annotations.Table(appliesTo = "t_moment",comment="瞬间")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
