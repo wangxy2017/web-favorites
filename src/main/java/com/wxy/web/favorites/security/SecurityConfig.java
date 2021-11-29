@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private JwtFilter jwtFilter;
+    private TokenFilter tokenFilter;
 
     @Autowired
     private AjaxAuthenticationEntryPoint ajaxAuthenticationEntryPoint;
@@ -52,14 +52,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(ajaxAuthenticationEntryPoint)
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         ;
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
-                "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                "/favicon.ico", "/search.json", "/notice.json");
+                        "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
+                        "/favicon.ico", "/search.json", "/notice.json")
+                //swagger2所需要用到的静态资源，允许访问
+                .antMatchers("/swagger-ui.html")
+                .antMatchers("/swagger-ui/**")
+                .antMatchers("/swagger-resources/**")
+                .antMatchers("/webjars/**")
+                .antMatchers("/v2/**");
+        ;
     }
 }

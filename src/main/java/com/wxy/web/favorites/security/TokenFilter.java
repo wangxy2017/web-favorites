@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class TokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenUtil tokenUtil;
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -35,14 +35,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith(PublicConstants.TOKEN_PREFIX)) {
             token = authorizationHeader.substring(PublicConstants.TOKEN_PREFIX.length());
-            userName = jwtUtil.extractUsername(token);
+            userName = tokenUtil.extractUsername(token);
         }
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
 
-            if (jwtUtil.validateToken(token, userDetails)) {
+            if (tokenUtil.validateToken(token, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

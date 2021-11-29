@@ -2,7 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.QuickNavigation;
 import com.wxy.web.favorites.service.QuickNavigationService;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

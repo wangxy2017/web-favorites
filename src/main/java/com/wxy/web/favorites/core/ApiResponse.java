@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.util;
+package com.wxy.web.favorites.core;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.wxy.web.favorites.constant.PublicConstants;

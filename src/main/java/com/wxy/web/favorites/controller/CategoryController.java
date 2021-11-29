@@ -7,8 +7,10 @@ import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/category")
+@Api(tags = "分类管理")
 public class CategoryController {
 
     @Autowired
@@ -29,6 +32,7 @@ public class CategoryController {
     private SpringUtils springUtils;
 
     @PostMapping
+    @ApiOperation(value = "保存分类")
     public ApiResponse save(@RequestBody Category category) {
         if (!PublicConstants.DEFAULT_CATEGORY_NAME.equals(category.getName())) {
             User user = springUtils.getCurrentUser();

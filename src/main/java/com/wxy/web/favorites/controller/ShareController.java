@@ -2,8 +2,8 @@ package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.service.FavoritesService;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

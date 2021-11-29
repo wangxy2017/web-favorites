@@ -3,7 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

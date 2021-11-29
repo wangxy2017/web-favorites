@@ -6,11 +6,12 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
-import com.wxy.web.favorites.security.JwtUtil;
+import com.wxy.web.favorites.security.TokenUtil;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
@@ -27,7 +28,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +62,7 @@ public class LoginController {
     private AppConfig recommendsConfig;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenUtil tokenUtil;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -116,7 +116,7 @@ public class LoginController {
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.EMAIL_REGISTER_TITLE, String.format(EmailConstants.EMAIL_REGISTER_CONTENT, user.getUsername(), tempPwd));
             }
             // 生成token
-            String token = jwtUtil.generateToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+            String token = tokenUtil.generateToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
             return ApiResponse.success(token);
         } else {
             return ApiResponse.error(ErrorConstants.INVALID_VERIFICATION_MSG);
@@ -131,9 +131,9 @@ public class LoginController {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token;
                 if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
-                    token = jwtUtil.generateToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+                    token = tokenUtil.generateToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
                 } else {
-                    token = jwtUtil.generateToken(user1.getUsername());
+                    token = tokenUtil.generateToken(user1.getUsername());
                 }
                 updateErrorCount(user1, true);
                 return ApiResponse.success(token);
@@ -159,7 +159,7 @@ public class LoginController {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
-                String token = jwtUtil.generateToken(user1.getUsername());
+                String token = tokenUtil.generateToken(user1.getUsername());
                 TextWebSocketFrame tws = new TextWebSocketFrame(JSONObject.toJSONString(ApiResponse.success(token)));
                 channel.writeAndFlush(tws);
                 updateErrorCount(user1, true);

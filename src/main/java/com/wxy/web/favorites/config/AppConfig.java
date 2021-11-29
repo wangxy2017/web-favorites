@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * 系统参数配置
+ */
 @Configuration
 @ConfigurationProperties(prefix = "app")
 @Data

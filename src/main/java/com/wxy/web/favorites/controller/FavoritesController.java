@@ -3,6 +3,8 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;

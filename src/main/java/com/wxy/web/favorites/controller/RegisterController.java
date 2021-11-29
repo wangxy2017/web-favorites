@@ -9,12 +9,12 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
-import com.wxy.web.favorites.security.JwtUtil;
+import com.wxy.web.favorites.security.TokenUtil;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
 import com.wxy.web.favorites.util.SpringUtils;
@@ -63,7 +63,7 @@ public class RegisterController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenUtil tokenUtil;
 
     /**
      * 注册
@@ -94,7 +94,7 @@ public class RegisterController {
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 生成token
-                String token = jwtUtil.generateToken(user1.getUsername());
+                String token = tokenUtil.generateToken(user1.getUsername());
                 // 移除验证码
                 verificationService.deleteById(verification.getId());
                 return ApiResponse.success(token);

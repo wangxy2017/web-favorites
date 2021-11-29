@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 @Component
 @Slf4j
-public class StartRunner implements CommandLineRunner {
+public class InitConfig implements CommandLineRunner {
 
     @Autowired
     private AppConfig appConfig;

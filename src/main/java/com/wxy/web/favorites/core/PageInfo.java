@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.util;
+package com.wxy.web.favorites.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

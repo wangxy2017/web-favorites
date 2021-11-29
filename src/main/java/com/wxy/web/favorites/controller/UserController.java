@@ -9,7 +9,7 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.SpringUtils;
 import org.apache.commons.lang3.StringUtils;

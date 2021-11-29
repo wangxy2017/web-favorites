@@ -1,12 +1,10 @@
 package com.wxy.web.favorites.security;
 
-import cn.hutool.http.ContentType;
 import cn.hutool.http.HttpStatus;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -15,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author wangxiaoyuan

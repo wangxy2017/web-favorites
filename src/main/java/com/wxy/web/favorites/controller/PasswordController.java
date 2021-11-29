@@ -4,7 +4,7 @@ import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.Password;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.PasswordService;
-import com.wxy.web.favorites.util.ApiResponse;
+import com.wxy.web.favorites.core.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

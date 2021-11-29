@@ -1,27 +1,15 @@
 package com.wxy.web.favorites.controller;
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.SearchType;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.SearchTypeService;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author wangxiaoyuan

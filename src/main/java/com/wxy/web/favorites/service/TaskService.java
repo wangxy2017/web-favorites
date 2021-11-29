@@ -3,7 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.TaskRepository;
 import com.wxy.web.favorites.model.Task;
-import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.core.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

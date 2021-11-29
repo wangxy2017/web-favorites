@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 @Service
 @Slf4j
-public class JwtUtil {
+public class TokenUtil {
 
     @Value("${jwt.token-secret-key:}")
     private String tokenSecretKey;

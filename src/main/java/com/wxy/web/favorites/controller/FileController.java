@@ -1,7 +1,6 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -9,8 +8,8 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.service.UserFileService;
 import com.wxy.web.favorites.service.UserService;
-import com.wxy.web.favorites.util.ApiResponse;
-import com.wxy.web.favorites.util.PageInfo;
+import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import com.wxy.web.favorites.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;

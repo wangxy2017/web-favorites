@@ -87,3 +87,5 @@ backup: #数据库备份文件地址
   zip-file-path: ./backup/h2.zip
 aes: #aes密钥
   secret-key:
+swagger:
+  enable: true #开启swagger

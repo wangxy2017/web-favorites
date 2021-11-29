@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 /***
  * <p>
- * Description: 描述
+ * Description: aes配置
  * </p>
  * @author wangxiaoyuan
  * 2021年10月12日
