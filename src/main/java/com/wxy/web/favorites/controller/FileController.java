@@ -10,7 +10,7 @@ import com.wxy.web.favorites.service.UserFileService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.util.ZipUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +47,7 @@ public class FileController {
     private UserService userService;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @Autowired
     private AppConfig appConfig;
@@ -55,7 +55,7 @@ public class FileController {
     @GetMapping("/count")
     @ApiOperation(value = "查询文件总数")
     public ApiResponse count() {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         List<UserFile> list = userFileService.findRootList(user.getId());
         Map<String, Object> data = new HashMap<>();
         data.put("count", list.size());
@@ -99,7 +99,7 @@ public class FileController {
                             @RequestParam(required = false) Integer pid,
                             @RequestParam(required = false) Integer pageNum,
                             @RequestParam(required = false) Integer pageSize) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         PageInfo<UserFile> page = userFileService.findPageList(user.getId(), name, pid, pageNum, pageSize);
         List<UserFile> floors = userFileService.findFloorsByPid(pid);
         HashMap<String, Object> data = new HashMap<>();
@@ -159,8 +159,8 @@ public class FileController {
     @GetMapping("/downloadAll")
     @ApiOperation(value = "备份")
     public void downloadAll(HttpServletResponse response) throws IOException {
-        User user = springUtils.getCurrentUser();
-        String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
+        User user = contextUtils.getCurrentUser();
+        String tempPath = contextUtils.getRequest().getServletContext().getRealPath("/");
         Path packageFile = userFileService.packageFile(user.getId(), tempPath);
         Assert.notNull(packageFile, ErrorConstants.RESOURCE_NOT_FOUND);
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream())) {
@@ -187,7 +187,7 @@ public class FileController {
     @PostMapping("/upload")
     @ApiOperation(value = "批量上传")
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         if (Optional.ofNullable(user.getCapacity()).orElse(0L) > 0) {
             long restSize = user.getCapacity() - Optional.ofNullable(user.getUsedSize()).orElse(0L);
             long totalSize = 0;
@@ -219,7 +219,7 @@ public class FileController {
     @PostMapping("/delete")
     @ApiOperation(value = "删除文件")
     public ApiResponse delete(@RequestParam Integer id) throws IOException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         userFileService.deleteById(id, user.getId());
         return ApiResponse.success();
     }
@@ -227,7 +227,7 @@ public class FileController {
     @PostMapping("/deleteMore")
     @ApiOperation(value = "批量删除")
     public ApiResponse deleteMore(@RequestParam String ids) throws IOException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         String[] split = ids.split(PublicConstants.ID_DELIMITER);
         for (String s : split) {
             userFileService.deleteById(Integer.valueOf(s), user.getId());
@@ -240,7 +240,7 @@ public class FileController {
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
         UserFile file = userFileService.findByPidAndFilename(pid, filename);
         Assert.isNull(file, "文件夹已存在");
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         UserFile file1 = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, null, 1, 0L, null);
         userFileService.save(file1);
         return ApiResponse.success();
@@ -321,7 +321,7 @@ public class FileController {
     @GetMapping("/capacity")
     @ApiOperation(value = "查询用户使用容量")
     public ApiResponse capacity() {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         User user1 = userService.findById(user.getId());
         Map<String, Object> data = new HashMap<>();
         data.put("capacity", Optional.ofNullable(user1.getCapacity()).orElse(0L));

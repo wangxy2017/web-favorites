@@ -11,7 +11,7 @@ import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ public class UserController {
     private EmailUtils emailUtils;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @Autowired
     private VerificationService verificationService;
@@ -50,7 +50,7 @@ public class UserController {
     @GetMapping("/info")
     @ApiOperation(value = "查询登录信息")
     public ApiResponse info() {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         user.setPassword(null);
         return ApiResponse.success(user);
     }
@@ -58,7 +58,7 @@ public class UserController {
     @PostMapping("/password")
     @ApiOperation(value = "重置密码")
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
@@ -71,7 +71,7 @@ public class UserController {
     @PostMapping("/style")
     @ApiOperation(value = "保存浏览模式")
     public ApiResponse viewStyle(@RequestParam Integer viewStyle) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         user.setViewStyle(viewStyle == 1 ? 1 : 0);
         userService.save(user);
         return ApiResponse.success();
@@ -97,7 +97,7 @@ public class UserController {
             Verification verification = verificationService.findCode(newEmail, PublicConstants.VERIFICATION_EMAIL_UPDATE);
             String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (user1 == null && code.equals(emailCode)) {
-                User user = springUtils.getCurrentUser();
+                User user = contextUtils.getCurrentUser();
                 user.setEmail(newEmail);
                 userService.save(user);
                 // 移除验证码
@@ -111,7 +111,7 @@ public class UserController {
     @GetMapping("/data")
     @ApiOperation(value = "获取统计信息")
     public ApiResponse getUserData(){
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         Map<String,Object> userData = userService.findUserData(user.getId());
         return ApiResponse.success(userData);
     }

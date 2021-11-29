@@ -6,7 +6,7 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.TaskService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ public class TaskController {
     private TaskService taskService;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @PostMapping
     @ApiOperation(value = "新增日程")
     public ApiResponse save(@RequestBody Task task) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         task.setUserId(user.getId());
         if (task.getId() == null) task.setCreateTime(new Date());
         taskService.save(task);
@@ -56,7 +56,7 @@ public class TaskController {
     @GetMapping("/clean/{date}")
     @ApiOperation(value = "清空日程")
     public ApiResponse cleanByDate(@PathVariable String date) throws ParseException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         taskService.deleteAllByDate(user.getId(), date);
         return ApiResponse.success();
     }
@@ -76,7 +76,7 @@ public class TaskController {
     @GetMapping("/all/{date}")
     @ApiOperation(value = "日程统计")
     public ApiResponse findAll(@PathVariable String date) throws ParseException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
@@ -88,7 +88,7 @@ public class TaskController {
     @GetMapping("/list")
     @ApiOperation(value = "查询日程列表")
     public ApiResponse findPageList(@RequestParam String date, @RequestParam Integer pageNum, @RequestParam Integer pageSize) throws ParseException {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(), date, pageNum, pageSize);
         return ApiResponse.success(page);
     }

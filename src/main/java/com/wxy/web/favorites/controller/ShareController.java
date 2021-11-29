@@ -4,7 +4,7 @@ import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class ShareController {
     private FavoritesService favoritesService;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
 
     @GetMapping("/list")
@@ -33,7 +33,7 @@ public class ShareController {
     @GetMapping("/support/{id}")
     @ApiOperation(value = "搜藏书签")
     public ApiResponse support(@PathVariable Integer id) {
-        boolean success = favoritesService.saveSupport(springUtils.getCurrentUser().getId(), id);
+        boolean success = favoritesService.saveSupport(contextUtils.getCurrentUser().getId(), id);
         return success ? ApiResponse.success() : ApiResponse.error();
     }
 }

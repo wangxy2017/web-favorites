@@ -8,7 +8,7 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,13 @@ public class CategoryController {
     private FavoritesService favoritesService;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @PostMapping
     @ApiOperation(value = "保存分类")
     public ApiResponse save(@RequestBody Category category) {
         if (!PublicConstants.DEFAULT_CATEGORY_NAME.equals(category.getName())) {
-            User user = springUtils.getCurrentUser();
+            User user = contextUtils.getCurrentUser();
             category.setUserId(user.getId());
             categoryService.save(category);
             return ApiResponse.success();
@@ -53,7 +53,7 @@ public class CategoryController {
     @GetMapping("/check/{name}")
     @ApiOperation(value = "检查分类是否存在")
     public ApiResponse queryName(@PathVariable String name) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         Category category = categoryService.findByName(name, user.getId());
         if (category != null) {
             return ApiResponse.success(category);
@@ -113,7 +113,7 @@ public class CategoryController {
     @GetMapping("/list")
     @ApiOperation(value = "查询分类列表")
     public ApiResponse list() {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }

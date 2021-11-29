@@ -17,7 +17,7 @@ import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class RegisterController {
     private EmailUtils emailUtils;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @Autowired
     private AppConfig recommendsConfig;

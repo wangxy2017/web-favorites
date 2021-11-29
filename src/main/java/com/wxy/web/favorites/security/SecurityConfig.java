@@ -46,8 +46,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/", "/login/**", "/register/**", "/file/share/download/**", "/websocket/**")
-                .permitAll().anyRequest().authenticated()
+        http.csrf().disable().authorizeRequests()
+                // 允许根路径url的访问
+                .antMatchers("/").permitAll()
+                // 开放相关接口
+                .antMatchers("/login/**", "/register/**", "/file/share/download/**", "/websocket/**").permitAll()
+                .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(ajaxAuthenticationEntryPoint)
                 .and().sessionManagement()
@@ -58,15 +62,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
-                        "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                        "/favicon.ico", "/search.json", "/notice.json")
+        web.ignoring()
                 //swagger2所需要用到的静态资源，允许访问
                 .antMatchers("/swagger-ui.html")
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/swagger-resources/**")
                 .antMatchers("/webjars/**")
-                .antMatchers("/v2/**");
-        ;
+                .antMatchers("/v2/**")
+                // 其他静态资源
+                .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
+                        "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
+                        "/favicon.ico", "/search.json", "/notice.json");
     }
 }

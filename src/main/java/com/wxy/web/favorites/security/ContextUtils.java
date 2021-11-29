@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.util;
+package com.wxy.web.favorites.security;
 
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.UserService;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class SpringUtils {
+public class ContextUtils {
 
     @Autowired
     private UserService userService;

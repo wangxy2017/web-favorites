@@ -11,6 +11,7 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
+import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.security.TokenUtil;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -59,7 +60,7 @@ public class LoginController {
     private EmailUtils emailUtils;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     @Autowired
     private AppConfig recommendsConfig;

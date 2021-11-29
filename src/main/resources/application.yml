@@ -88,4 +88,4 @@ backup: #数据库备份文件地址
 aes: #aes密钥
   secret-key:
 swagger:
-  enable: true #开启swagger
+  enable: false #开启swagger

@@ -5,7 +5,7 @@ import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.MemorandumService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
-import com.wxy.web.favorites.util.SpringUtils;
+import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class MemorandumController {
     private MemorandumService memorandumService;
 
     @Autowired
-    private SpringUtils springUtils;
+    private ContextUtils contextUtils;
 
     /**
      * 新增
@@ -33,7 +33,7 @@ public class MemorandumController {
     @PostMapping
     @ApiOperation(value = "保存")
     public ApiResponse save(@RequestBody Memorandum memorandum) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         memorandum.setUserId(user.getId());
         memorandum.setCreateTime(new Date());
         memorandumService.save(memorandum);
@@ -68,7 +68,7 @@ public class MemorandumController {
     @GetMapping("/list")
     @ApiOperation(value = "分页查询")
     public ApiResponse list(@RequestParam(required = false) String content, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = springUtils.getCurrentUser();
+        User user = contextUtils.getCurrentUser();
         PageInfo<Memorandum> page = memorandumService.findPageByUserIdAndContentLike(user.getId(), content, pageNum, pageSize);
         return ApiResponse.success(page);
     }
