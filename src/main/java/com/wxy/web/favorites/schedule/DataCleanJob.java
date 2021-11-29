@@ -14,7 +14,6 @@ import java.util.Calendar;
 
 @Component
 @Slf4j
-@Transactional
 public class DataCleanJob {
 
     @Autowired
@@ -27,6 +26,7 @@ public class DataCleanJob {
      * 清理大于30天的数据
      */
     @Scheduled(cron = "${cron.data-clean-job}")
+    @Transactional(rollbackFor = Exception.class)
     public void run() {
         try {
             log.info("验证码清理任务开始执行...");
@@ -36,6 +36,7 @@ public class DataCleanJob {
             verificationService.deleteBeforeTime(sdf.format(calendar.getTime()));
         } catch (Exception e) {
             log.error("验证码清理任务执行失败：{}", e.getMessage(), e);
+            throw new RuntimeException("验证码清理任务执行失败");
         }
     }
 }

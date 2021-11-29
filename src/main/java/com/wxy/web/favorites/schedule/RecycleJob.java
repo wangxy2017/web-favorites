@@ -14,7 +14,6 @@ import java.util.Calendar;
 
 @Component
 @Slf4j
-@Transactional
 public class RecycleJob {
 
     @Autowired
@@ -27,6 +26,7 @@ public class RecycleJob {
      * 清理大于30天的数据
      */
     @Scheduled(cron = "${cron.recycle-job}")
+    @Transactional(rollbackFor = Exception.class)
     public void run() {
         try {
             log.info("回收站清理任务开始执行...");
@@ -40,6 +40,7 @@ public class RecycleJob {
             }
         } catch (Exception e) {
             log.error("回收站清理任务执行失败：{}", e.getMessage(), e);
+            throw new RuntimeException("回收站清理任务执行失败");
         }
     }
 }

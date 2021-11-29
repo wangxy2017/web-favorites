@@ -20,21 +20,26 @@ import java.util.List;
  **/
 @Component
 @Slf4j
-@Transactional
 public class TaskCancelJob {
 
     @Autowired
     private TaskService taskService;
 
     @Scheduled(cron = "${cron.task-cancel-job}")
+    @Transactional(rollbackFor = Exception.class)
     public void run() throws ParseException {
-        log.info("任务取消程序开始执行...");
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        // 查询昨日未完成的任务，将状态改为取消
-        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
-        List<Task> undoTaskList = taskService.findUndoTask(sdf.format(calendar.getTime()));
-        undoTaskList.forEach(t -> t.setLevel(PublicConstants.TASK_LEVEL_5));
-        taskService.saveAll(undoTaskList);
+        try {
+            log.info("任务取消程序开始执行...");
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -1);
+            // 查询昨日未完成的任务，将状态改为取消
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_PATTERN);
+            List<Task> undoTaskList = taskService.findUndoTask(sdf.format(calendar.getTime()));
+            undoTaskList.forEach(t -> t.setLevel(PublicConstants.TASK_LEVEL_5));
+            taskService.saveAll(undoTaskList);
+        } catch (Exception e) {
+            log.error("日程取消任务执行失败：{}", e.getMessage(), e);
+            throw new RuntimeException("日程取消任务执行失败");
+        }
     }
 }

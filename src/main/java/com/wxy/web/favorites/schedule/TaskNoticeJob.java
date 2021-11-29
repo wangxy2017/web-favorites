@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Slf4j
-@Transactional
 public class TaskNoticeJob {
 
     @Autowired
@@ -38,19 +37,25 @@ public class TaskNoticeJob {
     private EmailUtils emailUtils;
 
     @Scheduled(cron = "${cron.task-notice-job}")
+    @Transactional(rollbackFor = Exception.class)
     public void run() throws ParseException {
-        log.info("任务通知程序开始执行...");
-        // 查询此刻任务
-        SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_MINUTE_PATTERN);
-        List<Task> taskList = taskService.findByAlarmTime(sdf.format(new Date()) + ":00");
-        // 邮件通知
-        List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
-        noticeList.forEach(t -> {
-            User user = userService.findById(t.getUserId());
-            emailUtils.sendHtmlMail(user.getEmail(), EmailConstants.TASK_NOTICE_TITLE, t.getContent());
-            // 改变状态
-            t.setLevel(PublicConstants.TASK_LEVEL_4);
-        });
-        taskService.saveAll(noticeList);
+        try {
+            log.info("任务通知程序开始执行...");
+            // 查询此刻任务
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATE_MINUTE_PATTERN);
+            List<Task> taskList = taskService.findByAlarmTime(sdf.format(new Date()) + ":00");
+            // 邮件通知
+            List<Task> noticeList = taskList.stream().filter(t -> t.getLevel() < PublicConstants.TASK_LEVEL_4).collect(Collectors.toList());
+            noticeList.forEach(t -> {
+                User user = userService.findById(t.getUserId());
+                emailUtils.sendHtmlMail(user.getEmail(), EmailConstants.TASK_NOTICE_TITLE, t.getContent());
+                // 改变状态
+                t.setLevel(PublicConstants.TASK_LEVEL_4);
+            });
+            taskService.saveAll(noticeList);
+        } catch (Exception e) {
+            log.error("日程通知任务执行失败：{}", e.getMessage(), e);
+            throw new RuntimeException("日程通知任务执行失败");
+        }
     }
 }
