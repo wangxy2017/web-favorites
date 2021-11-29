@@ -6,6 +6,8 @@ import com.wxy.web.favorites.service.MemorandumService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/memorandum")
+@Api(tags = "备忘录")
 public class MemorandumController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class MemorandumController {
      * @return
      */
     @PostMapping
+    @ApiOperation(value = "保存")
     public ApiResponse save(@RequestBody Memorandum memorandum) {
         User user = springUtils.getCurrentUser();
         memorandum.setUserId(user.getId());
@@ -43,6 +47,7 @@ public class MemorandumController {
      * @return
      */
     @PostMapping("/update")
+    @ApiOperation(value = "修改")
     public ApiResponse update(@RequestBody Memorandum memorandum) {
         Memorandum Memorandum1 = memorandumService.findById(memorandum.getId());
         if (Memorandum1 != null) {
@@ -54,12 +59,14 @@ public class MemorandumController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Memorandum memorandum = memorandumService.findById(id);
         return ApiResponse.success(memorandum);
     }
 
     @GetMapping("/list")
+    @ApiOperation(value = "分页查询")
     public ApiResponse list(@RequestParam(required = false) String content, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<Memorandum> page = memorandumService.findPageByUserIdAndContentLike(user.getId(), content, pageNum, pageSize);

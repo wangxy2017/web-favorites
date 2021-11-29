@@ -12,6 +12,8 @@ import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户")
 public class UserController {
 
     @Autowired
@@ -45,6 +48,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/info")
+    @ApiOperation(value = "查询登录信息")
     public ApiResponse info() {
         User user = springUtils.getCurrentUser();
         user.setPassword(null);
@@ -52,6 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/password")
+    @ApiOperation(value = "重置密码")
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
         User user = springUtils.getCurrentUser();
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
@@ -64,6 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/style")
+    @ApiOperation(value = "保存浏览模式")
     public ApiResponse viewStyle(@RequestParam Integer viewStyle) {
         User user = springUtils.getCurrentUser();
         user.setViewStyle(viewStyle == 1 ? 1 : 0);
@@ -72,6 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/email/code")
+    @ApiOperation(value = "修改邮箱-获取验证码")
     public ApiResponse code(@RequestParam String email) {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_UPDATE), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
@@ -83,6 +90,7 @@ public class UserController {
     }
 
     @PostMapping("/email")
+    @ApiOperation(value = "修改邮箱")
     public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
         if (StringUtils.isNotBlank(newEmail) && StringUtils.isNotBlank(code)) {
             User user1 = userService.findByEmail(newEmail);
@@ -101,6 +109,7 @@ public class UserController {
     }
 
     @GetMapping("/data")
+    @ApiOperation(value = "获取统计信息")
     public ApiResponse getUserData(){
         User user = springUtils.getCurrentUser();
         Map<String,Object> userData = userService.findUserData(user.getId());

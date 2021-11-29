@@ -20,6 +20,8 @@ import com.wxy.web.favorites.util.*;
 import com.wxy.web.favorites.websocket.ChannelSupervise;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/login")
 @Slf4j
+@Api(tags = "登录")
 public class LoginController {
 
     @Autowired
@@ -71,6 +74,7 @@ public class LoginController {
     private VerificationService verificationService;
 
     @GetMapping("/email/code")
+    @ApiOperation(value = "邮箱登录-获取验证码")
     public ApiResponse code(@RequestParam String email) {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_LOGIN), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
@@ -83,6 +87,7 @@ public class LoginController {
     }
 
     @PostMapping("/emailLogin")
+    @ApiOperation(value = "邮箱登录")
     public ApiResponse emailLogin(@RequestParam String email, @RequestParam String code) {
         Verification verification = verificationService.findCode(email, PublicConstants.VERIFICATION_EMAIL_LOGIN);
         String loginEmailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
@@ -124,6 +129,7 @@ public class LoginController {
     }
 
     @PostMapping
+    @ApiOperation(value = "账号密码登录")
     public ApiResponse login(@RequestBody User user, @RequestParam(required = false) String remember) {
         Assert.isTrue(CaptchaUtils.verify(user.getSid(), user.getCode()), "验证码错误");
         User user1 = userService.findByUsername(user.getUsername());
@@ -148,6 +154,7 @@ public class LoginController {
     }
 
     @PostMapping("/qrLogin")
+    @ApiOperation(value = "扫码登录")
     public ApiResponse qrLogin(@RequestBody User user) {
         if (StringUtils.isBlank(user.getSid())) {
             return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
@@ -190,11 +197,13 @@ public class LoginController {
     }
 
     @GetMapping("/captcha")
+    @ApiOperation(value = "账号密码登录-获取验证码")
     public ApiResponse captcha() {
         return ApiResponse.success(CaptchaUtils.generate());
     }
 
     @GetMapping("/forgot/code")
+    @ApiOperation(value = "忘记密码-获取验证码")
     public ApiResponse forgotCode(@RequestParam String email) {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_FORGOT), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
@@ -207,6 +216,7 @@ public class LoginController {
     }
 
     @PostMapping("/forgot")
+    @ApiOperation(value = "忘记密码")
     public ApiResponse forgot(@RequestBody User user) {
         Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_EMAIL_FORGOT);
         String forgotEmailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;

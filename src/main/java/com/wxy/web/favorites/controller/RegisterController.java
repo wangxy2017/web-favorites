@@ -18,6 +18,8 @@ import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/register")
+@Api(tags = "注册")
 public class RegisterController {
 
     @Autowired
@@ -72,6 +75,7 @@ public class RegisterController {
      * @return
      */
     @PostMapping
+    @ApiOperation(value = "用户注册")
     public ApiResponse register(@RequestBody User user) {
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
             Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_REGISTER);
@@ -107,6 +111,7 @@ public class RegisterController {
     }
 
     @GetMapping("/{username}")
+    @ApiOperation(value = "查询用户名是否存在")
     public ApiResponse checkUsername(@PathVariable String username) {
         User user = userService.findByUsername(username);
         if (user == null) {
@@ -116,6 +121,7 @@ public class RegisterController {
     }
 
     @GetMapping("/email/code")
+    @ApiOperation(value = "邮箱注册-获取验证码")
     public ApiResponse code(@RequestParam String email) {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_REGISTER), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
@@ -128,6 +134,7 @@ public class RegisterController {
     }
 
     @GetMapping("/email/{email}")
+    @ApiOperation(value = "验证邮箱是否存在")
     public ApiResponse checkEmail(@PathVariable String email) {
         User user = userService.findByEmail(email);
         if (user == null) {

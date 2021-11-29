@@ -44,12 +44,14 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
         return ApiResponse.success(category);
     }
 
     @GetMapping("/check/{name}")
+    @ApiOperation(value = "检查分类是否存在")
     public ApiResponse queryName(@PathVariable String name) {
         User user = springUtils.getCurrentUser();
         Category category = categoryService.findByName(name, user.getId());
@@ -60,6 +62,7 @@ public class CategoryController {
     }
 
     @GetMapping("/favorites/{categoryId}")
+    @ApiOperation(value = "查询分类下的收藏")
     public ApiResponse favorites(@PathVariable Integer categoryId) {
         List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
         return ApiResponse.success(favorites);
@@ -72,6 +75,7 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/delete/{id}")
+    @ApiOperation(value = "删除分类")
     public ApiResponse delete(@PathVariable Integer id) {
         Category category = categoryService.findById(id);
         if (!PublicConstants.SYSTEM_CATEGORY_CODE.equals(category.getIsSystem())) {
@@ -95,6 +99,7 @@ public class CategoryController {
      * @return
      */
     @PostMapping("/clean")
+    @ApiOperation(value = "清空收藏")
     public ApiResponse clean(@RequestParam Integer id) {
         List<Favorites> favoritesList = favoritesService.findByCategoryId(id);
         favoritesList.forEach(favorites -> {
@@ -106,6 +111,7 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
+    @ApiOperation(value = "查询分类列表")
     public ApiResponse list() {
         User user = springUtils.getCurrentUser();
         List<Category> list = categoryService.findByUserId(user.getId());
@@ -113,6 +119,7 @@ public class CategoryController {
     }
 
     @PostMapping("/bookmark")
+    @ApiOperation(value = "切换书签模式")
     public ApiResponse bookmark(@RequestBody Category category) {
         Category category1 = categoryService.findById(category.getId());
         if (category1 != null) {

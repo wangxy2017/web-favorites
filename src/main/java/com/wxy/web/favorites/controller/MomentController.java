@@ -7,6 +7,8 @@ import com.wxy.web.favorites.service.MomentService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/moment")
+@Api(tags = "瞬间")
 public class MomentController {
 
     @Autowired
@@ -30,6 +33,7 @@ public class MomentController {
      * @return
      */
     @PostMapping
+    @ApiOperation(value = "新增瞬间")
     public ApiResponse save(@RequestBody Moment moment) {
         User user = springUtils.getCurrentUser();
         moment.setUserId(user.getId());
@@ -45,6 +49,7 @@ public class MomentController {
      * @return
      */
     @PostMapping("/update")
+    @ApiOperation(value = "修改瞬间")
     public ApiResponse update(@RequestBody Moment moment) {
         Moment moment1 = momentService.findById(moment.getId());
         if (moment1 != null) {
@@ -57,12 +62,14 @@ public class MomentController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Moment moment = momentService.findById(id);
         return ApiResponse.success(moment);
     }
 
     @GetMapping("/count")
+    @ApiOperation(value = "统计我的瞬间")
     public ApiResponse count() {
         User user = springUtils.getCurrentUser();
         int count = momentService.countByUserId(user.getId());
@@ -70,6 +77,7 @@ public class MomentController {
     }
 
     @GetMapping("/top")
+    @ApiOperation(value = "查询置顶瞬间")
     public ApiResponse queryTop() {
         User user = springUtils.getCurrentUser();
         Moment moment = momentService.findTopMoment(user.getId());
@@ -77,6 +85,7 @@ public class MomentController {
     }
 
     @PostMapping("/top/{id}")
+    @ApiOperation(value = "置顶")
     public ApiResponse setTop(@PathVariable Integer id) {
         Moment moment1 = momentService.findById(id);
         if (moment1 != null) {
@@ -96,6 +105,7 @@ public class MomentController {
     }
 
     @DeleteMapping("/top/{id}")
+    @ApiOperation(value = "取消置顶")
     public ApiResponse cancelTop(@PathVariable Integer id) {
         Moment moment = momentService.findById(id);
         if (moment != null) {
@@ -107,6 +117,7 @@ public class MomentController {
     }
 
     @GetMapping("/search")
+    @ApiOperation(value = "搜索瞬间")
     public ApiResponse search(@RequestParam String text) {
         User user = springUtils.getCurrentUser();
         List<Moment> list = momentService.findMoment(user.getId(), text);
@@ -115,12 +126,14 @@ public class MomentController {
 
 
     @GetMapping("/delete/{id}")
+    @ApiOperation(value = "删除瞬间")
     public ApiResponse delete(@PathVariable Integer id) {
         momentService.deleteById(id);
         return ApiResponse.success();
     }
 
     @GetMapping("/list")
+    @ApiOperation(value = "分页查询")
     public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<Moment> page = momentService.findPageByUserId(user.getId(), pageNum, pageSize);

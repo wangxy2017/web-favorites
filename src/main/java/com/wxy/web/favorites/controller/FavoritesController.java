@@ -8,6 +8,8 @@ import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/favorites")
+@Api(tags = "收藏管理")
 public class FavoritesController {
 
     @Autowired
@@ -62,6 +65,7 @@ public class FavoritesController {
     private SpringUtils springUtils;
 
     @PostMapping("/save")
+    @ApiOperation(value = "保存书签")
     public ApiResponse save(@RequestBody Favorites favorites) {
         User user = springUtils.getCurrentUser();
         favorites.setUserId(user.getId());
@@ -77,6 +81,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/url")
+    @ApiOperation(value = "获取标题")
     public ApiResponse url(@RequestParam String url) {
         if (StringUtils.isNotBlank(url)) {
             return ApiResponse.success(HtmlUtils.getTitle(url));
@@ -85,6 +90,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/shortcut")
+    @ApiOperation(value = "根据快捷口令查询书签")
     public ApiResponse shortcut(@RequestParam String key) {
         User user = springUtils.getCurrentUser();
         Favorites favorites = favoritesService.findByShortcut(key, user.getId());
@@ -101,6 +107,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation(value = "用户收藏列表(分页查询)")
     public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         // 查询用户分类
@@ -112,6 +119,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/position")
+    @ApiOperation(value = "查询定位")
     public ApiResponse position(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam Integer page) {
         User user = springUtils.getCurrentUser();
         List<Category> list = new ArrayList<>();
@@ -138,6 +146,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/more")
+    @ApiOperation(value = "显示更多")
     public ApiResponse more(@RequestParam Integer categoryId) {
         List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
         return ApiResponse.success(favorites);
@@ -151,6 +160,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/recycle")
+    @ApiOperation(value = "查看回收站")
     public ApiResponse recycle(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<Favorites> page = favoritesService.findRecycleByPage(user.getId(), pageNum, pageSize);
@@ -158,6 +168,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/shareList")
+    @ApiOperation(value = "查询我的分享列表")
     public ApiResponse shareList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<Favorites> page = favoritesService.findShareByPage(user.getId(), pageNum, pageSize);
@@ -170,6 +181,7 @@ public class FavoritesController {
      * @return
      */
     @PostMapping("/recycle/clean")
+    @ApiOperation(value = "清空回收站")
     public ApiResponse CleanRecycle() {
         User user = springUtils.getCurrentUser();
         favoritesService.deleteAllFromRecycle(user.getId());
@@ -177,6 +189,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/recycle/delete/{id}")
+    @ApiOperation(value = "回收站删除")
     public ApiResponse deleteFromRecycle(@PathVariable Integer id) {
         favoritesService.deleteById(id);
         return ApiResponse.success();
@@ -189,6 +202,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/recover/{id}")
+    @ApiOperation(value = "还原")
     public ApiResponse recover(@PathVariable Integer id) {
         User user = springUtils.getCurrentUser();
         favoritesService.updateDeleteFlag(id, user.getId());
@@ -196,6 +210,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/no-share/{id}")
+    @ApiOperation(value = "取消分享")
     public ApiResponse noShare(@PathVariable Integer id) {
         favoritesService.updateShare(id);
         return ApiResponse.success();
@@ -208,6 +223,7 @@ public class FavoritesController {
      * @return
      */
     @GetMapping("/delete/{id}")
+    @ApiOperation(value = "逻辑删除")
     public ApiResponse delete(@PathVariable Integer id) {
         Favorites favorites = favoritesService.findById(id);
         if (favorites != null) {
@@ -219,12 +235,14 @@ public class FavoritesController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Favorites favorites = favoritesService.findById(id);
         return ApiResponse.success(favorites);
     }
 
     @GetMapping("/search")
+    @ApiOperation(value = "搜索书签")
     public ApiResponse search(@RequestParam String name) {
         User user = springUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
@@ -237,12 +255,14 @@ public class FavoritesController {
     }
 
     @GetMapping("/star")
+    @ApiOperation(value = "查询常用网址")
     public ApiResponse star() {
         User user = springUtils.getCurrentUser();
         return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
     }
 
     @GetMapping("/visit/{id}")
+    @ApiOperation(value = "增加访问次数")
     public ApiResponse visit(@PathVariable Integer id) {
         Favorites favorites = favoritesService.findById(id);
         if (favorites != null) {
@@ -254,6 +274,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/star")
+    @ApiOperation(value = "标记为常用")
     public ApiResponse starUpdate(@RequestBody Favorites favorites) {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
         if (favorites1 != null) {
@@ -272,6 +293,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/share")
+    @ApiOperation(value = "分享书签")
     public ApiResponse shareUpdate(@RequestBody Favorites favorites) {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
         if (favorites1 != null) {
@@ -394,6 +416,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/import")
+    @ApiOperation(value = "导入")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
         User user = springUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
@@ -482,6 +505,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/export")
+    @ApiOperation(value = "导出")
     public void export(@RequestParam(required = false) String f,
                        @RequestParam(required = false) String m,
                        @RequestParam(required = false) String t,

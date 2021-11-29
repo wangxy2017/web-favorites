@@ -7,6 +7,8 @@ import com.wxy.web.favorites.service.TaskService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/task")
+@Api(tags = "日程管理")
 public class TaskController {
 
     @Autowired
@@ -27,6 +30,7 @@ public class TaskController {
     private SpringUtils springUtils;
 
     @PostMapping
+    @ApiOperation(value = "新增日程")
     public ApiResponse save(@RequestBody Task task) {
         User user = springUtils.getCurrentUser();
         task.setUserId(user.getId());
@@ -36,18 +40,21 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Task task = taskService.findById(id);
         return ApiResponse.success(task);
     }
 
     @GetMapping("/delete/{id}")
+    @ApiOperation(value = "删除日程")
     public ApiResponse delete(@PathVariable Integer id) {
         taskService.deleteById(id);
         return ApiResponse.success();
     }
 
     @GetMapping("/clean/{date}")
+    @ApiOperation(value = "清空日程")
     public ApiResponse cleanByDate(@PathVariable String date) throws ParseException {
         User user = springUtils.getCurrentUser();
         taskService.deleteAllByDate(user.getId(), date);
@@ -55,6 +62,7 @@ public class TaskController {
     }
 
     @GetMapping("/done/{id}")
+    @ApiOperation(value = "完成")
     public ApiResponse done(@PathVariable Integer id) {
         Task task = taskService.findById(id);
         if (task != null) {
@@ -66,6 +74,7 @@ public class TaskController {
     }
 
     @GetMapping("/all/{date}")
+    @ApiOperation(value = "日程统计")
     public ApiResponse findAll(@PathVariable String date) throws ParseException {
         User user = springUtils.getCurrentUser();
         Calendar calendar = Calendar.getInstance();
@@ -77,6 +86,7 @@ public class TaskController {
     }
 
     @GetMapping("/list")
+    @ApiOperation(value = "查询日程列表")
     public ApiResponse findPageList(@RequestParam String date, @RequestParam Integer pageNum, @RequestParam Integer pageSize) throws ParseException {
         User user = springUtils.getCurrentUser();
         PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(), date, pageNum, pageSize);

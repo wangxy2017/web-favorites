@@ -5,11 +5,14 @@ import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/share")
+@Api(tags = "书签库分享")
 public class ShareController {
 
     @Autowired
@@ -20,6 +23,7 @@ public class ShareController {
 
 
     @GetMapping("/list")
+    @ApiOperation(value = "查询书签库")
     public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize, @RequestParam(required = false) String name) {
         // 查询用户分类
         PageInfo<Favorites> page = favoritesService.findShareList(name, pageNum, pageSize);
@@ -27,6 +31,7 @@ public class ShareController {
     }
 
     @GetMapping("/support/{id}")
+    @ApiOperation(value = "搜藏书签")
     public ApiResponse support(@PathVariable Integer id) {
         boolean success = favoritesService.saveSupport(springUtils.getCurrentUser().getId(), id);
         return success ? ApiResponse.success() : ApiResponse.error();

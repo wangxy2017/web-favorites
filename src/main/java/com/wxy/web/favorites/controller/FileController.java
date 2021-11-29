@@ -12,6 +12,8 @@ import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
 import com.wxy.web.favorites.util.ZipUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/file")
 @Slf4j
+@Api(tags = "文件管理")
 public class FileController {
 
     @Autowired
@@ -50,6 +53,7 @@ public class FileController {
     private AppConfig appConfig;
 
     @GetMapping("/count")
+    @ApiOperation(value = "查询文件总数")
     public ApiResponse count() {
         User user = springUtils.getCurrentUser();
         List<UserFile> list = userFileService.findRootList(user.getId());
@@ -59,6 +63,7 @@ public class FileController {
     }
 
     @GetMapping("/exists/{id}")
+    @ApiOperation(value = "判断文件是否存在")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
         if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
@@ -68,6 +73,7 @@ public class FileController {
     }
 
     @GetMapping("/share/{id}")
+    @ApiOperation(value = "分享文件")
     public ApiResponse share(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
         if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
@@ -88,6 +94,7 @@ public class FileController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation(value = "获取文件列表")
     public ApiResponse list(@RequestParam(required = false) String name,
                             @RequestParam(required = false) Integer pid,
                             @RequestParam(required = false) Integer pageNum,
@@ -103,6 +110,7 @@ public class FileController {
     }
 
     @PostMapping("/rename")
+    @ApiOperation(value = "重命名")
     public ApiResponse rename(@RequestParam Integer id, @RequestParam String filename) {
         UserFile file = userFileService.findById(id);
         if (file != null && StringUtils.isNoneBlank(filename)) {
@@ -115,6 +123,7 @@ public class FileController {
     }
 
     @GetMapping("/share/download/{shareId}")
+    @ApiOperation(value = "下载分享文件")
     public void shareDownload(HttpServletResponse response, @PathVariable String shareId) throws IOException {
         UserFile userFile = userFileService.findByShareId(shareId);
         Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
@@ -122,6 +131,7 @@ public class FileController {
     }
 
     @GetMapping("/share/cancel/{id}")
+    @ApiOperation(value = "取消分享")
     public ApiResponse shareCancel(HttpServletResponse response, @PathVariable Integer id) {
         UserFile userFile = userFileService.findById(id);
         if (userFile != null) {
@@ -132,6 +142,7 @@ public class FileController {
     }
 
     @GetMapping("/download/{id}")
+    @ApiOperation(value = "下载文件")
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
         Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
@@ -146,6 +157,7 @@ public class FileController {
     }
 
     @GetMapping("/downloadAll")
+    @ApiOperation(value = "备份")
     public void downloadAll(HttpServletResponse response) throws IOException {
         User user = springUtils.getCurrentUser();
         String tempPath = springUtils.getRequest().getServletContext().getRealPath("/");
@@ -173,6 +185,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
+    @ApiOperation(value = "批量上传")
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
         User user = springUtils.getCurrentUser();
         if (Optional.ofNullable(user.getCapacity()).orElse(0L) > 0) {
@@ -198,11 +211,13 @@ public class FileController {
     }
 
     @GetMapping("/back")
+    @ApiOperation(value = "返回上一级")
     public ApiResponse goBack(@RequestParam(required = false) Integer pid) {
         return ApiResponse.success(Optional.ofNullable(userFileService.findById(pid)).map(UserFile::getPid).orElse(null));
     }
 
     @PostMapping("/delete")
+    @ApiOperation(value = "删除文件")
     public ApiResponse delete(@RequestParam Integer id) throws IOException {
         User user = springUtils.getCurrentUser();
         userFileService.deleteById(id, user.getId());
@@ -210,6 +225,7 @@ public class FileController {
     }
 
     @PostMapping("/deleteMore")
+    @ApiOperation(value = "批量删除")
     public ApiResponse deleteMore(@RequestParam String ids) throws IOException {
         User user = springUtils.getCurrentUser();
         String[] split = ids.split(PublicConstants.ID_DELIMITER);
@@ -220,6 +236,7 @@ public class FileController {
     }
 
     @PostMapping("/folder")
+    @ApiOperation(value = "新建文件夹")
     public ApiResponse newFolder(@RequestParam String filename, @RequestParam(required = false) Integer pid) {
         UserFile file = userFileService.findByPidAndFilename(pid, filename);
         Assert.isNull(file, "文件夹已存在");
@@ -235,6 +252,7 @@ public class FileController {
      * @return
      */
     @PostMapping("/move")
+    @ApiOperation(value = "移动文件")
     public ApiResponse move(@RequestParam String ids, @RequestParam(required = false) Integer pid) {
         for (String id : ids.split(PublicConstants.ID_DELIMITER)) {
             UserFile file = userFileService.findById(Integer.valueOf(id));
@@ -245,6 +263,7 @@ public class FileController {
     }
 
     @GetMapping("/view")
+    @ApiOperation(value = "预览")
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
         if (file != null) {
@@ -267,6 +286,7 @@ public class FileController {
     }
 
     @GetMapping("/tree")
+    @ApiOperation(value = "获取文件夹树")
     public ApiResponse tree() {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> element = new HashMap<>();
@@ -299,6 +319,7 @@ public class FileController {
     }
 
     @GetMapping("/capacity")
+    @ApiOperation(value = "查询用户使用容量")
     public ApiResponse capacity() {
         User user = springUtils.getCurrentUser();
         User user1 = userService.findById(user.getId());

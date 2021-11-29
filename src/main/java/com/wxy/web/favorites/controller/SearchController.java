@@ -7,6 +7,8 @@ import com.wxy.web.favorites.service.SearchTypeService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SpringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/search")
 @Slf4j
+@Api(tags = "搜索引擎管理")
 public class SearchController {
 
     @Autowired
@@ -30,6 +33,7 @@ public class SearchController {
     private SpringUtils springUtils;
 
     @GetMapping("/data")
+    @ApiOperation(value = "查询默认搜索引擎")
     public ApiResponse data(@RequestParam Integer pageNum,@RequestParam Integer pageSize) {
         User user = springUtils.getCurrentUser();
         PageInfo<SearchType> page = searchTypeService.findPageByUserId(user.getId(),pageNum,pageSize);
@@ -37,6 +41,7 @@ public class SearchController {
     }
 
     @PostMapping
+    @ApiOperation(value = "新增搜索引擎")
     public ApiResponse save(@RequestBody SearchType searchType) {
         User user = springUtils.getCurrentUser();
         searchType.setUserId(user.getId());
@@ -45,12 +50,14 @@ public class SearchController {
     }
 
     @GetMapping("/delete/{id}")
+    @ApiOperation(value = "删除搜索引擎")
     public ApiResponse delete(@PathVariable Integer id) {
         searchTypeService.deleteById(id);
         return ApiResponse.success();
     }
 
     @GetMapping("/query/{id}")
+    @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         SearchType searchType = searchTypeService.findById(id);
         return ApiResponse.success(searchType);
