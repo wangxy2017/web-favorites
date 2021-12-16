@@ -527,6 +527,11 @@
             color: #999;
             cursor: pointer;
         }
+
+        .positionNav {
+            padding-left: 20px;
+            padding-bottom: 4px;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -536,7 +541,7 @@
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
         </div>
         <div class="search-input">
-            <i class="layui-icon layui-icon-mike search-mike"></i>
+            <i id="searchMike" class="layui-icon layui-icon-mike search-mike"></i>
             <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                    class="layui-input">
             <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
@@ -575,11 +580,20 @@
             <span id="slideBtn" class="layui-icon layui-icon-right"></span>
             <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
             <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
-            <button type="button" class="layui-btn layui-btn-sm" id="fastNav">快捷导航</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="fastNavBtn">快捷导航</button>
         </div>
         <div id="starDiv"></div>
         <div id="main"></div>
-        <div id="searchDiv"></div>
+        <div id="searchDiv" style="display:none;"></div>
+        <div id="positionDiv" style="display:none;">
+            <div class="positionNav">
+                <span class="layui-breadcrumb" lay-separator="/">
+                <a href="javascript:window.location.reload();">首页</a>
+                <a><cite>分类</cite></a>
+            </span>
+            </div>
+            <div class="positionData"></div>
+        </div>
         <div id="loadingDiv">
             <div class="lGDtb">
                 <div class="ljZkoB"></div>
@@ -714,7 +728,7 @@
             <input type="text" name="shortcut" lay-verify="shortcut" placeholder="例如：打开...或Open..." autocomplete="off"
                    class="layui-input">
             <span style="color: #ff5722;font-size: 12px;margin-top: 5px;display: block;">温馨提示：配合语音输入效果更佳哦</span>
-            <i class="layui-icon layui-icon-mike shortcut-mike"></i>
+            <i id="shortcutMike" class="layui-icon layui-icon-mike shortcut-mike"></i>
         </div>
     </div>
     <div class="layui-form-item">
@@ -1003,7 +1017,7 @@
                 if(type === 'bar1'){
                     window.location.href = "search.html";
                 }else if(type === 'bar2'){
-                    window.location.href = "memorandum.html";
+                    layer.msg("该功能暂未开放");
                 }else if(type === 'bar3'){
                     window.location.href = "moment.html";
                 }else if(type === 'bar4'){
@@ -1058,6 +1072,14 @@
             }
         });
 
+        $("#shortcutMike").click(function(){
+            layer.msg("该功能暂未开放");
+        });
+
+        $("#searchMike").click(function(){
+            layer.msg("该功能暂未开放");
+        });
+
         // 清除密码
         $("#unsetPwd").click(function(){
             var passwordId = $("#pwdId").val();
@@ -1101,7 +1123,7 @@
             });
             var lHtml = '';
             $.each(result, function (i, x) {
-                lHtml += '<li onclick="position(' + x.id + ',' + x.page + ')">' + x.name + '</li>';
+                lHtml += '<li onclick="position(' + x.id + ')">' + x.name + '</li>';
             });
             $("#catalogList").empty().append(lHtml);
         });
@@ -1305,12 +1327,18 @@
             });
         });
 
+        // 快捷导航
+        $("#fastNavBtn").click(function () {
+            layer.msg("该功能暂未开放");
+        });
+
         // 关闭搜索
         $("#search_close").click(function () {
             $("#starDiv").show();
             $("#main").show();
 
-            $("#searchDiv").empty();
+            $("#searchDiv").hide();
+            $("#positionDiv").hide();
             $(this).hide();
             $("#search_name").val("").blur();
             $("#notFoundDiv").hide();
@@ -1375,7 +1403,7 @@
                             html += '</li>';
                         });
                         html += '</ul>';
-                        $("#searchDiv").append(html);
+                        $("#searchDiv").append(html).show();
                         imgRender();
                         $("#notFoundDiv").hide();
                         // 存入历史记录
@@ -1417,7 +1445,7 @@
                             html += '</li>';
                         });
                         html += '</ul>';
-                        $("#searchDiv").append(html);
+                        $("#searchDiv").append(html).show();
                         imgRender();
                         $("#notFoundDiv").hide();
                     }else{
@@ -1789,7 +1817,7 @@
                         $.each(result.data, function (i, c) {
                             c.page = parseInt(i / indexPageSize) + 1;
                             oHtml += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
-                            lHtml += '<li onclick="position(' + c.id + ',' + c.page + ')">' + c.name + '</li>';
+                            lHtml += '<li onclick="position(' + c.id + ')">' + c.name + '</li>';
                         });
                         catalogArr = result.data;
                         $("select[name='categoryId']").empty().append(oHtml);
@@ -2319,78 +2347,68 @@
             $(this).removeClass('hover-in');
         });
 
-        window.position = function(id,page){
+        window.position = function(id){
             // 退出搜索模式
-            $("#starDiv").show();
-            $("#main").show();
+            $("#starDiv").hide();
+            $("#main").hide();
             $("#notFoundDiv").hide();
-            $("#searchDiv").empty();
+            $("#searchDiv").hide();
             // 如果当前页数据还未加载，则先加载数据
-            if(page > currentPage){
-                layer.load();
-                $.ajax({
-                    type: "GET",
-                    url: "favorites/position",
-                    data: {"currentPage":currentPage, "pageSize":indexPageSize, "page": page},
-                    dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        layer.closeAll('loading');
-                        if (result.code == 0) {
-                            // 加载数据
-                            var html = '';
-                            $.each(result.data.list, function (i, c) {
-                                var bookmarkClass = c.bookmark==1?"bookmark":"";
-                                html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                                html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
-                                html += '   <ul class="favorites">';
-                                if(c.favorites.length > 0) {
-                                    $.each(c.favorites, function (j, f) {
-                                        html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
-                                        html += '       <div class="favorites-bg">';
-                                        html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
-                                        html += '       </div>';
-                                        html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
-                                        html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                                        html += '   </li>';
-                                        if(j == limit - 1){
-                                            html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
-                                            html += '   <div class="favorites-bg">';
-                                            html += '       <img src="images/more.svg"/>';
-                                            html += '   </div>';
-                                            html += '   <p title="显示更多">显示更多</p>';
-                                            html += '</li>';
-                                            return false;
-                                        }
-                                    });
-                                } else {
-                                    html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
+            layer.close(indexMap.get('#catalog'));
+            layer.load();
+            $.ajax({
+                type: "GET",
+                url: "favorites/position/" + id,
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        // 加载数据
+                        var c = result.data;
+                        var html = '';
+                        var bookmarkClass = c.bookmark==1?"bookmark":"";
+                        html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
+                        html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
+                        html += '   <ul class="favorites">';
+                        if(c.favorites.length > 0) {
+                            $.each(c.favorites, function (j, f) {
+                                html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                                html += '       <div class="favorites-bg">';
+                                html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                html += '       </div>';
+                                html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                                html += '   </li>';
+                                if(j == limit - 1){
+                                    html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                     html += '   <div class="favorites-bg">';
-                                    html += '       <img src="images/add.svg"/>';
+                                    html += '       <img src="images/more.svg"/>';
                                     html += '   </div>';
-                                    html += '   <p title="添加网址">添加网址</p>';
+                                    html += '   <p title="显示更多">显示更多</p>';
                                     html += '</li>';
+                                    return false;
                                 }
-                                html += '   </ul>';
-                                html += '</div>';
                             });
-                            $("#main").append(html);
-                            currentPage = result.data.currentPage;
-                            // 定位到锚点
-                            var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop - 20;
-                            $("#layuiBody").animate({scrollTop: offsetTop}, 200);
+                        } else {
+                            html += '<li class="layui-anim layui-anim-fadein" onclick="addFavorites(' + c.id + ')">';
+                            html += '   <div class="favorites-bg">';
+                            html += '       <img src="images/add.svg"/>';
+                            html += '   </div>';
+                            html += '   <p title="添加网址">添加网址</p>';
+                            html += '</li>';
                         }
-                    },
-                    error: function(){
-                        layer.closeAll('loading');
-                        layer.msg("服务器异常", {icon: 2});
+                        html += '   </ul>';
+                        html += '</div>';
+                        $("#positionDiv").show().find(".positionData").empty().append(html);
+                        imgRender();
                     }
-                });
-            }else{
-                // 定位到锚点
-                var offsetTop = $("div[data-id="+id+"]").get(0).offsetTop - 20;
-                $("#layuiBody").animate({scrollTop: offsetTop}, 200);
-            }
+                },
+                error: function(){
+                    layer.closeAll('loading');
+                    layer.msg("服务器异常", {icon: 2});
+                }
+            });
         };
 
         window.imgRender = function(){

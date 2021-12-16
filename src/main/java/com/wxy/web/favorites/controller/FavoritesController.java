@@ -119,25 +119,12 @@ public class FavoritesController {
         return ApiResponse.success(page);
     }
 
-    @GetMapping("/position")
+    @GetMapping("/position/{categoryId}")
     @ApiOperation(value = "查询定位")
-    public ApiResponse position(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam Integer page) {
-        User user = contextUtils.getCurrentUser();
-        List<Category> list = new ArrayList<>();
-        int count = page - currentPage;
-        int pageNum = currentPage + 1;
-        for (int i = 0; i < count; i++) {
-            // 查询用户分类
-            List<Category> list1 = categoryService.findPageByUserId(user.getId(), pageNum++, pageSize).getList();
-            for (Category c : list1) {
-                c.setFavorites(favoritesService.findLimitByCategoryId(c.getId()));
-            }
-            list.addAll(list1);
-        }
-        Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("currentPage", pageNum - 1);
-        dataMap.put("list", list);
-        return ApiResponse.success(dataMap);
+    public ApiResponse position(@PathVariable Integer categoryId) {
+        Category category = categoryService.findById(categoryId);
+        category.setFavorites(favoritesService.findLimitByCategoryId(category.getId()));
+        return ApiResponse.success(category);
     }
 
     /**
