@@ -28,8 +28,8 @@ spring:
   datasource: #数据源
     driverClassName: org.h2.Driver
     url: jdbc:h2:file:./db/h2
-    username: sa
-    password: sa
+    username:
+    password:
     hikari: #连接池配置
       connection-timeout: 10000
       idle-timeout: 30000
