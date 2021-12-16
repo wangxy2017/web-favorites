@@ -32,9 +32,9 @@ spring:
     password: sa
     hikari: #连接池配置
       connection-timeout: 10000
-      idle-timeout: 10000
-      max-lifetime: 30000
-      maximum-pool-size: 1000
+      idle-timeout: 30000
+      max-lifetime: 300000
+      maximum-pool-size: 100
       minimum-idle: 10
       pool-name: myHikariCP
   jpa: #jpa配置
@@ -57,7 +57,7 @@ app: #系统参数配置
   recycle-save-days: 30 #回收站保存时间
   verification-expired-minutes: 30 #验证码过期时间
   verification-resend-seconds: 60 #验证码重发时间
-  star-limit: 30 #标记个数限制
+  star-limit: 40 #标记个数限制
   favorites-search-limit: 100 #搜索收藏个数限制
   category-search-limit: 30 #搜索分类个数限制
   favorites-limit: 40 #显示收藏个数限制
