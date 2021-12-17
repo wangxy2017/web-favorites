@@ -529,7 +529,7 @@
         }
 
         .positionNav {
-            padding-left: 20px;
+            padding-left: 18px;
             padding-bottom: 4px;
         }
     </style>
@@ -1451,15 +1451,10 @@
 
         // 关闭搜索
         $("#search_close").click(function () {
-            $("#starDiv").show();
-            $("#main").show();
-
-            $("#searchDiv").hide();
-            $("#positionDiv").hide();
             $(this).hide();
             $("#search_name").val("").blur();
-            $("#notFoundDiv").hide();
             $(".search-items").hide();
+            changeIndexMode();
         });
 
         // 搜索指令
@@ -1483,11 +1478,37 @@
             });
         };
 
+        // 切换搜索模式
+        window.changeSearchMode = function(){
+            $("#main").hide();
+            $("#positionDiv").hide();
+            $("#starDiv").hide();
+            $("#notFoundDiv").hide();
+            $("#searchDiv").show();
+        };
+
+        // 切换搜索模式
+        window.changePositionMode = function(){
+            $("#starDiv").hide();
+            $("#main").hide();
+            $("#notFoundDiv").hide();
+            $("#searchDiv").hide();
+            $("#positionDiv").show();
+        };
+
+        // 切换首页模式
+        window.changeIndexMode = function(){
+            $("#notFoundDiv").hide();
+            $("#searchDiv").hide();
+            $("#positionDiv").hide();
+            $("#starDiv").show();
+            $("#main").show();
+        };
+
+
         // 搜索文本
         window.searchFavorites = function(name){
-            $("#main").hide();
-
-            $("#starDiv").hide();
+            changeSearchMode();
             layer.load();
             $.ajax({
                 type: "GET",
@@ -1520,9 +1541,8 @@
                             html += '</li>';
                         });
                         html += '</ul>';
-                        $("#searchDiv").append(html).show();
+                        $("#searchDiv").append(html);
                         imgRender();
-                        $("#notFoundDiv").hide();
                         // 存入历史记录
                         var input_history = JSON.parse(localStorage.getItem("input_history"));
                         if (input_history == null || input_history.length >= 5) input_history = [];
@@ -2512,11 +2532,7 @@
         });
 
         window.position = function(id){
-            // 退出搜索模式
-            $("#starDiv").hide();
-            $("#main").hide();
-            $("#notFoundDiv").hide();
-            $("#searchDiv").hide();
+            changePositionMode();
             // 如果当前页数据还未加载，则先加载数据
             layer.close(indexMap.get('#catalog'));
             layer.load();
@@ -2564,7 +2580,7 @@
                         }
                         html += '   </ul>';
                         html += '</div>';
-                        $("#positionDiv").show().find(".positionData").empty().append(html);
+                        $("#positionDiv").find(".positionData").empty().append(html);
                         imgRender();
                     }
                 },
