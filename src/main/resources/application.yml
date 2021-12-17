@@ -58,6 +58,7 @@ app: #系统参数配置
   verification-expired-minutes: 30 #验证码过期时间
   verification-resend-seconds: 60 #验证码重发时间
   star-limit: 40 #标记个数限制
+  navigation-limit: 6 #快捷导航个数限制
   favorites-search-limit: 100 #搜索收藏个数限制
   category-search-limit: 30 #搜索分类个数限制
   favorites-limit: 40 #显示收藏个数限制

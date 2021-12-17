@@ -671,6 +671,30 @@
         </div>
     </div>
 </form>
+<!-- 添加快捷导航 -->
+<form class="layui-form" action="" id="add-fastNav" lay-filter="add-fastNav" style="display: none;padding: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <textarea name="url" id="nav_url_input" required lay-verify="required|url" placeholder="请输入地址"
+                      class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline" style="width: 210px;">
+            <input type="text" name="name" id="nav_name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <i id="nav_url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="addFastNav">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancelAddFastNav">取消</button>
+        </div>
+    </div>
+</form>
 <!-- 编辑收藏表单 -->
 <form class="layui-form" action="" id="update-favorites" lay-filter="update-favorites"
       style="display: none;padding: 10px 0;max-height: 400px;overflow-y: auto">
@@ -893,7 +917,8 @@
         var flow = layui.flow;
         var util = layui.util;
 
-        var limit = 40;// 显示个数限制
+        var favoritesLimit = 40;// 显示个数限制
+        var navigationLimit = 6;// 显示个数限制
         var indexPageSize = 10;// 分页大小
 
         var currentPage = 1;
@@ -969,7 +994,7 @@
                                     html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
-                                    if(j == limit - 1){
+                                    if(j == favoritesLimit - 1){
                                         html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                         html += '   <div class="favorites-bg">';
                                         html += '       <img src="images/more.svg"/>';
@@ -1190,6 +1215,34 @@
             }
         });
 
+        $("#nav_url_input").on('input',function(){
+            var url = $(this).val();
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                $("#nav_name_input").addClass("layui-disabled").attr("disabled",true);
+                $("#nav_url_loading").show();
+                // 请求后台解析url
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/url",
+                    data: {"url": url},
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        $("#nav_name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#nav_url_loading").hide();
+
+                        if (result.code == 0 && result.data != "") {
+                            $("#nav_name_input").val(result.data);
+                        }
+                    },
+                    error: function(){
+                        $("#nav_name_input").removeClass("layui-disabled").removeAttr("disabled",true);
+                        $("#nav_url_loading").hide();
+                    }
+                });
+            }
+        });
+
         window.isMobile = function(){
             let info = navigator.userAgent;
             let agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPod", "iPad"];
@@ -1254,6 +1307,10 @@
 
         $("#cancelAddFavorites").click(function () {
             layer.close(indexMap.get('#add-favorites'));
+        });
+
+        $("#cancelAddFastNav").click(function () {
+            layer.close(indexMap.get('#add-fastNav'));
         });
 
         window.downloadFile = function(filename, url){
@@ -1327,9 +1384,69 @@
             });
         });
 
+        // 添加快捷导航
+        window.addFastNav = function(){
+            var index = layer.open({
+                type: 1,
+                title: "添加快捷导航",
+                area: '400px',
+                content: $('#add-fastNav')
+            });
+            indexMap.set('#add-fastNav',index);
+            // 表单赋值
+            form.val("add-fastNav", {
+                "name": ""
+                , "url": ""
+            });
+        };
+
         // 快捷导航
         $("#fastNavBtn").click(function () {
-            layer.msg("该功能暂未开放");
+            $.ajax({
+                type: "GET",
+                url: "quick-navigation/list",
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    if (result.code == 0) {
+                        // 加载数据
+                        var html = '   <ul class="favorites">';
+                        if(result.data.length > 0) {
+                            $.each(result.data, function (j, f) {
+                                html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this,true)">';
+                                html += '       <div class="favorites-bg">';
+                                html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                html += '       </div>';
+                                html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <i onclick="deleteFastNav(this,event)" class="action-icon layui-icon layui-icon-delete"></i>';
+                                html += '   </li>';
+                            });
+                        }
+                        if(result.data.length < navigationLimit){
+                            html += '<li class="layui-anim layui-anim-fadein" onclick="addFastNav()">';
+                            html += '   <div class="favorites-bg">';
+                            html += '       <img src="images/add.svg"/>';
+                            html += '   </div>';
+                            html += '   <p title="添加网址">添加网址</p>';
+                            html += '</li>';
+                        }
+                        html += '   </ul>';
+                        // 弹出层
+                        layer.open({
+                            type: 1,
+                            title: "快捷导航",
+                            area: '800px',
+                            content: '<div>' + html + '</div>',
+                            success: function(layero){
+                              imgRender();
+                            }
+                        });
+                    }
+                },
+                error: function(){
+                    layer.msg("服务器异常", {icon: 2});
+                }
+              });
         });
 
         // 关闭搜索
@@ -1642,7 +1759,7 @@
         };
 
         // 打开新窗口
-        window.openUrl = function (obj) {
+        window.openUrl = function (obj, onlyOpen) {
             var url = $(obj).attr("data-url");
             var schema = $(obj).attr("data-schema");
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
@@ -1661,11 +1778,13 @@
                     newWin(url);
                 }
                 // 记录访问时间
-                $.ajax({
-                    type: "GET",
-                    url: "favorites/visit/" + $(obj).attr("data-id"),
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
-                });
+                if(!onlyOpen){
+                    $.ajax({
+                        type: "GET",
+                        url: "favorites/visit/" + $(obj).attr("data-id"),
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                    });
+                }
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
@@ -1920,6 +2039,28 @@
                 });
             });
         });
+
+        // 删除快捷导航
+        window.deleteFastNav = function(id){
+            layer.confirm('确认删除快捷导航吗?', function(index){
+                layer.close(index);
+                layer.load();
+                $.ajax({
+                    type: "GET",
+                    url: "quick-navigation/delete/" + id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        if (result.code == 0) {
+                            window.location.reload();
+                        } else {
+                            layer.msg("删除失败", {icon: 5});
+                        }
+                    }
+                });
+            });
+        };
 
         // 清空收藏
         $("#clean").click(function () {
@@ -2216,6 +2357,29 @@
             return false;
         });
 
+        // 新增快捷导航
+        form.on('submit(addFastNav)', function (data) {
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "quick-navigation",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    layer.close(indexMap.get('#add-favorites'));
+                    if (result.code == 0) {
+                        window.location.reload();
+                    } else {
+                        layer.msg("添加失败", {icon: 5});
+                    }
+                }
+            });
+            return false;
+        });
+
         // 保存密码
         form.on('submit(savePwd)', function (data) {
             if(!data.field.account && !data.field.password){
@@ -2380,7 +2544,7 @@
                                 html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
                                 html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                 html += '   </li>';
-                                if(j == limit - 1){
+                                if(j == favoritesLimit - 1){
                                     html += '<li class="layui-anim layui-anim-fadein" onclick="moreFavorites(' + c.id + ')">';
                                     html += '   <div class="favorites-bg">';
                                     html += '       <img src="images/more.svg"/>';

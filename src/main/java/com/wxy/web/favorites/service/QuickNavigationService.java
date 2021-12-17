@@ -28,5 +28,8 @@ public class QuickNavigationService {
         return quickNavigationRepository.findAllByUserId(userId);
     }
 
+    public void deleteById(Integer id) {
+        quickNavigationRepository.deleteById(id);
+    }
 }
 
