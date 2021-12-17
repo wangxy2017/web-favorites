@@ -532,6 +532,13 @@
             padding-left: 18px;
             padding-bottom: 4px;
         }
+
+        .deleteFastNav {
+            top: 0px !important;
+            font-size: 18px !important;
+            font-weight: normal !important;
+            color: #6a6a6a !important;
+        }
     </style>
 </head>
 <body class="layui-layout-body">
@@ -1400,6 +1407,13 @@
             });
         };
 
+        window.loadImg =  function loadImg(el) {
+            var source = el.dataset.src;
+            if(source){
+                el.src = source;
+            }
+        };
+
         // 快捷导航
         $("#fastNavBtn").click(function () {
             $.ajax({
@@ -1415,10 +1429,10 @@
                             $.each(result.data, function (j, f) {
                                 html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this,true)">';
                                 html += '       <div class="favorites-bg">';
-                                html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
+                                html += '           <img src="images/book.svg" lazy-src="' + f.icon + '"/>';
                                 html += '       </div>';
                                 html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
-                                html += '       <i onclick="deleteFastNav(this,event)" class="action-icon layui-icon layui-icon-delete"></i>';
+                                html += '       <i onclick="deleteFastNav(this,event)" class="deleteFastNav action-icon layui-icon layui-icon-delete"></i>';
                                 html += '   </li>';
                             });
                         }
@@ -1433,12 +1447,16 @@
                         html += '   </ul>';
                         // 弹出层
                         layer.open({
+                            id: "fastNav",
                             type: 1,
                             title: "快捷导航",
-                            area: '800px',
+                            area: ['700px','220px'],
                             content: '<div>' + html + '</div>',
-                            success: function(layero){
-                              imgRender();
+                            success: function(layero, index){
+                                $("img[lazy-src]").each(function(){
+                                    console.log(this);
+                                    loadImg(this);
+                                });
                             }
                         });
                     }
@@ -2061,13 +2079,14 @@
         });
 
         // 删除快捷导航
-        window.deleteFastNav = function(id){
+        window.deleteFastNav = function(obj, e){
+            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
             layer.confirm('确认删除快捷导航吗?', function(index){
                 layer.close(index);
                 layer.load();
                 $.ajax({
                     type: "GET",
-                    url: "quick-navigation/delete/" + id,
+                    url: "quick-navigation/delete/" + $(obj).parent().attr("data-id"),
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
