@@ -18,4 +18,6 @@ public interface MemorandumRepository extends JpaRepository<Memorandum, Integer>
     Page<Memorandum> findPageByUserIdAndContentLike(Integer userId, String content, Pageable pageable);
 
     List<Memorandum> findByUserId(Integer userId);
+
+    long countByUserId(Integer userId);
 }

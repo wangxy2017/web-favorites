@@ -500,12 +500,12 @@ public class FavoritesController {
 
     @GetMapping("/export")
     @ApiOperation(value = "导出")
-    public void export(@RequestParam(required = false) String f,
-                       @RequestParam(required = false) String m,
-                       @RequestParam(required = false) String t,
-                       @RequestParam(required = false) String n,
-                       @RequestParam(required = false) String r,
-                       @RequestParam(required = false) String s) throws IOException, ParseException {
+    public void export(@RequestParam(required = false) String favorites,
+                       @RequestParam(required = false) String moment,
+                       @RequestParam(required = false) String task,
+                       @RequestParam(required = false) String navigation,
+                       @RequestParam(required = false) String memorandum,
+                       @RequestParam(required = false) String search) throws IOException, ParseException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
         List<Task> taskList = new ArrayList<>();
@@ -514,35 +514,35 @@ public class FavoritesController {
         List<Memorandum> memorandumList = new ArrayList<>();
         User user = contextUtils.getCurrentUser();
         // 查询用户分类
-        if (PublicConstants.EXPORT_FAVORITES_CODE.equals(f)) {
+        if (PublicConstants.EXPORT_FAVORITES_CODE.equals(favorites)) {
             categories = categoryService.findByUserId(user.getId());
             categories.forEach(category -> {
                 List<Favorites> favoritesList = favoritesService.findByCategoryId(category.getId());
-                favoritesList.forEach(favorites -> {
-                    Password password = passwordService.findByFavoritesId(favorites.getId());
-                    favorites.setPassword(password);
+                favoritesList.forEach(f -> {
+                    Password password = passwordService.findByFavoritesId(f.getId());
+                    f.setPassword(password);
                 });
                 category.setFavorites(favoritesList);
             });
         }
         // 查询用户瞬间
-        if (PublicConstants.EXPORT_MOMENT_CODE.equals(m)) {
+        if (PublicConstants.EXPORT_MOMENT_CODE.equals(moment)) {
             momentList = momentService.findByUserId(user.getId());
         }
         // 查询用户未完成的日程
-        if (PublicConstants.EXPORT_TASK_CODE.equals(t)) {
+        if (PublicConstants.EXPORT_TASK_CODE.equals(task)) {
             taskList = taskService.findUndoTaskByUserId(user.getId());
         }
         // 查询用户搜索引擎
-        if (PublicConstants.EXPORT_SEARCH_CODE.equals(s)) {
+        if (PublicConstants.EXPORT_SEARCH_CODE.equals(search)) {
             searchTypeList = searchTypeService.findByUserId(user.getId());
         }
         // 查询快捷导航
-        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(n)) {
+        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(navigation)) {
             quickNavigationList = quickNavigationService.findByUserId(user.getId());
         }
         // 查询备忘录
-        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(r)) {
+        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(memorandum)) {
             memorandumList = memorandumService.findByUserId(user.getId());
         }
         HttpServletResponse response = contextUtils.getResponse();

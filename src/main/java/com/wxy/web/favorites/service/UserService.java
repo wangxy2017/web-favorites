@@ -35,6 +35,12 @@ public class UserService {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private MemorandumRepository memorandumRepository;
+
+    @Autowired
+    private QuickNavigationRepository quickNavigationRepository;
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -65,6 +71,8 @@ public class UserService {
         data.put("moments",momentRepository.countByUserId(userId));
         data.put("tasks",taskRepository.countByUserId(userId));
         data.put("searchTypes",searchTypeRepository.countByUserId(userId));
+        data.put("navigations",quickNavigationRepository.countByUserId(userId));
+        data.put("memorandums",memorandumRepository.countByUserId(userId));
         return data;
     }
 }

@@ -12,4 +12,6 @@ import java.util.List;
 public interface QuickNavigationRepository extends JpaRepository<QuickNavigation, Integer>, JpaSpecificationExecutor<QuickNavigation> {
 
     List<QuickNavigation> findAllByUserId(Integer userId);
+
+    long countByUserId(Integer userId);
 }

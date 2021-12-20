@@ -529,7 +529,7 @@
         }
 
         .positionNav {
-            padding-left: 18px;
+            padding-left: 20px;
             padding-bottom: 4px;
         }
 
@@ -641,6 +641,8 @@
                         <input type="checkbox" id="moment" name="moment" title="瞬间(0)" lay-skin="primary" checked>
                         <input type="checkbox" id="task" name="task" title="日程(0)" lay-skin="primary" checked>
                         <input type="checkbox" id="search" name="search" title="搜索(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="navigation" name="navigation" title="导航(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="memorandum" name="memorandum" title="备忘录(0)" lay-skin="primary" checked>
                     </div>
                 </div>
             </div>
@@ -1299,8 +1301,10 @@
             var moment = $("#moment").is(":checked")?"1":"0";
             var task = $("#task").is(":checked")?"1":"0";
             var search = $("#search").is(":checked")?"1":"0";
+            var navigation = $("#navigation").is(":checked")?"1":"0";
+            var memorandum = $("#memorandum").is(":checked")?"1":"0";
             layer.close(indexMap.get('#importOrExport'));
-            var url = "favorites/export?f=" + favorites + "&m=" + moment + "&t=" + task + "&s=" + search;
+            var url = "favorites/export?favorites=" + favorites + "&moment=" + moment + "&task=" + task + "&search=" + search + "&navigation=" + navigation + "&memorandum=" + memorandum;
             downloadFile('export.xml', url);
         });
 
@@ -2644,6 +2648,8 @@
                         $("#moment").attr("title","瞬间("+ user.moments +")");
                         $("#task").attr("title","日程("+ user.tasks +")");
                         $("#search").attr("title","搜索("+ user.searchTypes +")");
+                        $("#navigation").attr("title","导航("+ user.navigations +")");
+                        $("#memorandum").attr("title","备忘录("+ user.memorandums +")");
                         form.render('checkbox','userData');
                     }
                 }
