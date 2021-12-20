@@ -51,5 +51,9 @@ public class MemorandumService {
     public List<Memorandum> findByUserId(Integer userId) {
         return memorandumRepository.findByUserId(userId);
     }
+
+    public void saveAll(List<Memorandum> list) {
+        memorandumRepository.saveAll(list);
+    }
 }
 

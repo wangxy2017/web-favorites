@@ -537,7 +537,10 @@
             top: 0px !important;
             font-size: 18px !important;
             font-weight: normal !important;
-            color: #6a6a6a !important;
+        }
+
+        #fastNav .favorites {
+            margin-bottom: 24px !important;
         }
     </style>
 </head>
@@ -1449,11 +1452,13 @@
                         html += '       </li>';
                         html += '   </ul>';
                         // 弹出层
+                        var width = parseInt($(window).width()) * 0.9;
+                        width = (width >= 700 ? 700 : (width <= 360 ? 360 : width)) + 'px';
                         layer.open({
                             id: "fastNav",
                             type: 1,
                             title: "快捷导航",
-                            area: ['700px','220px'],
+                            area: width,
                             content: '<div>' + html + '</div>',
                             success: function(layero, index){
                                 $("img[lazy-src]").each(function(){

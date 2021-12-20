@@ -1,5 +1,7 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -374,6 +376,57 @@ public class FavoritesController {
         }
     }
 
+    private void parseNavigationList(InputStream in) {
+        Integer userId = contextUtils.getCurrentUser().getId();
+        List<String> urls = quickNavigationService.findByUserId(userId).stream().map(QuickNavigation::getUrl).collect(Collectors.toList());
+        try {
+            List<QuickNavigation> list = new ArrayList<>();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            if (root.element("NAVIGATIONS") != null) {
+                root.element("NAVIGATIONS").elements("NAVIGATION").forEach(n -> {
+                    String url = n.elementText("URL");
+                    if (!urls.contains(url)) {
+                        list.add(new QuickNavigation(null, n.elementText("NAME"), n.elementText("ICON"), url, userId));
+                    }
+                });
+            }
+            for (int i = 0; i < appConfig.getNavigationLimit() - urls.size(); i++) {
+                quickNavigationService.save(list.get(i));
+            }
+        } catch (Exception e) {
+            log.error("快捷导航导入失败：userId = {}", userId, e);
+        }
+    }
+
+    private void parseMemorandumList(InputStream in) {
+        Integer userId = contextUtils.getCurrentUser().getId();
+        try {
+            List<Memorandum> list = new ArrayList<>();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(in);
+            Element root = document.getRootElement();
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+            if (root.element("MEMORANDUMS") != null) {
+                root.element("MEMORANDUMS").elements("MEMORANDUM").forEach(r -> {
+                    String content = r.elementText("CONTENT");
+                    String createTime = r.elementText("CREATE_TIME");
+                    if (StrUtil.isNotBlank(content) && StrUtil.isNotBlank(createTime)) {
+                        try {
+                            list.add(new Memorandum(null, content, userId, sdf.parse(createTime)));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            memorandumService.saveAll(list);
+        } catch (Exception e) {
+            log.error("备忘录导入失败：userId = {}", userId, e);
+        }
+    }
+
     private List<Category> parseCategoryList(InputStream in, Integer userId) {
         List<Category> list = new ArrayList<>();
         try {
@@ -471,6 +524,10 @@ public class FavoritesController {
             parseTaskList(file.getInputStream());
             // 保存搜索引擎
             parseSearchTypeList(file.getInputStream());
+            // 保存快捷导航
+            parseNavigationList(file.getInputStream());
+            // 保存备忘录
+            parseMemorandumList(file.getInputStream());
             return ApiResponse.success();
         }
         return ApiResponse.error();
