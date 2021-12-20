@@ -1095,7 +1095,7 @@
                 if (result.code == 0) {
                     window.location.reload();//刷新
                 } else {
-                    layer.msg('导入失败', {icon: 5});
+                    layer.msg(result.msg, {icon: 5});
                 }
             }
             , error: function () {
@@ -1139,7 +1139,7 @@
                                 , "password": ""
                             });
                         } else {
-                           layer.msg('操作失败', {icon: 5});
+                           layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -1408,9 +1408,9 @@
         };
 
         window.loadImg =  function loadImg(el) {
-            var source = el.dataset.src;
+            var source = $(el).attr("lazy-src");
             if(source){
-                el.src = source;
+                $(el).attr("src", source).removeAttr("lazy-src");
             }
         };
 
@@ -1436,14 +1436,13 @@
                                 html += '   </li>';
                             });
                         }
-                        if(result.data.length < navigationLimit){
-                            html += '<li class="layui-anim layui-anim-fadein" onclick="addFastNav()">';
-                            html += '   <div class="favorites-bg">';
-                            html += '       <img src="images/add.svg"/>';
-                            html += '   </div>';
-                            html += '   <p title="添加网址">添加网址</p>';
-                            html += '</li>';
-                        }
+                        var hideCss = result.data.length < navigationLimit ? '' : 'style="display:none"';
+                        html += '       <li id="addFastNavBtn" class="layui-anim layui-anim-fadein" onclick="addFastNav()" '+ hideCss +'>';
+                        html += '           <div class="favorites-bg">';
+                        html += '               <img src="images/add.svg"/>';
+                        html += '           </div>';
+                        html += '           <p title="添加网址">添加网址</p>';
+                        html += '       </li>';
                         html += '   </ul>';
                         // 弹出层
                         layer.open({
@@ -1454,7 +1453,6 @@
                             content: '<div>' + html + '</div>',
                             success: function(layero, index){
                                 $("img[lazy-src]").each(function(){
-                                    console.log(this);
                                     loadImg(this);
                                 });
                             }
@@ -1909,7 +1907,7 @@
                             if (result.code == 0) {
                                 window.location.reload();
                             } else {
-                                layer.msg("添加失败", {icon: 5});
+                                layer.msg(result.msg, {icon: 5});
                             }
                         }
                     });
@@ -2071,7 +2069,7 @@
                         if (result.code == 0) {
                             window.location.reload();
                         } else {
-                            layer.msg("删除失败", {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -2092,9 +2090,10 @@
                     success: function (result) {
                         layer.closeAll('loading');
                         if (result.code == 0) {
-                            window.location.reload();
+                            $(obj).parent().remove();
+                            $("#addFastNavBtn").show();
                         } else {
-                            layer.msg("删除失败", {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -2389,7 +2388,7 @@
                     if (result.code == 0) {
                         window.location.reload();
                     } else {
-                        layer.msg("添加失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -2412,7 +2411,7 @@
                     if (result.code == 0) {
                         window.location.reload();
                     } else {
-                        layer.msg("添加失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -2441,7 +2440,7 @@
                         });
                         layer.msg("保存成功", {icon: 6});
                     } else {
-                        layer.msg("保存失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -2463,7 +2462,7 @@
                     if (result.code == 0) {
                         layer.msg("修改成功", {icon: 6});
                     } else {
-                        layer.msg("修改失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -2486,7 +2485,7 @@
                     if (result.code == 0) {
                         window.location.reload();
                     } else {
-                        layer.msg("修改失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -2509,7 +2508,7 @@
                     if (result.code == 0) {
                         window.location.reload();
                     } else {
-                        layer.msg("修改失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
