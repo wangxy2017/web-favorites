@@ -65,6 +65,12 @@ public class FavoritesController {
     @Autowired
     private ContextUtils contextUtils;
 
+    @Autowired
+    private QuickNavigationService quickNavigationService;
+
+    @Autowired
+    private MemorandumService memorandumService;
+
     @PostMapping("/save")
     @ApiOperation(value = "保存书签")
     public ApiResponse save(@RequestBody Favorites favorites) {
@@ -385,7 +391,7 @@ public class FavoritesController {
                                 StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
                                 StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null,  null, null,null);
+                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
@@ -497,11 +503,15 @@ public class FavoritesController {
     public void export(@RequestParam(required = false) String f,
                        @RequestParam(required = false) String m,
                        @RequestParam(required = false) String t,
+                       @RequestParam(required = false) String n,
+                       @RequestParam(required = false) String r,
                        @RequestParam(required = false) String s) throws IOException, ParseException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
         List<Task> taskList = new ArrayList<>();
         List<SearchType> searchTypeList = new ArrayList<>();
+        List<QuickNavigation> quickNavigationList = new ArrayList<>();
+        List<Memorandum> memorandumList = new ArrayList<>();
         User user = contextUtils.getCurrentUser();
         // 查询用户分类
         if (PublicConstants.EXPORT_FAVORITES_CODE.equals(f)) {
@@ -527,13 +537,21 @@ public class FavoritesController {
         if (PublicConstants.EXPORT_SEARCH_CODE.equals(s)) {
             searchTypeList = searchTypeService.findByUserId(user.getId());
         }
+        // 查询快捷导航
+        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(n)) {
+            quickNavigationList = quickNavigationService.findByUserId(user.getId());
+        }
+        // 查询备忘录
+        if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(r)) {
+            memorandumList = memorandumService.findByUserId(user.getId());
+        }
         HttpServletResponse response = contextUtils.getResponse();
         response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
         // 写入输出流
-        writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList);
+        writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList, quickNavigationList, memorandumList);
     }
 
-    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList, List<Task> taskList, List<SearchType> searchTypeList) throws IOException {
+    private void writeXML(OutputStream out, List<Category> categories, List<Moment> momentList, List<Task> taskList, List<SearchType> searchTypeList, List<QuickNavigation> quickNavigationList, List<Memorandum> memorandumList) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("DATA");
         if (!CollectionUtils.isEmpty(categories)) {
@@ -613,6 +631,24 @@ public class FavoritesController {
                 }
             });
         }
+        if (!CollectionUtils.isEmpty(quickNavigationList)) {
+            Element navigations = root.addElement("NAVIGATIONS");
+            quickNavigationList.forEach(n -> {
+                Element navigation = navigations.addElement("NAVIGATION");
+                navigation.addElement("NAME").setText(n.getName());
+                navigation.addElement("URL").setText(n.getUrl());
+                navigation.addElement("ICON").setText(n.getIcon());
+            });
+        }
+        if (!CollectionUtils.isEmpty(memorandumList)) {
+            Element memorandums = root.addElement("MEMORANDUMS");
+            SimpleDateFormat sdf = new SimpleDateFormat(PublicConstants.FORMAT_DATETIME_PATTERN);
+            memorandumList.forEach(r -> {
+                Element memorandum = memorandums.addElement("MEMORANDUM");
+                memorandum.addElement("CONTENT").setText(r.getContent());
+                memorandum.addElement("CREATE_TIME").setText(sdf.format(r.getCreateTime()));
+            });
+        }
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding(StandardCharsets.UTF_8.name());
         XMLWriter writer = new XMLWriter(out, format);
@@ -622,7 +658,7 @@ public class FavoritesController {
     }
 
     private boolean isInteger(String str) {
-        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        Pattern pattern = Pattern.compile("^[-+]?[\\d]*$");
         return StringUtils.isNotBlank(str) && pattern.matcher(str).matches();
     }
 }

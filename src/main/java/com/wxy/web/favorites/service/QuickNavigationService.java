@@ -24,7 +24,7 @@ public class QuickNavigationService {
         return quickNavigationRepository.save(quickNavigation);
     }
 
-    public List<QuickNavigation> findList(Integer userId){
+    public List<QuickNavigation> findByUserId(Integer userId){
         return quickNavigationRepository.findAllByUserId(userId);
     }
 

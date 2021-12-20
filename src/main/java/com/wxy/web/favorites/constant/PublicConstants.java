@@ -73,4 +73,5 @@ public interface PublicConstants {
     String NAVIGATION_LIMITED_MSG = "快捷导航数量已达上限";
 
     Integer SHARE_CODE = 1;
+    String EXPORT_QUICK_NAVIGATION = "1";
 }

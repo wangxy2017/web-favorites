@@ -47,5 +47,9 @@ public class MemorandumService {
         Page<Memorandum> page = memorandumRepository.findPageByUserIdAndContentLike(userId, "%" + SqlUtils.trimAndEscape(content) + "%", pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
+
+    public List<Memorandum> findByUserId(Integer userId) {
+        return memorandumRepository.findByUserId(userId);
+    }
 }
 

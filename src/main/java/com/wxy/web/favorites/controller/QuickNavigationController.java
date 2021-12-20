@@ -1,12 +1,9 @@
 package com.wxy.web.favorites.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
-import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.QuickNavigation;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
@@ -19,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 /***
@@ -48,7 +44,7 @@ public class QuickNavigationController {
     @ApiOperation(value = "新增快捷导航")
     public ApiResponse save(@RequestBody QuickNavigation quickNavigation) {
         User user = contextUtils.getCurrentUser();
-        List<QuickNavigation> list = quickNavigationService.findList(user.getId());
+        List<QuickNavigation> list = quickNavigationService.findByUserId(user.getId());
         Assert.isTrue(list == null || list.size() < appConfig.getNavigationLimit(), PublicConstants.NAVIGATION_LIMITED_MSG);
         quickNavigation.setUserId(user.getId());
         // 处理图标
@@ -62,7 +58,7 @@ public class QuickNavigationController {
     @ApiOperation(value = "查询快捷导航")
     public ApiResponse findList() {
         Integer userId = contextUtils.getCurrentUser().getId();
-        return ApiResponse.success(quickNavigationService.findList(userId));
+        return ApiResponse.success(quickNavigationService.findByUserId(userId));
     }
 
     @GetMapping("/delete/{id}")
