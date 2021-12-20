@@ -2722,7 +2722,8 @@
             $(document).on('mousemove','p.myToolTip',function (e) {
                 $('#myTitle').css({
                     'left': (e.pageX + x + 10 + 'px'),
-                    'top': (e.pageY + y - 20 + 'px')
+                    'top': (e.pageY + y - 20 + 'px'),
+                    'z-index': 2147483647
                 }).show();
             });
         };
