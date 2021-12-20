@@ -1796,7 +1796,7 @@
         };
 
         window.isEmpty = function(obj){
-            if(typeof obj == "undefined" || obj == null || obj == "" || obj == "none" || obj == "null"){
+            if(typeof obj == "undefined" || obj == "undefined" || obj == null || obj == "" || obj == "none" || obj == "null"){
                 return true;
             }else{
                 return false;
@@ -2711,7 +2711,8 @@
                 $('body').append('<div id="myTitle" >' + newTitle + '</div>');
                 $('#myTitle').css({
                     'left': (e.pageX + x + 'px'),
-                    'top': (e.pageY + y + 'px')
+                    'top': (e.pageY + y + 'px'),
+                    'z-index': 2147483647
                 }).show();
             });
             $(document).on('mouseout','p.myToolTip',function () {
