@@ -33,4 +33,8 @@ public class ApiResponse {
         return new ApiResponse(code, msg, null);
     }
 
+    public static ApiResponse error(String msg, Object data) {
+        return new ApiResponse(PublicConstants.ERROR_CODE, msg, null);
+    }
+
 }

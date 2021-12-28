@@ -1,9 +1,8 @@
 package com.wxy.web.favorites.advice;
 
-import cn.hutool.core.util.IdUtil;
 import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.ErrorId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -14,33 +13,29 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-/**
- * 全局异常处理
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
 
     @ExceptionHandler(value = Exception.class)
     public ApiResponse Exception(Exception e) {
-        String errorId = IdUtil.simpleUUID();
-        log.error("内部错误：errorId = {}", errorId, e);
-        return ApiResponse.error("内部错误：errorId = " + errorId);
-    }
-
-    @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public ApiResponse HttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return ApiResponse.error(400, "参数解析失败");
+        ErrorId errorId = ErrorId.get();
+        log.error("系统错误：{}", errorId, e);
+        return ApiResponse.error("系统错误", errorId);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ApiResponse IllegalArgumentException(IllegalArgumentException e) {
-        return ApiResponse.error(400, e.getMessage());
+        ErrorId errorId = ErrorId.get();
+        log.error("参数错误：{}", errorId, e);
+        return ApiResponse.error(e.getMessage(), errorId);
     }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ApiResponse HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return ApiResponse.error(405, "不支持当前请求方法");
+        ErrorId errorId = ErrorId.get();
+        log.error("不支持当前请求方法：{}", errorId, e);
+        return ApiResponse.error("不支持当前请求方法", errorId);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,9 +45,13 @@ public class GlobalExceptionAdvice {
             List<ObjectError> errors = exceptions.getAllErrors();
             if (!errors.isEmpty()) {
                 FieldError fieldError = (FieldError) errors.get(0);
-                return ApiResponse.error(fieldError.getDefaultMessage());
+                ErrorId errorId = ErrorId.get();
+                log.error("参数验证失败：{}", errorId, e);
+                return ApiResponse.error(fieldError.getDefaultMessage(), errorId);
             }
         }
-        return ApiResponse.error(e.getMessage());
+        ErrorId errorId = ErrorId.get();
+        log.error("参数验证失败：{}", errorId, e);
+        return ApiResponse.error("参数验证失败", errorId);
     }
 }
