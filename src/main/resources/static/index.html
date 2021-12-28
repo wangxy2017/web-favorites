@@ -1003,7 +1003,7 @@
                                     html += '       <div class="favorites-bg">';
                                     html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                     html += '       </div>';
-                                    html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                    html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
                                     if(j == favoritesLimit - 1){
@@ -1438,7 +1438,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lazy-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                 html += '       <i onclick="deleteFastNav(this,event)" class="deleteFastNav action-icon layui-icon layui-icon-delete"></i>';
                                 html += '   </li>';
                             });
@@ -1561,7 +1561,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -1602,7 +1602,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2012,7 +2012,7 @@
                             html += '       <div class="favorites-bg">';
                             html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '       </div>';
-                            html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                            html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '   </li>';
                         });
@@ -2044,7 +2044,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2584,7 +2584,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img class="lazy" src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p class="myToolTip" title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                 html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                 html += '   </li>';
                                 if(j == favoritesLimit - 1){
@@ -2726,6 +2726,10 @@
                     'z-index': 2147483647
                 }).show();
             });
+        };
+
+        window.escapeHtml = function(html){
+            return html.replace(/</g, '&lt').replace(/>/g, '&gt');
         };
 
         window.showNotice = function(type){
