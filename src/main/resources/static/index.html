@@ -586,12 +586,6 @@
 
     <div class="layui-body" id="layuiBody" style="padding: 15px 0;left: 0;">
         <!-- 内容主体区域 -->
-        <div class="layui-btn-container layui-anim layui-anim-fadein" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
-            <span id="slideBtn" class="layui-icon layui-icon-right"></span>
-            <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
-            <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
-            <button type="button" class="layui-btn layui-btn-sm" id="fastNavBtn">快捷导航</button>
-        </div>
         <div id="starDiv"></div>
         <div id="main"></div>
         <div id="searchDiv" style="display:none;"></div>
@@ -604,18 +598,26 @@
             </div>
             <div class="positionData"></div>
         </div>
-        <div id="loadingDiv">
-            <div class="lGDtb">
-                <div class="ljZkoB"></div>
-                <div class="gPySoS"></div>
-                <div class="dVkzjP"></div>
-                <div class="UdOCq"></div>
-                <div class="bnWJxh"></div>
-            </div>
-        </div>
     </div>
     <div class="layui-footer" style="left: 0;">
         <p class="open-source">© 2020 网络收藏夹 | <a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">网站源码</a> | QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a></p>
+    </div>
+</div>
+<!-- 操作按钮 -->
+<div class="layui-btn-container layui-anim layui-anim-fadein" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
+    <span id="slideBtn" class="layui-icon layui-icon-right"></span>
+    <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
+    <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
+    <button type="button" class="layui-btn layui-btn-sm" id="fastNavBtn">快捷导航</button>
+</div>
+<!-- 加载动画 -->
+<div id="loadingDiv">
+    <div class="lGDtb">
+        <div class="ljZkoB"></div>
+        <div class="gPySoS"></div>
+        <div class="dVkzjP"></div>
+        <div class="UdOCq"></div>
+        <div class="bnWJxh"></div>
     </div>
 </div>
 <!-- 找不到结果 -->
