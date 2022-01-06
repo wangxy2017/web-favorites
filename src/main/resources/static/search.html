@@ -264,9 +264,6 @@
             var form = layui.form;
             var flow = layui.flow;
 
-            // 图片懒加载
-            flow.lazyimg({elem: 'img.lazy', scrollElem: '#center'});
-
             var indexMap = new Map();// 弹出层索引容器
 
             // 点击空白关闭
@@ -290,6 +287,7 @@
             flow.load({
                 elem: '#searchTypeList'
                 ,scrollElem: '#searchTypeList'
+                ,isLazyimg: true
                 ,mb: 50
                 ,done: function(page, next){
                   var lis = [];
@@ -302,7 +300,7 @@
                         success: function (data) {
                            $.each(data, function(i, item){
                                 var html = '';
-                                html += '<li class="search-type-li" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                html += '<li class="search-type-li" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
                                     '</span></li>';
                                 lis.push(html);
                            });
@@ -319,7 +317,7 @@
                             if(result.code == 0){
                                 $.each(result.data.list, function(index, item) {
                                     var html = '';
-                                    html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img class="lazy" src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                    html += '<li class="search-type-li" data-id="' + item.id + '" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
                                         '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
                                     lis.push(html);
                                 });
@@ -327,7 +325,6 @@
                                 var addBtn = '<li id="addBtn" onclick="addSearchType()"><img src="images/add.svg"><span>添加搜索</span></li>';
                                 lis.push(addBtn);
                                 next(lis.join(''), page < result.data.pages);
-                                imgRender();
                             }
                         }
                     });
@@ -351,11 +348,6 @@
                     window.location.href = "login.html";
                 });
             });
-
-            window.imgRender = function(){
-                // 触发scroll模拟render
-                $("#center").scroll();
-            };
 
             window.loadData = function(){
 
