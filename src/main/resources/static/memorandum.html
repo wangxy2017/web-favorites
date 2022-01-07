@@ -122,6 +122,35 @@
                 font-weight: bold;
             }
 
+            .memorandum-item {
+			    cursor: pointer;
+			}
+
+			.memorandum-item .content {
+			    max-height: 600px;
+			    overflow: hidden;
+			}
+
+			.memorandum-item .content-mask {
+			    text-align: center;
+			    cursor: pointer;
+			    display: none;
+			}
+
+			.action {
+				margin-top: 6px;
+				line-height: 30px;
+			}
+
+			.action .layui-icon {
+			    margin-right: 10px;
+			    font-size: 18px;
+			}
+
+			.action .layui-icon:hover {
+			    color: #1e9fff;
+			}
+
     </style>
 </head>
 <body>
@@ -145,6 +174,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
             </div>
         </div>
+        <div id="memorandumList"></div>
     </div>
 </div>
 <div class="footer">
@@ -164,7 +194,18 @@
         var form = layui.form;
 
         // 加载动画
-        $("#notFoundDiv").show();
+        layer.load();
+
+        // 隐藏大文本
+        window.hideBigText = function(containerId){
+            $(containerId + " .content").each(function(){
+                var height = parseInt($(this).height());
+                var maxHeight = parseInt($(this).css("max-height"));
+                if(maxHeight == 600 && height == 600){
+                    $(this).next().show();
+                }
+            });
+        };
 
         // 加载数据
         flow.load({
@@ -186,9 +227,18 @@
                         if (result.code == 0) {
                             $.each(result.data.list, function(index, item){
                                 var html = '';
+                                html += '<div class="memorandum-item" data-id="' + item.id + '">';
+                                html += '   <div class="content">'+ item.content +'</div>';
+                                html += '   <div class="content-mask">点击查看全文</div>';
+                                html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
+                                html += '       <i class="layui-icon layui-icon-edit"></i>';
+                                html += '       <i class="layui-icon layui-icon-delete"></i>';
+                                html += '   </div>';
+                                html += '</div>';
                                 lis.push(html);
                             });
                             next(lis.join(''), page < result.data.pages);
+                            hideBigText("#memorandumList");
                         }
                     }
               });
@@ -242,6 +292,40 @@
                 }
             });
             return false;
+        });
+
+        // 删除
+        $(document).on('click', '.action .layui-icon-delete', function(e) {
+            layer.confirm('确认删除吗?', function(index) {
+                var id = $(e.target).parent().attr("data-id");
+                $.ajax({
+                    type: "GET",
+                    url: "memorandum/delete/" + id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            window.location.reload();
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+        $(function(){
+            // 暂无数据
+            $.ajax({
+                type: "GET",
+                url: "memorandum/count",
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    if (result.code == 0 && result.data == 0) {
+                        $("#notFoundDiv").show();
+                    }
+                }
+            });
         });
     });
 

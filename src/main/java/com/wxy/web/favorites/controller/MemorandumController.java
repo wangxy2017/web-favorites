@@ -73,4 +73,19 @@ public class MemorandumController {
         return ApiResponse.success(page);
     }
 
+    @GetMapping("/count")
+    @ApiOperation(value = "统计我的备忘录")
+    public ApiResponse count() {
+        User user = contextUtils.getCurrentUser();
+        long count = memorandumService.countByUserId(user.getId());
+        return ApiResponse.success(count);
+    }
+
+    @GetMapping("/delete/{id}")
+    @ApiOperation(value = "删除备忘录")
+    public ApiResponse delete(@PathVariable Integer id) {
+        memorandumService.deleteById(id);
+        return ApiResponse.success();
+    }
+
 }

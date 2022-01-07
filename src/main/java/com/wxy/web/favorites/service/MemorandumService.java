@@ -55,5 +55,9 @@ public class MemorandumService {
     public void saveAll(List<Memorandum> list) {
         memorandumRepository.saveAll(list);
     }
+
+    public long countByUserId(Integer userId) {
+       return memorandumRepository.countByUserId(userId);
+    }
 }
 
