@@ -191,10 +191,28 @@
     layui.use(['layer','flow','util','form'], function() {
         var layer = layui.layer;
         var flow = layui.flow;
+        var util = layui.util;
         var form = layui.form;
 
         // 加载动画
         layer.load();
+
+        // 固定块
+        util.fixbar({
+            top: true
+            ,bar1: '&#xe654;'
+            ,bar2: '&#xe6dc;'
+            ,scrollElem: '#center'
+            ,bgcolor: '#393D49'
+            ,css: {right: 50, bottom: 80}
+            ,click: function(type){
+                if(type === 'bar1'){
+                    showAddMemorandumForm();
+                }else if(type === 'bar2'){
+                    layer.msg("该功能暂未开放");
+                }
+            }
+        });
 
         // 隐藏大文本
         window.hideBigText = function(containerId){
