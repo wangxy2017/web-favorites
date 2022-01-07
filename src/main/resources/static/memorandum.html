@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|备忘录</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <style type="text/css">
 			* {
@@ -110,6 +110,7 @@
                 height: 80px;
                 display: block;
                 margin: 0 auto;
+                cursor: pointer;
             }
 
             .notFoundDiv span{
@@ -120,7 +121,8 @@
                 margin-top: 24px;
                 font-weight: bold;
             }
-		</style>
+
+    </style>
 </head>
 <body>
 <div class="header">
@@ -129,13 +131,20 @@
         <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
         <input type="text" id="search_text" name="search_text" placeholder="搜索备忘录..." autocomplete="off"
                class="layui-input">
-        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
+           style="display:none;"></i>
     </div>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
 <div class="center" id="center">
     <div class="main">
-
+        <div class="layui-form" id="addMemorandumForm" style="display:none">
+            <textarea name="content" placeholder="请输入内容" class="layui-textarea" required lay-verify="required" wrap="hard"></textarea>
+            <div class="layui-btn-container" style="text-align: right;margin-top: 10px;">
+                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="footer">
@@ -143,15 +152,16 @@
 </div>
 <!-- 找不到结果 -->
 <div id="notFoundDiv" class="notFoundDiv">
-    <img src="images/note.svg" alt="">
+    <img src="images/note.svg" alt="" onclick="showAddMemorandumForm()">
     <span>备忘录是空~</span>
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/layui.js"></script>
 <script>
-    layui.use(['layer','flow','util'], function() {
+    layui.use(['layer','flow','util','form'], function() {
         var layer = layui.layer;
         var flow = layui.flow;
+        var form = layui.form;
 
         // 加载动画
         $("#notFoundDiv").show();
@@ -202,7 +212,39 @@
                 window.location.href = "login.html";
             });
         });
+
+        $("#cancelAddMemorandum").click(function(){
+            $("#notFoundDiv").show();
+            $("#addMemorandumForm").hide();
+        });
+
+        window.showAddMemorandumForm = function(){
+            $("#notFoundDiv").hide();
+            $("#addMemorandumForm").show();
+        }
+
+        form.on('submit(addMemorandum)', function (data) {
+            layer.load();
+            $.ajax({
+                type: "POST",
+                url: "memorandum",
+                data: JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        window.location.reload();
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                }
+            });
+            return false;
+        });
     });
+
 </script>
 </body>
 </html>
