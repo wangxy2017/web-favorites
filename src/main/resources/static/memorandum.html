@@ -267,7 +267,7 @@
                             $.each(result.data.list, function(index, item){
                                 var html = '';
                                 html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
-                                html += '   <div class="content" onclick="editContent(this)">'+ item.content +'</div>';
+                                html += '   <div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
                                 html += '   <div class="content-mask">点击查看全文</div>';
                                 html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
                                 html += '       <i class="layui-icon layui-icon-delete"></i>';
@@ -305,6 +305,19 @@
             }
         });
 
+
+        window.wrapSearch = function(content,keyword){
+            var text = '<span style="background-color:#ffb800">'+keyword+'</span>';
+            var reg = new RegExp(keyword,"gi");
+            return content.replace(reg,text);
+        };
+
+         window.unwrapSearch = function(content,keyword){
+            var text = '<span style="background-color:#ffb800">'+keyword+'</span>';
+            var reg = new RegExp(text,"gi");
+            return content.replace(reg,keyword);
+        };
+
         // 登出
         $("#logout").click(function () {
             layer.confirm('确认退出系统吗？', function(index){
@@ -336,8 +349,8 @@
         });
         
         window.searchText = function(){
-            var content = $("#search_text").val().trim();
-            if (content == "") { //退出搜索模式
+            var keyword = $("#search_text").val().trim();
+            if (keyword == "") { //退出搜索模式
                 $("#search_close").click();
             } else {
                 // 加载数据
@@ -345,7 +358,7 @@
                 $.ajax({
                     type: "GET",
                     url: "memorandum/search",
-                    data: {"content": content},
+                    data: {"content": keyword},
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
@@ -354,7 +367,7 @@
                             var html = '';
                             $.each(result.data, function(index, item){
                                 html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
-                                html += '   <div class="content" style="max-height: none !important;" onclick="editContent(this)">'+ item.content +'</div>';
+                                html += '   <div class="content" style="max-height: none !important;" ondblclick="editContent(this)" data-keyword="'+keyword+'">'+ wrapSearch(item.content,keyword) +'</div>';
                                 html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
                                 html += '       <i class="layui-icon layui-icon-delete"></i>';
                                 html += '   </div>';
@@ -397,8 +410,13 @@
             }
         };
 
+        window.escapeHtml = function(html){
+            return html.replace(/</g, '&lt').replace(/>/g, '&gt');
+        };
+
         form.on('submit(addMemorandum)', function (data) {
             layer.load();
+            data.field.content = escapeHtml(data.field.content);
             $.ajax({
                 type: "POST",
                 url: "memorandum",
@@ -440,6 +458,9 @@
         // 编辑
         window.editContent = function(obj) {
             var that = $(obj);
+            var keyword = that.attr("data-keyword");
+            keyword&&that.html(unwrapSearch(that.html(),keyword));
+            that.next().click();
             that.attr("contenteditable",true).addClass("content-edit").focus()
             .blur(function(){
                 var content = that.html();
