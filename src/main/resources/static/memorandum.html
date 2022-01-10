@@ -125,6 +125,8 @@
 			.memorandum-item .content {
 			    max-height: 200px;
 			    overflow: hidden;
+			    word-break: break-all;
+                white-space: pre-line;
 			}
 
 			.memorandum-item .content-mask {
@@ -186,7 +188,8 @@
 <div class="center" id="center">
     <div class="main">
         <div class="layui-form" id="addMemorandumForm" style="display:none">
-            <textarea style="height: 200px;" name="content" placeholder="请输入内容" class="layui-textarea" required lay-verify="required" wrap="hard"></textarea>
+            <textarea style="min-height: 200px;" name="content" required lay-verify="required" placeholder="请输入内容"
+                      class="layui-textarea" wrap="hard"></textarea>
             <div class="layui-btn-container" style="text-align: right;margin-top: 10px;">
                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
