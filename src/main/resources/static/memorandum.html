@@ -197,7 +197,7 @@
 <div class="center" id="center">
     <div class="main">
         <div class="layui-form" id="addMemorandumForm" style="display:none">
-            <textarea name="content" placeholder="请输入内容" class="layui-textarea" required lay-verify="required" wrap="hard"></textarea>
+            <textarea style="height: 200px;" name="content" placeholder="请输入内容" class="layui-textarea" required lay-verify="required" wrap="hard"></textarea>
             <div class="layui-btn-container" style="text-align: right;margin-top: 10px;">
                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
@@ -239,7 +239,7 @@
             ,css: {right: 50, bottom: 80}
             ,click: function(type){
                 if(type === 'bar1'){
-                    showAddMemorandumForm();
+                    changeAddMemorandumMode();
                 }else if(type === 'bar2'){
                     layer.msg("该功能暂未开放");
                 }
@@ -329,16 +329,14 @@
         
         // 关闭搜索
         $("#search_close").click(function () {
-            $("#memorandumList").show();
-
-            $("#searchList").empty();
+            changeIndexMode();
             $(this).hide();
             $("#search_text").val("").blur();
-            $("#notFoundDiv").hide();
         });
 
         $("#search_text").on("keydown", function(event){
             if(event.key === "Enter"){
+                changeSearchMode();
                 searchText();
             }
         }).on("focus", function () {
@@ -364,9 +362,6 @@
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
-                        $("#memorandumList").hide();
-                        
-                        $("#searchList").empty();
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
                             $.each(result.data, function(index, item){
@@ -378,7 +373,7 @@
                                 html += '   </div>';
                                 html += '</div>';
                             });
-                            $("#searchList").append(html);
+                            $("#searchList").empty().append(html);
                             $("#notFoundDiv").hide();
                         }else{
                             $("#notFoundDiv").show();
@@ -389,16 +384,31 @@
         };
 
         $("#cancelAddMemorandum").click(function(){
-            if(memorandumCount == 0){
-                $("#notFoundDiv").show();
-            }
-            $("#addMemorandumForm").hide();
+            changeIndexMode();
         });
 
-        window.showAddMemorandumForm = function(){
+        window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
+            $("#memorandumList").hide();
+            $("#searchList").hide();
             $("#addMemorandumForm").show();
-        }
+        };
+
+        window.changeSearchMode = function(){
+            $("#memorandumList").hide();
+            $("#addMemorandumForm").hide();
+            $("#searchList").show();
+        };
+
+        window.changeIndexMode = function(){
+            $("#searchList").hide();
+            $("#addMemorandumForm").hide();
+            if(memorandumCount == 0){
+                $("#notFoundDiv").show();
+            }else{
+                $("#memorandumList").show();
+            }
+        };
 
         form.on('submit(addMemorandum)', function (data) {
             layer.load();
