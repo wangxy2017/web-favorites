@@ -59,5 +59,13 @@ public class MemorandumService {
     public long countByUserId(Integer userId) {
        return memorandumRepository.countByUserId(userId);
     }
+
+    public List<Memorandum> findMemorandum(Integer userId, String content) {
+        content = SqlUtils.trimAndEscape(content);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
+        return memorandumRepository.findByUserIdAndContentLike(userId, "%" + content + "%", Sort.by(orders));
+    }
 }
 

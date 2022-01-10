@@ -20,4 +20,6 @@ public interface MemorandumRepository extends JpaRepository<Memorandum, Integer>
     List<Memorandum> findByUserId(Integer userId);
 
     long countByUserId(Integer userId);
+
+    List<Memorandum> findByUserIdAndContentLike(Integer userId, String content, Sort by);
 }

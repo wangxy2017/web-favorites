@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.Memorandum;
+import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.MemorandumService;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/memorandum")
@@ -63,6 +65,14 @@ public class MemorandumController {
     public ApiResponse query(@PathVariable Integer id) {
         Memorandum memorandum = memorandumService.findById(id);
         return ApiResponse.success(memorandum);
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "搜索备忘录")
+    public ApiResponse search(@RequestParam String content) {
+        User user = contextUtils.getCurrentUser();
+        List<Memorandum> list = memorandumService.findMemorandum(user.getId(), content);
+        return ApiResponse.success(list);
     }
 
     @GetMapping("/list")
