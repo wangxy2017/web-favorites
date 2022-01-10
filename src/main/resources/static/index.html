@@ -1150,18 +1150,16 @@
             });
         });
 
-        var catalogArr = [];
         $("#catalog_search_name").on('input',function(){
             $("#catalog_search_close").show();
             var name = $(this).val();
-            var result = catalogArr.filter(function(x){
-                return x.name.indexOf(name) != -1;
+            $("#catalogList").children("li").each(function(i,item){
+                if($(item).text().indexOf(name) != -1){
+                    $(item).show();
+                }else{
+                    $(item).hide();
+                }
             });
-            var lHtml = '';
-            $.each(result, function (i, x) {
-                lHtml += '<li onclick="position(' + x.id + ')">' + x.name + '</li>';
-            });
-            $("#catalogList").empty().append(lHtml);
         });
 
         // 关闭搜索
@@ -1994,7 +1992,6 @@
                             oHtml += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
                             lHtml += '<li onclick="position(' + c.id + ')">' + c.name + '</li>';
                         });
-                        catalogArr = result.data;
                         $("select[name='categoryId']").empty().append(oHtml);
                         $("#catalogList").empty().append(lHtml);
 

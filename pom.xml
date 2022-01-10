@@ -150,6 +150,22 @@
                             <tag>latest</tag>
                         </tags>
                     </to>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-Duser.timezone=Asia/Shanghai</jvmFlag>
+                            <jvmFlag>-Xms512m</jvmFlag>
+                            <jvmFlag>-Xmx512m</jvmFlag>
+                            <jvmFlag>-Xmn256m</jvmFlag>
+                        </jvmFlags>
+                        <mainClass>com.wxy.web.favorites.WebFavoritesApplication</mainClass>
+                        <ports>
+                            <port>9020</port>
+                            <port>8888</port>
+                        </ports>
+                        <appRoot>/user/local/app</appRoot>
+                        <entrypoint>java,-jar,/usr/local/app/${project.artifactId}.jar</entrypoint>
+                        <creationTime>${maven.build.timestamp}</creationTime>
+                    </container>
                 </configuration>
             </plugin>
         </plugins>
