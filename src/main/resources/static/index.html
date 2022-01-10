@@ -9,9 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
     <style>
-        * {
-            user-select: none;
-        }
+
 
         /* 解决没有src属性时出现的边框 */
         img[src=""], img:not([src]){
@@ -91,7 +89,6 @@
             position: relative;
             padding: 10px 16px;
             cursor: pointer;
-            user-select: none;
             border-radius: 4px;
         }
 
@@ -1486,7 +1483,7 @@
         // 关闭搜索
         $("#search_close").click(function () {
             $(this).hide();
-            $("#search_name").val("").blur();
+            $("#search_name").val("");
             $(".search-items").hide();
             changeIndexMode();
         });

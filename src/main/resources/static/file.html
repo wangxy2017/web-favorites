@@ -9,9 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <style type="text/css">
-			* {
-				user-select: none;
-			}
+
 
 			.layui-laypage-prev i, .layui-laypage-next i{
                 font-size: 12px;
@@ -638,7 +636,7 @@
                                 area:['800px','600px'],
                                 type: 1,
                                 title: '文件内容',
-                                content: '<xmp style="padding: 10px;user-select: text;margin: 0">' + result.data + '</xmp>'
+                                content: '<xmp style="padding: 10px;margin: 0">' + result.data + '</xmp>'
                             });
                         } else {
                             layer.msg('暂不支持文件查看', {icon: 5});

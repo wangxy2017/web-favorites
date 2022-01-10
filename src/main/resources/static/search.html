@@ -9,9 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
     <style type="text/css">
-			* {
-				user-select: none;
-			}
+
 
 			.main {
 				margin: 0 auto;
@@ -468,7 +466,7 @@
             });
 
 			$("#search_close").click(function() {
-			    $("#search_content").val("").blur();
+			    $("#search_content").val("");
 			    $(".search-items").hide();
 			    $(this).hide();
 			});
