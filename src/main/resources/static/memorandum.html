@@ -85,6 +85,7 @@
 
             .memorandum-item {
                 margin-bottom: 20px;
+                position: relative;
 			}
 
 			.memorandum-item .content {
@@ -94,18 +95,10 @@
 			}
 
 			.action {
-				margin-top: 6px;
-				line-height: 30px;
-				cursor: pointer;
-			}
-
-			.action .layui-icon {
-			    margin-right: 10px;
-			    font-size: 18px;
-			}
-
-			.action .layui-icon:hover {
-			    color: #1e9fff;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                display:none;
 			}
 
 			.content-edit {
@@ -128,6 +121,10 @@
 
 			.content-edit:focus {
                 border-color: #009688!important;
+			}
+
+			.content-edit + .action {
+			    display:block;
 			}
 
     </style>
@@ -211,8 +208,10 @@
                                 var html = '';
                                 html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
                                 html += '   <div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
-                                html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                html += '       <i class="layui-icon layui-icon-delete"></i>';
+                                html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
+                                html += '       <button class="layui-btn layui-btn-xs" onclick="updateContent(this)">保存</button>';
+                                html += '       <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelEditContent(this)">取消</button>';
+                                html += '       <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
                                 html += '   </div>';
                                 html += '</div>';
                                 lis.push(html);
@@ -245,6 +244,10 @@
         $("#cancelAddMemorandum").click(function(){
             changeIndexMode();
         });
+
+        window.cancelEditContent = function(obj){
+            $(obj).parent().parent().find(".content").removeAttr("contenteditable").removeClass("content-edit");
+        };
 
         window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
@@ -288,9 +291,9 @@
         });
 
         // 删除
-        $(document).on('click', '.action .layui-icon-delete', function(e) {
+        window.deleteMemorandum = function(obj){
             layer.confirm('确认删除吗?', function(index) {
-                var id = $(e.target).parent().attr("data-id");
+                var id = $(obj).parent().attr("data-id");
                 $.ajax({
                     type: "GET",
                     url: "memorandum/delete/" + id,
@@ -304,32 +307,33 @@
                 });
                 layer.close(index);
             });
-        });
+        };
 
         // 编辑
         window.editContent = function(obj) {
-            var that = $(obj);
-            that.attr("contenteditable",true).addClass("content-edit").focus()
-            .blur(function(){
-                var content = that.html();
-                var id = that.parent().attr("data-id");
-                $.ajax({
-                    type: "POST",
-                    url: "memorandum",
-                    data: JSON.stringify({"id":id,"content":content}),
-                    contentType: 'application/json;charset=utf-8',
-                    dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        layer.closeAll('loading');
-                        if (result.code == 0) {
-                            layer.msg("修改成功", {icon: 6});
-                            that.removeAttr("contenteditable").removeClass("content-edit");
-                        } else {
-                            layer.msg(result.msg, {icon: 5});
-                        }
+            $(obj).attr("contenteditable",true).addClass("content-edit").focus();
+        };
+
+        window.updateContent = function(obj){
+            var contentDiv = $(obj).parent().parent().find(".content");
+            var content = contentDiv.html();
+            var id = contentDiv.parent().attr("data-id");
+            $.ajax({
+                type: "POST",
+                url: "memorandum",
+                data: JSON.stringify({"id":id,"content":content}),
+                contentType: 'application/json;charset=utf-8',
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    layer.closeAll('loading');
+                    if (result.code == 0) {
+                        layer.msg("修改成功", {icon: 6});
+                        contentDiv.removeAttr("contenteditable").removeClass("content-edit");
+                    } else {
+                        layer.msg(result.msg, {icon: 5});
                     }
-                });
+                }
             });
         };
 
