@@ -23,6 +23,12 @@ public class Memorandum {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "title", columnDefinition = "varchar(100) comment '标题'")
+    private String title;
+
+    @Column(name = "summary", columnDefinition = "varchar(500) comment '摘要'")
+    private String summary;
+
     @Column(name = "content", columnDefinition = "text comment '内容'")
     private String content;
 

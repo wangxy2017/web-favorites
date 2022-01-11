@@ -127,16 +127,9 @@
 			}
 
 			.memorandum-item .content {
-			    max-height: 200px;
 			    overflow: hidden;
 			    word-break: break-all;
                 white-space: pre-line;
-			}
-
-			.memorandum-item .content-mask {
-			    text-align: center;
-			    cursor: pointer;
-			    display: none;
 			}
 
 			.action {
@@ -242,17 +235,6 @@
             }
         });
 
-        // 隐藏大文本
-        window.hideBigText = function(containerId){
-            $(containerId + " .content").each(function(){
-                var height = parseInt($(this).height());
-                var maxHeight = parseInt($(this).css("max-height"));
-                if(maxHeight == 200 && height == 200){
-                    $(this).next().show();
-                }
-            });
-        };
-
         // 加载数据
         flow.load({
             elem: '#memorandumList'
@@ -275,7 +257,6 @@
                                 var html = '';
                                 html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
                                 html += '   <div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
-                                html += '   <div class="content-mask">点击查看全文</div>';
                                 html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
                                 html += '       <i class="layui-icon layui-icon-delete"></i>';
                                 html += '   </div>';
@@ -283,7 +264,6 @@
                                 lis.push(html);
                             });
                             next(lis.join(''), page < result.data.pages);
-                            hideBigText("#memorandumList");
                         }
                     }
               });
@@ -296,12 +276,6 @@
             if(result != undefined && result.code == "401"){
                 window.location.href= "login.html";
             }
-        });
-
-        // 点击显示更多
-        $(document).on('click', '.content-mask', function(e){
-            var that = $(e.currentTarget);
-            that.hide().prev().css("max-height", "none");
         });
 
         // 点击空白关闭
@@ -374,7 +348,7 @@
                             var html = '';
                             $.each(result.data, function(index, item){
                                 html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
-                                html += '   <div class="content" style="max-height: none !important;" ondblclick="editContent(this)" data-keyword="'+keyword+'">'+ wrapSearch(item.content,keyword) +'</div>';
+                                html += '   <div class="content" ondblclick="editContent(this)" data-keyword="'+keyword+'">'+ wrapSearch(item.content,keyword) +'</div>';
                                 html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
                                 html += '       <i class="layui-icon layui-icon-delete"></i>';
                                 html += '   </div>';
