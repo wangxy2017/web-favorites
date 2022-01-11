@@ -59,45 +59,6 @@
                 padding: 15px;
 			}
 
-			.search-input {
-                z-index: 999;
-                position: absolute;
-                top: 16px;
-                right: 70px;
-                width: 180px;
-                height: 30px;
-                transition: width .3s ease;
-            }
-
-            .search-input input {
-                height: 100%;
-                font-size: 12px;
-                border: none;
-                background-color: #161a1d;
-                color: #b2b2b2;
-                padding-left: 26px;
-                padding-right: 26px;
-            }
-
-            .search-input .search-close {
-                position: absolute;
-                top: 4px;
-                right: 4px;
-                font-size: 20px;
-                color: #666;
-                display: none;
-                cursor: pointer;
-            }
-
-            .search-input .search-icon {
-                position: absolute;
-                top: 8px;
-                left: 6px;
-                font-size: 14px;
-                color: #999;
-                cursor: pointer;
-            }
-
             .notFoundDiv {
                 display: none;
                 position: fixed;
@@ -148,6 +109,7 @@
 			}
 
 			.content-edit {
+			    min-height: 100px;
                 padding: 6px 10px;
                 display: block;
                 width: 100%;
@@ -173,13 +135,6 @@
 <body>
 <div class="header">
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
-    <div class="search-input">
-        <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
-        <input type="text" id="search_text" name="search_text" placeholder="搜索备忘录..." autocomplete="off"
-               class="layui-input">
-        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
-           style="display:none;"></i>
-    </div>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
 <div class="center" id="center">
@@ -193,7 +148,6 @@
             </div>
         </div>
         <div id="memorandumList"></div>
-        <div id="searchList"></div>
     </div>
 </div>
 <div class="footer">
@@ -278,27 +232,6 @@
             }
         });
 
-        // 点击空白关闭
-        $(document).on("click", function(e) {
-            var _conss = $('.search-input');//点击的容器范围
-            if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
-                $("#search_close").hide();
-            }
-        });
-
-
-        window.wrapSearch = function(content,keyword){
-            var text = '<span style="background-color:#ffb800">'+keyword+'</span>';
-            var reg = new RegExp(keyword,"gi");
-            return content.replace(reg,text);
-        };
-
-         window.unwrapSearch = function(content,keyword){
-            var text = '<span style="background-color:#ffb800">'+keyword+'</span>';
-            var reg = new RegExp(text,"gi");
-            return content.replace(reg,keyword);
-        };
-
         // 登出
         $("#logout").click(function () {
             layer.confirm('确认退出系统吗？', function(index){
@@ -308,61 +241,6 @@
                 window.location.href = "login.html";
             });
         });
-        
-        // 关闭搜索
-        $("#search_close").click(function () {
-            changeIndexMode();
-            $(this).hide();
-            $("#search_text").val("");
-        });
-
-        $("#search_text").on("keydown", function(event){
-            if(event.key === "Enter"){
-                changeSearchMode();
-                searchText();
-            }
-        }).on("focus", function () {
-           $("#search_close").show();
-        });
-
-        $("#search_icon").click(function(){
-            searchText();
-        });
-        
-        window.searchText = function(){
-            var keyword = $("#search_text").val().trim();
-            if (keyword == "") { //退出搜索模式
-                $("#search_close").click();
-            } else {
-                // 加载数据
-                layer.load();
-                $.ajax({
-                    type: "GET",
-                    url: "memorandum/search",
-                    data: {"content": keyword},
-                    dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        layer.closeAll('loading');
-                        if (result.code == 0 && result.data.length > 0) {
-                            var html = '';
-                            $.each(result.data, function(index, item){
-                                html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
-                                html += '   <div class="content" ondblclick="editContent(this)" data-keyword="'+keyword+'">'+ wrapSearch(item.content,keyword) +'</div>';
-                                html += '   <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                html += '       <i class="layui-icon layui-icon-delete"></i>';
-                                html += '   </div>';
-                                html += '</div>';
-                            });
-                            $("#searchList").empty().append(html);
-                            $("#notFoundDiv").hide();
-                        }else{
-                            $("#notFoundDiv").show();
-                        }
-                    }
-              });
-            }
-        };
 
         $("#cancelAddMemorandum").click(function(){
             changeIndexMode();
@@ -371,18 +249,10 @@
         window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
             $("#memorandumList").hide();
-            $("#searchList").hide();
             $("#addMemorandumForm").show();
         };
 
-        window.changeSearchMode = function(){
-            $("#memorandumList").hide();
-            $("#addMemorandumForm").hide();
-            $("#searchList").show();
-        };
-
         window.changeIndexMode = function(){
-            $("#searchList").hide();
             $("#addMemorandumForm").hide();
             if(memorandumCount == 0){
                 $("#notFoundDiv").show();
@@ -439,9 +309,6 @@
         // 编辑
         window.editContent = function(obj) {
             var that = $(obj);
-            var keyword = that.attr("data-keyword");
-            keyword&&that.html(unwrapSearch(that.html(),keyword));
-            that.next().click();
             that.attr("contenteditable",true).addClass("content-edit").focus()
             .blur(function(){
                 var content = that.html();
