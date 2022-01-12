@@ -128,11 +128,61 @@
 			    display:block;
 			}
 
+			.search-input {
+                z-index: 999;
+                position: absolute;
+                top: 16px;
+                right: 70px;
+                width: 180px;
+                height: 30px;
+                transition: width .3s ease;
+            }
+
+            .search-input input {
+                height: 100%;
+                font-size: 12px;
+                border: none;
+                background-color: #161a1d;
+                color: #b2b2b2;
+                padding-left: 26px;
+                padding-right: 26px;
+            }
+
+            .search-input .search-close {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                font-size: 20px;
+                color: #666;
+                display: none;
+                cursor: pointer;
+            }
+
+            .search-input .search-icon {
+                position: absolute;
+                top: 8px;
+                left: 6px;
+                font-size: 14px;
+                color: #999;
+                cursor: pointer;
+            }
+
+            .highLight {
+                background-color: #ffb800 !important;
+            }
+
     </style>
 </head>
 <body>
 <div class="header">
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <div class="search-input">
+        <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
+        <input type="text" id="search_text" name="search_text" placeholder="搜索备忘录..." autocomplete="off"
+               class="layui-input">
+        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
+           style="display:none;"></i>
+    </div>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
 <div class="center" id="center">
@@ -167,9 +217,6 @@
 
         var memorandumCount = 0;
 
-        // 加载动画
-        layer.load();
-
         // 固定块
         util.fixbar({
             top: true
@@ -188,41 +235,54 @@
         });
 
         // 加载数据
-        flow.load({
-            elem: '#memorandumList'
-            ,scrollElem: '#center'
-            ,mb: 400
-            ,done: function(page, next){
-              var lis = [];
-              $.ajax({
-                    type: "GET",
-                    url: "memorandum/list",
-                    data: {"pageNum": page,"pageSize": 20},
-                    dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        if(page == 1){
-                            layer.closeAll('loading');
+        window.loadList = function(){
+            // 加载动画
+            layer.load();
+            $("#memorandumList").empty();
+            var keyword = $("#search_text").val().trim();
+            flow.load({
+                elem: '#memorandumList'
+                ,scrollElem: '#center'
+                ,mb: 400
+                ,done: function(page, next){
+                  var lis = [];
+                  $.ajax({
+                        type: "GET",
+                        url: "memorandum/list",
+                        data: {"pageNum": page,"pageSize": 20,"content":keyword},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if(page == 1){
+                                layer.closeAll('loading');
+                            }
+                            if (result.code == 0) {
+                                $.each(result.data.list, function(index, item){
+                                    var html = '';
+                                    html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
+                                    if(keyword){
+                                        html += '<div class="content" ondblclick="editContent(this)" data-keyword="'+ keyword +'">'+ wrapSearch(escapeHtml(item.content),keyword) +'</div>';
+                                    }else{
+                                        html += '<div class="content" ondblclick="editContent(this)">'+ escapeHtml(item.content) +'</div>';
+                                    }
+                                    html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
+                                    html += '       <button class="layui-btn layui-btn-xs" onclick="updateContent(this)">保存</button>';
+                                    html += '       <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelEditContent(this)">取消</button>';
+                                    html += '       <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
+                                    html += '   </div>';
+                                    html += '</div>';
+                                    lis.push(html);
+                                });
+                                next(lis.join(''), page < result.data.pages);
+                            }
                         }
-                        if (result.code == 0) {
-                            $.each(result.data.list, function(index, item){
-                                var html = '';
-                                html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
-                                html += '   <div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
-                                html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                html += '       <button class="layui-btn layui-btn-xs" onclick="updateContent(this)">保存</button>';
-                                html += '       <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelEditContent(this)">取消</button>';
-                                html += '       <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
-                                html += '   </div>';
-                                html += '</div>';
-                                lis.push(html);
-                            });
-                            next(lis.join(''), page < result.data.pages);
-                        }
-                    }
-              });
-            }
-        });
+                  });
+                }
+            });
+        };
+
+        loadList();
+
 
         // jQuery全局拦截器
         $(document).ajaxSuccess(function(event,xhr,options){
@@ -242,9 +302,43 @@
             });
         });
 
+        window.wrapSearch = function(content,keyword){
+            var text = '<span class="highLight">'+keyword+'</span>';
+            var reg = new RegExp(keyword,"gi");
+            return content.replace(reg,text);
+        };
+
+         window.unwrapSearch = function(content,keyword){
+            var text = '<span class="highLight">'+keyword+'</span>';
+            var reg = new RegExp(text,"gi");
+            return content.replace(reg,keyword);
+        };
+
+        // 关闭搜索
+        $("#search_close").click(function () {
+            $(this).hide();
+            $("#search_text").val("");
+        });
+
+        $("#search_text").on("keydown", function(event){
+            if(event.key === "Enter"){
+                loadList();
+            }
+        }).on("focus", function () {
+           $("#search_close").show();
+        });
+
+        $("#search_icon").click(function(){
+            loadList();
+        });
+
         $("#cancelAddMemorandum").click(function(){
             changeIndexMode();
         });
+
+        window.searchText = function(){
+
+        };
 
         window.cancelEditContent = function(obj){
             $(obj).parent().parent().find(".content").removeAttr("contenteditable").removeClass("content-edit");
@@ -312,7 +406,12 @@
 
         // 编辑
         window.editContent = function(obj) {
-            $(obj).attr("contenteditable",true).addClass("content-edit").focus();
+            var that = $(obj);
+            var keyword = that.attr("data-keyword");
+            if(keyword){
+                that.html(unwrapSearch(that.html(),keyword));
+            }
+            that.attr("contenteditable",true).addClass("content-edit").focus();
         };
 
         window.updateContent = function(obj){
