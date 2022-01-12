@@ -158,7 +158,7 @@
 <div class="center" id="center">
     <div class="main">
         <div class="layui-timeline" id="topMoment"></div>
-        <div class="layui-timeline" id="momentList"></div>
+        <div id="momentDiv"><div class="layui-timeline" id="momentList"></div></div>
         <div class="layui-timeline" id="searchList"></div>
         <div id="noData" style="text-align: center;margin-top: 40px;display: none;">
             <img src="images/nodata-topic.svg" alt="">
@@ -186,6 +186,7 @@
             elem: '#momentList'
             ,scrollElem: '#center'
             ,mb: 400
+            ,end: ' '
             ,done: function(page, next){
               var lis = [];
               $.ajax({
@@ -254,13 +255,9 @@
 
         // 关闭搜索
         $("#search_close").click(function () {
-            $("#topMoment").show();
-            $("#momentList").show();
-
-            $("#searchList").empty();
+            changeIndexMode();
             $(this).hide();
             $("#search_text").val("").parent().css({"width":"100px"});
-            $("#noData").hide();
         });
 
         $("#search_text").on("keydown", function(event){
@@ -293,11 +290,25 @@
             });
         };
 
+        window.changeIndexMode = function(){
+            $("#topMoment").show();
+            $("#momentDiv").show();
+            $("#searchList").hide();
+            $("#noData").hide();
+        };
+        window.changeSearchMode = function(){
+            $("#noData").hide();
+            $("#topMoment").hide();
+            $("#momentDiv").hide();
+            $("#searchList").show();
+        };
+
         window.searchText = function(){
             var text = $("#search_text").val().trim();
             if (text == "") { //退出搜索模式
                 $("#search_close").click();
             } else {
+                changeSearchMode();
                 // 加载数据
                 layer.load();
                 $.ajax({
@@ -308,10 +319,7 @@
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
-                        $("#topMoment").hide();
-                        $("#momentList").hide();
-                        
-                        $("#searchList").empty();
+
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
                             $.each(result.data, function(index, item){
@@ -331,7 +339,7 @@
                                 html += '    </div>';
                                 html += '</div>';
                             });
-                            $("#searchList").append(html);
+                            $("#searchList").empty().append(html);
                             $("#noData").hide();
                             hideBigText("#searchList");
                         }else{
@@ -553,6 +561,8 @@
                 success: function (result) {
                     if (result.code == 0 && result.data == 0) {
                         $("#noData").show();
+                    }else{
+                        $("#noData").hide();
                     }
                 }
             });

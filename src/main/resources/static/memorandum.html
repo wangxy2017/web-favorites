@@ -195,7 +195,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
             </div>
         </div>
-        <div id="memorandumList"></div>
+        <div id="memorandumDiv"><div id="memorandumList"></div></div>
     </div>
 </div>
 <div class="footer">
@@ -244,6 +244,7 @@
                 elem: '#memorandumList'
                 ,scrollElem: '#center'
                 ,mb: 400
+                ,end: ' '
                 ,done: function(page, next){
                   var lis = [];
                   $.ajax({
@@ -346,7 +347,7 @@
 
         window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
-            $("#memorandumList").hide();
+            $("#memorandumDiv").hide();
             $("#addMemorandumForm").show();
         };
 
@@ -355,7 +356,7 @@
             if(memorandumCount == 0){
                 $("#notFoundDiv").show();
             }else{
-                $("#memorandumList").show();
+                $("#memorandumDiv").show();
             }
         };
 

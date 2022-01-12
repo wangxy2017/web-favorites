@@ -584,7 +584,7 @@
     <div class="layui-body" id="layuiBody" style="padding: 15px 0;left: 0;">
         <!-- 内容主体区域 -->
         <div id="starDiv"></div>
-        <div id="main"></div>
+        <div id="main"><div id="categoryList"></div></div>
         <div id="searchDiv" style="display:none;"></div>
         <div id="positionDiv" style="display:none;">
             <div class="positionNav">
@@ -965,9 +965,10 @@
         };
 
         flow.load({
-            elem: '#main'
+            elem: '#categoryList'
             ,scrollElem: '#layuiBody'
             ,isLazyimg: true
+            ,end: ' '
             ,mb: 400
             ,done: function(page, next){
               // 校正page值
