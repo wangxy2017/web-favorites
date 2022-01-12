@@ -69,6 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**")
                 .antMatchers("/webjars/**")
                 .antMatchers("/v2/**")
+                // h2控制台
+                .antMatchers("/h2-console/**")
                 // 其他静态资源
                 .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
                         "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",

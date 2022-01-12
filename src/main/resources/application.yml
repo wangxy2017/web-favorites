@@ -42,6 +42,13 @@ spring:
       ddl-auto: update
     show-sql: false
     database-platform: org.hibernate.dialect.H2Dialect
+  h2: #h2数据库配置
+    console:
+      enabled: false
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
   mail: #邮件配置
     username:
     password:
