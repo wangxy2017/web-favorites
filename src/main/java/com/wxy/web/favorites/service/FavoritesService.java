@@ -1,15 +1,15 @@
 package com.wxy.web.favorites.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
-import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SqlUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -83,7 +83,7 @@ public class FavoritesService {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
             predicateList.add(criteriaBuilder.isNull(root.get("deleteFlag")));
-            if (StringUtils.isNotBlank(text)) {
+            if (StrUtil.isNotBlank(text)) {
                 predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + text + "%")));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));

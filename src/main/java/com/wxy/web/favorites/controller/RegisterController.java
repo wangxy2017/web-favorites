@@ -1,27 +1,27 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
+import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.security.TokenUtil;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
-import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
@@ -80,7 +80,7 @@ public class RegisterController {
         if (userService.findByUsernameOrEmail(user.getUsername(), user.getEmail()) == null) {
             Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_REGISTER);
             String code = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
-            if (StringUtils.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
+            if (StrUtil.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);

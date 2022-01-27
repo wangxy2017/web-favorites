@@ -1,9 +1,9 @@
 package com.wxy.web.favorites.config;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.wxy.web.favorites.constant.PublicConstants;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +25,6 @@ public class AesConfig {
 
     @Bean
     public AES aes() {
-        return SecureUtil.aes((StringUtils.isNotBlank(secretKey) ? secretKey : PublicConstants.DEFAULT_AES_SECRET_KEY).getBytes(StandardCharsets.UTF_8));
+        return SecureUtil.aes((StrUtil.isNotBlank(secretKey) ? secretKey : PublicConstants.DEFAULT_AES_SECRET_KEY).getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -1,4 +1,4 @@
-import com.wxy.web.favorites.WebFavoritesApplication;
+import com.wxy.web.favorites.Application;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.*;
 import com.wxy.web.favorites.model.*;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @Description TODO
  **/
 @Slf4j
-@SpringBootTest(classes = WebFavoritesApplication.class)
+@SpringBootTest(classes = Application.class)
 @Transactional
 public class DemoTest {
 

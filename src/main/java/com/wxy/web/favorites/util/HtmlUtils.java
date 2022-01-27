@@ -1,9 +1,9 @@
 package com.wxy.web.favorites.util;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -46,7 +46,7 @@ public class HtmlUtils {
                 Elements elements = document.getElementsByAttributeValueMatching("rel", "Shortcut Icon|shortcut icon|icon");
                 if (elements.size() > 0) {
                     String htmlIcon = elements.get(0).attr("href");
-                    if (StringUtils.isNotBlank(htmlIcon)) {
+                    if (StrUtil.isNotBlank(htmlIcon)) {
                         URL url = new URL(urlString);
                         if (htmlIcon.startsWith("//")) {
                             htmlIcon = url.getProtocol() + ":" + htmlIcon;
@@ -62,7 +62,7 @@ public class HtmlUtils {
                         }
                     }
                     // 验证是否有效
-                    if (StringUtils.isNotBlank(htmlIcon)) {
+                    if (StrUtil.isNotBlank(htmlIcon)) {
                         HttpResponse response1 = HttpRequest.get(htmlIcon).timeout(500).execute();
                         if (response1.isOk()) {
                             iconUrl = htmlIcon;
@@ -70,7 +70,7 @@ public class HtmlUtils {
                     }
                 }
             }
-            if (StringUtils.isBlank(iconUrl)) {
+            if (StrUtil.isBlank(iconUrl)) {
                 // 如果html中没有icon，则从网站根目录获取
                 URL url = new URL(urlString);
                 String rootIcon = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";

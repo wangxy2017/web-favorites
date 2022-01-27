@@ -10,9 +10,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAsync
 @EnableScheduling
 @EnableSwagger2
-public class WebFavoritesApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebFavoritesApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

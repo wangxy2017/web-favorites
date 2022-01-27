@@ -1,20 +1,20 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
+import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.EmailUtils;
-import com.wxy.web.favorites.security.ContextUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
@@ -92,7 +92,7 @@ public class UserController {
     @PostMapping("/email")
     @ApiOperation(value = "修改邮箱")
     public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
-        if (StringUtils.isNotBlank(newEmail) && StringUtils.isNotBlank(code)) {
+        if (StrUtil.isNotBlank(newEmail) && StrUtil.isNotBlank(code)) {
             User user1 = userService.findByEmail(newEmail);
             Verification verification = verificationService.findCode(newEmail, PublicConstants.VERIFICATION_EMAIL_UPDATE);
             String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;

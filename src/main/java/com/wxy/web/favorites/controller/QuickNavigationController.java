@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -12,7 +13,6 @@ import com.wxy.web.favorites.util.HtmlUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +49,7 @@ public class QuickNavigationController {
         quickNavigation.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(quickNavigation.getUrl());
-        quickNavigation.setIcon(StringUtils.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
+        quickNavigation.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
         quickNavigationService.save(quickNavigation);
         return ApiResponse.success();
     }

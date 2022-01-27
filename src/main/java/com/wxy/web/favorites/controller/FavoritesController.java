@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
@@ -10,17 +9,18 @@ import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.service.*;
-import com.wxy.web.favorites.util.*;
+import com.wxy.web.favorites.util.HtmlUtils;
+import com.wxy.web.favorites.util.PinYinUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +80,7 @@ public class FavoritesController {
         favorites.setUserId(user.getId());
         // 处理图标
         String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StringUtils.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
+        favorites.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
         // 拼音
         favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
         // 拼音首字母
@@ -92,7 +92,7 @@ public class FavoritesController {
     @GetMapping("/url")
     @ApiOperation(value = "获取标题")
     public ApiResponse url(@RequestParam String url) {
-        if (StringUtils.isNotBlank(url)) {
+        if (StrUtil.isNotBlank(url)) {
             return ApiResponse.success(HtmlUtils.getTitle(url));
         }
         return ApiResponse.error();
@@ -314,7 +314,7 @@ public class FavoritesController {
                         String content = m.elementText("CONTENT");
                         String text = m.elementText("TEXT");
                         String time = m.elementText("TIME");
-                        if (StringUtils.isNoneBlank(content) && StringUtils.isNoneBlank(time)) {
+                        if (StrUtil.isNotBlank(content) && StrUtil.isNotBlank(time)) {
                             list.add(new Moment(null, content, text, userId, sdf.parse(time), null));
                         }
                     } catch (ParseException ignored) {
@@ -441,8 +441,8 @@ public class FavoritesController {
                         Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
                                 f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
                                 PinYinUtils.toPinyinS(f.elementText("NAME")),
-                                StringUtils.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
-                                StringUtils.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
+                                StrUtil.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
+                                StrUtil.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
                                 sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
                                 Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
                         Element pwd = f.element("USER");
@@ -536,8 +536,30 @@ public class FavoritesController {
     @PostMapping("/importHtml")
     @ApiOperation(value = "导入html")
     public ApiResponse importHtml(@RequestParam("file") MultipartFile file) throws IOException {
-        User user = contextUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".html")) {
+            User user = contextUtils.getCurrentUser();
+            Category category = categoryService.findDefaultCategory(user.getId());
+            List<String> existsUrls = favoritesService.findByCategoryId(category.getId())
+                    .stream().map(Favorites::getUrl).collect(Collectors.toList());
+            org.jsoup.nodes.Document document = Jsoup.parse(file.getInputStream(), StandardCharsets.UTF_8.name(), "");
+            List<Favorites> favoritesList = document.getElementsByTag("a").stream().map(element -> {
+                String url = element.attr("href");
+                String name = element.text();
+                if (StrUtil.isNotBlank(name) && !existsUrls.contains(url)) {
+                    String icon = HtmlUtils.getIcon(url);
+                    Favorites f = new Favorites();
+                    f.setName(name);
+                    f.setUrl(url);
+                    f.setIcon(StrUtil.isNotBlank(icon) ? icon : PublicConstants.FAVORITES_ICON_DEFAULT);
+                    f.setUserId(user.getId());
+                    f.setPinyin(PinYinUtils.toPinyin(name));
+                    f.setPinyinS(PinYinUtils.toPinyinS(name));
+                    f.setCategoryId(category.getId());
+                    return f;
+                }
+                return null;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            favoritesService.saveAll(favoritesList);
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -647,10 +669,10 @@ public class FavoritesController {
                     if (PublicConstants.SHARE_CODE.equals(f.getIsShare())) {
                         favorites.addElement("SHARE").setText("true");
                     }
-                    if (StringUtils.isNotBlank(f.getShortcut())) {
+                    if (StrUtil.isNotBlank(f.getShortcut())) {
                         favorites.addElement("SHORTCUT").setText(f.getShortcut());
                     }
-                    if (StringUtils.isNotBlank(f.getSchemaName())) {
+                    if (StrUtil.isNotBlank(f.getSchemaName())) {
                         favorites.addElement("SCHEMA_NAME").setText(f.getSchemaName());
                     }
                     if (f.getPassword() != null) {
@@ -668,7 +690,7 @@ public class FavoritesController {
             momentList.forEach(m -> {
                 Element moment = moments.addElement("MOMENT");
                 moment.addElement("CONTENT").setText(m.getContent());
-                if (StringUtils.isNotBlank(m.getText())) {
+                if (StrUtil.isNotBlank(m.getText())) {
                     moment.addElement("TEXT").setText(m.getText());
                 }
                 moment.addElement("TIME").setText(sdf.format(m.getCreateTime()));
@@ -726,6 +748,6 @@ public class FavoritesController {
 
     private boolean isInteger(String str) {
         Pattern pattern = Pattern.compile("^[-+]?[\\d]*$");
-        return StringUtils.isNotBlank(str) && pattern.matcher(str).matches();
+        return StrUtil.isNotBlank(str) && pattern.matcher(str).matches();
     }
 }

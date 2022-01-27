@@ -1,21 +1,21 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
-import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.model.UserFile;
-import com.wxy.web.favorites.service.UserFileService;
-import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.service.UserFileService;
+import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.ZipUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,7 +66,7 @@ public class FileController {
     @ApiOperation(value = "判断文件是否存在")
     public ApiResponse exists(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
+        if (file != null && StrUtil.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
             return ApiResponse.success();
         }
         return ApiResponse.error();
@@ -76,8 +76,8 @@ public class FileController {
     @ApiOperation(value = "分享文件")
     public ApiResponse share(@PathVariable Integer id) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
-            if (StringUtils.isBlank(file.getShareId())) {
+        if (file != null && StrUtil.isNotBlank(file.getPath()) && Files.exists(Paths.get(file.getPath()))) {
+            if (StrUtil.isBlank(file.getShareId())) {
                 file.setShareId(UUID.randomUUID().toString().replaceAll("-", ""));
                 userFileService.save(file);
             }
@@ -113,7 +113,7 @@ public class FileController {
     @ApiOperation(value = "重命名")
     public ApiResponse rename(@RequestParam Integer id, @RequestParam String filename) {
         UserFile file = userFileService.findById(id);
-        if (file != null && StringUtils.isNoneBlank(filename)) {
+        if (file != null && StrUtil.isNotBlank(filename)) {
             file.setFilename(filename);
             file.setUpdateTime(new Date());
             userFileService.save(file);
@@ -146,7 +146,7 @@ public class FileController {
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
         Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
-        Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StringUtils.isNotBlank(userFile.getPath()), "数据异常");
+        Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StrUtil.isNotBlank(userFile.getPath()), "数据异常");
         Path file = Paths.get(userFile.getPath());
         Assert.isTrue(Files.exists(file), ErrorConstants.FILE_IS_DELETED);
         response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
@@ -268,7 +268,7 @@ public class FileController {
         UserFile file = userFileService.findById(id);
         if (file != null) {
             String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
-            if (StringUtils.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
+            if (StrUtil.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
                 try (FileChannel channel = new RandomAccessFile(file.getPath(), "r").getChannel()) {
                     ByteBuffer buffer = ByteBuffer.allocate(1024);

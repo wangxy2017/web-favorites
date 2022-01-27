@@ -1,13 +1,13 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.Password;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.PasswordService;
-import com.wxy.web.favorites.core.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ public class PasswordController {
     @ApiOperation(value = "保存密码")
     public ApiResponse save(@RequestBody Password password) {
         Favorites favorites = favoritesService.findById(password.getFavoritesId());
-        if (favorites != null && (StringUtils.isNotBlank(password.getAccount()) || StringUtils.isNotBlank(password.getPassword()))) {
+        if (favorites != null && (StrUtil.isNotBlank(password.getAccount()) || StrUtil.isNotBlank(password.getPassword()))) {
             Password password1 = passwordService.save(password);
             return ApiResponse.success(password1.getId());
         }

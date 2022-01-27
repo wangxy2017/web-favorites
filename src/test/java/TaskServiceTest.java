@@ -1,4 +1,4 @@
-import com.wxy.web.favorites.WebFavoritesApplication;
+import com.wxy.web.favorites.Application;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.TaskRepository;
 import com.wxy.web.favorites.model.Task;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @Description TODO
  **/
 @Slf4j
-@SpringBootTest(classes = WebFavoritesApplication.class)
+@SpringBootTest(classes = Application.class)
 @Transactional
 public class TaskServiceTest {
 

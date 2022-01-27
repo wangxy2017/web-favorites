@@ -1,7 +1,8 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
@@ -17,14 +18,15 @@ import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
-import com.wxy.web.favorites.util.*;
+import com.wxy.web.favorites.util.CaptchaUtils;
+import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.PinYinUtils;
 import com.wxy.web.favorites.websocket.ChannelSupervise;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
@@ -92,7 +94,7 @@ public class LoginController {
     public ApiResponse emailLogin(@RequestParam String email, @RequestParam String code) {
         Verification verification = verificationService.findCode(email, PublicConstants.VERIFICATION_EMAIL_LOGIN);
         String loginEmailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
-        if (StringUtils.isNotBlank(code) && code.equals(loginEmailCode)) {
+        if (StrUtil.isNotBlank(code) && code.equals(loginEmailCode)) {
             // 查询email是否注册，如果没有注册，先注册账号
             User user = userService.findByEmail(email);
             if (user == null) {
@@ -135,7 +137,7 @@ public class LoginController {
         Assert.isTrue(CaptchaUtils.verify(user.getSid(), user.getCode()), "验证码错误");
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
-            if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
+            if (StrUtil.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token;
                 if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
                     token = tokenUtil.generateToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
@@ -157,7 +159,7 @@ public class LoginController {
     @PostMapping("/qrLogin")
     @ApiOperation(value = "扫码登录")
     public ApiResponse qrLogin(@RequestBody User user) {
-        if (StringUtils.isBlank(user.getSid())) {
+        if (StrUtil.isBlank(user.getSid())) {
             return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
         }
         Channel channel = ChannelSupervise.findChannel(user.getSid());
@@ -166,9 +168,9 @@ public class LoginController {
         }
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
-            if (StringUtils.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
+            if (StrUtil.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
                 String token = tokenUtil.generateToken(user1.getUsername());
-                TextWebSocketFrame tws = new TextWebSocketFrame(JSONObject.toJSONString(ApiResponse.success(token)));
+                TextWebSocketFrame tws = new TextWebSocketFrame(JSONUtil.toJsonStr(ApiResponse.success(token)));
                 channel.writeAndFlush(tws);
                 updateErrorCount(user1, true);
                 return ApiResponse.success();

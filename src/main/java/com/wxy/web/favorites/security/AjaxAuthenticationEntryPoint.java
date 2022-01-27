@@ -1,7 +1,7 @@
 package com.wxy.web.favorites.security;
 
 import cn.hutool.http.HttpStatus;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -26,6 +26,6 @@ public class AjaxAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ApiResponse response = new ApiResponse(ErrorConstants.NO_LOGIN_CODE, ErrorConstants.NO_LOGIN_MSG, null);
         httpServletResponse.setStatus(HttpStatus.HTTP_OK);
         httpServletResponse.setContentType(PublicConstants.CONTENT_TYPE_JSON);
-        httpServletResponse.getWriter().write(JSONObject.toJSONString(response));
+        httpServletResponse.getWriter().write(JSONUtil.toJsonStr(response));
     }
 }

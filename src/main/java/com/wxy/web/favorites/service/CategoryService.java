@@ -1,11 +1,11 @@
 package com.wxy.web.favorites.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
-import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SqlUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -77,7 +77,7 @@ public class CategoryService {
         Specification<Category> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
-            if (StringUtils.isNotBlank(text)) {
+            if (StrUtil.isNotBlank(text)) {
                 predicateList.add(criteriaBuilder.like(root.get("name"), "%" + text + "%"));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));

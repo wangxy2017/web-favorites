@@ -1,15 +1,16 @@
 package com.wxy.web.favorites.service;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.UserFileRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
-import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.util.SqlUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -86,7 +87,7 @@ public class UserFileService {
     }
 
     public void cleanHistory(Path base) throws IOException {
-        if(Files.exists(base)){
+        if (Files.exists(base)) {
             Files.walkFileTree(base, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -162,7 +163,7 @@ public class UserFileService {
     }
 
     public String saveFile(InputStream input) throws IOException {
-        Path folder = Paths.get(appConfig.getFileRepository(), StringUtils.join(RandomUtil.randomString(appConfig.getFileDeepLevel()).toCharArray(), File.separatorChar));
+        Path folder = Paths.get(appConfig.getFileRepository(), Strings.join(Collections.singletonList(RandomUtil.randomString(appConfig.getFileDeepLevel()).toCharArray()), File.separatorChar));
         if (Files.notExists(folder)) {
             Files.createDirectories(folder);
         }
@@ -178,7 +179,7 @@ public class UserFileService {
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         Page<UserFile> page;
-        if (StringUtils.isNotBlank(name) && pid == null) {
+        if (StrUtil.isNotBlank(name) && pid == null) {
             page = userFileRepository.findByUserIdAndFilenameLike(userId, "%" + name + "%", pageable);
         } else {
             page = userFileRepository.findByUserIdAndPid(userId, pid, pageable);
@@ -204,7 +205,7 @@ public class UserFileService {
     }
 
     public UserFile findByPidAndFilename(Integer pid, String filename) {
-        return userFileRepository.findByPidAndFilename(pid,filename);
+        return userFileRepository.findByPidAndFilename(pid, filename);
     }
 }
 

@@ -1,11 +1,11 @@
 package com.wxy.web.favorites.security;
 
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.constant.PublicConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class TokenUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(StringUtils.isNoneBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(StrUtil.isNotBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -66,7 +66,7 @@ public class TokenUtil {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + time))
-                .signWith(SignatureAlgorithm.HS256, StringUtils.isNoneBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, StrUtil.isNotBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
