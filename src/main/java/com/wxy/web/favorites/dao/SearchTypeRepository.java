@@ -16,4 +16,6 @@ public interface SearchTypeRepository extends JpaRepository<SearchType, Integer>
     Page<SearchType> findPageByUserId(Integer userId, Pageable pageable);
 
     int countByUserId(Integer userId);
+
+    void deleteAllByUserId(Integer userId);
 }

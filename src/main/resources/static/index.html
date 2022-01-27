@@ -546,7 +546,14 @@
             color: #5e6d82;
             cursor: pointer;
             margin-left: 4px;
-            vertical-align: -32%;
+            vertical-align: -34%;
+        }
+
+        #cleanData {
+            cursor: pointer;
+            color: #1e9fff;
+            display: block;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -647,7 +654,10 @@
             <div style="margin: 20px 0;color: #999;line-height: 32px;">请将 "export.xml" 文件上传至服务器</div>
         </div>
         <div class="layui-tab-item">
-            <button style="margin-top: 30px;margin-bottom: 20px;" type="button" class="layui-btn" id="export">备份收藏夹</button>
+            <div style="margin-top: 30px;margin-bottom: 10px;">
+                <button type="button" class="layui-btn" id="export">备份收藏夹</button>
+                <span id="cleanData">清除所有数据</span>
+            </div>
             <div class="layui-form" lay-filter="userData">
                 <div class="layui-form-item">
                     <label class="layui-form-label">备份数据：</label>
@@ -1967,6 +1977,31 @@
                         }
                     });
                 }
+            });
+        });
+
+        // 清除数据
+        $("#cleanData").click(function(){
+            layer.confirm('该操作会清除您在平台上的所有数据，且不可恢复，请谨慎操作！确认清除所有数据吗？', {title:'清除数据'}, function(index){
+                layer.close(index);
+
+                layer.prompt({formType: 1, title: "登录密码", placeholder:"请输入登录密码", maxlength: 20}, function(value, index, elem){
+                    $.ajax({
+                        type: "POST",
+                        url: "user/cleanData",
+                        data: {"loginPwd":md5(value)},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if (result.code == 0) {
+                                window.location.reload();
+                            } else {
+                                layer.msg(result.msg, {icon: 5});
+                            }
+                        }
+                    });
+                  layer.close(index);
+                });
             });
         });
 

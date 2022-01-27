@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.Password;
+import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.PasswordService;
 import io.swagger.annotations.Api;
@@ -22,11 +24,15 @@ public class PasswordController {
     @Autowired
     private FavoritesService favoritesService;
 
+    @Autowired
+    private ContextUtils contextUtils;
+
     @PostMapping
     @ApiOperation(value = "保存密码")
     public ApiResponse save(@RequestBody Password password) {
         Favorites favorites = favoritesService.findById(password.getFavoritesId());
         if (favorites != null && (StrUtil.isNotBlank(password.getAccount()) || StrUtil.isNotBlank(password.getPassword()))) {
+            password.setUserId(contextUtils.getCurrentUser().getId());
             Password password1 = passwordService.save(password);
             return ApiResponse.success(password1.getId());
         }

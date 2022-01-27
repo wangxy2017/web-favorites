@@ -22,4 +22,6 @@ public interface MemorandumRepository extends JpaRepository<Memorandum, Integer>
     long countByUserId(Integer userId);
 
     List<Memorandum> findByUserIdAndContentLike(Integer userId, String content, Sort by);
+
+    void deleteAllByUserId(Integer userId);
 }

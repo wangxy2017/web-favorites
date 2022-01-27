@@ -447,7 +447,7 @@ public class FavoritesController {
                                 Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
-                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null);
+                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null,null);
                             favorites.setPassword(password);
                         }
                         list1.add(favorites);
@@ -491,6 +491,7 @@ public class FavoritesController {
                         Favorites favorites = favoritesService.save(f);
                         if (f.getPassword() != null) {
                             Password password = f.getPassword();
+                            password.setUserId(user.getId());
                             password.setFavoritesId(favorites.getId());
                             passwordService.save(password);
                         }
@@ -505,12 +506,14 @@ public class FavoritesController {
                             // 保存密码
                             Password password = f.getPassword();
                             if (password != null) {
+                                password.setUserId(user.getId());
                                 password.setFavoritesId(save.getId());
                                 passwordService.save(password);
                             }
                         } else {// 如果收藏存在，则跳过收藏，看是否有密码需要新增
                             Password password = f.getPassword();
                             if (password != null && favorites.getPassword() == null) {
+                                password.setUserId(user.getId());
                                 password.setFavoritesId(favorites.getId());
                                 passwordService.save(password);
                             }

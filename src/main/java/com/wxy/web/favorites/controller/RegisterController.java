@@ -57,9 +57,6 @@ public class RegisterController {
     private ContextUtils contextUtils;
 
     @Autowired
-    private AppConfig recommendsConfig;
-
-    @Autowired
     private VerificationService verificationService;
 
     @Autowired
@@ -84,19 +81,8 @@ public class RegisterController {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
                 User user1 = userService.save(user);
-                // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user1.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null,null);
-                categoryService.save(category);
-                // 推荐收藏
-                List<Favorites> favorites = recommendsConfig.getRecommends().stream().map(s -> {
-                    String[] split = s.split(PublicConstants.DEFAULT_DELIMITER);
-                    return new Favorites(null, split[0], split[1] + "favicon.ico"
-                            , split[1], category.getId(), user1.getId(),
-                            PinYinUtils.toPinyin(split[0]),
-                            PinYinUtils.toPinyinS(split[0]),
-                            null, null, null, null, null, null, null, null,null,null,null);
-                }).collect(Collectors.toList());
-                favoritesService.saveAll(favorites);
+                // 初始化用户数据
+                userService.initData(user1.getId());
                 // 生成token
                 String token = tokenUtil.generateToken(user1.getUsername());
                 // 移除验证码
@@ -126,7 +112,7 @@ public class RegisterController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_REGISTER), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_REGISTER,new Date());
+        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_REGISTER, new Date());
         verificationService.save(verification);
         log.info("注册邮箱：{}，注册验证码：{}", email, code);
         emailUtils.sendSimpleMail(email, EmailConstants.REGISTER_TITLE, String.format(EmailConstants.REGISTER_CONTENT, code, appConfig.getVerificationExpiredMinutes()));

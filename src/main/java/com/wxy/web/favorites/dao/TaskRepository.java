@@ -31,4 +31,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     int countByUserId(Integer userId);
 
     List<Task> findByUserIdAndLevelIn(Integer userId, List<Integer> levels);
+
+    void deleteAllByUserId(Integer userId);
 }

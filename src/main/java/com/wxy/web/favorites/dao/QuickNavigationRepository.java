@@ -14,4 +14,6 @@ public interface QuickNavigationRepository extends JpaRepository<QuickNavigation
     List<QuickNavigation> findAllByUserId(Integer userId);
 
     long countByUserId(Integer userId);
+
+    void deleteAllByUserId(Integer userId);
 }

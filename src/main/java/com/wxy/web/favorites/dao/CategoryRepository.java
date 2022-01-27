@@ -46,4 +46,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>, Jp
 
     @Query("select c from  Category c where c.userId = :userId and c.isSystem = 1 ")
     Category findDefaultCategory(Integer userId);
+
+    void deleteAllByUserId(Integer userId);
 }

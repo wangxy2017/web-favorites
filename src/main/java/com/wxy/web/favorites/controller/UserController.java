@@ -55,6 +55,18 @@ public class UserController {
         return ApiResponse.success(user);
     }
 
+    @PostMapping("/cleanData")
+    @ApiOperation(value = "清除所有数据")
+    public ApiResponse cleanData(@RequestParam String loginPwd) {
+        User user = contextUtils.getCurrentUser();
+        if (passwordEncoder.matches(loginPwd, user.getPassword())) {
+            userService.deleteAllData(user.getId());
+            return ApiResponse.success();
+        } else {
+            return ApiResponse.error(ErrorConstants.INVALID_PASSWORD_MSG);
+        }
+    }
+
     @PostMapping("/password")
     @ApiOperation(value = "重置密码")
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
@@ -83,9 +95,9 @@ public class UserController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_UPDATE), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_UPDATE,new Date());
+        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_UPDATE, new Date());
         verificationService.save(verification);
-        emailUtils.sendSimpleMail(email, EmailConstants.BINDING_EMAIL_TITLE, String.format(EmailConstants.BINDING_EMAIL_CONTENT,code,appConfig.getVerificationExpiredMinutes()));
+        emailUtils.sendSimpleMail(email, EmailConstants.BINDING_EMAIL_TITLE, String.format(EmailConstants.BINDING_EMAIL_CONTENT, code, appConfig.getVerificationExpiredMinutes()));
         return ApiResponse.success();
     }
 
@@ -110,9 +122,9 @@ public class UserController {
 
     @GetMapping("/data")
     @ApiOperation(value = "获取统计信息")
-    public ApiResponse getUserData(){
+    public ApiResponse getUserData() {
         User user = contextUtils.getCurrentUser();
-        Map<String,Object> userData = userService.findUserData(user.getId());
+        Map<String, Object> userData = userService.findUserData(user.getId());
         return ApiResponse.success(userData);
     }
 }

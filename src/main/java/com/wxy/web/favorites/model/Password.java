@@ -29,4 +29,8 @@ public class Password {
 
     @Column(name = "favorites_id", unique = true, columnDefinition = "int(10) comment '收藏ID'")
     private Integer favoritesId;
+
+    @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
+    private Integer userId;
+
 }

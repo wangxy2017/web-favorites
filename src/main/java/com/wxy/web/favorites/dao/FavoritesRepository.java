@@ -42,4 +42,6 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
     Page<Favorites> findShareList(String name, Pageable pageable);
 
     Favorites findByUserIdAndUrl(Integer userId, String url);
+
+    void deleteAllByUserId(Integer userId);
 }

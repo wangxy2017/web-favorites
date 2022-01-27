@@ -36,4 +36,6 @@ public interface MomentRepository extends JpaRepository<Moment, Integer> {
     List<Moment> findByUserId(Integer userId);
 
     List<Moment> findByUserIdAndTextLike(Integer userId, String text, Sort sort);
+
+    void deleteAllByUserId(Integer userId);
 }

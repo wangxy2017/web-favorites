@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface PasswordRepository extends JpaRepository<Password, Integer> {
 
     Password findByFavoritesId(Integer favoritesId);
+
+    void deleteAllByUserId(Integer userId);
 }
