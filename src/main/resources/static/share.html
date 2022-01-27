@@ -279,7 +279,7 @@
                                     html += '       <div class="title myToolTip" title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
-                                    html += '       <div class="user"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
+                                    html += '       <div class="user" title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
                                     html += '       <div class="support" data-id="' + item.id + '" data-support="' + (item.support == null? 0: item.support) + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support == null ?0 : item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';

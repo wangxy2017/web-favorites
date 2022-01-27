@@ -533,6 +533,16 @@ public class FavoritesController {
         return ApiResponse.error();
     }
 
+    @PostMapping("/importHtml")
+    @ApiOperation(value = "导入html")
+    public ApiResponse importHtml(@RequestParam("file") MultipartFile file) throws IOException {
+        User user = contextUtils.getCurrentUser();
+        if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".html")) {
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
     private Category existCategory(String name, List<Category> categories) {
         if (categories != null && categories.size() > 0) {
             for (Category c : categories) {
