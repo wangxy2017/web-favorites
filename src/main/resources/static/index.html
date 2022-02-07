@@ -1982,7 +1982,7 @@
 
         // 清除数据
         $("#cleanData").click(function(){
-            layer.confirm('该操作会清除您在平台上的所有数据，且不可恢复，请谨慎操作！确认清除所有数据吗？', {title:'清除数据'}, function(index){
+            layer.confirm('该操作会清除您在平台上的所有数据，且不可恢复，清除数据前应做好备份工作，谨慎操作！确认清除所有数据吗？', {title:'清除数据'}, function(index){
                 layer.close(index);
 
                 layer.prompt({formType: 1, title: "登录密码", placeholder:"请输入登录密码", maxlength: 20}, function(value, index, elem){
