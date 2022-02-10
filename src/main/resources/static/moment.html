@@ -319,7 +319,7 @@
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         layer.closeAll('loading');
-
+                        $("#searchList").empty();
                         if (result.code == 0 && result.data.length > 0) {
                             var html = '';
                             $.each(result.data, function(index, item){
@@ -339,7 +339,7 @@
                                 html += '    </div>';
                                 html += '</div>';
                             });
-                            $("#searchList").empty().append(html);
+                            $("#searchList").append(html);
                             $("#noData").hide();
                             hideBigText("#searchList");
                         }else{
