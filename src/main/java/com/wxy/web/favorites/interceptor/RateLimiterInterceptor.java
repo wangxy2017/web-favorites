@@ -23,7 +23,7 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
             .build(new CacheLoader<String, RateLimiter>() {
                 @Override
                 public RateLimiter load(String key) throws Exception {
-                    return RateLimiter.create(100);
+                    return RateLimiter.create(30);
                 }
             });
 

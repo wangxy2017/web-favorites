@@ -4,17 +4,8 @@ server:
   port: 9020 #应用端口
   compression: #开启数据压缩
     enabled: true
-    mime-types:
-      - image/svg+xml
-      - image/x-icon
-      - text/html
-      - application/javascript
-      - text/css
-      - application/octet-stream
-      - application/json
-      - font/x-font-woff
-      - text/plain
-    min-response-size: 2048
+    min-response-size: 1024
+    mime-types: application/javascript,application/json,application/xml,text/html,text/xml,text/plain,text/css,image/*
 spring:
   servlet:
     multipart: #上传文件大小限制

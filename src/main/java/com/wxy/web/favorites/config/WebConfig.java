@@ -18,6 +18,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new RateLimiterInterceptor())
-                .addPathPatterns("/**");
+                .addPathPatterns("/category/**", "/favorites/**",
+                        "/file/**", "/login/**", "/memorandum/**",
+                        "/moment/**", "/password/**", "/quick-navigation/**",
+                        "/register/**", "/search/**", "/share/**",
+                        "/task/**", "/user/**");
     }
 }
