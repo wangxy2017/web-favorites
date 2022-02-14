@@ -164,7 +164,12 @@
             }
 
             .highLight {
-                background-color: #ffb800 !important;
+                background-color: rgba(255, 170, 0, 0.34);
+                border: 1px solid #ffaa00;
+            }
+
+            .highLight.active {
+                background-color: #c2cff9;
             }
 
     </style>
@@ -212,6 +217,7 @@
         var form = layui.form;
 
         var memorandumCount = 0;
+        var searchIndex = -1;
 
         // 固定块
         util.fixbar({
@@ -250,8 +256,11 @@
                         dataType: "json",
                         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                         success: function (result) {
-                            if(page == 1){
+                            if(page == 1){// 首次加载
                                 layer.closeAll('loading');
+                                if(keyword && result.code == 0 && result.data.list.length > 0){
+                                    searchIndex = 0;
+                                }
                             }
                             if (result.code == 0) {
                                 $.each(result.data.list, function(index, item){
@@ -323,11 +332,24 @@
         $("#search_close").click(function () {
             $(this).hide();
             $("#search_text").val("");
+            searchIndex = -1;
+            loadList();
         });
 
         $("#search_text").on("keydown", function(event){
             if(event.key === "Enter"){
-                loadList();
+                if(searchIndex >= 0){
+                    var active = $(".highLight").eq(searchIndex++)[0];
+                    if(active){
+                        $(active).addClass("active").siblings().removeClass("active");
+                        $("#center").animate({scrollTop: active.offsetTop - 100}, 50);
+                    }
+                }else{
+                    loadList();
+                }
+            } else if (event.key === "Backspace") {
+                // 退出选择模式
+                searchIndex = -1;
             }
         }).on("focus", function () {
            $("#search_close").show();
@@ -340,10 +362,6 @@
         $("#cancelAddMemorandum").click(function(){
             changeIndexMode();
         });
-
-        window.searchText = function(){
-
-        };
 
         window.cancelEditContent = function(obj){
             $(obj).parent().parent().find(".content").removeAttr("contenteditable").removeClass("content-edit");
