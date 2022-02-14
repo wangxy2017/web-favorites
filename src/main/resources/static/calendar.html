@@ -178,7 +178,11 @@
 				border-radius: 4px;
 				height: 30px;
 				width: 200px;
-				margin: 0 30px;
+				transition: all .3s;
+			}
+
+			.date-input:hover {
+			    opacity: .8;
 			}
 
 			.date-input input {
@@ -195,7 +199,7 @@
 			.date-input span {
 				position: absolute;
 				top: 6px;
-				right: 24px;
+				right: 10px;
 				color: #fff !important;
 			}
 
@@ -246,11 +250,6 @@
                 height: 3em;
                 display: inline-block;
                 line-height: 3em;
-			}
-
-			.calendar-header .left,
-			.calendar-header .right {
-			    font-size: 2em;
 			}
 
 			.date {
@@ -311,12 +310,10 @@
 <div class="center" id="center">
     <div class="main" id="main">
         <div class="calendar-header">
-            <span id="leftBtn" style="transform:rotate(180deg);" class="layui-icon layui-icon-triangle-r left"></span>
             <div class="layui-inline date-input">
                 <input type="text" class="layui-input" id="calendarInput" readonly="readonly">
                 <span class="layui-icon layui-icon-triangle-d"></span>
             </div>
-            <span id="rightBtn" class="layui-icon layui-icon-triangle-r right"></span>
         </div>
         <div id="calendar"></div>
     </div>
@@ -828,14 +825,6 @@
             return false;
         });
 
-        $("#leftBtn").click(function() {
-            var date = $("#calendarInput").val();
-            var preMonth = getPreMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
-            var split = preMonth.split("-");
-            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
-            drawCalender(preMonth);
-        });
-
         // 新增日程点击事件
         window.addTask = function(text){// 2020-01-01
             $('#taskForm')[0].reset();
@@ -912,14 +901,6 @@
                 }
             });
         };
-
-        $("#rightBtn").click(function() {
-            var date = $("#calendarInput").val();
-            var nextMonth = getNextMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
-            var split = nextMonth.split("-");
-            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
-            drawCalender(nextMonth);
-        });
 
         $("#cancelSaveTaskBtn").click(function(){
             layer.close(indexMap.get('#taskForm'));
