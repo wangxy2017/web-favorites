@@ -22,7 +22,7 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
             .expireAfterWrite(1, TimeUnit.DAYS)
             .build(new CacheLoader<String, RateLimiter>() {
                 @Override
-                public RateLimiter load(String key) throws Exception {
+                public RateLimiter load(String ip) throws Exception {
                     return RateLimiter.create(30);
                 }
             });
@@ -32,7 +32,7 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String ip = IpUtils.getIpAddr(request);
         RateLimiter rateLimiter = caches.get(ip);
-        if (rateLimiter.tryAcquire()) {
+        if (rateLimiter.tryAcquire(500, TimeUnit.MILLISECONDS)) {
             return true;
         }
         log.error("服务请求频繁，地址来源：{}", ip);

@@ -105,10 +105,11 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         } else {
             handshaker.handshake(ctx.channel(), req);
             //添加连接
-            String[] split = req.uri().split("sid=");
-            if (split.length < 2 || StrUtil.isBlank(split[1])) throw new IllegalArgumentException("缺少必要参数：sid");
-            log.info("客户端加入连接：{}，sid：{}", ctx.channel(), split[1]);
-            ChannelSupervise.addChannel(ctx.channel(), split[1]);
+            String uri = req.uri();
+            String sid = uri.substring(uri.lastIndexOf("sid=") + 4);
+            if (StrUtil.isBlank(sid)) throw new IllegalArgumentException("缺少必要参数：sid");
+            log.info("客户端加入连接：{}", ctx.channel());
+            ChannelSupervise.addChannel(ctx.channel(), sid);
         }
     }
 

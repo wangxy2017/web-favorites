@@ -35,7 +35,7 @@ public class NioWebSocketServer {
             log.info("webSocket服务器启动成功：{}", channel);
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
-            log.info("运行出错：", e);
+            log.error("websocket服务器运行出错：", e);
         } finally {
             boss.shutdownGracefully();
             work.shutdownGracefully();
