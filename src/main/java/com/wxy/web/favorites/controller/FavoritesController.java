@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
@@ -76,16 +77,38 @@ public class FavoritesController {
     @PostMapping("/save")
     @ApiOperation(value = "保存书签")
     public ApiResponse save(@RequestBody Favorites favorites) {
-        User user = contextUtils.getCurrentUser();
-        favorites.setUserId(user.getId());
-        // 处理图标
-        String icon = HtmlUtils.getIcon(favorites.getUrl());
-        favorites.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
-        // 拼音
-        favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
-        // 拼音首字母
-        favorites.setPinyinS(PinYinUtils.toPinyinS(favorites.getName()));
-        favoritesService.save(favorites);
+        if (favorites.getId() == null) {// 新增
+            Assert.notNull(favorites.getCategoryId(), "分类不能为空");
+            User user = contextUtils.getCurrentUser();
+            favorites.setUserId(user.getId());
+            // 处理图标
+            String icon = HtmlUtils.getIcon(favorites.getUrl());
+            favorites.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
+            // 拼音
+            favorites.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
+            // 拼音首字母
+            favorites.setPinyinS(PinYinUtils.toPinyinS(favorites.getName()));
+            favoritesService.save(favorites);
+        } else {// 修改
+            Favorites favorites1 = favoritesService.findById(favorites.getId());
+            Assert.notNull(favorites1, "书签不存在");
+            favorites1.setUrl(favorites.getUrl());
+            favorites1.setName(favorites.getName());
+            // 处理图标
+            String icon = HtmlUtils.getIcon(favorites.getUrl());
+            favorites1.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
+            // 拼音
+            favorites1.setPinyin(PinYinUtils.toPinyin(favorites.getName()));
+            // 拼音首字母
+            favorites1.setPinyinS(PinYinUtils.toPinyinS(favorites.getName()));
+            favorites1.setCategoryId(favorites.getCategoryId());
+            favorites1.setSort(favorites.getSort());
+            favorites1.setStar(favorites.getStar());
+            favorites1.setSchemaName(favorites.getSchemaName());
+            favorites1.setShortcut(favorites.getShortcut());
+            favorites1.setIsShare(favorites.getIsShare());
+            favoritesService.save(favorites1);
+        }
         return ApiResponse.success();
     }
 
@@ -447,7 +470,7 @@ public class FavoritesController {
                                 Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
-                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null,null);
+                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null, null);
                             favorites.setPassword(password);
                         }
                         list1.add(favorites);

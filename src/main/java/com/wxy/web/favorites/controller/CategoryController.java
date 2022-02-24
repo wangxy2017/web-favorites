@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/category")
@@ -34,13 +36,22 @@ public class CategoryController {
     @PostMapping
     @ApiOperation(value = "保存分类")
     public ApiResponse save(@RequestBody Category category) {
-        if (!PublicConstants.DEFAULT_CATEGORY_NAME.equals(category.getName())) {
+        if (category.getId() == null) {// 新增
             User user = contextUtils.getCurrentUser();
+            Assert.isNull(categoryService.findByName(category.getName(), user.getId()), "分类已存在");
             category.setUserId(user.getId());
             categoryService.save(category);
-            return ApiResponse.success();
+        } else {// 修改
+            Category category1 = categoryService.findById(category.getId());
+            Assert.notNull(category1, "分类不存在");
+            if(!Objects.equals(category1.getIsSystem(), PublicConstants.SYSTEM_CATEGORY_CODE)){
+                category1.setName(category.getName());
+                category1.setSort(category.getSort());
+            }
+            category1.setBookmark(category.getBookmark());
+            categoryService.save(category1);
         }
-        return ApiResponse.error();
+        return ApiResponse.success();
     }
 
     @GetMapping("/{id}")

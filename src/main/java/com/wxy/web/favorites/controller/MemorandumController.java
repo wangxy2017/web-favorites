@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.model.Memorandum;
 import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.model.User;
@@ -35,29 +36,18 @@ public class MemorandumController {
     @PostMapping
     @ApiOperation(value = "保存")
     public ApiResponse save(@RequestBody Memorandum memorandum) {
-        User user = contextUtils.getCurrentUser();
-        memorandum.setUserId(user.getId());
-        memorandum.setCreateTime(new Date());
-        memorandumService.save(memorandum);
-        return ApiResponse.success();
-    }
-
-    /**
-     * 修改
-     *
-     * @param memorandum
-     * @return
-     */
-    @PostMapping("/update")
-    @ApiOperation(value = "修改")
-    public ApiResponse update(@RequestBody Memorandum memorandum) {
-        Memorandum Memorandum1 = memorandumService.findById(memorandum.getId());
-        if (Memorandum1 != null) {
-            Memorandum1.setContent(memorandum.getContent());
-            memorandumService.save(Memorandum1);
-            return ApiResponse.success();
+        if (memorandum.getId() == null) {// 新建
+            User user = contextUtils.getCurrentUser();
+            memorandum.setUserId(user.getId());
+            memorandum.setCreateTime(new Date());
+            memorandumService.save(memorandum);
+        } else {// 修改
+            Memorandum memorandum1 = memorandumService.findById(memorandum.getId());
+            Assert.notNull(memorandum1, "备忘录不存在");
+            memorandum1.setContent(memorandum.getContent());
+            memorandumService.save(memorandum1);
         }
-        return ApiResponse.error();
+        return ApiResponse.success();
     }
 
     @GetMapping("/{id}")
