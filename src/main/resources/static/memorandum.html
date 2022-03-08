@@ -271,7 +271,7 @@
                                         html += '<div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
                                     }
                                     html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                    html += '       <button class="layui-btn layui-btn-xs" onclick="updateContent(this)">保存</button>';
+                                    html += '       <button class="layui-btn layui-btn-xs saveBtn" onclick="updateContent(this)">保存</button>';
                                     html += '       <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelEditContent(this)">取消</button>';
                                     html += '       <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
                                     html += '   </div>';
@@ -428,16 +428,18 @@
 
         // 编辑
         window.editContent = function(obj) {
+            $(".content-edit").next().find(".saveBtn").click();
             var that = $(obj);
+            that.attr("contenteditable",true).addClass("content-edit").focus();
             var keyword = that.attr("data-keyword");
             if(keyword){
                 that.html(unwrapSearch(that.html(),keyword));
             }
-            that.attr("contenteditable",true).addClass("content-edit").focus();
         };
 
         window.updateContent = function(obj){
             var contentDiv = $(obj).parent().parent().find(".content");
+            contentDiv.removeAttr("contenteditable").removeClass("content-edit");
             var content = contentDiv.html();
             var id = contentDiv.parent().attr("data-id");
             $.ajax({
@@ -450,8 +452,7 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     if (result.code == 0) {
-                        layer.msg("修改成功", {icon: 6});
-                        contentDiv.removeAttr("contenteditable").removeClass("content-edit");
+                        layer.msg("保存成功", {icon: 6});
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }
