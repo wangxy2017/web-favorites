@@ -73,6 +73,18 @@ public class TaskController {
         return ApiResponse.error();
     }
 
+    @GetMapping("/cancel/{id}")
+    @ApiOperation(value = "取消")
+    public ApiResponse cancel(@PathVariable Integer id) {
+        Task task = taskService.findById(id);
+        if (task != null) {
+            task.setLevel(PublicConstants.TASK_LEVEL_5);
+            taskService.save(task);
+            return ApiResponse.success();
+        }
+        return ApiResponse.error();
+    }
+
     @GetMapping("/all/{date}")
     @ApiOperation(value = "日程统计")
     public ApiResponse findAll(@PathVariable String date) throws ParseException {

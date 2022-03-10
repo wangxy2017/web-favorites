@@ -78,7 +78,6 @@ jwt: #jwt令牌配置
   token-expired-seconds: 7200
 cron: #定时任务
   task-notice-job: '0 0,30 8-20 * * ?'
-  task-cancel-job: '0 0 0 * * ?'
   recycle-job: '0 1 0 * * ?'
   data-clean-job: '0 2 0 * * ?'
   backup-job: '0 3 0 * * ?'

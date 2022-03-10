@@ -616,7 +616,11 @@
                                                                 html += '   <img class="alarm-icon" src="images/alarm.svg" data-time="' + t.alarmTime.substring(11) + '">';
                                                             }
                                                             html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
-                                                            html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                                            if(dateCompare(date,today) >= 0){
+                                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                                            }else{
+                                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelTask(this)">取消</button> ';
+                                                            }
                                                             html += '   </div>';
                                                         }
                                                         html += '   </div>';
@@ -875,7 +879,27 @@
                         layer.msg('操作成功', {icon: 6});
                         task_item.find('.task-level').replaceWith('<span class="layui-badge layui-bg-gray task-level">完成</span>');
                         task_item.find('.task-action').remove();
-                        task_item.find('.alarm-icon').remove();
+                    } else {
+                        layer.msg('操作失败', {icon: 5});
+                    }
+                }
+            });
+        };
+
+        // 取消任务
+        window.cancelTask = function(obj){
+            var id = $(obj).parent().attr("data-id");
+            $.ajax({
+                type: "GET",
+                url: "task/cancel/" + id ,
+                dataType: "json",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    if (result.code == 0) {
+                        var task_item = $(obj).parent().parent();
+                        layer.msg('操作成功', {icon: 6});
+                        task_item.find('.task-level').replaceWith('<span class="layui-badge-rim task-level">取消</span>');
+                        task_item.find('.task-action').remove();
                     } else {
                         layer.msg('操作失败', {icon: 5});
                     }
