@@ -29,10 +29,9 @@ public class TokenUtil {
     public String extractUsername(String token) {
         try {
             return extractClaim(token, Claims::getSubject);
-        } catch (Exception e) {
-            log.error("token解析失败");
+        } catch (Exception ignored) {
+            return null;
         }
-        return null;
     }
 
     public Date extractExpiration(String token) {
