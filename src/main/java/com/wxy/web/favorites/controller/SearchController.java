@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.SearchType;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.SearchTypeService;
@@ -12,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author wangxiaoyuan
@@ -34,9 +38,9 @@ public class SearchController {
 
     @GetMapping("/data")
     @ApiOperation(value = "查询默认搜索引擎")
-    public ApiResponse data(@RequestParam Integer pageNum,@RequestParam Integer pageSize) {
+    public ApiResponse data(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = contextUtils.getCurrentUser();
-        PageInfo<SearchType> page = searchTypeService.findPageByUserId(user.getId(),pageNum,pageSize);
+        PageInfo<SearchType> page = searchTypeService.findPageByUserId(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
 
@@ -45,6 +49,14 @@ public class SearchController {
     public ApiResponse save(@RequestBody SearchType searchType) {
         User user = contextUtils.getCurrentUser();
         searchType.setUserId(user.getId());
+        String iconUrl;
+        try {
+            URL url = new URL(searchType.getUrl());
+            iconUrl = url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
+        } catch (Exception e) {
+            iconUrl = PublicConstants.FAVORITES_ICON_DEFAULT;
+        }
+        searchType.setIcon(iconUrl);
         searchTypeService.save(searchType);
         return ApiResponse.success();
     }

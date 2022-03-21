@@ -240,14 +240,6 @@
         <i class="layui-icon layui-icon-tips tips-icon" title="示例：https://www.bing.com/search?q=hello"></i>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">图标</label>
-        <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="icon" required lay-verify="required|url" placeholder="请输入引擎图标" autocomplete="off"
-                   class="layui-input">
-        </div>
-        <i class="layui-icon layui-icon-tips tips-icon" title="请填写网络图片地址"></i>
-    </div>
-    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="addSearchType">立即提交</button>
             <button type="button" class="layui-btn layui-btn-primary" id="cancelAddSearchType">取消</button>
@@ -361,10 +353,6 @@
                     window.location.href = "login.html";
                 });
             });
-
-            window.loadData = function(){
-
-            };
 
             // 删除搜索引擎
 			window.deleteSearchType = function(event){

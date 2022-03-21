@@ -9,7 +9,10 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="layui/css/layui.css">
     <style>
-
+        .layui-blue {
+            color: #1e9fff !important;
+            text-decoration: underline;
+        }
 
         /* 解决没有src属性时出现的边框 */
         img[src=""], img:not([src]){
@@ -653,7 +656,7 @@
                 <button style="vertical-align: bottom;margin-left: 5px;" type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="importLocal">从浏览器导入</button>
                 <i class="layui-icon layui-icon-tips local-tip" title="请将书签从其他浏览器导出，存至本地html文件，再将文件上传至服务器"></i>
             </div>
-            <div style="margin: 20px 0;color: #5e6d82;line-height: 32px;font-size: 12px;">* 请将 "export.xml" 文件上传至服务器</div>
+            <div style="margin: 20px 0;color: #5e6d82;line-height: 32px;font-size: 12px;">请将 "export.xml" 文件上传至服务器</div>
         </div>
         <div class="layui-tab-item">
             <div style="margin-top: 30px;margin-bottom: 10px;">
@@ -1996,9 +1999,15 @@
             });
         });
 
+        window.exportNow = function(){
+            $("#export").click();
+            layer.closeAll();
+        };
+
         // 清除数据
         $("#cleanData").click(function(){
-            layer.confirm('该操作会清除您在平台上的所有数据，且不可恢复，清除数据前应做好备份，谨慎操作！确认清除所有数据吗？', {title:'清除数据'}, function(index){
+            var aHtml = '<a class="layui-blue" href="javascript:exportNow();">立即备份</a>';
+            layer.confirm('该操作会清除您在平台上的所有数据，且不可恢复，清除数据前应做好备份('+ aHtml +')，谨慎操作！确认清除所有数据吗？', {title:'清除数据'}, function(index){
                 layer.close(index);
 
                 layer.prompt({formType: 1, title: "登录密码", placeholder:"请输入登录密码", maxlength: 20}, function(value, index, elem){
