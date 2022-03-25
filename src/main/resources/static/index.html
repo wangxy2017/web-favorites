@@ -516,7 +516,7 @@
             right: -30px;
             font-size: 22px;
             cursor: pointer;
-            color: #6a6a6a;
+            color: #5e6d82;
         }
 
         .search-mike {
@@ -548,7 +548,7 @@
             font-size: 18px;
             color: #5e6d82;
             cursor: pointer;
-            margin-left: 4px;
+            margin-left: 6px;
             vertical-align: -34%;
         }
 
@@ -559,6 +559,14 @@
             width: 100px;
             margin: 0 auto;
             margin-top: 10px;
+        }
+
+        #addCategoryIcon {
+            margin-top: 8px;
+            display: inline-block;
+            font-size: 20px;
+            color: #5e6d82;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -654,7 +662,7 @@
             <div style="margin-top: 30px;">
                 <button type="button" class="layui-btn" id="import">导入收藏夹</button>
                 <button style="vertical-align: bottom;margin-left: 5px;" type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="importLocal">从浏览器导入</button>
-                <i class="layui-icon layui-icon-tips local-tip" title="请将书签从其他浏览器导出，存至本地html文件，再将文件上传至服务器"></i>
+                <i class="layui-icon layui-icon-tips local-tip" lay-title="请将书签从其他浏览器导出，存至本地html文件，再将文件上传至服务器"></i>
             </div>
             <div style="margin: 20px 0;color: #5e6d82;line-height: 32px;font-size: 12px;">请将 "export.xml" 文件上传至服务器</div>
         </div>
@@ -702,6 +710,7 @@
             <select name="categoryId" lay-verify="required" lay-search>
             </select>
         </div>
+        <i id="addCategoryIcon" class="layui-icon layui-icon-add-circle"></i>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -849,7 +858,7 @@
             <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入旧密码"
                    autocomplete="off" class="layui-input">
         </div>
-        <i class="layui-icon layui-icon-tips tips-icon" title="忘记密码可在登录页面找回密码"></i>
+        <i class="layui-icon layui-icon-tips tips-icon" lay-title="忘记密码可在登录页面找回密码"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">新密码</label>
@@ -1999,6 +2008,47 @@
             });
         });
 
+        // 新增分类
+        $("#addCategoryIcon").click(function () {
+            layer.prompt({title: "添加分类", placeholder:"输入分类名称", maxlength: 20}, function (value, index, elem) {
+                // 验证
+                var bool = true;
+                $.ajax({
+                    type: "GET",
+                    url: 'category/check/' + value,
+                    async: false,
+                    dataType: 'json',
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            layer.tips('分类已存在', elem, {tips: 3});
+                            bool = false;
+                        }
+                    }
+                });
+                if(bool){
+                    layer.close(index);
+                    layer.load();
+                    $.ajax({
+                        type: "POST",
+                        url: "category",
+                        data: JSON.stringify({"name": value}),
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            layer.closeAll('loading');
+                            if (result.code == 0) {
+                                loadCategoryList(result.data.id);
+                            } else {
+                                layer.msg(result.msg, {icon: 5});
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
         window.exportNow = function(){
             $("#export").click();
             layer.closeAll();
@@ -2074,7 +2124,7 @@
         });
 
         // 加载分类
-        window.loadCategoryList = function () {
+        window.loadCategoryList = function (id) {
             $.ajax({
                 type: "GET",
                 url: "category/list",
@@ -2086,7 +2136,7 @@
                         var lHtml = '';
                         $.each(result.data, function (i, c) {
                             c.page = parseInt(i / indexPageSize) + 1;
-                            oHtml += '<option value="' + c.id + '" ' + (i == 0 ? 'selected' : '') +'>' + c.name + '</option>';
+                            oHtml += '<option value="' + c.id + '" ' + ((c.id == id||i == 0) ? 'selected' : '') +'>' + c.name + '</option>';
                             lHtml += '<li onclick="position(' + c.id + ')">' + c.name + '</li>';
                         });
                         $("select[name='categoryId']").empty().append(oHtml);
@@ -2871,6 +2921,13 @@
                 }
             });
         };
+
+        $(".layui-icon-tips").hover(function(){
+            var that = $(this);
+            layer.tips(that.attr("lay-title"), that, {tips: 3});
+        },function(){
+            layer.closeAll('tips');
+        });
 
         // 页面加载完成执行
         $(function () {

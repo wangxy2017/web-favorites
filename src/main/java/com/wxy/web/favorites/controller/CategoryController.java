@@ -40,7 +40,8 @@ public class CategoryController {
             User user = contextUtils.getCurrentUser();
             Assert.isNull(categoryService.findByName(category.getName(), user.getId()), "分类已存在");
             category.setUserId(user.getId());
-            categoryService.save(category);
+            Category save = categoryService.save(category);
+            return ApiResponse.success(save);
         } else {// 修改
             Category category1 = categoryService.findById(category.getId());
             Assert.notNull(category1, "分类不存在");
@@ -49,9 +50,9 @@ public class CategoryController {
                 category1.setSort(category.getSort());
             }
             category1.setBookmark(category.getBookmark());
-            categoryService.save(category1);
+            Category save = categoryService.save(category1);
+            return ApiResponse.success(save);
         }
-        return ApiResponse.success();
     }
 
     @GetMapping("/{id}")
