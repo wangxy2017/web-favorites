@@ -267,8 +267,13 @@
                         success: function (result) {
                             if(page == 1){
                                 layer.closeAll('loading');
+                                if (result.code == 0 && result.data.list.length > 0) {
+                                    $("#notFoundDiv").hide();
+                                }else{
+                                    $("#notFoundDiv").show();
+                                }
                             }
-                            if (result.code == 0 && result.data.list.length > 0) {
+                            if (result.code == 0) {
                                 $.each(result.data.list, function(index, item){
                                     var html = '';
                                     html += '<div class="favorites">';
@@ -286,9 +291,6 @@
                                     lis.push(html);
                                 });
                                 next(lis.join(''), page < result.data.pages);
-                                $("#notFoundDiv").hide();
-                            }else{
-                                $("#notFoundDiv").show();
                             }
                         }
                   });
