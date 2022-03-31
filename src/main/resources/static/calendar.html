@@ -173,11 +173,20 @@
 				cursor: pointer;
 			}
 
+			.calendar-header .left,
+			.calendar-header .right {
+				display: inline-block;
+				padding: 4px 6px;
+				vertical-align: middle;
+				font-size: 1.3rem;
+			}
+
 			.date-input {
 				background-color: #009688;
 				border-radius: 4px;
 				height: 30px;
 				width: 200px;
+				margin: 0 10px;
 				transition: all .3s;
 			}
 
@@ -310,10 +319,12 @@
 <div class="center" id="center">
     <div class="main" id="main">
         <div class="calendar-header">
+            <span id="leftBtn" style="transform:rotate(180deg);" class="layui-icon layui-icon-triangle-r left"></span>
             <div class="layui-inline date-input">
                 <input type="text" class="layui-input" id="calendarInput" readonly="readonly">
                 <span class="layui-icon layui-icon-triangle-d"></span>
             </div>
+            <span id="rightBtn" class="layui-icon layui-icon-triangle-r right"></span>
         </div>
         <div id="calendar"></div>
     </div>
@@ -791,6 +802,28 @@
                 return '最多输入500个字符';
             }
           }
+        });
+
+        $("#leftBtn").click(function() {
+            var date = $("#calendarInput").val();
+            var preMonth = getPreMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
+            var split = preMonth.split("-");
+            if(split[0] < 1970){
+                return false;
+            }
+            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
+            drawCalender(preMonth);
+        });
+
+        $("#rightBtn").click(function() {
+            var date = $("#calendarInput").val();
+            var nextMonth = getNextMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
+            var split = nextMonth.split("-");
+            if(split[0]> 2970){
+                return false;
+            }
+            $("#calendarInput").val(split[0] + "年" + split[1] + "月");
+            drawCalender(nextMonth);
         });
 
         form.on('select(alarmTime)', function(data){
