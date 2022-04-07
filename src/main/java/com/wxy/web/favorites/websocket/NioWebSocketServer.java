@@ -33,13 +33,8 @@ public class NioWebSocketServer {
             bootstrap.childHandler(new NioWebSocketChannelInitializer());
             Channel channel = bootstrap.bind(port).sync().channel();
             log.info("webSocket服务器启动成功：{}", channel);
-            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("websocket服务器运行出错：", e);
-        } finally {
-            boss.shutdownGracefully();
-            work.shutdownGracefully();
-            log.info("websocket服务器已关闭");
         }
     }
 }
