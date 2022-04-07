@@ -74,6 +74,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 其他静态资源
                 .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
                         "/calendar.html", "/wangEditor.html", "/file.html", "/recycle.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                        "/favicon.ico", "/search.json", "/notice.json");
+                        "/favicon.ico");
     }
 }

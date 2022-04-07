@@ -4,8 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 /**
  * 系统参数配置
  */
@@ -37,8 +35,6 @@ public class AppConfig {
     private String fileSuffixes;
 
     private Integer fileCompressLevel;
-
-    private List<String> recommends;
 
     private Integer verificationExpiredMinutes;
 

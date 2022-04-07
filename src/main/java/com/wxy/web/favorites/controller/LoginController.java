@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -111,12 +112,11 @@ public class LoginController {
                 categoryService.save(category);
                 // 推荐收藏
                 Integer userId = user.getId();
-                List<Favorites> favorites = recommendsConfig.getRecommends().stream().map(s -> {
-                    String[] split = s.split(PublicConstants.DEFAULT_DELIMITER);
-                    return new Favorites(null, split[0], split[1] + "favicon.ico"
-                            , split[1], category.getId(), userId,
-                            PinYinUtils.toPinyin(split[0]),
-                            PinYinUtils.toPinyinS(split[0]),
+                List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {
+                    return new Favorites(null, dto.getName(), dto.getUrl() + "/favicon.ico"
+                            , dto.getUrl(), category.getId(), userId,
+                            PinYinUtils.toPinyin(dto.getName()),
+                            PinYinUtils.toPinyinS(dto.getName()),
                             null, null, null, null, null, null, null, null, null, null, null);
                 }).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);

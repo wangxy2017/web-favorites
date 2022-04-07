@@ -584,8 +584,8 @@
             <ul class="search-items layui-anim layui-anim-fadein"></ul>
         </div>
         <div id="notice" onclick="showNotice('click')">
-            <cite>系统公告</cite>
-            <span class="layui-badge-dot"></span>
+            <cite>公告</cite>
+            <span class="layui-badge-dot" style="margin-left: 4px;"></span>
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
             <div class="layui-input-inline">
@@ -2885,9 +2885,11 @@
             // 查询公告
             $.ajax({
                 type: "GET",
-                url: "notice.json",
+                url: "user/notice",
                 dataType: "json",
-                success: function (data) {
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                success: function (result) {
+                    var data = result.data;
                     if (data.isShow) {
                         // 显示按钮
                         if(parseInt($(window).width()) >= 550){

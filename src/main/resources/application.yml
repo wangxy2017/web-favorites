@@ -66,13 +66,6 @@ app: #系统参数配置
   file-deep-level: 10 #文件夹深度
   file-compress-level: 7 #文件压缩等级
   file-suffixes: txt,properties,yml,xml,sh,bat,sql,json #可查看文件
-  recommends: #默认推荐
-    - bilibili,https://www.bilibili.com/
-    - 淘宝,https://www.taobao.com/
-    - 知乎,https://www.zhihu.com/
-    - 京东,https://www.jd.com/
-    - 腾讯视频,https://v.qq.com/
-    - 今日头条,https://www.toutiao.com/
 jwt: #jwt令牌配置
   token-secret-key:
   token-expired-seconds: 7200

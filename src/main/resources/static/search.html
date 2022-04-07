@@ -285,11 +285,12 @@
                   if(page == 1){
                     $.ajax({
                         type: "GET",
-                        url: "search.json",
+                        url: "search/system",
                         async: false,
                         dataType: "json",
-                        success: function (data) {
-                           $.each(data, function(i, item){
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                           $.each(result.data, function(i, item){
                                 var html = '';
                                 html += '<li class="search-type-li" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
                                     '</span></li>';

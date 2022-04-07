@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.service;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.*;
 import com.wxy.web.favorites.model.Category;
@@ -107,12 +108,11 @@ public class UserService {
         Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, userId, PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null, null);
         categoryRepository.save(category);
         // 推荐收藏
-        List<Favorites> favorites = appConfig.getRecommends().stream().map(s -> {
-            String[] split = s.split(PublicConstants.DEFAULT_DELIMITER);
-            return new Favorites(null, split[0], split[1] + "favicon.ico"
-                    , split[1], category.getId(), userId,
-                    PinYinUtils.toPinyin(split[0]),
-                    PinYinUtils.toPinyinS(split[0]),
+        List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {
+            return new Favorites(null, dto.getName(), dto.getUrl() + "/favicon.ico"
+                    , dto.getName(), category.getId(), userId,
+                    PinYinUtils.toPinyin(dto.getUrl()),
+                    PinYinUtils.toPinyinS(dto.getUrl()),
                     null, null, null, null, null, null, null, null, null, null, null);
         }).collect(Collectors.toList());
         favoritesRepository.saveAll(favorites);

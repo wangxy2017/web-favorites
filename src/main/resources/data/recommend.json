@@ -1,0 +1,26 @@
+[
+  {
+    "name": "哔哩哔哩",
+    "url": "https://www.bilibili.com"
+  },
+  {
+    "name": "淘宝",
+    "url": "https://www.taobao.com"
+  },
+  {
+    "name": "知乎",
+    "url": "https://www.zhihu.com"
+  },
+  {
+    "name": "京东",
+    "url": "https://www.jd.com"
+  },
+  {
+    "name": "腾讯视频",
+    "url": "https://v.qq.com"
+  },
+  {
+    "name": "今日头条",
+    "url": "https://www.toutiao.com"
+  }
+]

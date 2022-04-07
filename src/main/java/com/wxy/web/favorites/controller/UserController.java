@@ -3,6 +3,7 @@ package com.wxy.web.favorites.controller;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -53,6 +54,12 @@ public class UserController {
         User user = contextUtils.getCurrentUser();
         user.setPassword(null);
         return ApiResponse.success(user);
+    }
+
+    @GetMapping("/notice")
+    @ApiOperation(value = "查询系统公告")
+    public ApiResponse notice() {
+        return ApiResponse.success(DataConstants.SYSTEM_NOTICE);
     }
 
     @PostMapping("/cleanData")

@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
+import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.SearchType;
 import com.wxy.web.favorites.model.User;
@@ -37,11 +38,17 @@ public class SearchController {
     private ContextUtils contextUtils;
 
     @GetMapping("/data")
-    @ApiOperation(value = "查询默认搜索引擎")
+    @ApiOperation(value = "查询搜索引擎")
     public ApiResponse data(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = contextUtils.getCurrentUser();
         PageInfo<SearchType> page = searchTypeService.findPageByUserId(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
+    }
+
+    @GetMapping("/system")
+    @ApiOperation(value = "查询默认搜索引擎")
+    public ApiResponse system() {
+        return ApiResponse.success(DataConstants.SEARCH_LIST);
     }
 
     @PostMapping
