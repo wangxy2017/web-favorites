@@ -26,8 +26,6 @@ public class AppConfig {
 
     private Integer favoritesLimit;
 
-    private String searchTypeJson;
-
     private Integer initCapacity;
 
     private String fileRepository;
