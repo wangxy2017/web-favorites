@@ -19,26 +19,19 @@
         }
 
         .loginBox{
-            max-width: 360px;
+            max-width: 260px;
             width: 80%;
             z-index: 999;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
             padding: 10px;
         }
 
         .loginBox .title{
             text-align: center;
             margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .loginBox .title span{
-            font-size: 18px;
-            font-weight: 200;
         }
 
         .loginDone{
@@ -49,11 +42,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
         }
 
         .loginDone .info{
-            margin-bottom: 30px;
+            margin-bottom: 80px;
         }
 
         .loginDone .info i{
@@ -64,6 +56,7 @@
         .loginDone .info p{
             font-size: 24px;
             font-weight: 200;
+            margin-top: 10px;
         }
 
         .loginDone button{
@@ -85,42 +78,43 @@
 
     </style>
 </head>
-<body>
+<body style="background-color: #f3f3f4;">
 <div id="loginBox" class="loginBox">
-    <div class="title">网络收藏夹 | <span>登录</span></div>
+    <div class="title">
+        <h1>网络收藏夹</h1>
+        <p style="margin-top: 10px;">欢迎登录</p>
+    </div>
     <form class="layui-form" action="">
         <div class="layui-form-item">
-            <label class="layui-form-label">用户名:</label>
             <div class="layui-input-block">
                 <input type="text" name="username" required lay-verify="required" placeholder="请输入用户名"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码:</label>
             <div class="layui-input-block">
                 <input type="password" name="password" required lay-verify="required" placeholder="请输入密码"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <input type="checkbox" name="remember" value="1" title="记住密码" lay-skin="primary">
-            </div>
-        </div>
-        <div class="layui-form-item" style="margin-top: 30px;">
+        <div class="layui-form-item" style="margin-bottom: 10px;">
             <div class="layui-input-block">
                 <button type="button" class="layui-btn layui-btn-fluid" lay-submit lay-filter="login">登录</button>
             </div>
         </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="checkbox" name="remember" value="1" title="两周内自动登录" lay-skin="primary">
+            </div>
+        </div>
     </form>
+    <div><img src="images/dogs.gif" style="width: 100%;"></div>
 </div>
 <div id="loginDone" class="loginDone">
     <div class="info">
         <i class="layui-icon layui-icon-ok-circle"></i>
         <p>登录成功</p>
     </div>
-    <button type="button" class="layui-btn" id="confirm">确认</button>
 </div>
 <div class="loginFooter">
     © 2020 网络收藏夹 || 网络收藏夹版权所有
@@ -194,11 +188,6 @@
                 }
             });
             return false;
-        });
-
-        $("#confirm").click(function(){
-            $("#loginBox").show();
-            $("#loginDone").hide();
         });
     });
 
