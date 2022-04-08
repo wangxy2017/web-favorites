@@ -6,7 +6,6 @@ import com.wxy.web.favorites.dto.NoticeDto;
 import com.wxy.web.favorites.dto.RecommendDto;
 import com.wxy.web.favorites.dto.SearchDto;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -25,8 +24,8 @@ public class DataConstants {
     public static final NoticeDto SYSTEM_NOTICE;
 
     static {
-        RECOMMEND_LIST = JSONUtil.readJSONArray(new File(ResourceUtil.getResource("data/recommend.json").getFile()), StandardCharsets.UTF_8).toList(RecommendDto.class);
-        SEARCH_LIST = JSONUtil.readJSONArray(new File(ResourceUtil.getResource("data/search.json").getFile()), StandardCharsets.UTF_8).toList(SearchDto.class);
-        SYSTEM_NOTICE = JSONUtil.readJSONObject(new File(ResourceUtil.getResource("data/notice.json").getFile()), StandardCharsets.UTF_8).toBean(NoticeDto.class);
+        RECOMMEND_LIST = JSONUtil.toList(JSONUtil.parseArray(ResourceUtil.readStr("data/recommend.json", StandardCharsets.UTF_8)), RecommendDto.class);
+        SEARCH_LIST = JSONUtil.toList(JSONUtil.parseArray(ResourceUtil.readStr("data/search.json", StandardCharsets.UTF_8)), SearchDto.class);
+        SYSTEM_NOTICE = JSONUtil.toBean(JSONUtil.parseObj(ResourceUtil.readStr("data/notice.json", StandardCharsets.UTF_8)), NoticeDto.class);
     }
 }
