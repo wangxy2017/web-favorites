@@ -11,8 +11,8 @@
 2. 将打包好的jar文件：web-favorites.jar上传至服务器
 2. 服务器终端执行命令：nohup java -jar web-favorites.jar > /dev/null 2>&1 &
 ##### docker启动：
-1. docker pull wangxiaoyuan2020/web-favorites:latest
-2. docker run -d -p 9020:9020 -p 8888:8888 wangxiaoyuan2020/web-favorites
+1. docker pull wangxiaoyuan2021/web-favorites:latest
+2. docker run -d -p 9020:9020 -p 8888:8888 wangxiaoyuan2021/web-favorites
 ##### 访问：
 1. `http://ip:9020/ `，也可以在nginx中配置反向代理
 ##### QQ群：
