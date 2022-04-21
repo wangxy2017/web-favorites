@@ -242,6 +242,14 @@
             ,scrollElem: '#center'
             ,bgcolor: '#393D49'
             ,css: {right: 50, bottom: 60}
+            ,mouseenter: function(type,ele){
+                if(type === 'top'){
+                    layer.tips('回到顶部', ele, {tips: 4});
+                }
+            }
+            ,mouseleave: function(ele,type){
+                layer.closeAll('tips');
+            }
         });
 
         // 点击空白关闭

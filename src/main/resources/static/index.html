@@ -439,19 +439,6 @@
             overflow: hidden;
 		}
 
-		/*修改提示框*/
-        #myTitle {
-            z-index: 9999999;
-            position: absolute;
-            color: #ffffff;
-            max-width: 160px;
-            font-size: 14px;
-            padding: 4px;
-            background: rgba(40, 40, 40, 0.8);
-            border: solid 1px #e9f7f6;
-            border-radius:5px;
-        }
-
         #notice {
             display:none;
             z-index: 999;
@@ -1038,7 +1025,7 @@
                                     html += '       <div class="favorites-bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                     html += '       </div>';
-                                    html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                    html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
                                     if(j == favoritesLimit - 1){
@@ -1046,7 +1033,7 @@
                                         html += '   <div class="favorites-bg">';
                                         html += '       <img src="images/more.svg"/>';
                                         html += '   </div>';
-                                        html += '   <p title="显示更多">显示更多</p>';
+                                        html += '   <p lay-title="显示更多">显示更多</p>';
                                         html += '</li>';
                                         return false;
                                     }
@@ -1056,7 +1043,7 @@
                                 html += '   <div class="favorites-bg">';
                                 html += '       <img src="images/add.svg"/>';
                                 html += '   </div>';
-                                html += '   <p title="添加网址">添加网址</p>';
+                                html += '   <p lay-title="添加网址">添加网址</p>';
                                 html += '</li>';
                             }
                             html += '   </ul>';
@@ -1510,7 +1497,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                 html += '       <i onclick="deleteFastNav(this,event)" class="deleteFastNav action-icon layui-icon layui-icon-delete"></i>';
                                 html += '   </li>';
                             });
@@ -1520,7 +1507,7 @@
                         html += '           <div class="favorites-bg">';
                         html += '               <img src="images/add.svg"/>';
                         html += '           </div>';
-                        html += '           <p title="添加网址">添加网址</p>';
+                        html += '           <p lay-title="添加网址">添加网址</p>';
                         html += '       </li>';
                         html += '   </ul>';
                         // 弹出层
@@ -1622,7 +1609,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/category.svg"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + c.name + '">' + c.name + '</p>';
+                            html += '   <p  lay-title="' + c.name + '">' + c.name + '</p>';
                             html += '   <i onclick="editCategory(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -1631,7 +1618,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -1672,7 +1659,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2167,7 +2154,7 @@
                             html += '       <div class="favorites-bg">';
                             html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '       </div>';
-                            html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '   </li>';
                         });
@@ -2199,7 +2186,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2738,7 +2725,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p class="myToolTip" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
                                 html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                 html += '   </li>';
                                 if(j == favoritesLimit - 1){
@@ -2746,7 +2733,7 @@
                                     html += '   <div class="favorites-bg">';
                                     html += '       <img src="images/more.svg"/>';
                                     html += '   </div>';
-                                    html += '   <p title="显示更多">显示更多</p>';
+                                    html += '   <p lay-title="显示更多">显示更多</p>';
                                     html += '</li>';
                                     return false;
                                 }
@@ -2756,7 +2743,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/add.svg"/>';
                             html += '   </div>';
-                            html += '   <p title="添加网址">添加网址</p>';
+                            html += '   <p lay-title="添加网址">添加网址</p>';
                             html += '</li>';
                         }
                         html += '   </ul>';
@@ -2850,33 +2837,6 @@
             indexMap.set('#importOrExport',index);
         });
 
-        window.initTitle = function(){
-            var x = 10;
-            var y = 20;
-            var newTitle = '';
-            $(document).on('mouseover','p.myToolTip',function (e) {
-                newTitle = this.title;
-                this.title = '';
-                $('body').append('<div id="myTitle" >' + newTitle + '</div>');
-                $('#myTitle').css({
-                    'left': (e.pageX + x + 'px'),
-                    'top': (e.pageY + y + 'px'),
-                    'z-index': 2147483647
-                }).show();
-            });
-            $(document).on('mouseout','p.myToolTip',function () {
-                this.title = newTitle;
-                $('#myTitle').remove();
-            });
-            $(document).on('mousemove','p.myToolTip',function (e) {
-                $('#myTitle').css({
-                    'left': (e.pageX + x + 10 + 'px'),
-                    'top': (e.pageY + y - 20 + 'px'),
-                    'z-index': 2147483647
-                }).show();
-            });
-        };
-
         window.escapeHtml = function(html){
             return html.replace(/</g, '&lt').replace(/>/g, '&gt');
         };
@@ -2924,10 +2884,11 @@
             });
         };
 
-        $(".layui-icon-tips").hover(function(){
-            var that = $(this);
-            layer.tips(that.attr("lay-title"), that, {tips: 3});
-        },function(){
+        // 初始化title
+        $(document).on('mouseenter','[lay-title]',function(e){
+            var that = $(e.target);
+            layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
+        }).on('mouseleave','[lay-title]',function(e){
             layer.closeAll('tips');
         });
 
@@ -2943,8 +2904,6 @@
             initClipboard();
             // 加载用户数据
             loadUserData();
-            // 初始化title
-            initTitle();
             // 显示公告
             showNotice('ready');
         });

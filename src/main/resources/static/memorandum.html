@@ -247,6 +247,18 @@
                     layer.msg("该功能暂未开放");
                 }
             }
+            ,mouseenter: function(type,ele){
+                if(type === 'top'){
+                    layer.tips('回到顶部', ele, {tips: 4});
+                }else if(type === 'bar1'){
+                    layer.tips('添加', ele, {tips: 4});
+                }else if(type === 'bar2'){
+                    layer.tips('录音', ele, {tips: 4});
+                }
+            }
+            ,mouseleave: function(ele,type){
+                layer.closeAll('tips');
+            }
         });
 
         // 加载数据

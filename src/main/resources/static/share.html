@@ -141,19 +141,6 @@
                 margin: 20px 0;
             }
             
-            /*修改提示框*/
-            #myTitle {
-                z-index: 9999999;
-                position: absolute;
-                color: #ffffff;
-                max-width: 160px;
-                font-size: 14px;
-                padding: 4px;
-                background: rgba(40, 40, 40, 0.8);
-                border: solid 1px #e9f7f6;
-                border-radius:5px;
-            }
-
             em {
                 font-style: normal;
             }
@@ -281,10 +268,10 @@
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
                                     html += '       </div>';
-                                    html += '       <div class="title myToolTip" title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
+                                    html += '       <div class="title" lay-title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
-                                    html += '       <div class="user" title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
+                                    html += '       <div class="user" lay-title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
                                     html += '       <div class="support" data-id="' + item.id + '" data-support="' + (item.support == null? 0: item.support) + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support == null ?0 : item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';
@@ -306,6 +293,14 @@
             ,scrollElem: '#center'
             ,bgcolor: '#393D49'
             ,css: {right: 50, bottom: 60}
+            ,mouseenter: function(type,ele){
+                if(type === 'top'){
+                    layer.tips('回到顶部', ele, {tips: 4});
+                }
+            }
+            ,mouseleave: function(ele,type){
+                layer.closeAll('tips');
+            }
         });
 
         // 点击空白关闭
@@ -337,31 +332,6 @@
                 return false;
             }
         });
-
-        window.initTitle = function(){
-            var x = 10;
-            var y = 20;
-            var newTitle = '';
-            $(document).on('mouseover','div.myToolTip',function (e) {
-                newTitle = this.title;
-                this.title = '';
-                $('body').append('<div id="myTitle" >' + newTitle + '</div>');
-                $('#myTitle').css({
-                    'left': (e.pageX + x + 'px'),
-                    'top': (e.pageY + y + 'px')
-                }).show();
-            });
-            $(document).on('mouseout','div.myToolTip',function () {
-                this.title = newTitle;
-                $('#myTitle').remove();
-            });
-            $(document).on('mousemove','div.myToolTip',function (e) {
-                $('#myTitle').css({
-                    'left': (e.pageX + x + 10 + 'px'),
-                    'top': (e.pageY + y - 20 + 'px')
-                }).show();
-            });
-        };
 
         window.support = function(obj){
             layer.confirm('确认收藏书签吗？', function(index){
@@ -429,6 +399,14 @@
             return newValue.join('');
         };
 
+        // 初始化title
+        $(document).on('mouseenter','[lay-title]',function(e){
+            var that = $(e.target);
+            layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
+        }).on('mouseleave','[lay-title]',function(e){
+            layer.closeAll('tips');
+        });
+
         // 登出
         $("#logout").click(function () {
             layer.confirm('确认退出系统吗？', function(index){
@@ -463,10 +441,6 @@
             loadList();
         });
 
-        $(function(){
-            // 初始化title
-            initTitle();
-        });
     });
 </script>
 </body>
