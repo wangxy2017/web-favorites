@@ -524,7 +524,7 @@
                     html = '<span class="layui-badge layui-bg-orange task-level">优先</span>';
                     break;
                 case 2:
-                    html = '<span class="layui-badge layui-bg-cyan task-level">重要</span>';
+                    html = '<span class="layui-badge layui-bg-green task-level">重要</span>';
                     break;
                 case 3:
                     html = '<span class="layui-badge layui-bg-blue task-level">待办</span>';
@@ -561,7 +561,7 @@
                                     html += '<span class="layui-badge layui-bg-blue">' + item.blueTasks + '</span>';
                                 }
                                 if(item.greenTasks && item.greenTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-cyan">' + item.greenTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-green">' + item.greenTasks + '</span>';
                                 }
                                 if(item.orangeTasks && item.orangeTasks > 0){
                                     html += '<span class="layui-badge layui-bg-orange">' + item.orangeTasks + '</span>';
