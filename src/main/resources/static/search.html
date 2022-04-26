@@ -237,7 +237,7 @@
             <input type="text" name="url" required lay-verify="required|url" placeholder="请输入引擎地址" autocomplete="off"
                    class="layui-input">
         </div>
-        <i class="layui-icon layui-icon-tips tips-icon" lay-title="示例：https://www.bing.com/search?q=hello"></i>
+        <i class="layui-icon layui-icon-tips tips-icon" lay-title="示例：https://www.bing.com/search?q="></i>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -408,7 +408,6 @@
 			//监听提交
             form.on('submit(addSearchType)', function(data){
                 layer.load();
-                data.field.url = data.field.url.replace("=hello","");
                 $.ajax({
                     type: "POST",
                     url: "search",
