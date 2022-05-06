@@ -189,7 +189,7 @@ public class FileController {
     public ApiResponse upload(@RequestParam("file") MultipartFile[] files, @RequestParam(required = false) Integer pid) throws IOException {
         User user = contextUtils.getCurrentUser();
         if (Optional.ofNullable(user.getCapacity()).orElse(0L) > 0) {
-            long restSize = user.getCapacity() - Optional.ofNullable(user.getUsedSize()).orElse(0L);
+            long restSize = Optional.ofNullable(user.getCapacity()).orElse(0L) - Optional.ofNullable(user.getUsedSize()).orElse(0L);
             long totalSize = 0;
             for (MultipartFile file : files) {
                 totalSize += file.getSize();
@@ -201,7 +201,8 @@ public class FileController {
                     UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), getNoRepeatFilename(pid, filename), path, null, null, file.getSize(), null);
                     userFileService.save(userFile);
                     long newSize = Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize();
-                    user.setUsedSize(newSize > user.getCapacity() ? user.getCapacity() : newSize);// 容量误差修正
+                    long capacity = Optional.ofNullable(user.getCapacity()).orElse(0L);
+                    user.setUsedSize(Math.min(newSize, capacity));// 容量误差修正
                     userService.save(user);
                 }
                 return ApiResponse.success();
@@ -213,7 +214,11 @@ public class FileController {
     @GetMapping("/back")
     @ApiOperation(value = "返回上一级")
     public ApiResponse goBack(@RequestParam(required = false) Integer pid) {
-        return ApiResponse.success(Optional.ofNullable(userFileService.findById(pid)).map(UserFile::getPid).orElse(null));
+        if (pid == null) {
+            return ApiResponse.success();
+        } else {
+            return ApiResponse.success(Optional.ofNullable(userFileService.findById(pid)).map(UserFile::getPid).orElse(null));
+        }
     }
 
     @PostMapping("/delete")

@@ -327,6 +327,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         $("#sid").val(result.data.key);
+                        $("#code").val("");
                         $("#code").next().remove();
                         $("#code").after('<img class="verifyCode" src="' + result.data.image + '" alt="验证码" onclick="loadVerifyCode()">');
                         clearInterval(verifyCodeTimer);

@@ -27,14 +27,12 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ApiResponse IllegalArgumentException(IllegalArgumentException e) {
         ErrorId errorId = ErrorId.get();
-        log.error("参数错误：{}", errorId, e);
         return ApiResponse.error(e.getMessage(), errorId);
     }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ApiResponse HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         ErrorId errorId = ErrorId.get();
-        log.error("不支持当前请求方法：{}", errorId, e);
         return ApiResponse.error("不支持当前请求方法", errorId);
     }
 
@@ -46,12 +44,10 @@ public class GlobalExceptionAdvice {
             if (!errors.isEmpty()) {
                 FieldError fieldError = (FieldError) errors.get(0);
                 ErrorId errorId = ErrorId.get();
-                log.error("参数验证失败：{}", errorId, e);
                 return ApiResponse.error(fieldError.getDefaultMessage(), errorId);
             }
         }
         ErrorId errorId = ErrorId.get();
-        log.error("参数验证失败：{}", errorId, e);
         return ApiResponse.error("参数验证失败", errorId);
     }
 }

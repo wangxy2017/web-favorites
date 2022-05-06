@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @Author wangxiaoyuan
@@ -144,7 +141,7 @@ public class UserFileService {
             }
             // 更新容量
             User user = userRepository.getOne(userId);
-            long size = user.getUsedSize() - totalSize;
+            long size = Optional.ofNullable(user.getUsedSize()).orElse(0L) - totalSize;
             user.setUsedSize(size < 0 ? 0 : size);// 容量计算误差修正
             userRepository.save(user);
             // 数据删除
