@@ -74,6 +74,9 @@ public class FavoritesController {
     @Autowired
     private MemorandumService memorandumService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/save")
     @ApiOperation(value = "保存书签")
     public ApiResponse save(@RequestBody Favorites favorites) {
@@ -283,6 +286,9 @@ public class FavoritesController {
     @GetMapping("/visit/{id}")
     @ApiOperation(value = "增加访问次数")
     public ApiResponse visit(@PathVariable Integer id) {
+        User user = contextUtils.getCurrentUser();
+        user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
+        userService.save(user);
         Favorites favorites = favoritesService.findById(id);
         if (favorites != null) {
             favorites.setVisitTime(new Date());

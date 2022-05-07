@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|我的报告</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style>
+        .report {
+            padding: 15px;
+        }
+
+        .report .title {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4b4b4b
+        }
+
+        .report .content {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .content .content-item {
+            width: 25%;
+            border-right: 1px solid #e6e6e6;
+            margin-right: 20px;
+        }
+
+        .content .content-item:last-child {
+            border-right: none;
+        }
+        
+        .content-item .content-label {
+            font-size: 12px;
+            height: 30px;
+        }
+        
+        .content-item .content-data {
+            font-size: 24px;
+            font-weight: 600;
+            word-wrap:break-word;
+            color: #4b4b4b;
+        }
+    </style>
+</head>
+<body>
+<div class="report">
+    <div class="title">交互统计</div>
+    <div class="content">
+        <div class="content-item">
+            <div class="content-label">访问次数</div>
+            <div class="content-data" id="clickCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">搜索次数</div>
+            <div class="content-data" id="searchCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">注册天数</div>
+            <div class="content-data" id="registerDay">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">在线时长</div>
+            <div class="content-data" id="onlineHour">0</div>
+        </div>
+    </div>
+    <hr style="margin: 30px 0;">
+    <div class="title">内容统计</div>
+    <div class="content">
+        <div class="content-item">
+            <div class="content-label">分类</div>
+            <div class="content-data" id="categoryCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">收藏</div>
+            <div class="content-data" id="favoriteCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">瞬间</div>
+            <div class="content-data" id="momentCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">日程</div>
+            <div class="content-data" id="taskCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">导航</div>
+            <div class="content-data" id="navigationCount">0</div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="content-item">
+            <div class="content-label">备忘录</div>
+            <div class="content-data" id="memorandumCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">搜索</div>
+            <div class="content-data" id="searchTypeCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">文件</div>
+            <div class="content-data" id="fileCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">分享</div>
+            <div class="content-data" id="shareCount">0</div>
+        </div>
+        <div class="content-item">
+            <div class="content-label">回收站</div>
+            <div class="content-data" id="recycleCount">0</div>
+        </div>
+    </div>
+</div>
+<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['element'], function() {
+       var element = layui.element;
+
+       $.ajax({
+            type: "GET",
+            url: "user/data",
+            dataType: "json",
+            headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+            success: function (result) {
+                if (result.code == 0) {
+                    var data = result.data;
+                    $("#clickCount").text(formatNumber(data.clickCount));
+                    $("#searchCount").text(formatNumber(data.searchCount));
+                    $("#registerDay").text(formatNumber(data.registerDay));
+                    $("#onlineHour").text(formatNumber(data.onlineHour));
+                    $("#categoryCount").text(formatNumber(data.categoryCount));
+                    $("#favoriteCount").text(formatNumber(data.favoriteCount));
+                    $("#momentCount").text(formatNumber(data.momentCount));
+                    $("#taskCount").text(formatNumber(data.taskCount));
+                    $("#navigationCount").text(formatNumber(data.navigationCount));
+                    $("#memorandumCount").text(formatNumber(data.memorandumCount));
+                    $("#searchTypeCount").text(formatNumber(data.searchTypeCount));
+                    $("#fileCount").text(formatNumber(data.fileCount));
+                    $("#shareCount").text(formatNumber(data.shareCount));
+                    $("#recycleCount").text(formatNumber(data.recycleCount));
+                }
+            }
+        });
+    });
+
+    window.formatNumber = function(num) {
+        if(isNaN(num)){
+            return 0;
+        }
+        return Number(num).toLocaleString();
+    };
+
+</script>
+</body>
+</html>

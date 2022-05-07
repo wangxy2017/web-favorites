@@ -591,6 +591,7 @@
                     <dd><a href="javascript:;" id="changeEmail">修改邮箱</a></dd>
                     <dd><a href="javascript:;" id="recycle">管理收藏</a></dd>
                     <dd><a href="javascript:;" id="importOrExportBtn">导入与备份</a></dd>
+                    <dd><a href="javascript:;" id="report">我的报告</a></dd>
                     <dd><a href="javascript:;" id="logout">安全退出</a></dd>
                 </dl>
             </li>
@@ -662,12 +663,12 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">备份数据：</label>
                     <div class="layui-input-block backupList" style="text-align: left;">
-                        <input type="checkbox" id="favorites" name="favorites" title="收藏(0)" lay-skin="primary" checked>
-                        <input type="checkbox" id="moment" name="moment" title="瞬间(0)" lay-skin="primary" checked>
-                        <input type="checkbox" id="task" name="task" title="日程(0)" lay-skin="primary" checked>
-                        <input type="checkbox" id="search" name="search" title="搜索(0)" lay-skin="primary" checked>
-                        <input type="checkbox" id="navigation" name="navigation" title="导航(0)" lay-skin="primary" checked>
-                        <input type="checkbox" id="memorandum" name="memorandum" title="备忘录(0)" lay-skin="primary" checked>
+                        <input type="checkbox" id="favorites" name="favorites" title="收藏" lay-skin="primary" checked>
+                        <input type="checkbox" id="moment" name="moment" title="瞬间" lay-skin="primary" checked>
+                        <input type="checkbox" id="task" name="task" title="日程" lay-skin="primary" checked>
+                        <input type="checkbox" id="search" name="search" title="搜索" lay-skin="primary" checked>
+                        <input type="checkbox" id="navigation" name="navigation" title="导航" lay-skin="primary" checked>
+                        <input type="checkbox" id="memorandum" name="memorandum" title="备忘录" lay-skin="primary" checked>
                     </div>
                 </div>
             </div>
@@ -2776,27 +2777,6 @@
             });
         };
 
-        window.loadUserData = function(){
-            $.ajax({
-                type: "GET",
-                url: "user/data",
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    if (result.code == 0) {
-                        var user = result.data;
-                        $("#favorites").attr("title","收藏("+ user.favorites +")");
-                        $("#moment").attr("title","瞬间("+ user.moments +")");
-                        $("#task").attr("title","日程("+ user.tasks +")");
-                        $("#search").attr("title","搜索("+ user.searchTypes +")");
-                        $("#navigation").attr("title","导航("+ user.navigations +")");
-                        $("#memorandum").attr("title","备忘录("+ user.memorandums +")");
-                        form.render('checkbox','userData');
-                    }
-                }
-            });
-        };
-
         window.initClipboard = function(){
             var clipboard = new ClipboardJS('#accountCopy');
             clipboard.on('success', function(e) {layer.msg("复制成功");});
@@ -2835,6 +2815,20 @@
                 content: 'recycle.html'
             });
             indexMap.set('#importOrExport',index);
+        });
+
+        // 报告
+        $("#report").click(function() {
+            var width = parseInt($(window).width()) * 0.9;
+            width = (width >= 800? 800 : width) + 'px';
+            var index = layer.open({
+                type: 2,
+                area: [width,'530px'],
+                title: false,
+                closeBtn: 0,
+                content: 'report.html'
+            });
+            indexMap.set('#report',index);
         });
 
         window.escapeHtml = function(html){
@@ -2892,6 +2886,16 @@
             layer.closeAll('tips');
         });
 
+        // 定时器
+        window.onlineCount = function(){
+            $.ajax({
+                type: "GET",
+                url: "user/visit",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            });
+        };
+        setInterval(onlineCount(),3600000);
+
         // 页面加载完成执行
         $(function () {
             // 加载用户信息
@@ -2902,8 +2906,6 @@
             loadCategoryList();
             // 初始化剪贴板插件
             initClipboard();
-            // 加载用户数据
-            loadUserData();
             // 显示公告
             showNotice('ready');
         });

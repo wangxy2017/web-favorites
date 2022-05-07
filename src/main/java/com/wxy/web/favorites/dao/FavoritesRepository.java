@@ -34,7 +34,7 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
 
     void deleteByDeleteFlagAndDeleteTimeBefore(Integer deleteFlag, Date time);
 
-    long countByUserId(Integer userId);
+    Long countByUserId(Integer userId);
 
     Page<Favorites> findByUserIdAndIsShare(Integer userId, Integer shareCode, Pageable pageable);
 
@@ -44,4 +44,10 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer>, 
     Favorites findByUserIdAndUrl(Integer userId, String url);
 
     void deleteAllByUserId(Integer userId);
+
+    Long countByUserIdAndDeleteFlagIsNull(Integer userId);
+
+    Long countByUserIdAndDeleteFlag(Integer userId, Integer deleteCode);
+
+    Long countByUserIdAndIsShare(Integer userId, Integer shareCode);
 }

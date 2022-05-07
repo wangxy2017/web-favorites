@@ -1,5 +1,7 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -133,5 +136,19 @@ public class UserController {
         User user = contextUtils.getCurrentUser();
         Map<String, Object> userData = userService.findUserData(user.getId());
         return ApiResponse.success(userData);
+    }
+
+    @GetMapping("/visit")
+    @ApiOperation(value = "增加在线时长")
+    public ApiResponse visit() {
+        User user = contextUtils.getCurrentUser();
+        Date now = new Date();
+        long between = DateUtil.between(Optional.ofNullable(user.getLastOnlineTime()).orElse(now), now, DateUnit.HOUR);
+        if (between > 0) {
+            user.setOnlineHour(Optional.ofNullable(user.getOnlineHour()).orElse(0) + 1);
+            user.setLastOnlineTime(now);
+            userService.save(user);
+        }
+        return ApiResponse.success();
     }
 }

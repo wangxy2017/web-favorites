@@ -48,4 +48,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>, Jp
     Category findDefaultCategory(Integer userId);
 
     void deleteAllByUserId(Integer userId);
+
+    Long countByUserId(Integer userId);
 }

@@ -3,20 +3,21 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
-import com.wxy.web.favorites.model.SearchType;
-import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.service.SearchTypeService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.model.SearchType;
+import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.service.SearchTypeService;
+import com.wxy.web.favorites.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * @author wangxiaoyuan
@@ -33,6 +34,9 @@ public class SearchController {
 
     @Autowired
     private SearchTypeService searchTypeService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ContextUtils contextUtils;
@@ -80,5 +84,14 @@ public class SearchController {
     public ApiResponse query(@PathVariable Integer id) {
         SearchType searchType = searchTypeService.findById(id);
         return ApiResponse.success(searchType);
+    }
+
+    @GetMapping("/visit")
+    @ApiOperation(value = "增加搜索次数")
+    public ApiResponse visit() {
+        User user = contextUtils.getCurrentUser();
+        user.setSearchCount(Optional.ofNullable(user.getSearchCount()).orElse(0) + 1);
+        userService.save(user);
+        return ApiResponse.success();
     }
 }

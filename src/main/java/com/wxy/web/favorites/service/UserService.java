@@ -1,5 +1,7 @@
 package com.wxy.web.favorites.service;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -12,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +54,9 @@ public class UserService {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private UserFileRepository userFileRepository;
+
+    @Autowired
     private AppConfig appConfig;
 
     public User findByUsername(String username) {
@@ -81,13 +84,22 @@ public class UserService {
     }
 
     public Map<String, Object> findUserData(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         Map<String, Object> data = new HashMap<>();
-        data.put("favorites", favoritesRepository.countByUserId(userId));
-        data.put("moments", momentRepository.countByUserId(userId));
-        data.put("tasks", taskRepository.countByUserId(userId));
-        data.put("searchTypes", searchTypeRepository.countByUserId(userId));
-        data.put("navigations", quickNavigationRepository.countByUserId(userId));
-        data.put("memorandums", memorandumRepository.countByUserId(userId));
+        data.put("clickCount", Optional.ofNullable(user.getClickCount()).orElse(0));
+        data.put("searchCount", Optional.ofNullable(user.getSearchCount()).orElse(0));
+        data.put("registerDay", Math.max(1, DateUtil.between(Optional.ofNullable(user.getRegisterTime()).orElse(new Date()), new Date(), DateUnit.DAY)));
+        data.put("onlineHour", Math.max(1, Optional.ofNullable(user.getOnlineHour()).orElse(0)));
+        data.put("categoryCount", categoryRepository.countByUserId(userId));
+        data.put("favoriteCount", favoritesRepository.countByUserIdAndDeleteFlagIsNull(userId));
+        data.put("momentCount", momentRepository.countByUserId(userId));
+        data.put("taskCount", taskRepository.countByUserId(userId));
+        data.put("navigationCount", quickNavigationRepository.countByUserId(userId));
+        data.put("memorandumCount", memorandumRepository.countByUserId(userId));
+        data.put("searchTypeCount", searchTypeRepository.countByUserId(userId));
+        data.put("fileCount", userFileRepository.countByUserIdAndIsDirIsNull(userId));
+        data.put("shareCount", favoritesRepository.countByUserIdAndIsShare(userId, PublicConstants.SHARE_CODE));
+        data.put("recycleCount", favoritesRepository.countByUserIdAndDeleteFlag(userId, PublicConstants.DELETE_CODE));
         return data;
     }
 
@@ -110,7 +122,7 @@ public class UserService {
         // 推荐收藏
         List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {
             return new Favorites(null, dto.getName(), dto.getUrl() + "/favicon.ico"
-                    , dto.getName(), category.getId(), userId,
+                    , dto.getUrl(), category.getId(), userId,
                     PinYinUtils.toPinyin(dto.getUrl()),
                     PinYinUtils.toPinyinS(dto.getUrl()),
                     null, null, null, null, null, null, null, null, null, null, null);

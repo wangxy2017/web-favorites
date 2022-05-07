@@ -1,16 +1,18 @@
 package com.wxy.web.favorites.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "t_user")
-@org.hibernate.annotations.Table(appliesTo = "t_user",comment="用户表")
+@org.hibernate.annotations.Table(appliesTo = "t_user", comment = "用户表")
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
@@ -47,4 +49,21 @@ public class User {
 
     @Transient
     private String sid;
+
+    @Column(name = "click_count", columnDefinition = "int(10) comment '点击次数'")
+    private Integer clickCount;
+
+    @Column(name = "search_count", columnDefinition = "int(10) comment '搜索次数'")
+    private Integer searchCount;
+
+    @Column(name = "online_hour", columnDefinition = "int(10) comment '在线时长'")
+    private Integer onlineHour;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "register_time", columnDefinition = "datetime comment '注册时间'")
+    private Date registerTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "last_online_time", columnDefinition = "datetime comment '上线时间'")
+    private Date lastOnlineTime;
 }
