@@ -106,6 +106,7 @@ public class LoginController {
                 user.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(tempPwd.getBytes(StandardCharsets.UTF_8))));
                 user.setEmail(email);
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
+                user.setRegisterTime(new Date());
                 user = userService.save(user);
                 // 创建默认分类
                 Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null, null);

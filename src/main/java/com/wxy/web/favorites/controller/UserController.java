@@ -146,7 +146,11 @@ public class UserController {
     public ApiResponse visit() {
         User user = contextUtils.getCurrentUser();
         Date now = new Date();
-        long between = DateUtil.between(Optional.ofNullable(user.getLastOnlineTime()).orElse(now), now, DateUnit.HOUR);
+        if (user.getLastOnlineTime() == null) {
+            user.setLastOnlineTime(now);
+            userService.save(user);
+        }
+        long between = DateUtil.between(user.getLastOnlineTime(), now, DateUnit.HOUR);
         if (between > 0) {
             user.setOnlineHour(Optional.ofNullable(user.getOnlineHour()).orElse(0) + 1);
             user.setLastOnlineTime(now);

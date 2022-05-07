@@ -80,6 +80,7 @@ public class RegisterController {
             if (StrUtil.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
+                user.setRegisterTime(new Date());
                 User user1 = userService.save(user);
                 // 初始化用户数据
                 userService.initData(user1.getId());

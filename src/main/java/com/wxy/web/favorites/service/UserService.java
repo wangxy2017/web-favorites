@@ -86,10 +86,14 @@ public class UserService {
 
     public Map<String, Object> findUserData(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        if (user.getRegisterTime() == null) {
+            user.setRegisterTime(new Date());
+            userRepository.save(user);
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("clickCount", Optional.ofNullable(user.getClickCount()).orElse(0));
         data.put("searchCount", Optional.ofNullable(user.getSearchCount()).orElse(0));
-        data.put("registerDay", Math.max(1, DateUtil.between(Optional.ofNullable(user.getRegisterTime()).orElse(new Date()), new Date(), DateUnit.DAY)));
+        data.put("registerDay", Math.max(1, DateUtil.between(user.getRegisterTime(), new Date(), DateUnit.DAY)));
         data.put("onlineHour", Math.max(1, Optional.ofNullable(user.getOnlineHour()).orElse(0)));
         data.put("categoryCount", categoryRepository.countByUserId(userId));
         data.put("favoriteCount", favoritesRepository.countByUserIdAndDeleteFlagIsNull(userId));
