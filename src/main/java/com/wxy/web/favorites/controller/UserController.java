@@ -146,7 +146,11 @@ public class UserController {
     public ApiResponse visit() {
         User user = contextUtils.getCurrentUser();
         Date now = new Date();
-        if (user.getLastOnlineTime() == null) {
+        if (user.getRegisterTime() == null) {
+            user.setRegisterTime(now);
+            userService.save(user);
+        }
+        if (user.getOnlineHour() == null) {
             user.setLastOnlineTime(now);
             userService.save(user);
         }

@@ -78,9 +78,11 @@ public class RegisterController {
             Verification verification = verificationService.findCode(user.getEmail(), PublicConstants.VERIFICATION_REGISTER);
             String code = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (StrUtil.isNotBlank(user.getCode()) && user.getCode().equals(code)) {
+                Date now = new Date();
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user.setCapacity(appConfig.getInitCapacity() * 1024 * 1024L);
-                user.setRegisterTime(new Date());
+                user.setRegisterTime(now);
+                user.setLastOnlineTime(now);
                 User user1 = userService.save(user);
                 // 初始化用户数据
                 userService.initData(user1.getId());
