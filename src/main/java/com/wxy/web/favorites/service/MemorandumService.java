@@ -3,6 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.dao.MemorandumRepository;
 import com.wxy.web.favorites.model.Memorandum;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,9 @@ public class MemorandumService {
     private MemorandumRepository memorandumRepository;
 
     public Memorandum save(Memorandum memorandum) {
+        if (memorandum.getId() != null) {
+            memorandumRepository.findById(memorandum.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, memorandum));
+        }
         return memorandumRepository.save(memorandum);
     }
 
@@ -53,6 +57,11 @@ public class MemorandumService {
     }
 
     public void saveAll(List<Memorandum> list) {
+        list.forEach(memorandum -> {
+            if (memorandum.getId() != null) {
+                memorandumRepository.findById(memorandum.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, memorandum));
+            }
+        });
         memorandumRepository.saveAll(list);
     }
 

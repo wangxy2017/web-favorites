@@ -133,11 +133,7 @@ public class FileController {
     @GetMapping("/share/cancel/{id}")
     @ApiOperation(value = "取消分享")
     public ApiResponse shareCancel(HttpServletResponse response, @PathVariable Integer id) {
-        UserFile userFile = userFileService.findById(id);
-        if (userFile != null) {
-            userFile.setShareId(null);
-            userFileService.save(userFile);
-        }
+        userService.shareCancel(id);
         return ApiResponse.success();
     }
 

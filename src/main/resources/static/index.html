@@ -1109,7 +1109,6 @@
         var uploadInst = upload.render({
             elem: '#import' //绑定元素
             , accept: 'file'
-            , acceptMime: 'file/xml'
             , exts: 'xml'
             , url: 'favorites/import' //上传接口
             , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
@@ -1135,7 +1134,6 @@
         var uploadInst = upload.render({
             elem: '#importLocal' //绑定元素
             , accept: 'file'
-            , acceptMime: 'file/html'
             , exts: 'html'
             , url: 'favorites/importHtml' //上传接口
             , headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}

@@ -5,6 +5,7 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,9 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     public Category save(Category category) {
+        if (category.getId() != null) {
+            categoryRepository.findById(category.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, category));
+        }
         return categoryRepository.save(category);
     }
 

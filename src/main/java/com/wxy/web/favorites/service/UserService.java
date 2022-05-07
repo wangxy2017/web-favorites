@@ -9,6 +9,7 @@ import com.wxy.web.favorites.dao.*;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.model.UserFile;
 import com.wxy.web.favorites.util.PinYinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -128,5 +129,13 @@ public class UserService {
                     null, null, null, null, null, null, null, null, null, null, null);
         }).collect(Collectors.toList());
         favoritesRepository.saveAll(favorites);
+    }
+
+    public void shareCancel(Integer id) {
+        UserFile userFile = userFileRepository.findById(id).orElse(null);
+        if (userFile != null) {
+            userFile.setShareId(null);
+            userFileRepository.save(userFile);
+        }
     }
 }

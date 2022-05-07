@@ -3,6 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.dao.MomentRepository;
 import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,10 +29,18 @@ public class MomentService {
     private MomentRepository momentRepository;
 
     public void saveAll(List<Moment> momentList) {
+        momentList.forEach(moment -> {
+            if (moment.getId() != null) {
+                momentRepository.findById(moment.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, moment));
+            }
+        });
         momentRepository.saveAll(momentList);
     }
 
     public Moment save(Moment moment) {
+        if (moment.getId() != null) {
+            momentRepository.findById(moment.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, moment));
+        }
         return momentRepository.save(moment);
     }
 

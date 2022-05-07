@@ -2,6 +2,7 @@ package com.wxy.web.favorites.service;
 
 import com.wxy.web.favorites.dao.QuickNavigationRepository;
 import com.wxy.web.favorites.model.QuickNavigation;
+import com.wxy.web.favorites.util.JpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,9 @@ public class QuickNavigationService {
     private QuickNavigationRepository quickNavigationRepository;
 
     public QuickNavigation save(QuickNavigation quickNavigation) {
+        if (quickNavigation.getId() != null) {
+            quickNavigationRepository.findById(quickNavigation.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, quickNavigation));
+        }
         return quickNavigationRepository.save(quickNavigation);
     }
 

@@ -421,7 +421,8 @@ public class FavoritesController {
                     }
                 });
             }
-            for (int i = 0; i < appConfig.getNavigationLimit() - urls.size(); i++) {
+            int count = appConfig.getNavigationLimit() - urls.size() - 1;
+            for (int i = 0; i < count; i++) {
                 quickNavigationService.save(list.get(i));
             }
         } catch (Exception e) {

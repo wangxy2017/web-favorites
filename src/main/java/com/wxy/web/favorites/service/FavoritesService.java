@@ -9,6 +9,7 @@ import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.dao.FavoritesRepository;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
+import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -50,10 +51,18 @@ public class FavoritesService {
     }
 
     public Favorites save(Favorites favorites) {
+        if (favorites.getId() != null) {
+            favoritesRepository.findById(favorites.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, favorites));
+        }
         return favoritesRepository.save(favorites);
     }
 
     public List<Favorites> saveAll(List<Favorites> list) {
+        list.forEach(favorites -> {
+            if (favorites.getId() != null) {
+                favoritesRepository.findById(favorites.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, favorites));
+            }
+        });
         return favoritesRepository.saveAll(list);
     }
 

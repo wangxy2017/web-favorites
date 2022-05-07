@@ -4,6 +4,7 @@ import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.TaskRepository;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.util.JpaUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,10 +33,18 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     public void saveAll(List<Task> taskList) {
+        taskList.forEach(task -> {
+            if (task.getId() != null) {
+                taskRepository.findById(task.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, task));
+            }
+        });
         taskRepository.saveAll(taskList);
     }
 
     public Task save(Task task) {
+        if (task.getId() != null) {
+            taskRepository.findById(task.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, task));
+        }
         return taskRepository.save(task);
     }
 

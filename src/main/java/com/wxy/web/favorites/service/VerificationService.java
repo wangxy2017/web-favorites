@@ -4,6 +4,7 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.dao.VerificationRepository;
 import com.wxy.web.favorites.model.Verification;
+import com.wxy.web.favorites.util.JpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class VerificationService {
     }
 
     public Verification save(Verification verification) {
+        if (verification.getId() != null) {
+            verificationRepository.findById(verification.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, verification));
+        }
         return verificationRepository.save(verification);
     }
 

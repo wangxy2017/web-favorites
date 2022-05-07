@@ -3,6 +3,7 @@ package com.wxy.web.favorites.service;
 import com.wxy.web.favorites.dao.SearchTypeRepository;
 import com.wxy.web.favorites.model.SearchType;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.util.JpaUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,9 @@ public class SearchTypeService {
     }
 
     public SearchType save(SearchType searchType) {
+        if (searchType.getId() != null) {
+            searchTypeRepository.findById(searchType.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, searchType));
+        }
         return searchTypeRepository.save(searchType);
     }
 
@@ -49,6 +53,11 @@ public class SearchTypeService {
     }
 
     public void saveAll(List<SearchType> searchTypeList) {
+        searchTypeList.forEach(searchType -> {
+            if (searchType.getId() != null) {
+                searchTypeRepository.findById(searchType.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, searchType));
+            }
+        });
         searchTypeRepository.saveAll(searchTypeList);
     }
 }

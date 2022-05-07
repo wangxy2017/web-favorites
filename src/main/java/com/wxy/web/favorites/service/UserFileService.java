@@ -9,6 +9,7 @@ import com.wxy.web.favorites.dao.UserFileRepository;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
+import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class UserFileService {
     private UserRepository userRepository;
 
     public UserFile save(UserFile userFile) {
+        if (userFile.getId() != null) {
+            userFileRepository.findById(userFile.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, userFile));
+        }
         return userFileRepository.save(userFile);
     }
 

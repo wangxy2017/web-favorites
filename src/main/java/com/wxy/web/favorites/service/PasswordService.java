@@ -3,6 +3,7 @@ package com.wxy.web.favorites.service;
 import cn.hutool.crypto.symmetric.AES;
 import com.wxy.web.favorites.dao.PasswordRepository;
 import com.wxy.web.favorites.model.Password;
+import com.wxy.web.favorites.util.JpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,9 @@ public class PasswordService {
     public Password save(Password password) {
         Optional.ofNullable(password.getAccount()).ifPresent(a -> password.setAccount(aes.encryptBase64(a)));
         Optional.ofNullable(password.getPassword()).ifPresent(p -> password.setPassword(aes.encryptBase64(p)));
+        if (password.getId() != null) {
+            passwordRepository.findById(password.getId()).ifPresent(source -> JpaUtils.copyNotNullProperties(source, password));
+        }
         return passwordRepository.save(password);
     }
 

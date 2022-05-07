@@ -16,6 +16,7 @@ import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.JpaUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +57,9 @@ public class UserController {
     @ApiOperation(value = "查询登录信息")
     public ApiResponse info() {
         User user = contextUtils.getCurrentUser();
-        user.setPassword(null);
-        return ApiResponse.success(user);
+        User user1 = JpaUtils.evictSession(user, User.class);
+        user1.setPassword(null);
+        return ApiResponse.success(user1);
     }
 
     @GetMapping("/notice")
