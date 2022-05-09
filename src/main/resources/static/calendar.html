@@ -308,6 +308,12 @@
                 margin-top: 3px;
 			}
 
+			#levelTips {
+			    margin-left: 5px;
+                font-size: 14px;
+                cursor: pointer;
+			}
+
 
     </style>
 </head>
@@ -342,7 +348,7 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">事件等级</label>
+        <label class="layui-form-label">事件等级<i class="layui-icon layui-icon-tips" id="levelTips"></i></label>
         <div class="layui-input-block">
             <input type="radio" name="level" value="3" title="待办" checked>
             <input type="radio" name="level" value="2" title="重要">
@@ -824,6 +830,18 @@
             }
             $("#calendarInput").val(split[0] + "年" + split[1] + "月");
             drawCalender(nextMonth);
+        });
+
+        $("#levelTips").hover(function(){
+            var html = '';
+            html +='事件等级：<br>';
+            html +='1.紧急：紧急且重要<br>';
+            html +='2.优先：紧急但不重要<br>';
+            html +='3.重要：不紧急但很重要<br>';
+            html +='4.待办：不紧急也不重要<br>';
+            layer.tips(html, this, {tips: 3, time: 0});
+        },function(){
+            layer.closeAll('tips');
         });
 
         form.on('select(alarmTime)', function(data){
