@@ -549,10 +549,10 @@
 			window.openUrl = function(url) {
 				if (url.indexOf("https://") == 0 || url.indexOf("http://") == 0) {
 					newWin(url);
-					// 记录访问次数
+					// 记录搜索次数
 					$.ajax({
                         type: "GET",
-                        url: "search/visit",
+                        url: "user/search",
                         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
                     });
 				} else {

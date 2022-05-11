@@ -25,7 +25,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -141,9 +140,9 @@ public class UserController {
         return ApiResponse.success(userData);
     }
 
-    @GetMapping("/visit")
+    @GetMapping("/online")
     @ApiOperation(value = "增加在线时长")
-    public ApiResponse visit() {
+    public ApiResponse online() {
         User user = contextUtils.getCurrentUser();
         Date now = new Date();
         if (user.getRegisterTime() == null) {
@@ -160,6 +159,15 @@ public class UserController {
             user.setLastOnlineTime(now);
             userService.save(user);
         }
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "增加搜索次数")
+    public ApiResponse search() {
+        User user = contextUtils.getCurrentUser();
+        user.setSearchCount(Optional.ofNullable(user.getSearchCount()).orElse(0) + 1);
+        userService.save(user);
         return ApiResponse.success();
     }
 }

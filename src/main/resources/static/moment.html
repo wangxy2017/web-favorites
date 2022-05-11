@@ -268,6 +268,15 @@
             $("#search_text").val("").parent().css({"width":"100px"});
         });
 
+        window.searchCount = function(){
+            // 记录搜索次数
+            $.ajax({
+                type: "GET",
+                url: "user/search",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            });
+        };
+
         $("#search_text").on("keydown", function(event){
             if(event.key === "Enter"){
                 searchText();
@@ -316,6 +325,7 @@
             if (text == "") { //退出搜索模式
                 $("#search_close").click();
             } else {
+                searchCount();
                 changeSearchMode();
                 // 加载数据
                 layer.load();

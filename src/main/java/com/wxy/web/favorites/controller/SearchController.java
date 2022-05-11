@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
-import java.util.Optional;
 
 /**
  * @author wangxiaoyuan
@@ -86,12 +85,4 @@ public class SearchController {
         return ApiResponse.success(searchType);
     }
 
-    @GetMapping("/visit")
-    @ApiOperation(value = "增加搜索次数")
-    public ApiResponse visit() {
-        User user = contextUtils.getCurrentUser();
-        user.setSearchCount(Optional.ofNullable(user.getSearchCount()).orElse(0) + 1);
-        userService.save(user);
-        return ApiResponse.success();
-    }
 }

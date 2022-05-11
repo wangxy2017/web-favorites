@@ -417,6 +417,15 @@
             });
         });
 
+        window.searchCount = function(){
+            // 记录搜索次数
+            $.ajax({
+                type: "GET",
+                url: "user/search",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            });
+        };
+
         $("#search_text").on("keydown", function(event){
             if(event.key === "Enter"){
                 searchText();
@@ -432,6 +441,9 @@
         window.searchText = function(){
             var text = $("#search_text").val().trim();
             loadList(text);
+            if(text != ""){
+                searchCount();
+            }
         };
 
         // 关闭搜索
