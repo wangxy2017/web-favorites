@@ -5,10 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.QuickNavigation;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.service.QuickNavigationService;
+import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.util.HtmlUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /***
  * <p>
@@ -39,6 +43,9 @@ public class QuickNavigationController {
 
     @Autowired
     private AppConfig appConfig;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     @ApiOperation(value = "新增快捷导航")
@@ -65,6 +72,15 @@ public class QuickNavigationController {
     @ApiOperation(value = "删除快捷导航")
     public ApiResponse delete(@PathVariable Integer id) {
         quickNavigationService.deleteById(id);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/visit")
+    @ApiOperation(value = "增加访问次数")
+    public ApiResponse visit() {
+        User user = contextUtils.getCurrentUser();
+        user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
+        userService.save(user);
         return ApiResponse.success();
     }
 }

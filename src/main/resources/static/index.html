@@ -1492,7 +1492,7 @@
                         var html = '   <ul class="favorites">';
                         if(result.data.length > 0) {
                             $.each(result.data, function (j, f) {
-                                html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this,true)">';
+                                html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openNav(this)">';
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
@@ -1885,7 +1885,7 @@
         };
 
         // 打开新窗口
-        window.openUrl = function (obj, onlyOpen) {
+        window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
             var schema = $(obj).attr("data-schema");
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
@@ -1904,13 +1904,26 @@
                     newWin(url);
                 }
                 // 记录访问时间
-                if(!onlyOpen){
-                    $.ajax({
-                        type: "GET",
-                        url: "favorites/visit/" + $(obj).attr("data-id"),
-                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
-                    });
-                }
+                $.ajax({
+                    type: "GET",
+                    url: "favorites/visit/" + $(obj).attr("data-id"),
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
+            }else{
+                layer.msg('此链接无效', {icon: 7});
+            }
+        };
+
+        window.openNav = function (obj) {
+            var url = $(obj).attr("data-url");
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                newWin(url);
+                // 记录访问次数
+                $.ajax({
+                    type: "GET",
+                    url: "/quick-navigation/visit/",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
