@@ -1,7 +1,5 @@
 package com.wxy.web.favorites.util;
 
-import cn.hutool.core.util.StrUtil;
-
 /***
  * <p>
  * Description: 描述

@@ -14,7 +14,7 @@
     <name>web-favorites</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>8</java.version>
+        <java.version>17</java.version>
         <skipTests>true</skipTests>
         <log4j2.version>2.17.0</log4j2.version>
     </properties>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.6.Final</version>
+            <version>4.1.77.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -127,7 +127,7 @@
                 <version>1.7.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:8-jdk-alpine</image>
+                        <image>openjdk:17-jdk-alpine</image>
                     </from>
                     <to>
                         <image>registry.hub.docker.com/wangxiaoyuan2021/${project.artifactId}</image>
