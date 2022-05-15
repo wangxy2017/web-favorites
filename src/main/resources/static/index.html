@@ -572,7 +572,7 @@
         </div>
         <div id="notice" onclick="showNotice('click')">
             <cite>公告</cite>
-            <span class="layui-badge-dot" style="margin-left: 4px;"></span>
+            <span class="layui-badge-dot"></span>
         </div>
         <div class="layui-form style-select" lay-filter="styleSelect">
             <div class="layui-input-inline">
@@ -2910,7 +2910,7 @@
                         var width = parseInt($(window).width()) * 0.9;
                         width = (width >= 970 ? 970 : width) + 'px';
                         var index = layer.open({
-                            title: '公告'
+                            title: data.title
                             ,content: data.content
                             ,area: [width, '400px']
                             ,btn: ['知道了']
