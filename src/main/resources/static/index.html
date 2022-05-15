@@ -943,6 +943,7 @@
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
 <script src="layui/md5.min.js"></script>
+<script src="layui/Sortable.min.js"></script>
 <script>
     //JavaScript代码区域
     layui.use(['element', 'layer', 'form', 'upload','flow','util'], function () {
@@ -1489,7 +1490,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         // 加载数据
-                        var html = '   <ul class="favorites">';
+                        var html = '   <ul class="favorites" id="dragMenu">';
                         if(result.data.length > 0) {
                             $.each(result.data, function (j, f) {
                                 html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openNav(this)">';
@@ -1521,6 +1522,29 @@
                             success: function(layero, index){
                                 loadImg(layero);
                             }
+                        });
+                        // 初始化拖拽插件
+                        var container = document.getElementById("dragMenu");
+                        var sort = Sortable.create(container, {
+                          draggable: ".favorites-li",
+                          onUpdate: function (evt){
+                             var list = $("#dragMenu .favorites-li");
+                             var firstId = list.eq(evt.oldIndex).attr("data-id");
+                             var secondId = list.eq(evt.newIndex).attr("data-id");
+                             $.ajax({
+                                type: "POST",
+                                url: "quick-navigation/sort",
+                                data: JSON.stringify({"firstId": firstId, "secondId": secondId}),
+                                contentType: 'application/json;charset=utf-8',
+                                dataType: "json",
+                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                success: function (result) {
+                                    if (result.code != 0) {
+                                        layer.msg("操作失败", {icon: 5});
+                                    }
+                                }
+                            });
+                          }
                         });
                     }
                 },
