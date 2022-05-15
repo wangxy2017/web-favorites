@@ -606,9 +606,9 @@
         <div id="positionDiv" style="display:none;">
             <div class="positionNav">
                 <span class="layui-breadcrumb" lay-separator="/">
-                <a href="javascript:window.location.reload();">首页</a>
-                <a><cite>分类</cite></a>
-            </span>
+                    <a href="javascript:window.location.reload();">首页</a>
+                    <a><cite>分类</cite></a>
+                </span>
             </div>
             <div id="positionData"></div>
         </div>
@@ -1604,7 +1604,7 @@
                         var html = '';
                         html += '<ul class="favorites">';
                         $.each(result.data.categoryList, function (i, c) {
-                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" onclick="showFavorites(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" data-name="' + c.name + '" onclick="showFavorites(this)">';
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/category.svg"/>';
                             html += '   </div>';
@@ -1652,6 +1652,12 @@
                     $("#searchDiv").empty();
                     if (result.code == 0 && result.data.length > 0) {
                         var html = '';
+                        html += '<div class="positionNav">';
+                        html += '   <span class="layui-breadcrumb" lay-separator="/" lay-filter="category-nav">';
+                        html += '       <a href="javascript:window.location.reload();">首页</a>';
+                        html += '       <a><cite>' + $(obj).attr("data-name") + '</cite></a>';
+                        html += '   </span>';
+                        html += '</div>';
                         html += '<ul class="favorites">';
                         $.each(result.data, function (i, f) {
                             html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
@@ -1665,6 +1671,7 @@
                         html += '</ul>';
                         var searchDiv = $("#searchDiv").append(html).show();
                         loadImg(searchDiv);
+                        element.render('breadcrumb', 'category-nav');
                         $("#notFoundDiv").hide();
                     }else{
                         $("#notFoundDiv").show();

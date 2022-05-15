@@ -257,11 +257,16 @@ public class FileController {
     public ApiResponse move(@RequestParam String ids, @RequestParam(required = false) Integer pid) {
         for (String id : ids.split(PublicConstants.ID_DELIMITER)) {
             UserFile file = userFileService.findById(Integer.valueOf(id));
-            file.setPid(pid);
-            userFileService.save(file);
+            // 不能移动到自己或其子文件夹
+            List<Integer> list = userFileService.findAllChildDir(file);
+            if (!list.contains(pid)) {
+                file.setPid(pid);
+                userFileService.save(file);
+            }
         }
         return ApiResponse.success();
     }
+
 
     @GetMapping("/view")
     @ApiOperation(value = "预览")
