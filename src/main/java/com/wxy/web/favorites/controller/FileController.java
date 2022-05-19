@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -170,8 +172,8 @@ public class FileController {
     }
 
     private String getNoRepeatFilename(Integer pid, String filename) {
-        String firstPart = filename.substring(0, filename.lastIndexOf("."));
-        String secondPart = filename.substring(filename.lastIndexOf("."));
+        String firstPart = FileUtil.getPrefix(filename);
+        String secondPart = FileUtil.getSuffix(filename);
         String name = filename;
         int index = 0;
         while (userFileService.findByPidAndFilename(pid, name) != null) {
@@ -190,7 +192,8 @@ public class FileController {
             for (MultipartFile file : files) {
                 totalSize += file.getSize();
             }
-            if (restSize > totalSize) {
+            long freeSize = Arrays.stream(File.listRoots()).mapToLong(File::getFreeSpace).sum();
+            if (restSize > totalSize && freeSize * PublicConstants.DISK_LIMIT_RATE > totalSize) {
                 for (MultipartFile file : files) {
                     String path = userFileService.saveFile(file.getInputStream());
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
@@ -268,7 +271,7 @@ public class FileController {
     public ApiResponse view(@RequestParam Integer id) {
         UserFile file = userFileService.findById(id);
         if (file != null) {
-            String suffix = file.getFilename().lastIndexOf(".") > -1 ? file.getFilename().substring(file.getFilename().lastIndexOf(".") + 1) : "";
+            String suffix = FileUtil.getSuffix(file.getFilename());
             if (StrUtil.isNotBlank(suffix) && Optional.ofNullable(appConfig.getFileSuffixes()).orElse("").contains(suffix)) {
                 StringBuilder sb = new StringBuilder();
                 try (FileChannel channel = new RandomAccessFile(file.getPath(), "r").getChannel()) {

@@ -1071,7 +1071,7 @@
             ,bar5: '&#xe681;'// 文件
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
-            ,css: {right: 30, bottom: 50}
+            ,css: {right: 50, bottom: 80}
             ,click: function(type){
                 if(type === 'bar1'){
                     window.location.href = "search.html";
@@ -1966,11 +1966,13 @@
                         });
                         //禁用系统分类
                         if (data.isSystem == 1) {
-                            $("#categoryName").attr("disabled", true);
-                            $("#categorySort").attr("disabled", true);
+                            $("#categoryName").attr("disabled", true).addClass("layui-disabled");
+                            $("#categorySort").attr("disabled", true).addClass("layui-disabled");
+                            $("#deleteCategory").attr("disabled", true).addClass("layui-btn-disabled");
                         } else {
-                            $("#categoryName").removeAttr("disabled");
-                            $("#categorySort").removeAttr("disabled");
+                            $("#categoryName").removeAttr("disabled").removeClass("layui-disabled");
+                            $("#categorySort").removeAttr("disabled").removeClass("layui-disabled");
+                            $("#deleteCategory").removeAttr("disabled").removeClass("layui-btn-disabled");
                         }
                     }
                 }

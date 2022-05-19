@@ -18,7 +18,6 @@ public interface PublicConstants {
 
     String FORMAT_DATE_PATTERN = "yyyy-MM-dd";
     String FORMAT_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    String FORMAT_DATE_MINUTE_PATTERN = "yyyy-MM-dd HH:mm";
 
     Integer VERIFICATION_REGISTER = 0;
     Integer VERIFICATION_EMAIL_LOGIN = 1;
@@ -55,10 +54,10 @@ public interface PublicConstants {
     String TOKEN_HEADER = "Authorization";
     String TOKEN_PREFIX = "Bearer ";
 
-    int SUCCESS_CODE = 0;
+    Integer SUCCESS_CODE = 0;
     String SUCCESS_MSG = "SUCCESS";
 
-    int ERROR_CODE = -1;
+    Integer ERROR_CODE = -1;
     String ERROR_MSG = "ERROR";
 
     String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
@@ -74,4 +73,5 @@ public interface PublicConstants {
 
     Integer SHARE_CODE = 1;
     String EXPORT_QUICK_NAVIGATION = "1";
+    Double DISK_LIMIT_RATE = 0.9;
 }

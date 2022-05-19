@@ -367,32 +367,32 @@
         <div class="layui-input-block">
             <select name="alarmTime" id="alarmTime" lay-filter="alarmTime">
                 <option value="">请选择时间</option>
-                <option value="08:00">08:00</option>
-                <option value="08:30">08:30</option>
-                <option value="09:00">09:00</option>
-                <option value="09:30">09:30</option>
-                <option value="10:00">10:00</option>
-                <option value="10:30">10:30</option>
-                <option value="11:00">11:00</option>
-                <option value="11:30">11:30</option>
-                <option value="12:00">12:00</option>
-                <option value="12:30">12:30</option>
-                <option value="13:00">13:00</option>
-                <option value="13:30">13:30</option>
-                <option value="14:00">14:00</option>
-                <option value="14:30">14:30</option>
-                <option value="15:00">15:00</option>
-                <option value="15:30">15:30</option>
-                <option value="16:00">16:00</option>
-                <option value="16:30">16:30</option>
-                <option value="17:00">17:00</option>
-                <option value="17:30">17:30</option>
-                <option value="18:00">18:00</option>
-                <option value="18:30">18:30</option>
-                <option value="19:00">19:00</option>
-                <option value="19:30">19:30</option>
-                <option value="20:00">20:00</option>
-                <option value="20:30">20:30</option>
+                <option value="08:00:00">08:00</option>
+                <option value="08:30:00">08:30</option>
+                <option value="09:00:00">09:00</option>
+                <option value="09:30:00">09:30</option>
+                <option value="10:00:00">10:00</option>
+                <option value="10:30:00">10:30</option>
+                <option value="11:00:00">11:00</option>
+                <option value="11:30:00">11:30</option>
+                <option value="12:00:00">12:00</option>
+                <option value="12:30:00">12:30</option>
+                <option value="13:00:00">13:00</option>
+                <option value="13:30:00">13:30</option>
+                <option value="14:00:00">14:00</option>
+                <option value="14:30:00">14:30</option>
+                <option value="15:00:00">15:00</option>
+                <option value="15:30:00">15:30</option>
+                <option value="16:00:00">16:00</option>
+                <option value="16:30:00">16:30</option>
+                <option value="17:00:00">17:00</option>
+                <option value="17:30:00">17:30</option>
+                <option value="18:00:00">18:00</option>
+                <option value="18:30:00">18:30</option>
+                <option value="19:00:00">19:00</option>
+                <option value="19:30:00">19:30</option>
+                <option value="20:00:00">20:00</option>
+                <option value="20:30:00">20:30</option>
             </select>
         </div>
     </div>
@@ -629,7 +629,7 @@
                                                         html += '	    <span class="content">' + t.content + '</span>';
                                                         if(t.level < 4){
                                                             html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
-                                                            if(t.isAlarm){
+                                                            if(t.isAlarm && alarmTimeEffect(t.alarmTime)){
                                                                 html += '   <img class="alarm-icon" src="images/alarm.svg" data-time="' + t.alarmTime.substring(11) + '">';
                                                             }
                                                             html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
@@ -821,6 +821,10 @@
             drawCalender(preMonth);
         });
 
+        window.alarmTimeEffect = function(time){
+            return new Date(time).getTime() > new Date().getTime();
+        };
+
         $("#rightBtn").click(function() {
             var date = $("#calendarInput").val();
             var nextMonth = getNextMonth(date.substring(0, 4) + '-' + date.substring(5, 7));
@@ -855,7 +859,7 @@
         form.on('submit(saveTaskBtn)', function(data) {
             var postData = data.field;
             if(postData.isAlarm && postData.alarmTime){
-                postData.alarmTime = postData.taskDate + ' ' + postData.alarmTime + ':00';
+                postData.alarmTime = postData.taskDate + ' ' + postData.alarmTime;
             }else{
                 postData.alarmTime = "";
             }
@@ -883,15 +887,24 @@
         // 新增日程点击事件
         window.addTask = function(text){// 2020-01-01
             $('#taskForm')[0].reset();
-
             $("#taskDate").val(text);
-
             var index = layer.open({
                 type: 1,
                 skin: 'to-fix-select',
                 content: $('#taskForm')
             });
             indexMap.set('#taskForm',index);
+            // 禁用部分时间选项
+            $.each($("#alarmTime").children(),function(i,item){
+                var that = $(item);
+                var time = text + ' ' + that.attr("value");
+                if(new Date(time).getTime() <= new Date().getTime()){
+                    that.attr("disabled", true);
+                }else{
+                    that.removeAttr("disabled");
+                }
+            });
+            form.render('select','taskForm');
         };
 
         // 清除任务
