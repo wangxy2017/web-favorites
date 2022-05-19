@@ -208,5 +208,18 @@ public class UserFileService {
     public UserFile findByPidAndFilename(Integer pid, String filename) {
         return userFileRepository.findByPidAndFilename(pid, filename);
     }
+
+    public List<Integer> findAllChildDir(UserFile file) {
+        List<Integer> list = new ArrayList<>();
+        buildList(file, list);
+        return list;
+    }
+
+    private void buildList(UserFile file, List<Integer> list) {
+        if (file != null && PublicConstants.DIR_CODE.equals(file.getIsDir())) {
+            list.add(file.getId());
+            userFileRepository.findByPid(file.getId()).forEach(c -> buildList(c, list));
+        }
+    }
 }
 

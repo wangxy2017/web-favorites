@@ -340,7 +340,14 @@
         loadVerifyCode();
 
         // 刷新二维码
+        var refreshTime;
         $("#refreshCode").click(function(){
+            var now = new Date().getTime();
+            if(refreshTime && now - refreshTime < 5000){
+                layer.tips('刷新频繁,稍后再试', this, {tips: 2});
+                return false;
+            }
+            refreshTime = now;
             // 初始化二维码
             var sid = uuid();
             initQrCode(sid);

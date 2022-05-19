@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.core.SortDto;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.QuickNavigation;
 import com.wxy.web.favorites.model.User;
@@ -57,7 +58,15 @@ public class QuickNavigationController {
         // 处理图标
         String icon = HtmlUtils.getIcon(quickNavigation.getUrl());
         quickNavigation.setIcon(StrUtil.isBlank(icon) ? PublicConstants.FAVORITES_ICON_DEFAULT : icon);
+        quickNavigation.setSort(quickNavigationService.getSortByUserId(user.getId()));
         quickNavigationService.save(quickNavigation);
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/sort")
+    @ApiOperation(value = "排序 ")
+    public ApiResponse sort(@RequestBody SortDto dto) {
+        quickNavigationService.sort(dto);
         return ApiResponse.success();
     }
 

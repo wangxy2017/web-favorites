@@ -416,14 +416,19 @@ public class FavoritesController {
             if (root.element("NAVIGATIONS") != null) {
                 root.element("NAVIGATIONS").elements("NAVIGATION").forEach(n -> {
                     String url = n.elementText("URL");
+                    int sort = isInteger(n.elementText("SORT")) ? Integer.parseInt(n.elementText("SORT")) : -1;
                     if (!urls.contains(url)) {
-                        list.add(new QuickNavigation(null, n.elementText("NAME"), n.elementText("ICON"), url, userId));
+                        list.add(new QuickNavigation(null, n.elementText("NAME"), n.elementText("ICON"), url, userId, sort > 0 ? sort : null));
                     }
                 });
             }
-            int count = appConfig.getNavigationLimit() - urls.size() - 1;
-            for (int i = 0; i < count; i++) {
-                quickNavigationService.save(list.get(i));
+            int count = appConfig.getNavigationLimit() - urls.size();
+            for (int i = 0; i < count - 1; i++) {
+                if (i < list.size()) {
+                    quickNavigationService.save(list.get(i));
+                } else {
+                    break;
+                }
             }
         } catch (Exception e) {
             log.error("快捷导航导入失败：userId = {}", userId, e);
@@ -468,13 +473,7 @@ public class FavoritesController {
                     List<Favorites> list1 = new ArrayList<>();
                     c.element("LIST").elements("FAVORITES").forEach(f -> {
                         int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
-                        Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"),
-                                f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")),
-                                PinYinUtils.toPinyinS(f.elementText("NAME")),
-                                StrUtil.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null,
-                                StrUtil.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null,
-                                sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null,
-                                Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
+                        Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), StrUtil.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null, StrUtil.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
                             Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null, null);
@@ -572,8 +571,7 @@ public class FavoritesController {
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".html")) {
             User user = contextUtils.getCurrentUser();
             Category category = categoryService.findDefaultCategory(user.getId());
-            List<String> existsUrls = favoritesService.findByCategoryId(category.getId())
-                    .stream().map(Favorites::getUrl).collect(Collectors.toList());
+            List<String> existsUrls = favoritesService.findByCategoryId(category.getId()).stream().map(Favorites::getUrl).collect(Collectors.toList());
             org.jsoup.nodes.Document document = Jsoup.parse(file.getInputStream(), StandardCharsets.UTF_8.name(), "");
             List<Favorites> favoritesList = document.getElementsByTag("a").stream().map(element -> {
                 String url = element.attr("href");
@@ -622,12 +620,7 @@ public class FavoritesController {
 
     @GetMapping("/export")
     @ApiOperation(value = "导出")
-    public void export(@RequestParam(required = false) String favorites,
-                       @RequestParam(required = false) String moment,
-                       @RequestParam(required = false) String task,
-                       @RequestParam(required = false) String navigation,
-                       @RequestParam(required = false) String memorandum,
-                       @RequestParam(required = false) String search) throws IOException, ParseException {
+    public void export(@RequestParam(required = false) String favorites, @RequestParam(required = false) String moment, @RequestParam(required = false) String task, @RequestParam(required = false) String navigation, @RequestParam(required = false) String memorandum, @RequestParam(required = false) String search) throws IOException, ParseException {
         List<Category> categories = new ArrayList<>();
         List<Moment> momentList = new ArrayList<>();
         List<Task> taskList = new ArrayList<>();
@@ -760,6 +753,9 @@ public class FavoritesController {
                 navigation.addElement("NAME").setText(n.getName());
                 navigation.addElement("URL").setText(n.getUrl());
                 navigation.addElement("ICON").setText(n.getIcon());
+                if (n.getSort() != null) {
+                    navigation.addElement("SORT").setText(String.valueOf(n.getSort()));
+                }
             });
         }
         if (!CollectionUtils.isEmpty(memorandumList)) {
