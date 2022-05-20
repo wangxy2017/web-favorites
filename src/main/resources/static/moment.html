@@ -177,6 +177,8 @@
         var layer = layui.layer;
         var flow = layui.flow;
         var util = layui.util;
+        // 全局变量
+        var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
 
         // 加载动画
         layer.load();
@@ -378,8 +380,7 @@
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        var width = parseInt($(window).width()) * 0.9;
-                        width = (width >= 800? 800 : width) + 'px';
+                        var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
                         layer.open({
                           id:"wangEditor",
                           type: 2,
@@ -498,8 +499,7 @@
 
         // 发布
         $("#addMoment").click(function() {
-            var width = parseInt($(window).width()) * 0.9;
-            width = (width >= 800? 800 : width) + 'px';
+            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
             layer.open({
               id:"wangEditor",
               type: 2,

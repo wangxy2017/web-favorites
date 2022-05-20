@@ -953,13 +953,12 @@
         var upload = layui.upload;
         var flow = layui.flow;
         var util = layui.util;
-
+        // 全局变量
         var favoritesLimit = 40;// 显示个数限制
         var navigationLimit = 6;// 显示个数限制
         var indexPageSize = 10;// 分页大小
-
-        var currentPage = 1;
-
+        var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
+        var currentPage = 1;// 当前页
         var indexMap = new Map();// 弹出层索引容器
 
         // 执行加载动画
@@ -1072,7 +1071,7 @@
             ,bar5: '&#xe681;'// 文件
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
-            ,css: {right: 50, bottom: 80}
+            ,css: {right: windowWidth < 800 ? 30 : 50, bottom: windowWidth < 800 ? 54 : 80}
             ,click: function(type){
                 if(type === 'bar1'){
                     window.location.href = "search.html";
@@ -1511,8 +1510,7 @@
                         html += '       </li>';
                         html += '   </ul>';
                         // 弹出层
-                        var width = parseInt($(window).width()) * 0.9;
-                        width = (width >= 700 ? 700 : (width <= 360 ? 360 : width)) + 'px';
+                        var width = (windowWidth >= 700 ? 700 : (windowWidth <= 360 ? 360 : windowWidth)) + 'px';
                         layer.open({
                             id: "fastNav",
                             type: 1,
@@ -2847,8 +2845,7 @@
         };
 
         $("#slideBtn").click(function(){
-            var width = parseInt($(window).width()) * 0.9;
-            width = (width >= 500 ? 500 : (width <= 340 ? 340 : width)) + 'px';
+            var width = (windowWidth >= 500 ? 500 : (windowWidth <= 340 ? 340 : windowWidth)) + 'px';
             var index = layer.open({
                 type: 1,
                 title: "目录",
@@ -2860,8 +2857,7 @@
 
         // 回收站
         $("#recycle").click(function() {
-            var width = parseInt($(window).width()) * 0.9;
-            width = (width >= 800? 800 : width) + 'px';
+            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
             var index = layer.open({
                 type: 2,
                 area: [width,'530px'],
@@ -2874,8 +2870,7 @@
 
         // 报告
         $("#report").click(function() {
-            var width = parseInt($(window).width()) * 0.9;
-            width = (width >= 800? 800 : width) + 'px';
+            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
             var index = layer.open({
                 type: 2,
                 area: [width,'530px'],
@@ -2901,7 +2896,7 @@
                     var data = result.data;
                     if (data.isShow) {
                         // 显示按钮
-                        if(parseInt($(window).width()) >= 550){
+                        if(windowWidth >= 550){
                             $("#notice cite").text(data.title);
                             $("#notice").show();
                         }
@@ -2909,8 +2904,7 @@
                             return false;
                         }
                         // 弹出公告
-                        var width = parseInt($(window).width()) * 0.9;
-                        width = (width >= 970 ? 970 : width) + 'px';
+                        var width = (windowWidth >= 970 ? 970 : windowWidth) + 'px';
                         var index = layer.open({
                             title: data.title
                             ,content: data.content
