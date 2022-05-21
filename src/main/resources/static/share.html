@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|书签库</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <style type="text/css">
 
@@ -195,7 +195,8 @@
                 color: #999;
                 cursor: pointer;
             }
-		</style>
+
+    </style>
 </head>
 <body>
 <div class="header">
@@ -204,7 +205,8 @@
         <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
         <input type="text" id="search_text" name="search_text" placeholder="搜索书签库..." autocomplete="off"
                class="layui-input">
-        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
+           style="display:none;"></i>
     </div>
     <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
 </div>
@@ -268,11 +270,11 @@
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
                                     html += '       </div>';
-                                    html += '       <div class="title" lay-title="' + item.name + '"><a href="'+ item.url +'" target="_blank">' + item.name + '</a></div>';
+                                    html += '       <div class="title" lay-title="' + item.name + '" data-url="' + item.url + '" onclick="openUrl(this)">' + item.name + '</div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
                                     html += '       <div class="user" lay-title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
-                                    html += '       <div class="support" data-id="' + item.id + '" data-support="' + (item.support == null? 0: item.support) + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support == null ?0 : item.support) + '</em></div>';
+                                    html += '       <div class="support" data-id="' + item.id + '" data-support="' + item.support + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';
                                     lis.push(html);
@@ -333,12 +335,39 @@
             }
         });
 
+        window.openUrl = function (obj) {
+            var url = $(obj).attr("data-url");
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                newWin(url);
+                // 记录访问次数
+                $.ajax({
+                    type: "GET",
+                    url: "user/visit",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
+            }else{
+                layer.msg('此链接无效', {icon: 7});
+            }
+        };
+
+        window.newWin = function(url) {
+          var a = document.createElement('a');
+          a.setAttribute('href', url);
+          a.setAttribute('target', '_blank');
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        };
+
         window.support = function(obj){
             layer.confirm('确认收藏书签吗？', function(index){
                 layer.close(index);
 
                 var id = $(obj).attr("data-id");
                 var support = $(obj).attr("data-support");
+                if(support == null || isNaN(support)){
+                    support = 0;
+                }
                 $.ajax({
                     type: "GET",
                     url: "share/support/" + id,
@@ -355,6 +384,9 @@
         };
 
         window.transform = function(value) {
+            if(value == null || isNaN(value)){
+                return 0;
+            }
             let newValue = ['', '', ''];
             let fr = 1000;
             const ad = 1;
@@ -363,7 +395,6 @@
             while (value / fr >= 1) {
               fr *= 10;
               num += 1;
-              console.log('数字', value / fr, 'num:', num);
             }
             if (num <= 4) { // 千
               newValue[1] = '千';
@@ -401,7 +432,7 @@
 
         // 初始化title
         $(document).on('mouseenter','[lay-title]',function(e){
-            var that = $(e.target);
+            var that = $(e.currentTarget);
             layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
         }).on('mouseleave','[lay-title]',function(e){
             layer.closeAll('tips');
@@ -454,6 +485,7 @@
         });
 
     });
+
 </script>
 </body>
 </html>

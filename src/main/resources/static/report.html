@@ -150,7 +150,7 @@
     });
 
     window.formatNumber = function(num) {
-        if(isNaN(num)){
+        if(num == null || isNaN(num)){
             return 0;
         }
         return Number(num).toLocaleString();

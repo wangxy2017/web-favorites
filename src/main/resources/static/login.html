@@ -421,7 +421,6 @@
            if(typeof(WebSocket) == "undefined") {
                console.log("您的浏览器不支持WebSocket");
            }else{
-               console.log("您的浏览器支持WebSocket");
                if(socket){ socket.close(); }
                socket = new WebSocket("ws://" + window.location.host.split(':')[0] + ":" + socketPort + "/websocket?sid=" + sid);
                //打开事件

@@ -371,8 +371,8 @@
         };
 
         // 编辑
-        $(document).on('click', '.action .layui-icon-edit', function(e) {
-            var id = $(e.target).parent().attr("data-id");
+        $(document).on('click', '.layui-icon-edit', function(e) {
+            var id = $(e.currentTarget).parent().attr("data-id");
             $.ajax({
                 type: "GET",
                 url: "moment/" + id,
@@ -443,8 +443,8 @@
         });
 
         // 置顶
-        $(document).on('click', '.action .layui-icon-flag', function(e) {
-            var id = $(e.target).parent().attr("data-id");
+        $(document).on('click', '.layui-icon-flag', function(e) {
+            var id = $(e.currentTarget).parent().attr("data-id");
             $.ajax({
                 type: "POST",
                 url: "moment/top/" + id,
@@ -460,9 +460,9 @@
         });
 
         // 删除
-        $(document).on('click', '.action .layui-icon-delete', function(e) {
+        $(document).on('click', '.layui-icon-delete', function(e) {
+            var id = $(e.currentTarget).parent().attr("data-id");
             layer.confirm('确认删除吗?', function(index) {
-                var id = $(e.target).parent().attr("data-id");
                 $.ajax({
                     type: "GET",
                     url: "moment/delete/" + id,
@@ -479,9 +479,9 @@
         });
 
         // 取消置顶
-        $(document).on('click','#topMoment .set-top',function(e){
+        $(document).on('click','.set-top',function(e){
             layer.confirm('确认取消置顶吗?', function(index) {
-                var id = $(e.target).attr("data-id");
+                var id = $(e.currentTarget).attr("data-id");
                 $.ajax({
                     type: "DELETE",
                     url: "moment/top/" + id ,

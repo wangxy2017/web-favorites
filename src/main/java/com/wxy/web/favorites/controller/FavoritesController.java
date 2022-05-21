@@ -284,15 +284,15 @@ public class FavoritesController {
     }
 
     @GetMapping("/visit/{id}")
-    @ApiOperation(value = "增加访问次数")
+    @ApiOperation(value = "记录访问时间")
     public ApiResponse visit(@PathVariable Integer id) {
-        User user = contextUtils.getCurrentUser();
-        user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
-        userService.save(user);
         Favorites favorites = favoritesService.findById(id);
         if (favorites != null) {
             favorites.setVisitTime(new Date());
             favoritesService.save(favorites);
+            User user = contextUtils.getCurrentUser();
+            user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
+            userService.save(user);
             return ApiResponse.success();
         }
         return ApiResponse.error();

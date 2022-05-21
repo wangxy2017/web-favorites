@@ -1950,7 +1950,7 @@
                 // 记录访问次数
                 $.ajax({
                     type: "GET",
-                    url: "/quick-navigation/visit/",
+                    url: "user/visit",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
                 });
             }else{
@@ -2929,7 +2929,7 @@
 
         // 初始化title
         $(document).on('mouseenter','[lay-title]',function(e){
-            var that = $(e.target);
+            var that = $(e.currentTarget);
             layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
         }).on('mouseleave','[lay-title]',function(e){
             layer.closeAll('tips');

@@ -170,4 +170,13 @@ public class UserController {
         userService.save(user);
         return ApiResponse.success();
     }
+
+    @GetMapping("/visit")
+    @ApiOperation(value = "增加访问次数")
+    public ApiResponse visit() {
+        User user = contextUtils.getCurrentUser();
+        user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
+        userService.save(user);
+        return ApiResponse.success();
+    }
 }

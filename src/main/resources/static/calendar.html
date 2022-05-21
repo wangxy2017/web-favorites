@@ -690,7 +690,7 @@
                             // 监听闹钟hover事件
                             var tipIndex;
                             $("#" + date).on('mouseenter','.alarm-icon',function(e){
-                                var that = $(e.target);
+                                var that = $(e.currentTarget);
                                 tipIndex = layer.tips(that.attr("data-time"), that, {tips: 4});
                             }).on('mouseleave','.alarm-icon',function(e){
                                 layer.close(tipIndex);

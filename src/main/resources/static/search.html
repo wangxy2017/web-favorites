@@ -325,7 +325,7 @@
 
             // 初始化title
             $(document).on('mouseenter','[lay-title]',function(e){
-                var that = $(e.target);
+                var that = $(e.currentTarget);
                 layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
             }).on('mouseleave','[lay-title]',function(e){
                 layer.closeAll('tips');
@@ -366,12 +366,10 @@
             // 删除搜索引擎
 			window.deleteSearchType = function(event){
 			    event.stopPropagation();
-
+                var id = $(event.target).parent().attr("data-id");
 			    layer.confirm('确认删除搜索引擎吗?', function(index){
                     layer.close(index);
                     layer.load();
-
-                    var id = $(event.target).parent().attr("data-id");
                     $.ajax({
                         type: "GET",
                         url: "search/delete/" + id,
