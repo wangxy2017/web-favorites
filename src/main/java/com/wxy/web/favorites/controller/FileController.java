@@ -172,12 +172,12 @@ public class FileController {
     }
 
     private String getNoRepeatFilename(Integer pid, String filename) {
-        String firstPart = FileUtil.getPrefix(filename);
-        String secondPart = FileUtil.getSuffix(filename);
+        String prefix = FileUtil.getPrefix(filename);
+        String suffix = FileUtil.getSuffix(filename);
         String name = filename;
         int index = 0;
         while (userFileService.findByPidAndFilename(pid, name) != null) {
-            name = firstPart + "_" + ++index + secondPart;
+            name = prefix + "_" + ++index + (StrUtil.isNotBlank(suffix) ? "." + suffix : "");
         }
         return name;
     }
