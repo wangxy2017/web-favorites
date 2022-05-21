@@ -822,7 +822,7 @@
         });
 
         window.alarmTimeEffect = function(time){
-            return new Date(time).getTime() > new Date().getTime();
+            return new Date(time.replace(/-/g, "/")).getTime() > new Date().getTime();
         };
 
         $("#rightBtn").click(function() {
@@ -898,7 +898,7 @@
             $.each($("#alarmTime").children(),function(i,item){
                 var that = $(item);
                 var time = text + ' ' + that.attr("value");
-                if(new Date(time).getTime() <= new Date().getTime()){
+                if(new Date(time.replace(/-/g, "/")).getTime() <= new Date().getTime()){
                     that.attr("disabled", true);
                 }else{
                     that.removeAttr("disabled");

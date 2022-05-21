@@ -240,11 +240,11 @@
             ,scrollElem: '#center'
             ,bgcolor: '#393D49'
             ,css: {right: 50, bottom: 80}
-            ,click: function(type){
+            ,click: function(type,ele){
                 if(type === 'bar1'){
                     changeAddMemorandumMode();
                 }else if(type === 'bar2'){
-                    layer.msg("该功能暂未开放");
+                    layer.tips('该功能暂未开放', ele, {tips: 4});
                 }
             }
             ,mouseenter: function(type,ele){

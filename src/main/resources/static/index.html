@@ -110,15 +110,15 @@
         }
 
         .favorites li.active {
-            background-color: #fafafa;
+            background-color: #F6F6F6;
         }
 
         .favorites li:hover {
-            background-color: #fafafa;
+            background-color: #F6F6F6;
         }
 
         .favorites li:hover .favorites-bg {
-            background-color: #f0f0f5;
+            background-color: #eeeeee;
         }
 
         .favorites li p {
@@ -1156,11 +1156,11 @@
         });
 
         $("#shortcutMike").click(function(){
-            layer.msg("该功能暂未开放");
+            layer.tips('该功能暂未开放', this, {tips: 3});
         });
 
         $("#searchMike").click(function(){
-            layer.msg("该功能暂未开放");
+            layer.tips('该功能暂未开放', this, {tips: 3});
         });
 
         // 清除密码
