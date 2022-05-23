@@ -365,7 +365,7 @@
 
             // 删除搜索引擎
 			window.deleteSearchType = function(event){
-			    event.stopPropagation();
+			    layui.stope(event);
                 var id = $(event.target).parent().attr("data-id");
 			    layer.confirm('确认删除搜索引擎吗?', function(index){
                     layer.close(index);
@@ -461,7 +461,7 @@
 			});
 
 			$(document).on('click', '.search-items li .history-close', function(event) {
-                event.stopPropagation();
+                layui.stope(event);
 
                 $(this).parent().remove();
                 if($(".search-items").children().length === 0) $(".search-items").hide();

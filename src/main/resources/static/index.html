@@ -1401,7 +1401,7 @@
         });
 
         $(document).on('click', '.search-items li .history-close', function(event) {
-            event.stopPropagation();
+            layui.stope(event);
 
             $(this).parent().remove();
             if($(".search-items").children().length === 0) $(".search-items").hide();
@@ -1524,15 +1524,20 @@
                         // 初始化拖拽插件
                         var container = document.getElementById("dragMenu");
                         var sort = Sortable.create(container, {
+                          handle: ".favorites-bg",
                           draggable: ".favorites-li",
-                          onUpdate: function (evt){
-                             var list = $("#dragMenu .favorites-li");
-                             var firstId = list.eq(evt.oldIndex).attr("data-id");
-                             var secondId = list.eq(evt.newIndex).attr("data-id");
+                          onEnd: function (evt){
+                             var arr = [];
+                             $("#dragMenu .favorites-li").each(function(i,item){
+                                var nav = {};
+                                nav.id = $(item).attr("data-id");
+                                nav.sort = i;
+                                arr[i] = nav;
+                             });
                              $.ajax({
                                 type: "POST",
                                 url: "quick-navigation/sort",
-                                data: JSON.stringify({"firstId": firstId, "secondId": secondId}),
+                                data: JSON.stringify(arr),
                                 contentType: 'application/json;charset=utf-8',
                                 dataType: "json",
                                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -1969,7 +1974,7 @@
 
         // 编辑分类
         window.editCategory = function (obj, e) {
-            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
+            layui.stope(e);
             var index = layer.open({
                 type: 1,
                 title: "修改分类",
@@ -2283,7 +2288,7 @@
 
         // 删除快捷导航
         window.deleteFastNav = function(obj, e){
-            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
+            layui.stope(e);
             layer.confirm('确认删除快捷导航吗?', function(index){
                 layer.close(index);
                 layer.load();
@@ -2356,7 +2361,7 @@
 
         // 编辑收藏
         window.editFavorites = function (obj, e) {
-            window.event ? window.event.cancelBubble = true : e.stopPropagation();//阻止冒泡
+            layui.stope(e);
             var index = layer.open({
                 type: 1,
                 title: "修改收藏",
