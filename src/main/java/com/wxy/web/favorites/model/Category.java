@@ -37,6 +37,12 @@ public class Category {
     @Column(name = "bookmark", columnDefinition = "int(1) comment '强制书签模式'")
     private Integer bookmark;
 
+    @Column(name = "pinyin", columnDefinition = "varchar(3000) comment '拼音'")
+    private String pinyin;
+
+    @Column(name = "pinyin_s", columnDefinition = "varchar(500) comment '拼音首字母'")
+    private String pinyinS;
+
     @Transient
     private List<Favorites> favorites;
 

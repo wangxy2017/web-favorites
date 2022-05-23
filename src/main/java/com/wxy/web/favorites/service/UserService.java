@@ -127,7 +127,7 @@ public class UserService {
 
     public void initData(Integer userId) {
         // 创建默认分类
-        Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, userId, PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null, null);
+        Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, userId, PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, PinYinUtils.toPinyin(PublicConstants.DEFAULT_CATEGORY_NAME), PinYinUtils.toPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME), null, null);
         categoryRepository.save(category);
         // 推荐收藏
         List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {

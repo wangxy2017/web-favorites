@@ -111,7 +111,7 @@ public class LoginController {
                 user.setLastOnlineTime(now);
                 user = userService.save(user);
                 // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, null, null);
+                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, PinYinUtils.toPinyin(PublicConstants.DEFAULT_CATEGORY_NAME), PinYinUtils.toPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME), null, null);
                 categoryService.save(category);
                 // 推荐收藏
                 Integer userId = user.getId();

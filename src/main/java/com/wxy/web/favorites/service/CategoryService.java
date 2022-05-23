@@ -82,7 +82,7 @@ public class CategoryService {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
             if (StrUtil.isNotBlank(text)) {
-                predicateList.add(criteriaBuilder.like(root.get("name"), "%" + text + "%"));
+                predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + text + "%")));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };

@@ -10,6 +10,7 @@ import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.util.PinYinUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +41,24 @@ public class CategoryController {
             User user = contextUtils.getCurrentUser();
             Assert.isNull(categoryService.findByName(category.getName(), user.getId()), "分类已存在");
             category.setUserId(user.getId());
+            // 拼音
+            category.setPinyin(PinYinUtils.toPinyin(category.getName()));
+            // 拼音首字母
+            category.setPinyinS(PinYinUtils.toPinyinS(category.getName()));
             Category save = categoryService.save(category);
             return ApiResponse.success(save);
         } else {// 修改
             Category category1 = categoryService.findById(category.getId());
             Assert.notNull(category1, "分类不存在");
-            if(!Objects.equals(category1.getIsSystem(), PublicConstants.SYSTEM_CATEGORY_CODE)){
+            if (!Objects.equals(category1.getIsSystem(), PublicConstants.SYSTEM_CATEGORY_CODE)) {
                 category1.setName(category.getName());
                 category1.setSort(category.getSort());
             }
             category1.setBookmark(category.getBookmark());
+            // 拼音
+            category1.setPinyin(PinYinUtils.toPinyin(category.getName()));
+            // 拼音首字母
+            category1.setPinyinS(PinYinUtils.toPinyinS(category.getName()));
             Category save = categoryService.save(category1);
             return ApiResponse.success(save);
         }
@@ -76,8 +85,13 @@ public class CategoryController {
     @GetMapping("/favorites/{categoryId}")
     @ApiOperation(value = "查询分类下的收藏")
     public ApiResponse favorites(@PathVariable Integer categoryId) {
-        List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
-        return ApiResponse.success(favorites);
+        Category category = categoryService.findById(categoryId);
+        if (category != null) {
+            List<Favorites> favorites = favoritesService.findByCategoryId(categoryId);
+            category.setFavorites(favorites);
+            return ApiResponse.success(category);
+        }
+        return ApiResponse.error();
     }
 
     /**

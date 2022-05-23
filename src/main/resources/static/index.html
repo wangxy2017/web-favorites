@@ -1677,25 +1677,29 @@
                 success: function (result) {
                     layer.closeAll('loading');
                     $("#searchDiv").empty();
-                    if (result.code == 0 && result.data.length > 0) {
+                    if (result.code == 0 && result.data.favorites.length > 0) {
+                        var c = result.data;
                         var html = '';
+                        var bookmarkClass = c.bookmark==1?"bookmark":"";
                         html += '<div class="positionNav">';
                         html += '   <span class="layui-breadcrumb" lay-separator="/" lay-filter="category-nav">';
                         html += '       <a href="javascript:window.location.reload();">首页</a>';
-                        html += '       <a><cite>' + $(obj).attr("data-name") + '</cite></a>';
+                        html += '       <a><cite>' + c.name + '</cite></a>';
                         html += '   </span>';
                         html += '</div>';
-                        html += '<ul class="favorites">';
-                        $.each(result.data, function (i, f) {
-                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
-                            html += '   <div class="favorites-bg">';
-                            html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
-                            html += '   </div>';
-                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
-                            html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                            html += '</li>';
+                        html += '<div class="category ' + bookmarkClass + '" data-id = "' + c.id + '">';
+                        html += '   <ul class="favorites">';
+                        $.each(c.favorites, function (i, f) {
+                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                            html += '       <div class="favorites-bg">';
+                            html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '       </div>';
+                            html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '   </li>';
                         });
-                        html += '</ul>';
+                        html += '   </ul>';
+                        html += '</div>'
                         var searchDiv = $("#searchDiv").append(html).show();
                         loadImg(searchDiv);
                         element.render('breadcrumb', 'category-nav');
