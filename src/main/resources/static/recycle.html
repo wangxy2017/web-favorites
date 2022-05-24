@@ -210,6 +210,12 @@
         window.openUrl = function (url) {
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 newWin(url);
+                // 记录访问次数
+                $.ajax({
+                    type: "GET",
+                    url: "user/visit",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }
