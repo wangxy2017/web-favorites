@@ -185,7 +185,7 @@ public class UserController {
     }
 
     @PostMapping("/feedback")
-    @ApiOperation(value = "在线反馈")
+    @ApiOperation(value = "问题反馈")
     public ApiResponse feedback(@RequestParam String content) {
         Assert.notBlank(content, PublicConstants.FEEDBACK_CONTENT_NOT_NULL);
         User user = contextUtils.getCurrentUser();
