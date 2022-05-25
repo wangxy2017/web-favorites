@@ -19,13 +19,13 @@ public class EmailUtils {
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username:}")
-    private String from;
+    private String systemMail;
 
     @Async
     public void sendSimpleMail(String mailTo, String mailHead, String mailContent) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(from);
+            message.setFrom(systemMail);
             message.setTo(mailTo);
             message.setSubject(mailHead);
             message.setText(mailContent);
@@ -40,13 +40,28 @@ public class EmailUtils {
         try {
             MimeMessage mimeMailMessage = this.javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMailMessage, true, "utf-8");
-            messageHelper.setFrom(from);
+            messageHelper.setFrom(systemMail);
             messageHelper.setTo(mailTo);
             messageHelper.setSubject(mailHead);
             messageHelper.setText(mailContent, true);
             javaMailSender.send(mimeMailMessage);
         } catch (Exception e) {
             log.error("邮件发送失败：mailTo = {}, mailHead = {}, mailContent = {}", mailTo, mailHead, mailContent);
+        }
+    }
+
+    @Async
+    public void sendHtmlMailToSystem(String form, String mailHead, String mailContent) {
+        try {
+            MimeMessage mimeMailMessage = this.javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMailMessage, true, "utf-8");
+            messageHelper.setFrom(form);
+            messageHelper.setTo(systemMail);
+            messageHelper.setSubject(mailHead);
+            messageHelper.setText(mailContent, true);
+            javaMailSender.send(mimeMailMessage);
+        } catch (Exception e) {
+            log.error("邮件发送失败：mailFrom = {}, mailHead = {}, mailContent = {}", form, mailHead, mailContent);
         }
     }
 

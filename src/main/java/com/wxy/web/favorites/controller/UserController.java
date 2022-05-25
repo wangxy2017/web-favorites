@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
@@ -20,8 +21,8 @@ import com.wxy.web.favorites.util.JpaUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -51,6 +52,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${spring.mail.username:}")
+    private String mailTo;
 
     @GetMapping("/info")
     @ApiOperation(value = "查询登录信息")
@@ -176,6 +180,19 @@ public class UserController {
     public ApiResponse visit() {
         User user = contextUtils.getCurrentUser();
         user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
+        userService.save(user);
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/feedback")
+    @ApiOperation(value = "在线反馈")
+    public ApiResponse feedback(@RequestParam String content) {
+        Assert.notBlank(content, PublicConstants.FEEDBACK_CONTENT_NOT_NULL);
+        User user = contextUtils.getCurrentUser();
+        Assert.isTrue(user.getFeedbackTime() == null
+                || DateUtil.between(user.getFeedbackTime(), new Date(), DateUnit.HOUR) > 0, "您的反馈已收到，请耐心等待");
+        emailUtils.sendHtmlMailToSystem(user.getEmail(), PublicConstants.FEEDBACK_HEAD, content);
+        user.setFeedbackTime(new Date());
         userService.save(user);
         return ApiResponse.success();
     }

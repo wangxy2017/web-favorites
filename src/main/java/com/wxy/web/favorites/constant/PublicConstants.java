@@ -1,5 +1,7 @@
 package com.wxy.web.favorites.constant;
 
+import java.util.function.Supplier;
+
 /**
  * @author wangxiaoyuan
  * 2021/5/7 16:15
@@ -74,4 +76,7 @@ public interface PublicConstants {
     Integer SHARE_CODE = 1;
     String EXPORT_QUICK_NAVIGATION = "1";
     Double DISK_LIMIT_RATE = 0.9;
+
+    String FEEDBACK_CONTENT_NOT_NULL = "反馈内容不能为空";
+    String FEEDBACK_HEAD = "用户反馈";
 }

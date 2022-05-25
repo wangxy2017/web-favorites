@@ -151,7 +151,12 @@
         /** 开源信息 **/
         .open-source {
             font-size: 12px;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .open-source .open-source-item {
+            margin-right: 4px;
         }
 
         .style-select{
@@ -614,7 +619,11 @@
         </div>
     </div>
     <div class="layui-footer" style="left: 0;">
-        <p class="open-source">© 2020 网络收藏夹 | <a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">网站源码</a> | QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a></p>
+        <ul class="open-source">
+            <li class="open-source-item"><span>© 2020 网络收藏夹 |</span></li>
+            <li class="open-source-item"><a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">网站源码</a> |</li>
+            <li class="open-source-item" onclick="feedback()"><span style="cursor: pointer;display: flex;"><i class="layui-icon layui-icon-email" style="margin-right: 2px;"></i>在线反馈</span></li>
+        </ul>
     </div>
 </div>
 <!-- 操作按钮 -->
@@ -2943,6 +2952,34 @@
         }).on('mouseleave','[lay-title]',function(e){
             layer.closeAll('tips');
         });
+
+        // 在线反馈
+        window.feedback = function(){
+            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            layer.prompt({
+              formType: 2,
+              title: '在线反馈',
+              placeholder:"请输入内容",
+              maxlength: 500,
+              area: [width, '350px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                $.ajax({
+                    type: "POST",
+                    url: "user/feedback",
+                    data: {"content":value},
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            layer.msg("提交成功，感谢您的反馈！", {icon: 6});
+                        }else{
+                            layer.msg(result.msg, {icon: 5});
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        };
 
         // 定时器
         window.onlineCount = function(){

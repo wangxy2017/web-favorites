@@ -66,4 +66,8 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "last_online_time", columnDefinition = "datetime comment '上线时间'")
     private Date lastOnlineTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "feedback_time", columnDefinition = "datetime comment '反馈时间'")
+    private Date feedbackTime;
 }
