@@ -183,17 +183,4 @@ public class UserController {
         userService.save(user);
         return ApiResponse.success();
     }
-
-    @PostMapping("/feedback")
-    @ApiOperation(value = "问题反馈")
-    public ApiResponse feedback(@RequestParam String content) {
-        Assert.notBlank(content, PublicConstants.FEEDBACK_CONTENT_NOT_NULL);
-        User user = contextUtils.getCurrentUser();
-        Assert.isTrue(user.getFeedbackTime() == null
-                || DateUtil.between(user.getFeedbackTime(), new Date(), DateUnit.HOUR) > 0, "您的反馈已收到，请耐心等待");
-        emailUtils.sendHtmlMailToSystem(user.getEmail(), PublicConstants.FEEDBACK_HEAD, content);
-        user.setFeedbackTime(new Date());
-        userService.save(user);
-        return ApiResponse.success();
-    }
 }
