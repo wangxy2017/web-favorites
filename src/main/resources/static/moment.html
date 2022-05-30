@@ -170,6 +170,7 @@
 </div>
 <div id="editDiv"></div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/config.js"></script>
 <script src="layui/layui.js"></script>
 <script>
     layui.use(['layer','flow','util'], function() {
@@ -185,6 +186,7 @@
             layer.load();
             $("#momentList").empty();
             var keyword = $("#search_text").val().trim();
+            $('#center').unbind();
             flow.load({
                 elem: '#momentList'
                 ,scrollElem: '#center'
@@ -238,14 +240,6 @@
         };
 
         loadList();
-
-        // jQuery全局拦截器
-        $(document).ajaxSuccess(function(event,xhr,options){
-            var result = xhr.responseJSON;
-            if(result != undefined && result.code == "401"){
-                window.location.href= "login.html";
-            }
-        });
 
         // 固定块
         util.fixbar({

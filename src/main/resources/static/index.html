@@ -645,10 +645,10 @@
         <div class="bnWJxh"></div>
     </div>
 </div>
-<!-- 找不到结果 -->
+<!-- 暂无数据 -->
 <div id="notFoundDiv" class="notFoundDiv">
     <img src="images/no_data.svg" alt="">
-    <span>找不到结果</span>
+    <span>暂无数据</span>
 </div>
 <!-- 导入/备份 -->
 <div class="layui-tab layui-tab-brief" id="importOrExport" style="display: none;">
@@ -951,6 +951,7 @@
     <ul id="catalogList"></ul>
 </div>
 <script src="layui/jquery-3.1.1.min.js"></script>
+<script src="layui/config.js"></script>
 <script src="layui/layui.js"></script>
 <script src="layui/clipboard.min.js"></script>
 <script src="layui/md5.min.js"></script>
@@ -984,14 +985,6 @@
             }
         });
 
-        // jQuery全局拦截器
-        $(document).ajaxSuccess(function(event,xhr,options){
-            var result = xhr.responseJSON;
-            if(result != undefined && result.code == "401"){
-                window.location.href= "login.html";
-            }
-        });
-
         // 根据数组的下标，删除该下标的元素
         Array.prototype.remove = function(val) {
             var index = this.indexOf(val);
@@ -1000,6 +993,7 @@
             }
         };
 
+        $('#layuiBody').unbind();
         flow.load({
             elem: '#categoryList'
             ,scrollElem: '#layuiBody'
@@ -1022,6 +1016,11 @@
                 success: function (result) {
                     if(page == 1){
                         $("#loadingDiv").fadeOut();
+                        if(result.code == 0 && result.data.list.length > 0){
+                             $("#notFoundDiv").hide();
+                        }else{
+                             $("#notFoundDiv").show();
+                        }
                     }
                     if (result.code == 0) {
                         // 加载数据
@@ -2895,7 +2894,7 @@
 
         // 报告
         $("#report").click(function() {
-            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            var width = (windowWidth >= 820? 820 : windowWidth) + 'px';
             var index = layer.open({
                 type: 2,
                 area: [width,'530px'],

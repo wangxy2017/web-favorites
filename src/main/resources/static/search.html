@@ -247,6 +247,7 @@
     </div>
 </form>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/config.js"></script>
 <script src="layui/layui.js"></script>
 <script type="text/javascript">
         layui.use(['layer', 'form', 'flow'], function(){
@@ -265,15 +266,8 @@
                 }
             });
 
-            // jQuery全局拦截器
-            $(document).ajaxSuccess(function(event,xhr,options){
-                var result = xhr.responseJSON;
-                if(result != undefined && result.code == "401"){
-                    window.location.href= "login.html";
-                }
-            });
-
             // 加载数据
+            $('#searchTypeList').unbind();
             flow.load({
                 elem: '#searchTypeList'
                 ,scrollElem: '#searchTypeList'

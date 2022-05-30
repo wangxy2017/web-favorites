@@ -223,6 +223,7 @@
     <a href="index.html" class="layui-btn layui-btn-sm">回到首页</a>
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="layui/config.js"></script>
 <script src="layui/layui.js"></script>
 <script>
     layui.use(['layer','flow','util'], function() {
@@ -237,6 +238,7 @@
         window.loadList = function(name){
             $("#favoritesList").empty();
             layer.load();
+            $('#center').unbind();
             flow.load({
                 elem: '#favoritesList'
                 ,scrollElem: '#center'
@@ -308,14 +310,6 @@
             var _conss = $('.search-input');//点击的容器范围
             if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
                 $("#search_close").hide();
-            }
-        });
-
-        // jQuery全局拦截器
-        $(document).ajaxSuccess(function(event,xhr,options){
-            var result = xhr.responseJSON;
-            if(result != undefined && result.code == "401"){
-                window.location.href= "login.html";
             }
         });
 
