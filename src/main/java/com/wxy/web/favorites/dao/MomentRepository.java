@@ -20,7 +20,7 @@ public interface MomentRepository extends JpaRepository<Moment, Integer> {
      * @param pageable 分页信息
      * @return
      */
-    Page<Moment> findPageByUserId(Integer userId, Pageable pageable);
+    Page<Moment> findPageByUserIdAndTextLike(Integer userId, String text, Pageable pageable);
 
     @Query("select m from  Moment m where m.userId = :userId and m.isTop = 1 ")
     Moment findTopMoment(Integer userId);

@@ -134,9 +134,9 @@ public class MomentController {
 
     @GetMapping("/list")
     @ApiOperation(value = "分页查询")
-    public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+    public ApiResponse list(@RequestParam(required = false) String text,@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         User user = contextUtils.getCurrentUser();
-        PageInfo<Moment> page = momentService.findPageByUserId(user.getId(), pageNum, pageSize);
+        PageInfo<Moment> page = momentService.findPageByUserIdAndTextLike(user.getId(),text, pageNum, pageSize);
         return ApiResponse.success(page);
     }
 

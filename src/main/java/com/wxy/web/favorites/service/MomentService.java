@@ -56,12 +56,12 @@ public class MomentService {
         return momentRepository.findTopMoment(userId);
     }
 
-    public PageInfo<Moment> findPageByUserId(Integer userId, Integer pageNum, Integer pageSize) {
+    public PageInfo<Moment> findPageByUserIdAndTextLike(Integer userId, String text,Integer pageNum, Integer pageSize) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC, "createTime"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
-        Page<Moment> page = momentRepository.findPageByUserId(userId, pageable);
+        Page<Moment> page = momentRepository.findPageByUserIdAndTextLike(userId,"%" + SqlUtils.trimAndEscape(text) + "%", pageable);
         return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 
