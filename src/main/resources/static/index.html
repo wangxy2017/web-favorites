@@ -171,11 +171,11 @@
         }
 
         /** 书签模式 **/
-        .bookmark .favorites li{
+        .bookmark li{
             flex-direction: row !important;
         }
 
-        .bookmark .favorites li .favorites-bg{
+        .bookmark li .favorites-bg{
             width: 16px !important;
             height: 16px !important;
             line-height: 16px !important;
@@ -183,18 +183,18 @@
             border-radius: 0 !important;
         }
 
-        .bookmark .favorites li .favorites-bg img{
+        .bookmark li .favorites-bg img{
             width: 100% !important;
             height: 100% !important;
             border: 0 !important;
             vertical-align: baseline !important;
         }
 
-        .bookmark .favorites li:hover .favorites-bg{
+        .bookmark li:hover .favorites-bg{
             background-color: transparent !important;
         }
 
-        .bookmark .favorites li p{
+        .bookmark li p{
             width: 300px !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
@@ -206,7 +206,7 @@
             padding-right: 4px !important;
         }
 
-        .bookmark .favorites li .action-icon{
+        .bookmark li .action-icon{
             top: 12px !important;
             right: 4px !important;
         }
@@ -1640,6 +1640,12 @@
                     $("#searchDiv").empty();
                     if (result.code == 0 && (result.data.favoritesList.length > 0 || result.data.categoryList.length > 0)) {
                         var html = '';
+                        html += '<div class="positionNav">';
+                        html += '   <span class="layui-breadcrumb" lay-separator="/" lay-filter="search-nav">';
+                        html += '       <a href="javascript:window.location.reload();">首页</a>';
+                        html += '       <a><cite>搜索</cite></a>';
+                        html += '   </span>';
+                        html += '</div>';
                         html += '<ul class="favorites">';
                         $.each(result.data.categoryList, function (i, c) {
                             html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" data-name="' + c.name + '" onclick="showFavorites(this)">';
@@ -1662,6 +1668,7 @@
                         html += '</ul>';
                         var searchDiv = $("#searchDiv").append(html);
                         loadImg(searchDiv);
+                        element.render('breadcrumb', 'search-nav');
                         // 存入历史记录
                         var input_history = JSON.parse(localStorage.getItem("input_history"));
                         if (input_history == null || input_history.length >= 5) input_history = [];
@@ -1698,19 +1705,17 @@
                         html += '       <a><cite>' + c.name + '</cite></a>';
                         html += '   </span>';
                         html += '</div>';
-                        html += '<div class="category ' + bookmarkClass + '" data-id = "' + c.id + '">';
-                        html += '   <ul class="favorites">';
+                        html += '<ul class="favorites ' + bookmarkClass + '">';
                         $.each(c.favorites, function (i, f) {
-                            html += '   <li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
-                            html += '       <div class="favorites-bg">';
-                            html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
-                            html += '       </div>';
-                            html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
-                            html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
-                            html += '   </li>';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + f.id + '" data-url="' + f.url + '" data-schema="' + f.schemaName + '" onclick="openUrl(this)">';
+                            html += '    <div class="favorites-bg">';
+                            html += '        <img src="images/book.svg" lay-src="' + f.icon + '"/>';
+                            html += '    </div>';
+                            html += '    <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '    <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
+                            html += '</li>';
                         });
-                        html += '   </ul>';
-                        html += '</div>'
+                        html += '</ul>';
                         var searchDiv = $("#searchDiv").append(html).show();
                         loadImg(searchDiv);
                         element.render('breadcrumb', 'category-nav');

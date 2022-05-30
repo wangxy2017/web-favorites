@@ -441,7 +441,6 @@
 			// 搜索类型绑定点击事件
 			$(document).on('click', '.search-type-li', function() {
 				$(this).addClass('search-type-selected').siblings().removeClass('search-type-selected');
-				if ($("#search_content").val().trim() !== "") $("#search_btn").trigger("click");
 			});
 
 			// 搜索项绑定hover事件
