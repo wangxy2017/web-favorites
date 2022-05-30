@@ -240,7 +240,6 @@
         var util = layui.util;
         var form = layui.form;
 
-        var memorandumCount = 0;
         var searchIndex = -1;
 
         // 固定块
@@ -300,6 +299,11 @@
                                 }else{
                                     searchIndex = -1;
                                     $("#search_info").hide();
+                                }
+                                if(result.code == 0 && result.data.list.length > 0){
+                                     $("#notFoundDiv").hide();
+                                }else{
+                                     $("#notFoundDiv").show();
                                 }
                             }
                             if (result.code == 0) {
@@ -483,11 +487,6 @@
 
         window.changeIndexMode = function(){
             $("#addMemorandumForm").hide();
-            if(memorandumCount == 0){
-                $("#notFoundDiv").show();
-            }else{
-                $("#memorandumDiv").show();
-            }
         };
 
         window.escapeHtml = function(html){
@@ -568,23 +567,6 @@
                 }
             });
         };
-
-        $(function(){
-            // 暂无数据
-            $.ajax({
-                type: "GET",
-                url: "memorandum/count",
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    if (result.code == 0 && result.data == 0) {
-                        $("#notFoundDiv").show();
-                    }else{
-                        memorandumCount = result.data;
-                    }
-                }
-            });
-        });
     });
 
 </script>
