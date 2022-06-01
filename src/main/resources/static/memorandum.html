@@ -89,22 +89,24 @@
 			}
 
 			.memorandum-item .content {
+			    min-height: 120px;
 			    word-break: break-all;
-                white-space: pre-line;
+                white-space: pre-wrap;
                 padding: 6px 10px;
                 border: 1px solid transparent;
 			}
 
 			.action {
-                position: absolute;
-                right: 0;
-                bottom: 0;
-                display:none;
+                text-align: right;
+                margin-top: 10px;
+			}
+
+			.memorandum-item .action {
+			    display:none;
 			}
 
 			.content-edit {
-			    min-height: 120px;
-                border: 1px solid #E4E7ED;
+                border: 1px solid #E4E7ED !important;
                 background-color: #fff;
                 border-radius: 4px;
                 outline: 0;
@@ -186,7 +188,7 @@
                 margin: 10px 0;
                 padding: 0;
                 border: none!important;
-                border-bottom: 1px solid #e6e6e6!important;
+                border-bottom: 1px solid #e2e2e2!important;
                 clear: both;
                 background: 0 0;
             }
@@ -212,15 +214,16 @@
 </div>
 <div class="center" id="center">
     <div class="main">
-        <div class="layui-form layui-anim layui-anim-fadein" id="addMemorandumForm" style="display:none">
-            <textarea style="height: 200px;" name="content" required lay-verify="required" placeholder="请输入内容"
+        <div class="layui-form layui-anim layui-anim-fadein" id="addMemorandumForm" style="display:none;position: relative;">
+            <textarea style="height: 200px;resize: none;" name="content" required lay-verify="required" placeholder="请输入内容"
                       class="layui-textarea" wrap="hard"></textarea>
-            <div class="layui-btn-container" style="text-align: right;margin-top: 10px;">
+            <div class="layui-btn-container action">
                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
             </div>
+            <div class="gray-line" id="formLine"></div>
         </div>
-        <div id="memorandumDiv"><div id="memorandumList"></div></div>
+        <div id="memorandumList"></div>
     </div>
 </div>
 <div class="footer">
@@ -319,13 +322,12 @@
                                         html += '<div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
                                     }
                                     html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                    html += '       <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
-                                    html += '       <button class="layui-btn layui-btn-xs saveBtn" onclick="updateContent(this)">保存</button>';
-                                    html += '       <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelEditContent(this)">取消</button>';
+                                    html += '       <button class="layui-btn layui-btn-sm saveBtn" onclick="updateContent(this)">保存</button>';
+                                    html += '       <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
                                     html += '   </div>';
                                     html += '</div>';
                                     if(index < limit){
-                                    html += '<div class="gray-line"></div>';
+                                        html += '<div class="gray-line"></div>';
                                     }
                                     lis.push(html);
                                 });
@@ -468,14 +470,16 @@
             changeIndexMode();
         });
 
-        window.cancelEditContent = function(obj){
-            $(obj).parent().parent().find(".content").removeAttr("contenteditable").removeClass("content-edit");
-        };
-
         window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
-            $("#memorandumDiv").hide();
-            $("#addMemorandumForm").show();
+            $("#addMemorandumForm").show().find("textarea").focus();
+            if($("#memorandumList").children().length == 0){
+                $("#formLine").hide();
+            }else{
+                $("#formLine").show();
+            }
+            $("#center").animate({scrollTop: 0}, 50);
+            $(".content-edit").next().find(".saveBtn").click();
         };
 
         window.changeIndexMode = function(){
@@ -529,8 +533,8 @@
 
         // 编辑
         window.editContent = function(obj) {
-            $(".content-edit").next().find(".saveBtn").click();
             var that = $(obj);
+            $(".content-edit").not(that).next().find(".saveBtn").click();
             that.attr("contenteditable",true).addClass("content-edit").focus();
             var keyword = that.attr("data-keyword");
             if(keyword){
@@ -540,8 +544,8 @@
 
         window.updateContent = function(obj){
             var contentDiv = $(obj).parent().parent().find(".content");
-            contentDiv.removeAttr("contenteditable").removeClass("content-edit");
             var content = contentDiv.html();
+            contentDiv.removeAttr("contenteditable").removeClass("content-edit");
             var id = contentDiv.parent().attr("data-id");
             $.ajax({
                 type: "POST",
