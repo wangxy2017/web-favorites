@@ -89,7 +89,6 @@
 			}
 
 			.memorandum-item .content {
-			    min-height: 120px;
 			    word-break: break-all;
                 white-space: pre-wrap;
                 padding: 6px 10px;
@@ -106,6 +105,7 @@
 			}
 
 			.content-edit {
+			    min-height: 120px;
                 border: 1px solid #E4E7ED !important;
                 background-color: #fff;
                 border-radius: 4px;
@@ -181,18 +181,6 @@
                 cursor: pointer;
                 display: none;
             }
-
-            .gray-line {
-                line-height: 0;
-                height: 0;
-                margin: 10px 0;
-                padding: 0;
-                border: none!important;
-                border-bottom: 1px solid #e2e2e2!important;
-                clear: both;
-                background: 0 0;
-            }
-
     </style>
 </head>
 <body>
@@ -221,7 +209,6 @@
                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
             </div>
-            <div class="gray-line" id="formLine"></div>
         </div>
         <div id="memorandumList"></div>
     </div>
@@ -312,7 +299,6 @@
                                 }
                             }
                             if (result.code == 0) {
-                                var limit = result.data.list.length - 1;
                                 $.each(result.data.list, function(index, item){
                                     var html = '';
                                     html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
@@ -326,9 +312,6 @@
                                     html += '       <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
                                     html += '   </div>';
                                     html += '</div>';
-                                    if(index < limit){
-                                        html += '<div class="gray-line"></div>';
-                                    }
                                     lis.push(html);
                                 });
                                 next(lis.join(''), page < result.data.pages);
@@ -473,11 +456,6 @@
         window.changeAddMemorandumMode = function(){
             $("#notFoundDiv").hide();
             $("#addMemorandumForm").show().find("textarea").focus();
-            if($("#memorandumList").children().length == 0){
-                $("#formLine").hide();
-            }else{
-                $("#formLine").show();
-            }
             $("#center").animate({scrollTop: 0}, 50);
             $(".content-edit").next().find(".saveBtn").click();
         };
