@@ -8,6 +8,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="layui/li-bgc-color.css">
     <style type="text/css">
 
             .layui-fixbar li:nth-child(2){
@@ -57,7 +58,6 @@
 
 			.main {
                 padding: 15px 10px;
-                margin-bottom: 150px;
 			}
 
             .notFoundDiv {
@@ -84,45 +84,42 @@
                 font-weight: bold;
             }
 
+            .memorandum-list {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
             .memorandum-item {
-                position: relative;
-			}
-
-			.memorandum-item .content {
-			    word-break: break-all;
-                white-space: pre-wrap;
-                padding: 6px 10px;
-                border: 1px solid transparent;
-			}
-
-			.action {
-                text-align: right;
-                margin-top: 10px;
-			}
-
-			.memorandum-item .action {
-			    display:none;
-			}
-
-			.content-edit {
-			    min-height: 120px;
-                border: 1px solid #E4E7ED !important;
-                background-color: #fff;
+                width: 300px;
+                background: #fff;
                 border-radius: 4px;
-                outline: 0;
-                transition: all .3s;
+                margin-right: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+                overflow: hidden;
+                flex-grow: 1;
 			}
 
-			.content-edit:hover {
-			    border-color: #c0c4cc!important;
+			.memorandum-item .memorandum-top {
+			    background: #606266;
+			    height: 80px;
+			    display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                cursor: pointer;
 			}
 
-			.content-edit:focus {
-                border-color: #009688!important;
+			.memorandum-item .memorandum-content {
+			    padding: 20px;
+			    word-wrap: break-word;
 			}
 
-			.content-edit + .action {
-			    display:block;
+			.memorandum-item .memorandum-footer {
+			    padding: 20px;
+			    display: flex;
+                justify-content: space-between;
+                align-items: center;
 			}
 
 			.search-input {
@@ -181,9 +178,31 @@
                 cursor: pointer;
                 display: none;
             }
+
+            .memorandum-time {
+                color: #6c757d!important;
+            }
+
+            .memorandum-summary {
+                background: #fff;
+                border-radius: 50%;
+                color: #393d49;
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                line-height: 30px;
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            .layui-btn-group .layui-btn-primary:hover {
+                background: #606266;
+                color: #fff;
+                border-color: #606266;
+            }
     </style>
 </head>
-<body>
+<body style="background: #FAFAFA;">
 <div class="header">
     <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
     <div class="search-input">
@@ -202,15 +221,7 @@
 </div>
 <div class="center" id="center">
     <div class="main">
-        <div class="layui-form layui-anim layui-anim-fadein" id="addMemorandumForm" style="display:none;position: relative;">
-            <textarea style="height: 200px;resize: none;" name="content" required lay-verify="required" placeholder="请输入内容"
-                      class="layui-textarea" wrap="hard"></textarea>
-            <div class="layui-btn-container action">
-                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="addMemorandum">保存</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="cancelAddMemorandum">取消</button>
-            </div>
-        </div>
-        <div id="memorandumList"></div>
+        <div id="memorandumList" class="memorandum-list"></div>
     </div>
 </div>
 <div class="footer">
@@ -231,6 +242,8 @@
         var util = layui.util;
         var form = layui.form;
 
+        // 全局变量
+        var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
         var searchIndex = -1;
 
         // 固定块
@@ -243,7 +256,7 @@
             ,css: {right: 50, bottom: 80}
             ,click: function(type,ele){
                 if(type === 'bar1'){
-                    changeAddMemorandumMode();
+                    addMemorandum();
                 }else if(type === 'bar2'){
                     layer.tips('该功能暂未开放', ele, {tips: 4});
                 }
@@ -261,6 +274,47 @@
                 layer.closeAll('tips');
             }
         });
+
+        // 计算函数方法
+        window.todo_time = function(time) {
+            if (!time) {
+              return '';
+            }
+            var oDate = new Date();
+            var newHaoMiao1 = oDate.getTime(); // 当前时间,含有时分秒
+            oDate.setHours(0);
+            oDate.setMinutes(0);
+            oDate.setSeconds(0);
+            oDate.setMilliseconds(0);
+            var newHaoMiao2 = oDate.getTime(); // 当前时间,不含有时分秒
+            var newTime = time.replace(new RegExp("-", "gm"), "/");
+            var arrTime = time.substring(0, 11).replace(new RegExp("-", "gm"), "/"); // 截取时间，不含有时分秒
+            var showTime = time.substring(0, 11);
+            var oldHaoMiao1 = new Date(newTime).getTime(); // 含有时分秒的转化成毫秒
+            var oldHaoMiao2 = new Date(arrTime).getTime(); // 不含有时分秒的转化成毫秒
+            var d1 = (newHaoMiao1 - oldHaoMiao1) / 1000;
+            var d2 = (newHaoMiao2 - oldHaoMiao2) / 1000;
+            var d_result = '';
+            if (d2 > 0) { // 是几天前
+              var d_days = parseInt(d2 / 86400);
+              if (d_days === 1) {
+                d_result = "昨天";
+              } else if (d_days >= 2) {
+                d_result = showTime;
+              }
+            } else { // 是今天
+              var d_hours = parseInt(d1 / 3600);
+              var d_minutes = parseInt(d1 / 60);
+              if (d_hours > 0) {
+                d_result = d_hours + "小时前";
+              } else if (d_hours <= 0 && d_minutes > 0) {
+                d_result = d_minutes + "分钟前";
+              } else {
+                d_result = "刚刚";
+              }
+            }
+            return d_result;
+        };
 
         // 加载数据
         window.loadList = function(){
@@ -301,16 +355,20 @@
                             if (result.code == 0) {
                                 $.each(result.data.list, function(index, item){
                                     var html = '';
-                                    html += '<div class="memorandum-item layui-text" data-id="' + item.id + '">';
+                                    html += '<div class="memorandum-item layui-anim layui-anim-fadein" data-id="' + item.id + '">';
+                                    html += '<div class="memorandum-top"><span class="memorandum-summary">' + item.content.substring(0,1) + '</span></div>';
                                     if(keyword){
-                                        html += '<div class="content" ondblclick="editContent(this)" data-keyword="'+ keyword +'">'+ wrapSearch(item.content,keyword) +'</div>';
+                                        html += '<div class="memorandum-content layui-text" data-keyword="'+ keyword +'">'+ wrapSearch(item.content,keyword) +'</div>';
                                     }else{
-                                        html += '<div class="content" ondblclick="editContent(this)">'+ item.content +'</div>';
+                                        html += '<div class="memorandum-content layui-text">'+ item.content +'</div>';
                                     }
-                                    html += '   <div class="layui-btn-container layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
-                                    html += '       <button class="layui-btn layui-btn-sm saveBtn" onclick="updateContent(this)">保存</button>';
-                                    html += '       <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="deleteMemorandum(this)">删除</button>';
-                                    html += '   </div>';
+                                    html +='    <div class="memorandum-footer">';
+                                    html += '       <div class="layui-btn-group" data-id="' + item.id + '">';
+                                    html += '           <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="editContent(this)">编辑</button>';
+                                    html += '           <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="deleteMemorandum(this)">删除</button>';
+                                    html += '       </div>';
+                                    html += '       <div class="memorandum-time">'+ todo_time(item.createTime) +'</div>';
+                                    html +='    </div>';
                                     html += '</div>';
                                     lis.push(html);
                                 });
@@ -341,6 +399,14 @@
                 $("#search_close").hide();
             }
         });
+
+        window.escapeHtml = function(str){
+             return str.replace(/[<>&"\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
+        };
+
+        window.htmlEscape = function(html){
+             return html.replace(/&lt;|&gt;|&amp;|&quot;|&nbsp;|<br\/>/ig,function(c){return {'&lt;':'<','&gt;':'>','&amp;':'&','&quot;':'"','&nbsp;':' ','<br/>':'\n'}[c];});
+        };
 
         window.preSearch = function(){
             var highLight = $(".highLight");
@@ -449,46 +515,35 @@
             loadList();
         });
 
-        $("#cancelAddMemorandum").click(function(){
-            changeIndexMode();
-        });
-
-        window.changeAddMemorandumMode = function(){
-            $("#notFoundDiv").hide();
-            $("#addMemorandumForm").show().find("textarea").focus();
-            $("#center").animate({scrollTop: 0}, 50);
-            $(".content-edit").next().find(".saveBtn").click();
-        };
-
-        window.changeIndexMode = function(){
-            $("#addMemorandumForm").hide();
-        };
-
-        window.escapeHtml = function(html){
-            return html.replace(/</g, '&lt').replace(/>/g, '&gt');
-        };
-
-        form.on('submit(addMemorandum)', function (data) {
-            layer.load();
-            data.field.content = data.field.content;
-            $.ajax({
-                type: "POST",
-                url: "memorandum",
-                data: JSON.stringify(data.field),
-                contentType: 'application/json;charset=utf-8',
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    layer.closeAll('loading');
-                    if (result.code == 0) {
-                        window.location.reload();
-                    } else {
-                        layer.msg(result.msg, {icon: 5});
+        window.addMemorandum = function(){
+            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            layer.prompt({
+              formType: 2,
+              placeholder: "请输入内容...",
+              maxlength: 500,
+              title: '添加备忘录',
+              area: [width, '350px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                layer.close(index);
+                layer.load();
+                  $.ajax({
+                    type: "POST",
+                    url: "memorandum",
+                    data: JSON.stringify({"content":escapeHtml(value)}),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        layer.closeAll('loading');
+                        if (result.code == 0) {
+                            window.location.reload();
+                        } else {
+                            layer.msg(result.msg, {icon: 5});
+                        }
                     }
-                }
+                });
             });
-            return false;
-        });
+        };
 
         // 删除
         window.deleteMemorandum = function(obj){
@@ -511,31 +566,42 @@
 
         // 编辑
         window.editContent = function(obj) {
-            var that = $(obj);
-            $(".content-edit").not(that).next().find(".saveBtn").click();
-            that.attr("contenteditable",true).addClass("content-edit").focus();
-            var keyword = that.attr("data-keyword");
-            if(keyword){
-                that.html(unwrapSearch(that.html(),keyword));
-            }
-        };
-
-        window.updateContent = function(obj){
-            var contentDiv = $(obj).parent().parent().find(".content");
-            var content = contentDiv.html();
-            contentDiv.removeAttr("contenteditable").removeClass("content-edit");
-            var id = contentDiv.parent().attr("data-id");
+            var id = $(obj).parent().attr("data-id");
             $.ajax({
-                type: "POST",
-                url: "memorandum",
-                data: JSON.stringify({"id":id,"content":content}),
-                contentType: 'application/json;charset=utf-8',
+                type: "GET",
+                url: "memorandum/" + id,
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
-                    layer.closeAll('loading');
                     if (result.code == 0) {
-                        layer.msg("保存成功", {icon: 6});
+                        var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+                        layer.prompt({
+                          formType: 2,
+                          value: htmlEscape(result.data.content),
+                          placeholder: "请输入内容...",
+                          maxlength: 2000,
+                          title: '编辑备忘录',
+                          area: [width, '350px']
+                        }, function(value, index, elem){
+                            layer.close(index);
+                            layer.load();
+                              $.ajax({
+                                type: "POST",
+                                url: "memorandum",
+                                data: JSON.stringify({id: id, "content": escapeHtml(value)}),
+                                contentType: 'application/json;charset=utf-8',
+                                dataType: "json",
+                                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                                success: function (result) {
+                                    layer.closeAll('loading');
+                                    if (result.code == 0) {
+                                        window.location.reload();
+                                    } else {
+                                        layer.msg(result.msg, {icon: 5});
+                                    }
+                                }
+                            });
+                        });
                     } else {
                         layer.msg(result.msg, {icon: 5});
                     }

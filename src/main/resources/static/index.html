@@ -1036,7 +1036,7 @@
                                     html += '       <div class="favorites-bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                     html += '       </div>';
-                                    html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                    html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
                                     if(j == favoritesLimit - 1){
@@ -1506,7 +1506,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
                                 html += '       <i onclick="deleteFastNav(this,event)" class="deleteFastNav action-icon layui-icon layui-icon-delete"></i>';
                                 html += '   </li>';
                             });
@@ -1660,7 +1660,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '   <p  lay-title="' + f.name + '">' + f.name + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -1710,7 +1710,7 @@
                             html += '    <div class="favorites-bg">';
                             html += '        <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '    </div>';
-                            html += '    <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '    <p  lay-title="' + f.name + '">' + f.name + '</p>';
                             html += '    <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2039,7 +2039,7 @@
                 var bool = true;
                 $.ajax({
                     type: "GET",
-                    url: 'category/check/' + value,
+                    url: 'category/check/' + escapeHtml(value),
                     async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -2080,7 +2080,7 @@
                 var bool = true;
                 $.ajax({
                     type: "GET",
-                    url: 'category/check/' + value,
+                    url: 'category/check/' + escapeHtml(value),
                     async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -2232,7 +2232,7 @@
                             html += '       <div class="favorites-bg">';
                             html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '       </div>';
-                            html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
                             html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '   </li>';
                         });
@@ -2264,7 +2264,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                            html += '   <p  lay-title="' + f.name + '">' + f.name + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -2603,6 +2603,7 @@
 
         // 新增收藏
         form.on('submit(addFavorites)', function (data) {
+            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -2700,6 +2701,7 @@
 
         // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
+            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -2723,6 +2725,7 @@
 
         // 修改分类
         form.on('submit(updateCategory)', function (data) {
+            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -2803,7 +2806,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p  lay-title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</p>';
+                                html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
                                 html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                 html += '   </li>';
                                 if(j == favoritesLimit - 1){
@@ -2905,8 +2908,8 @@
             indexMap.set('#report',index);
         });
 
-        window.escapeHtml = function(html){
-            return html.replace(/</g, '&lt').replace(/>/g, '&gt');
+        window.escapeHtml = function(str){
+             return str.replace(/[<>&"\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
         };
 
         window.showNotice = function(type){

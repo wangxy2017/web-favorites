@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.model.User;
@@ -35,6 +36,7 @@ public class MomentController {
     @PostMapping
     @ApiOperation(value = "新增瞬间")
     public ApiResponse save(@RequestBody Moment moment) {
+        Assert.notBlank(moment.getContent(),"内容不能为空");
         User user = contextUtils.getCurrentUser();
         moment.setUserId(user.getId());
         moment.setCreateTime(new Date());
@@ -51,6 +53,7 @@ public class MomentController {
     @PostMapping("/update")
     @ApiOperation(value = "修改瞬间")
     public ApiResponse update(@RequestBody Moment moment) {
+        Assert.notBlank(moment.getContent(),"内容不能为空");
         Moment moment1 = momentService.findById(moment.getId());
         if (moment1 != null) {
             moment1.setContent(moment.getContent());

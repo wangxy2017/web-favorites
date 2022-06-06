@@ -1,13 +1,12 @@
 package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
-import com.wxy.web.favorites.model.Memorandum;
-import com.wxy.web.favorites.model.Moment;
-import com.wxy.web.favorites.model.User;
-import com.wxy.web.favorites.service.MemorandumService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
+import com.wxy.web.favorites.model.Memorandum;
+import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.service.MemorandumService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ public class MemorandumController {
     @PostMapping
     @ApiOperation(value = "保存")
     public ApiResponse save(@RequestBody Memorandum memorandum) {
+        Assert.notBlank(memorandum.getContent(),"内容不能为空");
         if (memorandum.getId() == null) {// 新建
             User user = contextUtils.getCurrentUser();
             memorandum.setUserId(user.getId());
@@ -44,6 +44,7 @@ public class MemorandumController {
         } else {// 修改
             Memorandum memorandum1 = memorandumService.findById(memorandum.getId());
             Assert.notNull(memorandum1, "备忘录不存在");
+            memorandum1.setCreateTime(new Date());
             memorandum1.setContent(memorandum.getContent());
             memorandumService.save(memorandum1);
         }
