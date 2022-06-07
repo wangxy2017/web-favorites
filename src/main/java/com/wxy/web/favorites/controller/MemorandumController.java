@@ -44,7 +44,6 @@ public class MemorandumController {
         } else {// 修改
             Memorandum memorandum1 = memorandumService.findById(memorandum.getId());
             Assert.notNull(memorandum1, "备忘录不存在");
-            memorandum1.setCreateTime(new Date());
             memorandum1.setContent(memorandum.getContent());
             memorandumService.save(memorandum1);
         }
