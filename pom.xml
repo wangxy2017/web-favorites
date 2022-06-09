@@ -144,8 +144,8 @@
                         </jvmFlags>
                         <mainClass>com.wxy.web.favorites.Application</mainClass>
                         <ports>
-                            <port>9020</port>
                             <port>8888</port>
+                            <port>8889</port>
                         </ports>
                         <appRoot>/user/local/app</appRoot>
                         <entrypoint>java,-jar,/usr/local/app/${project.artifactId}.jar</entrypoint>

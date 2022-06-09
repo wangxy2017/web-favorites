@@ -46,7 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+        http.csrf().disable()
+                .formLogin().disable()// 禁用表单登录，前后端分离用不上
+                .logout().disable()// 禁用默认退出接口
+                .authorizeRequests()
                 // 允许根路径url的访问
                 .antMatchers("/").permitAll()
                 // 开放相关接口

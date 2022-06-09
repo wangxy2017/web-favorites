@@ -39,8 +39,11 @@ public class Application {
     @Autowired
     private AppConfig appConfig;
 
-    @Value("${netty.port:8888}")
+    @Value("${netty.port:8889}")
     private Integer nettyPort;
+
+    @Value("${netty.enable:false}")
+    private Boolean nettyEnable;
 
     @PostConstruct
     public void run() throws Exception {
@@ -49,7 +52,9 @@ public class Application {
             log.info("创建文件仓库：[{}]", repository.toAbsolutePath());
         }
         // 启动websocket
-        new NioWebSocketServer(nettyPort).init();
+        if (nettyEnable) {
+            new NioWebSocketServer(nettyPort).init();
+        }
     }
 }
 

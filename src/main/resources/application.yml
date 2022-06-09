@@ -1,7 +1,8 @@
 netty:
-  port: 8888 #netty端口
+  enable: true
+  port: 8889 #netty端口
 server:
-  port: 9020 #应用端口
+  port: 8888 #应用端口
   compression: #开启数据压缩
     enabled: true
     min-response-size: 1024

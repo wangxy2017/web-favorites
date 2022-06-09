@@ -48,7 +48,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Swagger2接口规范")
                 .description("接口说明")
-                .termsOfServiceUrl("http://localhost:9020/")
+                .termsOfServiceUrl("http://localhost:8888/")
                 .version("1.0.0")
                 .build();
     }

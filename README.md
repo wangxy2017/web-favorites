@@ -12,8 +12,8 @@
 2. 服务器终端执行命令：nohup java -jar web-favorites.jar > /dev/null 2>&1 &
 ##### docker启动：
 1. docker pull wangxiaoyuan2021/web-favorites:latest
-2. docker run -d -p 9020:9020 -p 8888:8888 wangxiaoyuan2021/web-favorites
+2. docker run -d -p 8888:8888 -p 8889:8889 wangxiaoyuan2021/web-favorites
 ##### 访问地址：
-1. `http://ip:9020/ `或`http://ip:9020/index.html `
+1. `http://ip:8888/ `或`http://ip:8888/index.html `
 ##### QQ群：
 - 972265056

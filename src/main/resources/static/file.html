@@ -112,9 +112,11 @@
             <button type="button" class="layui-btn layui-btn-sm" id="downloadAll">备份</button>
         </div>
         <div style="margin-top: 10px;color:#303133">
-            <div class="layui-inline">
-                搜索文件：<input class="layui-input" id="searchName" placeholder="请输入文件名称" autocomplete="off"
+            <div class="layui-inline" style="margin-right: 15px;">
+                <label for="searchName">搜索文件：</label>
+                <input class="layui-input" id="searchName" placeholder="请输入文件名称" autocomplete="off"
                             style="display: inline-block;width: 180px;height: 30px;margin-right: 10px;font-size: 12px;">
+                <button type="button" class="layui-btn layui-btn-sm" id="search" style="height: 28px;line-height: 28px;">查询</button>
             </div>
             <div class="layui-inline" style="height: 30px;line-height: 30px;">
                 当前路径：<span class="layui-breadcrumb" lay-separator="/" lay-filter="floors" id="floors"></span>
@@ -155,7 +157,6 @@
         </table>
     </div>
     <button type="button" class="layui-btn layui-btn-sm" id="testListAction">开始上传</button>
-    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="closeUpload">关闭</button>
 </div>
 <script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="layui/config.js"></script>
@@ -294,10 +295,6 @@
                 content: $("#layuiUpload")
             });
             indexMap.set('#layuiUpload',index);
-        });
-
-        $("#closeUpload").click(function(){
-            layer.close(indexMap.get('#layuiUpload'));
         });
 
         $(document).on("keydown", function(event){
@@ -444,11 +441,15 @@
         // 搜索
         $('#searchName').bind('keypress', function (event) {
             if (event.key === "Enter") {
-                var name = $(this).val();
-                table.reload('fileList', {page: {curr: 1}, where: {"name": name, "pid": null}});
-                if(name != ""){
-                    searchCount();
-                }
+                $("#search").click();
+            }
+        });
+
+        $("#search").click(function(){
+            var name = $("#searchName").val();
+            table.reload('fileList', {page: {curr: 1}, where: {"name": name, "pid": null}});
+            if(name != ""){
+                searchCount();
             }
         });
 

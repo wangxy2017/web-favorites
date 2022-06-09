@@ -135,4 +135,8 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
             f.addListener(ChannelFutureListener.CLOSE);
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    }
 }

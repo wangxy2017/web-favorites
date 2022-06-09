@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
  **/
 @Slf4j
 @SpringBootTest(classes = Application.class)
-@Transactional
 public class DemoTest {
 
     @Autowired
@@ -123,5 +122,15 @@ public class DemoTest {
     public void test2() {
         List<User> list = userRepository.findAll();
         log.info("查询结果：{}", list);
+    }
+
+    /**
+     * 分享所有书签
+     */
+    @Test
+    @Transactional(rollbackFor = Exception.class)
+    public void test3() {
+        userRepository.updateShareAll();
+        log.info("分享所有书签...");
     }
 }
