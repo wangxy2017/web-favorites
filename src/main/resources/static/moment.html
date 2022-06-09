@@ -357,7 +357,7 @@
                         layer.open({
                           id:"wangEditor",
                           type: 2,
-                          content: 'moment_edit.html#' + id,
+                          content: 'moment_edit.html?t=' + new Date().getTime() + '#' + id,
                           area: [width, '500px'],
                           btn: ['确认', '取消'],
                           yes: function(index, layero){
@@ -477,7 +477,7 @@
               id:"wangEditor",
               type: 2,
               title: "发布瞬间",
-              content: 'moment_edit.html',
+              content: 'moment_edit.html?t=' + new Date().getTime(),
               area: [width,'500px'],
               btn: ['确认', '取消'],
               yes: function(index, layero){

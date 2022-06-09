@@ -247,8 +247,7 @@
 			}
 
 			#taskForm {
-				padding-top: 10px;
-				padding-right: 40px;
+				padding: 10px 30px 10px 10px;
 			}
 
 			.day-today .date {
@@ -576,117 +575,9 @@
                             }else{// 历史任务，显示历史图标
                                 html += '<span class="layui-badge layui-bg-gray task-history">历史</span>';
                             }
-                            // 监听日历hover事件，初始化任务面板
-                            $("#" + date).append(html).hover(function(){
-                                var taskView = $(this).find('.task-view');
-                                if(!taskView[0]){
-                                    // 创建任务面板
-                                    var html = '';
-                                    html += '<div class="layui-anim layui-anim-fadein task-view">';
-                                    html += '   <div class="task-header">';
-                                    html += '	    <span>' + date + '</span>';
-                                    html += '	</div>';
-                                    html += '	<div class="task-list" id="task' + date + '">';
-                                    html += '   </div>';
-                                    html += '   <div class="layui-btn-container">';
-                                    if(dateCompare(date,today) >= 0){
-                                        html += '   <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
-                                    }else{
-                                        html += '   <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" onclick="cleanTask(\'' + item.date + '\')">清除历史</button>';
-                                    }
-                                    html += '   </div>';
-                                    html += '</div>';
-                                    taskView = $(this).append(html).find('.task-view');
-                                    // 初始化数据
-                                    $('#task' + date).unbind();
-                                    flow.load({
-                                        elem: '#task' + date
-                                        ,scrollElem: '#task' + date
-                                        ,mb: 50
-                                        ,end: ' '
-                                        ,done: function(page, next){
-                                          var lis = [];
-                                          $.ajax({
-                                            type: "GET",
-                                            url: "task/list",
-                                            data: {"date": date, "pageNum": page,"pageSize": 20},
-                                            dataType: "json",
-                                            headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                                            success: function (result) {
-                                                if (result.code == 0) {
-                                                    $(result.data.list).each(function(i,t){
-                                                        var html = '';
-                                                        html += '   <div class="task-item">';
-                                                        html += getLabel(t.level);
-                                                        html += '	    <span class="content">' + t.content + '</span>';
-                                                        if(t.level < 4){
-                                                            html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
-                                                            if(t.isAlarm && alarmTimeEffect(t.alarmTime)){
-                                                                html += '   <img class="alarm-icon" src="images/alarm.svg" data-time="' + t.alarmTime.substring(11) + '">';
-                                                            }
-                                                            html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
-                                                            if(dateCompare(date,today) >= 0){
-                                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
-                                                            }else{
-                                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelTask(this)">取消</button> ';
-                                                            }
-                                                            html += '   </div>';
-                                                        }
-                                                        html += '   </div>';
-                                                        lis.push(html);
-                                                    });
-                                                    next(lis.join(''), page < result.data.pages);
-                                                }
-                                            }
-                                          });
-                                        }
-                                    });
-                                }
-                                // 初始化面板后，计算面板显示位置
-                                var tWidth = parseInt(taskView.width());
-                                var tHeight = parseInt(taskView.height());
-                                var top = $(this).offset().top;
-                                var left = $(this).offset().left;
-                                var width = parseInt($(this).width());
-                                var height = parseInt($(this).height());
-                                var mWidth = parseInt($("#main").width());
-                                var mHeight = parseInt($("#main").height());
-                                // 任务面板初始位置是下，计算固定显示位置
-                                var bool1 = top + height + tHeight > mHeight;// 判断垂直方向
-                                var bool2 = left + tWidth > mWidth;// 判断水平方向
-                                if(bool1 && bool2){
-                                    taskView.css("bottom", height);
-                                    if(top - tHeight < 0) {
-                                        taskView.css("bottom", height - (tHeight - top));
-                                    }
-                                    taskView.css("right", width);
-                                    if(left - tWidth < 0) {
-                                        taskView.css("right", width - (tWidth - left));
-                                    }
-                                }else if(bool1){
-                                    taskView.css("bottom", height);
-                                    if(top - tHeight < 0) {
-                                        taskView.css("bottom", height - (tHeight - top));
-                                    }
-                                }else if(bool2){
-                                    taskView.css("right", width);
-                                    if(left - tWidth < 0) {
-                                        taskView.css("right", width - (tWidth - left));
-                                    }
-                                    taskView.css("bottom", 0);
-                                }
-                                taskView.show();
-                            },function(){
-                                $(this).find('.task-view').hide();
-                            }).find(".task-new-mask").remove();// 移除添加任务按钮：如果是历史时间，不需要按钮。如果是未来时间且有任务，则在任务面板添加。所以这里不需要。
-                            // 监听闹钟hover事件
-                            var tipIndex;
-                            $("#" + date).on('mouseenter','.alarm-icon',function(e){
-                                var that = $(e.currentTarget);
-                                tipIndex = layer.tips(that.attr("data-time"), that, {tips: 4});
-                            }).on('mouseleave','.alarm-icon',function(e){
-                                layer.close(tipIndex);
-                            });
+                            var day = $("#" + date).append(html);
+                            dayHover(day,date,today,item);
+                            alarmHover(day);
                         });
                     } else {
                         layer.msg("数据加载失败", {icon: 5});
@@ -783,6 +674,131 @@
             loadDataList(text);
         };
 
+        window.dayHover = function(day,date,today,item){
+            // 监听日历hover事件，初始化任务面板
+            day.hover(function(){
+                var taskView = $(this).find('.task-view');
+                if(!taskView[0]){
+                    // 创建任务面板
+                    var html = '';
+                    html += '<div class="layui-anim layui-anim-fadein task-view">';
+                    html += '   <div class="task-header">';
+                    html += '	    <span>' + date + '</span>';
+                    html += '	</div>';
+                    html += '	<div class="task-list" id="task' + date + '">';
+                    html += '   </div>';
+                    html += '   <div class="layui-btn-container">';
+                    if(dateCompare(date,today) >= 0){
+                        html += '   <button type="button" class="layui-btn layui-btn-sm" onclick="addTask(\'' + item.date + '\')">新增日程</button>';
+                    }else{
+                        html += '   <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" onclick="cleanTask(\'' + item.date + '\')">清除历史</button>';
+                    }
+                    html += '   </div>';
+                    html += '</div>';
+                    taskView = $(this).append(html).find('.task-view');
+                    // 初始化数据
+                    $('#task' + date).unbind();
+                    flow.load({
+                        elem: '#task' + date
+                        ,scrollElem: '#task' + date
+                        ,mb: 50
+                        ,end: ' '
+                        ,done: function(page, next){
+                          var lis = [];
+                          $.ajax({
+                            type: "GET",
+                            url: "task/list",
+                            data: {"date": date, "pageNum": page,"pageSize": 20},
+                            dataType: "json",
+                            headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                            success: function (result) {
+                                var first = page == 1;
+                                if (result.code == 0) {
+                                    $(result.data.list).each(function(i,t){
+                                        var html = '';
+                                        html += '   <div class="task-item">';
+                                        html += getLabel(t.level);
+                                        html += '	    <span class="content">' + t.content + '</span>';
+                                        if(t.level < 4){
+                                            html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
+                                            if(t.isAlarm && alarmTimeEffect(t.alarmTime)){
+                                                html += '   <img class="alarm-icon" src="images/alarm.svg" data-time="' + t.alarmTime.substring(11) + '">';
+                                            }
+                                            html += '       <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="doTask(this)">完成</button> ';
+                                            if(dateCompare(date,today) >= 0){
+                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteTask(this)">删除</button> ';
+                                            }else{
+                                                html += '   <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="cancelTask(this)">取消</button> ';
+                                            }
+                                            html += '   </div>';
+                                        }
+                                        html += '   </div>';
+                                        lis.push(html);
+                                    });
+                                    next(lis.join(''), page < result.data.pages);
+                                    // 数据加载完成
+                                    if(first){
+                                        calcPosition(taskView);
+                                    }
+                                }
+                            }
+                          });
+                        }
+                    });
+                }else{
+                    taskView.show();
+                }
+            },function(){
+                $(this).find('.task-view').hide();
+            }).find(".task-new-mask").remove();// 移除添加任务按钮：如果是历史时间，不需要按钮。如果是未来时间且有任务，则在任务面板添加。所以这里不需要。
+        };
+
+        window.alarmHover = function(day){
+            // 监听闹钟hover事件
+            var tipIndex;
+            day.on('mouseenter','.alarm-icon',function(e){
+                var that = $(e.currentTarget);
+                tipIndex = layer.tips(that.attr("data-time"), that, {tips: 4});
+            }).on('mouseleave','.alarm-icon',function(e){
+                layer.close(tipIndex);
+            });
+        };
+
+        window.calcPosition = function(taskView){
+            var that = taskView.parent();
+            // 初始化面板后，计算面板显示位置
+            var tWidth = parseInt(taskView.width());
+            var tHeight = parseInt(taskView.height());
+            var width = parseInt(that.width());
+            var height = parseInt(that.height());
+            var cWidth = parseInt($("#calendar").width());
+            var cHeight = parseInt($("#calendar").height());
+            var cTop = $("#calendar").offset().top;
+            var cLeft = $("#calendar").offset().left;
+            var top = that.offset().top - cTop;
+            var left = that.offset().left - cLeft;
+            var y_over = top + height + tHeight - cHeight;
+            var x_over = left + tWidth - cWidth;
+            // 相对于原点，计算移动距离
+            if(y_over > 0){
+                var min = 0 - y_over;
+                var max = 0 - (height + tHeight);
+                var real_max = 0 - (height + top);
+                var final = min - Math.abs(min - Math.max(max,real_max)) / 2;
+                taskView.css("top", height + parseInt(final));
+            }
+            if(x_over > 0){
+                var min = 0 - x_over;
+                var max = 0 - Math.abs(width - tWidth);
+                var real_max = 0 - left;
+                var final = min - Math.abs(min - Math.max(max,real_max)) - 20;
+                console.log(min,max,real_max,final);
+                taskView.css("left", parseInt(final));
+            }
+            taskView.show();
+        };
+
+        // 初始化日历
         drawCalender();
 
         // 邮件提醒开关
