@@ -968,9 +968,7 @@
         var favoritesLimit = 40;// 显示个数限制
         var navigationLimit = 6;// 显示个数限制
         var indexPageSize = 10;// 分页大小
-        var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
         var currentPage = 1;// 当前页
-        var indexMap = new Map();// 弹出层索引容器
 
         // 执行加载动画
         $("#loadingDiv").fadeIn();
@@ -1426,7 +1424,7 @@
         $("#importOrExportBtn").click(function () {
             var index = layer.open({
                 type: 1,
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 title: false,
                 closeBtn: 0,
                 content: $('#importOrExport')
@@ -1440,7 +1438,7 @@
                 type: 1,
                 title: "添加收藏",
                 skin: 'to-fix-select',
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#add-favorites')
             });
             indexMap.set('#add-favorites',index);
@@ -1456,7 +1454,7 @@
             var index = layer.open({
                 type: 1,
                 title: "添加快捷导航",
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#add-fastNav')
             });
             indexMap.set('#add-fastNav',index);
@@ -1996,7 +1994,7 @@
             var index = layer.open({
                 type: 1,
                 title: "修改分类",
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#update-category')
             });
             indexMap.set('#update-category',index);
@@ -2149,7 +2147,7 @@
             var index = layer.open({
                 type: 1,
                 title: "修改密码",
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#passwordForm')
             });
             indexMap.set('#changePwd',index);
@@ -2166,7 +2164,7 @@
             var index = layer.open({
                 type: 1,
                 title: "修改邮箱",
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#emailForm')
             });
             indexMap.set('#changeEmail',index);
@@ -2384,7 +2382,7 @@
                 type: 1,
                 title: "修改收藏",
                 skin: 'to-fix-select',
-                area: '400px',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#update-favorites')
             });
             indexMap.set('#update-favorites',index);
@@ -2934,7 +2932,7 @@
                         var index = layer.open({
                             title: data.title
                             ,content: data.content
-                            ,area: [width, '400px']
+                            ,area: [width, '375px']
                             ,btn: ['知道了']
                             ,yes: function(index, layero){
                                 layer.close(index);

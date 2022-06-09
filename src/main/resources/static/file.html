@@ -169,8 +169,6 @@
         var upload = layui.upload;
         var tree = layui.tree;
         // 全局变量
-        var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
-        var indexMap = new Map();// 弹出层索引容器
         var treeData = [];
 
         //加载数据
@@ -376,7 +374,7 @@
             var index = layer.open({
                 type: 1,
                 title: "移动文件(夹)",
-                area: ['400px', '300px'],
+                area: [windowWidth < 800 ? '360px' : '400px', '300px'],
                 content: $('#folderTree')
             });
             indexMap.set('#folderTree',index);
