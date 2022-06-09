@@ -3,6 +3,7 @@ package com.wxy.web.favorites.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.ContentType;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -49,7 +50,6 @@ public class FileController {
     @Autowired
     private UserService userService;
 
-    
 
     @Autowired
     private AppConfig appConfig;
@@ -147,7 +147,7 @@ public class FileController {
         Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StrUtil.isNotBlank(userFile.getPath()), "数据异常");
         Path file = Paths.get(userFile.getPath());
         Assert.isTrue(Files.exists(file), ErrorConstants.FILE_IS_DELETED);
-        response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
+        response.setContentType(ContentType.OCTET_STREAM.getValue());
         response.addHeader("Content-Disposition", "attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
         try (ServletOutputStream out = response.getOutputStream()) {
             Files.copy(file, out);

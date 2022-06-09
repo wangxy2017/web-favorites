@@ -56,7 +56,7 @@ public class RegisterController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TokenUtils tokenUtil;
+    private TokenUtils tokenUtils;
 
     /**
      * 注册
@@ -80,7 +80,7 @@ public class RegisterController {
                 // 初始化用户数据
                 userService.initData(user1.getId());
                 // 生成token
-                String token = tokenUtil.createToken(user1.getUsername());
+                String token = tokenUtils.createToken(user1.getUsername());
                 // 移除验证码
                 verificationService.deleteById(verification.getId());
                 return ApiResponse.success(token);

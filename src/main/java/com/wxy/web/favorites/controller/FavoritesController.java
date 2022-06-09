@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.ContentType;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -662,7 +663,7 @@ public class FavoritesController {
             memorandumList = memorandumService.findByUserId(user.getId());
         }
         HttpServletResponse response = ContextUtils.getResponse();
-        response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
+        response.setContentType(ContentType.OCTET_STREAM.getValue());
         // 写入输出流
         writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList, quickNavigationList, memorandumList);
     }

@@ -20,7 +20,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${swagger.enable:true}")
+    @Value("${swagger.enable}")
     private boolean enable;
 
     @Bean

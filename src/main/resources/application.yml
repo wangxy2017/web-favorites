@@ -67,7 +67,7 @@ app: #系统参数配置
   file-compress-level: 7 #文件压缩等级
   file-suffixes: txt,properties,yml,xml,sh,bat,sql,json #可查看文件
 jwt: #jwt令牌配置
-  token-secret-key:
+  token-secret-key: wdmhm7iJvRf2n#hc
   token-expired-seconds: 7200
 cron: #定时任务
   task-notice-job: '0 0,30 8-20 * * ?'
@@ -77,6 +77,6 @@ cron: #定时任务
 backup: #数据库备份文件地址
   zip-file-path: ./backup/h2.zip
 aes: #aes密钥
-  secret-key:
+  secret-key: 4sn2UaVa96pj4n#V
 swagger:
   enable: false #开启swagger

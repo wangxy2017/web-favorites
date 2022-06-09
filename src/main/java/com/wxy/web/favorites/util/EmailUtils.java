@@ -18,7 +18,7 @@ public class EmailUtils {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Value("${spring.mail.username:}")
+    @Value("${spring.mail.username}")
     private String systemMail;
 
     @Async

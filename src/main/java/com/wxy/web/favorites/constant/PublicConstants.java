@@ -60,13 +60,6 @@ public interface PublicConstants {
     Integer ERROR_CODE = -1;
     String ERROR_MSG = "ERROR";
 
-    String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
-    String CONTENT_TYPE_STREAM = "application/octet-stream";
-
-    String DEFAULT_TOKEN_SECRET_KEY = "wdmhm7iJvRf2n#hc";
-
-    String DEFAULT_AES_SECRET_KEY = "4sn2UaVa96pj4n#V";
-
     String FAVORITES_STAR_LIMITED_MSG = "标记数量已达上限";
 
     String NAVIGATION_LIMITED_MSG = "快捷导航数量已达上限";

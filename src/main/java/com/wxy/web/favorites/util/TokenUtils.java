@@ -1,13 +1,10 @@
 package com.wxy.web.favorites.util;
 
-import cn.hutool.core.util.StrUtil;
-import com.wxy.web.favorites.constant.PublicConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +24,11 @@ import java.util.concurrent.TimeUnit;
 public class TokenUtils {
 
     // 秘钥
-    @Value("${jwt.token-secret-key:wdmhm7iJvRf2n#hc}")
+    @Value("${jwt.token-secret-key}")
     private String tokenSecretKey;
 
     // 过期时间 秒
-    @Value("${jwt.token-expired-seconds:7200}")
+    @Value("${jwt.token-expired-seconds}")
     private Long tokenExpiredSeconds;
 
 
@@ -42,7 +39,7 @@ public class TokenUtils {
                 .setIssuedAt(new Date())
                 //过期时间
                 .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tokenExpiredSeconds)))
-                .signWith(SignatureAlgorithm.HS512, StrUtil.isNotBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS512, tokenSecretKey)
                 .compact();
     }
 
@@ -53,7 +50,7 @@ public class TokenUtils {
                 .setIssuedAt(new Date())
                 //过期时间
                 .setExpiration(new Date(System.currentTimeMillis() + timeout))
-                .signWith(SignatureAlgorithm.HS512, StrUtil.isNotBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS512, tokenSecretKey)
                 .compact();
     }
 
@@ -78,7 +75,7 @@ public class TokenUtils {
     private Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
-            claims = Jwts.parser().setSigningKey(StrUtil.isNotBlank(tokenSecretKey) ? tokenSecretKey : PublicConstants.DEFAULT_TOKEN_SECRET_KEY).parseClaimsJws(token).getBody();
+            claims = Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody();
         } catch (Exception e) {
             claims = null;
         }

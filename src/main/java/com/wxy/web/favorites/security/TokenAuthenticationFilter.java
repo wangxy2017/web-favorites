@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.security;
 
 import cn.hutool.core.util.StrUtil;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,12 +34,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private MyUserDetailsService myUserDetailsService;
 
-    public static final String TOKEN_HEADER = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = Optional.ofNullable(request.getHeader(TOKEN_HEADER)).filter(t -> t.startsWith(TOKEN_PREFIX)).map(t -> t.replace(TOKEN_PREFIX, "")).orElse(null);
+        String token = Optional.ofNullable(request.getHeader(PublicConstants.TOKEN_HEADER)).filter(t -> t.startsWith(PublicConstants.TOKEN_PREFIX)).map(t -> t.replace(PublicConstants.TOKEN_PREFIX, "")).orElse(null);
         if (StrUtil.isNotBlank(token)) {
             String username = tokenUtils.getUsernameFromToken(token);
             if (StrUtil.isNotBlank(username) && SecurityContextHolder.getContext().getAuthentication() == null) {

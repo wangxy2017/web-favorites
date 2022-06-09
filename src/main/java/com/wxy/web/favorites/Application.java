@@ -39,10 +39,10 @@ public class Application {
     @Autowired
     private AppConfig appConfig;
 
-    @Value("${netty.port:8889}")
+    @Value("${netty.port}")
     private Integer nettyPort;
 
-    @Value("${netty.enable:false}")
+    @Value("${netty.enable}")
     private Boolean nettyEnable;
 
     @PostConstruct
