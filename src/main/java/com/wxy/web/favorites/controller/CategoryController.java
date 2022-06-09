@@ -6,6 +6,7 @@ import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -31,14 +32,13 @@ public class CategoryController {
     @Autowired
     private FavoritesService favoritesService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @PostMapping
     @ApiOperation(value = "保存分类")
     public ApiResponse save(@RequestBody Category category) {
         if (category.getId() == null) {// 新增
-            User user = contextUtils.getCurrentUser();
+            SecurityUser user = ContextUtils.getCurrentUser();
             Assert.isNull(categoryService.findByName(category.getName(), user.getId()), "分类已存在");
             category.setUserId(user.getId());
             // 拼音
@@ -74,7 +74,7 @@ public class CategoryController {
     @GetMapping("/check/{name}")
     @ApiOperation(value = "检查分类是否存在")
     public ApiResponse queryName(@PathVariable String name) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         Category category = categoryService.findByName(name, user.getId());
         if (category != null) {
             return ApiResponse.success(category);
@@ -139,7 +139,7 @@ public class CategoryController {
     @GetMapping("/list")
     @ApiOperation(value = "查询分类列表")
     public ApiResponse list() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         List<Category> list = categoryService.findByUserId(user.getId());
         return ApiResponse.success(list);
     }

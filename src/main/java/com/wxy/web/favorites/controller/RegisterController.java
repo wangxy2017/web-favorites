@@ -10,13 +10,12 @@ import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
-import com.wxy.web.favorites.security.ContextUtils;
-import com.wxy.web.favorites.security.TokenUtil;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.EmailUtils;
+import com.wxy.web.favorites.util.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +47,7 @@ public class RegisterController {
     @Autowired
     private EmailUtils emailUtils;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @Autowired
     private VerificationService verificationService;
@@ -58,7 +56,7 @@ public class RegisterController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TokenUtil tokenUtil;
+    private TokenUtils tokenUtil;
 
     /**
      * 注册
@@ -82,7 +80,7 @@ public class RegisterController {
                 // 初始化用户数据
                 userService.initData(user1.getId());
                 // 生成token
-                String token = tokenUtil.generateToken(user1.getUsername());
+                String token = tokenUtil.createToken(user1.getUsername());
                 // 移除验证码
                 verificationService.deleteById(verification.getId());
                 return ApiResponse.success(token);

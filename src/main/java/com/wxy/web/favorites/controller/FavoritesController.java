@@ -9,6 +9,7 @@ import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.*;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.*;
 import com.wxy.web.favorites.util.HtmlUtils;
 import com.wxy.web.favorites.util.PinYinUtils;
@@ -65,8 +66,7 @@ public class FavoritesController {
     @Autowired
     private AppConfig appConfig;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @Autowired
     private QuickNavigationService quickNavigationService;
@@ -82,7 +82,7 @@ public class FavoritesController {
     public ApiResponse save(@RequestBody Favorites favorites) {
         if (favorites.getId() == null) {// 新增
             Assert.notNull(favorites.getCategoryId(), "分类不能为空");
-            User user = contextUtils.getCurrentUser();
+            SecurityUser user = ContextUtils.getCurrentUser();
             favorites.setUserId(user.getId());
             // 处理图标
             String icon = HtmlUtils.getIcon(favorites.getUrl());
@@ -127,7 +127,7 @@ public class FavoritesController {
     @GetMapping("/shortcut")
     @ApiOperation(value = "根据快捷口令查询书签")
     public ApiResponse shortcut(@RequestParam String key) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         Favorites favorites = favoritesService.findByShortcut(key, user.getId());
         if (favorites != null) {
             return ApiResponse.success(favorites);
@@ -144,7 +144,7 @@ public class FavoritesController {
     @GetMapping("/list")
     @ApiOperation(value = "用户收藏列表(分页查询)")
     public ApiResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         // 查询用户分类
         PageInfo<Category> page = categoryService.findPageByUserId(user.getId(), pageNum, pageSize);
         for (Category c : page.getList()) {
@@ -184,7 +184,7 @@ public class FavoritesController {
     @GetMapping("/recycle")
     @ApiOperation(value = "查看回收站")
     public ApiResponse recycle(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         PageInfo<Favorites> page = favoritesService.findRecycleByPage(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
@@ -192,7 +192,7 @@ public class FavoritesController {
     @GetMapping("/shareList")
     @ApiOperation(value = "查询我的分享列表")
     public ApiResponse shareList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         PageInfo<Favorites> page = favoritesService.findShareByPage(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
@@ -205,7 +205,7 @@ public class FavoritesController {
     @PostMapping("/recycle/clean")
     @ApiOperation(value = "清空回收站")
     public ApiResponse CleanRecycle() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         favoritesService.deleteAllFromRecycle(user.getId());
         return ApiResponse.success();
     }
@@ -226,7 +226,7 @@ public class FavoritesController {
     @GetMapping("/recover/{id}")
     @ApiOperation(value = "还原")
     public ApiResponse recover(@PathVariable Integer id) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         favoritesService.updateDeleteFlag(id, user.getId());
         return ApiResponse.success();
     }
@@ -266,7 +266,7 @@ public class FavoritesController {
     @GetMapping("/search")
     @ApiOperation(value = "搜索书签")
     public ApiResponse search(@RequestParam String name) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         name = Optional.ofNullable(name).orElse("").trim().toLowerCase();// 转换小写搜索
         List<Favorites> favoritesList = favoritesService.findFavorites(user.getId(), name);
         List<Category> categoryList = categoryService.findCategories(user.getId(), name);
@@ -279,7 +279,7 @@ public class FavoritesController {
     @GetMapping("/star")
     @ApiOperation(value = "查询常用网址")
     public ApiResponse star() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         return ApiResponse.success(favoritesService.findStarFavorites(user.getId()));
     }
 
@@ -290,7 +290,8 @@ public class FavoritesController {
         if (favorites != null) {
             favorites.setVisitTime(new Date());
             favoritesService.save(favorites);
-            User user = contextUtils.getCurrentUser();
+            SecurityUser securityUser = ContextUtils.getCurrentUser();
+            User user = userService.findById(securityUser.getId());
             user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
             userService.save(user);
             return ApiResponse.success();
@@ -304,7 +305,7 @@ public class FavoritesController {
         Favorites favorites1 = favoritesService.findById(favorites.getId());
         if (favorites1 != null) {
             if (favorites.getStar() == 1) {
-                User user = contextUtils.getCurrentUser();
+                SecurityUser user = ContextUtils.getCurrentUser();
                 List<Favorites> list = favoritesService.findStarFavorites(user.getId());
                 if (list.size() >= appConfig.getStarLimit() && !list.contains(favorites1)) {
                     return ApiResponse.error(PublicConstants.FAVORITES_STAR_LIMITED_MSG);
@@ -330,7 +331,7 @@ public class FavoritesController {
     }
 
     private void parseMomentList(InputStream in) {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         try {
             List<Moment> list = new ArrayList<>();
             SAXReader reader = new SAXReader();
@@ -357,7 +358,7 @@ public class FavoritesController {
     }
 
     private void parseTaskList(InputStream in) {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         try {
             List<Task> list = new ArrayList<>();
             SAXReader reader = new SAXReader();
@@ -384,7 +385,7 @@ public class FavoritesController {
     }
 
     private void parseSearchTypeList(InputStream in) {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         List<String> names = searchTypeService.findByUserId(userId).stream().map(SearchType::getName).collect(Collectors.toList());
         try {
             List<SearchType> list = new ArrayList<>();
@@ -406,7 +407,7 @@ public class FavoritesController {
     }
 
     private void parseNavigationList(InputStream in) {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         List<String> urls = quickNavigationService.findByUserId(userId).stream().map(QuickNavigation::getUrl).collect(Collectors.toList());
         try {
             List<QuickNavigation> list = new ArrayList<>();
@@ -436,7 +437,7 @@ public class FavoritesController {
     }
 
     private void parseMemorandumList(InputStream in) {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         try {
             List<Memorandum> list = new ArrayList<>();
             SAXReader reader = new SAXReader();
@@ -494,7 +495,7 @@ public class FavoritesController {
     @PostMapping("/import")
     @ApiOperation(value = "导入")
     public ApiResponse upload(@RequestParam("file") MultipartFile file) throws IOException {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".xml")) {
             List<Category> list = parseCategoryList(file.getInputStream(), user.getId());
             // 查询用户已存在的数据，防止重复导入
@@ -569,7 +570,7 @@ public class FavoritesController {
     @ApiOperation(value = "导入html")
     public ApiResponse importHtml(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.getSize() > 0 && Optional.ofNullable(file.getOriginalFilename()).orElse("").endsWith(".html")) {
-            User user = contextUtils.getCurrentUser();
+            SecurityUser user = ContextUtils.getCurrentUser();
             Category category = categoryService.findDefaultCategory(user.getId());
             List<String> existsUrls = favoritesService.findByCategoryId(category.getId()).stream().map(Favorites::getUrl).collect(Collectors.toList());
             org.jsoup.nodes.Document document = Jsoup.parse(file.getInputStream(), StandardCharsets.UTF_8.name(), "");
@@ -627,7 +628,7 @@ public class FavoritesController {
         List<SearchType> searchTypeList = new ArrayList<>();
         List<QuickNavigation> quickNavigationList = new ArrayList<>();
         List<Memorandum> memorandumList = new ArrayList<>();
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         // 查询用户分类
         if (PublicConstants.EXPORT_FAVORITES_CODE.equals(favorites)) {
             categories = categoryService.findByUserId(user.getId());
@@ -660,7 +661,7 @@ public class FavoritesController {
         if (PublicConstants.EXPORT_QUICK_NAVIGATION.equals(memorandum)) {
             memorandumList = memorandumService.findByUserId(user.getId());
         }
-        HttpServletResponse response = contextUtils.getResponse();
+        HttpServletResponse response = ContextUtils.getResponse();
         response.setContentType(PublicConstants.CONTENT_TYPE_STREAM);
         // 写入输出流
         writeXML(response.getOutputStream(), categories, momentList, taskList, searchTypeList, quickNavigationList, memorandumList);

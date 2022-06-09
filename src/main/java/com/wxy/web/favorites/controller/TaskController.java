@@ -3,6 +3,7 @@ package com.wxy.web.favorites.controller;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Task;
 import com.wxy.web.favorites.model.User;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.TaskService;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
@@ -26,13 +27,12 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @PostMapping
     @ApiOperation(value = "新增日程")
     public ApiResponse save(@RequestBody Task task) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         task.setUserId(user.getId());
         if (task.getId() == null) task.setCreateTime(new Date());
         taskService.save(task);
@@ -56,7 +56,7 @@ public class TaskController {
     @GetMapping("/clean/{date}")
     @ApiOperation(value = "清空日程")
     public ApiResponse cleanByDate(@PathVariable String date) throws ParseException {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         taskService.deleteAllByDate(user.getId(), date);
         return ApiResponse.success();
     }
@@ -88,7 +88,7 @@ public class TaskController {
     @GetMapping("/all/{date}")
     @ApiOperation(value = "日程统计")
     public ApiResponse findAll(@PathVariable String date) throws ParseException {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
         calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
@@ -100,7 +100,7 @@ public class TaskController {
     @GetMapping("/list")
     @ApiOperation(value = "查询日程列表")
     public ApiResponse findPageList(@RequestParam String date, @RequestParam Integer pageNum, @RequestParam Integer pageSize) throws ParseException {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         PageInfo<Task> page = taskService.findPageByUserIdAndTaskDate(user.getId(), date, pageNum, pageSize);
         return ApiResponse.success(page);
     }

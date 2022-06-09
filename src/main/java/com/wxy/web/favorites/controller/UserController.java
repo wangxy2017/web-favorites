@@ -14,6 +14,7 @@ import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.EmailUtils;
@@ -41,8 +42,7 @@ public class UserController {
     @Autowired
     private EmailUtils emailUtils;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @Autowired
     private VerificationService verificationService;
@@ -59,7 +59,8 @@ public class UserController {
     @GetMapping("/info")
     @ApiOperation(value = "查询登录信息")
     public ApiResponse info() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         User user1 = JpaUtils.evictSession(user, User.class);
         user1.setPassword(null);
         return ApiResponse.success(user1);
@@ -74,7 +75,7 @@ public class UserController {
     @PostMapping("/cleanData")
     @ApiOperation(value = "清除所有数据")
     public ApiResponse cleanData(@RequestParam String loginPwd) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         if (passwordEncoder.matches(loginPwd, user.getPassword())) {
             userService.deleteAllData(user.getId());
             return ApiResponse.success();
@@ -86,7 +87,8 @@ public class UserController {
     @PostMapping("/password")
     @ApiOperation(value = "重置密码")
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
@@ -99,7 +101,8 @@ public class UserController {
     @PostMapping("/style")
     @ApiOperation(value = "保存浏览模式")
     public ApiResponse viewStyle(@RequestParam Integer viewStyle) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         user.setViewStyle(viewStyle == 1 ? 1 : 0);
         userService.save(user);
         return ApiResponse.success();
@@ -125,7 +128,8 @@ public class UserController {
             Verification verification = verificationService.findCode(newEmail, PublicConstants.VERIFICATION_EMAIL_UPDATE);
             String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
             if (user1 == null && code.equals(emailCode)) {
-                User user = contextUtils.getCurrentUser();
+                SecurityUser securityUser = ContextUtils.getCurrentUser();
+                User user = userService.findById(securityUser.getId());
                 user.setEmail(newEmail);
                 userService.save(user);
                 // 移除验证码
@@ -139,7 +143,7 @@ public class UserController {
     @GetMapping("/data")
     @ApiOperation(value = "获取统计信息")
     public ApiResponse getUserData() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         Map<String, Object> userData = userService.findUserData(user.getId());
         return ApiResponse.success(userData);
     }
@@ -147,7 +151,8 @@ public class UserController {
     @GetMapping("/online")
     @ApiOperation(value = "增加在线时长")
     public ApiResponse online() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         Date now = new Date();
         if (user.getRegisterTime() == null) {
             user.setRegisterTime(now);
@@ -169,7 +174,8 @@ public class UserController {
     @GetMapping("/search")
     @ApiOperation(value = "增加搜索次数")
     public ApiResponse search() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         user.setSearchCount(Optional.ofNullable(user.getSearchCount()).orElse(0) + 1);
         userService.save(user);
         return ApiResponse.success();
@@ -178,7 +184,8 @@ public class UserController {
     @GetMapping("/visit")
     @ApiOperation(value = "增加访问次数")
     public ApiResponse visit() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user = userService.findById(securityUser.getId());
         user.setClickCount(Optional.ofNullable(user.getClickCount()).orElse(0) + 1);
         userService.save(user);
         return ApiResponse.success();

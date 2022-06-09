@@ -18,8 +18,7 @@ public class ShareController {
     @Autowired
     private FavoritesService favoritesService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
 
     @GetMapping("/list")
@@ -33,7 +32,7 @@ public class ShareController {
     @GetMapping("/support/{id}")
     @ApiOperation(value = "搜藏书签")
     public ApiResponse support(@PathVariable Integer id) {
-        boolean success = favoritesService.saveSupport(contextUtils.getCurrentUser().getId(), id);
+        boolean success = favoritesService.saveSupport(ContextUtils.getCurrentUser().getId(), id);
         return success ? ApiResponse.success() : ApiResponse.error();
     }
 }

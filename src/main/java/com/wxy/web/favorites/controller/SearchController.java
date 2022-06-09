@@ -8,6 +8,7 @@ import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.SearchType;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.SearchTypeService;
 import com.wxy.web.favorites.service.UserService;
 import io.swagger.annotations.Api;
@@ -37,13 +38,12 @@ public class SearchController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @GetMapping("/data")
     @ApiOperation(value = "查询搜索引擎")
     public ApiResponse data(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         PageInfo<SearchType> page = searchTypeService.findPageByUserId(user.getId(), pageNum, pageSize);
         return ApiResponse.success(page);
     }
@@ -57,7 +57,7 @@ public class SearchController {
     @PostMapping
     @ApiOperation(value = "新增搜索引擎")
     public ApiResponse save(@RequestBody SearchType searchType) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         searchType.setUserId(user.getId());
         String iconUrl;
         try {

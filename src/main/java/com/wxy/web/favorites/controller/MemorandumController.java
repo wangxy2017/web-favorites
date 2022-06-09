@@ -6,6 +6,7 @@ import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.Memorandum;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.MemorandumService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,8 +24,7 @@ public class MemorandumController {
     @Autowired
     private MemorandumService memorandumService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     /**
      * 新增
@@ -37,7 +37,7 @@ public class MemorandumController {
     public ApiResponse save(@RequestBody Memorandum memorandum) {
         Assert.notBlank(memorandum.getContent(),"内容不能为空");
         if (memorandum.getId() == null) {// 新建
-            User user = contextUtils.getCurrentUser();
+            SecurityUser user = ContextUtils.getCurrentUser();
             memorandum.setUserId(user.getId());
             memorandum.setCreateTime(new Date());
             memorandumService.save(memorandum);
@@ -60,7 +60,7 @@ public class MemorandumController {
     @GetMapping("/search")
     @ApiOperation(value = "搜索备忘录")
     public ApiResponse search(@RequestParam String content) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         List<Memorandum> list = memorandumService.findMemorandum(user.getId(), content);
         return ApiResponse.success(list);
     }
@@ -68,7 +68,7 @@ public class MemorandumController {
     @GetMapping("/list")
     @ApiOperation(value = "分页查询")
     public ApiResponse list(@RequestParam(required = false) String content, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         PageInfo<Memorandum> page = memorandumService.findPageByUserIdAndContentLike(user.getId(), content, pageNum, pageSize);
         return ApiResponse.success(page);
     }
@@ -76,7 +76,7 @@ public class MemorandumController {
     @GetMapping("/count")
     @ApiOperation(value = "统计我的备忘录")
     public ApiResponse count() {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         long count = memorandumService.countByUserId(user.getId());
         return ApiResponse.success(count);
     }

@@ -8,6 +8,7 @@ import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.model.QuickNavigation;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.ContextUtils;
+import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.QuickNavigationService;
 import com.wxy.web.favorites.util.HtmlUtils;
 import io.swagger.annotations.Api;
@@ -34,8 +35,7 @@ public class QuickNavigationController {
     @Autowired
     private QuickNavigationService quickNavigationService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @Autowired
     private AppConfig appConfig;
@@ -43,7 +43,7 @@ public class QuickNavigationController {
     @PostMapping
     @ApiOperation(value = "新增快捷导航")
     public ApiResponse save(@RequestBody QuickNavigation quickNavigation) {
-        User user = contextUtils.getCurrentUser();
+        SecurityUser user = ContextUtils.getCurrentUser();
         List<QuickNavigation> list = quickNavigationService.findByUserId(user.getId());
         Assert.isTrue(list == null || list.size() < appConfig.getNavigationLimit(), PublicConstants.NAVIGATION_LIMITED_MSG);
         quickNavigation.setUserId(user.getId());
@@ -65,7 +65,7 @@ public class QuickNavigationController {
     @GetMapping("/list")
     @ApiOperation(value = "查询快捷导航")
     public ApiResponse findList() {
-        Integer userId = contextUtils.getCurrentUser().getId();
+        Integer userId = ContextUtils.getCurrentUser().getId();
         return ApiResponse.success(quickNavigationService.findByUserId(userId));
     }
 

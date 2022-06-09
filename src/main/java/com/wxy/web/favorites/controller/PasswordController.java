@@ -24,15 +24,14 @@ public class PasswordController {
     @Autowired
     private FavoritesService favoritesService;
 
-    @Autowired
-    private ContextUtils contextUtils;
+    
 
     @PostMapping
     @ApiOperation(value = "保存密码")
     public ApiResponse save(@RequestBody Password password) {
         Favorites favorites = favoritesService.findById(password.getFavoritesId());
         if (favorites != null && (StrUtil.isNotBlank(password.getAccount()) || StrUtil.isNotBlank(password.getPassword()))) {
-            password.setUserId(contextUtils.getCurrentUser().getId());
+            password.setUserId(ContextUtils.getCurrentUser().getId());
             Password password1 = passwordService.save(password);
             return ApiResponse.success(password1.getId());
         }

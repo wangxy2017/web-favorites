@@ -26,6 +26,7 @@ public class GlobalExceptionAdvice {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ApiResponse IllegalArgumentException(IllegalArgumentException e) {
+        e.printStackTrace();
         ErrorId errorId = ErrorId.get();
         return ApiResponse.error(e.getMessage(), errorId);
     }
