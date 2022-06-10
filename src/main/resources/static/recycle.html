@@ -211,7 +211,9 @@
                 if(count == 0){
                     $("th[data-key='1-0-4']").css("border-right", "0");
                 }
-                setTimeout(function(){$("#shareList").parent().hide()},100);
+                if(curr == 1){
+                    setTimeout(function(){$("#shareList").parent().hide()},100);
+                }
             }
             , cols: [[ //表头
                 {type: 'numbers'}
