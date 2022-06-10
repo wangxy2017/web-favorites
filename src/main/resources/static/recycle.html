@@ -56,6 +56,11 @@
         .content-item{
             padding: 10px;
         }
+
+        .content-item-hide {
+            position: absolute;
+            top: -9999px;
+        }
     </style>
 </head>
 <body>
@@ -81,7 +86,7 @@
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
         </div>
-        <div class="content-item layui-anim layui-anim-fadein">
+        <div class="content-item content-item-hide layui-anim layui-anim-fadein">
             <!-- 数据表格 -->
             <table id="shareList" lay-filter="shareList"></table>
             <!-- 操作 -->
@@ -212,7 +217,7 @@
                     $("th[data-key='1-0-4']").css("border-right", "0");
                 }
                 if(curr == 1){
-                    setTimeout(function(){$("#shareList").parent().hide()},100);
+                    //setTimeout(function(){$("#shareList").parent().hide().removeClass("content-item-hide")},100);
                 }
             }
             , cols: [[ //表头
