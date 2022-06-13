@@ -50,16 +50,10 @@ public class Application {
     @Value("${netty.enable}")
     private Boolean nettyEnable;
 
-    @Value("${init.user.username}")
-    private String username;
-
-    @Value("${init.user.password}")
-    private String password;
-
-    @Value("${init.admin.username}")
+    @Value("${admin.username}")
     private String adminUsername;
 
-    @Value("${init.admin.password}")
+    @Value("${admin.password}")
     private String adminPassword;
 
     @Autowired
@@ -79,8 +73,8 @@ public class Application {
             new NioWebSocketServer(nettyPort).init();
         }
         // 初始化用户账号
-        if (userService.findByUsername(username) == null) {
-            User user = userService.save(new User().setUsername(username).setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8)))));
+        if (appConfig.getDemoUserEnable() && userService.findByUsername("demo") == null) {
+            User user = userService.save(new User().setUsername("demo").setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex("demo".getBytes(StandardCharsets.UTF_8)))));
             log.info("初始化用户账号：{}", user);
             userService.initData(user.getId());
         }

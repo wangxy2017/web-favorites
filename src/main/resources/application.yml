@@ -66,6 +66,7 @@ app: #系统参数配置
   file-deep-level: 10 #文件夹深度
   file-compress-level: 7 #文件压缩等级
   file-suffixes: txt,properties,yml,xml,sh,bat,sql,json #可查看文件
+  demo-user-enable: true
 jwt: #jwt令牌配置
   token-secret-key: wdmhm7iJvRf2n#hc
   token-expired-seconds: 7200
@@ -80,10 +81,6 @@ aes: #aes密钥
   secret-key: 4sn2UaVa96pj4n#V
 swagger:
   enable: false #开启swagger
-init: #初始化账号
-  user:
-    username: demo
-    password: demo
-  admin:
-    username: admin
-    password: admin
+admin:
+  username: admin
+  password: admin

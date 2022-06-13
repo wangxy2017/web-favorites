@@ -40,4 +40,6 @@ public class AppConfig {
 
     private Integer errorCountLimit;
 
+    private Boolean demoUserEnable;
+
 }
