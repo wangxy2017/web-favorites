@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller;
+package com.wxy.web.favorites.controller.user;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
@@ -25,6 +25,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/favorites")
 @Api(tags = "收藏管理")
+@Secured("USER")
 public class FavoritesController {
 
     @Autowired

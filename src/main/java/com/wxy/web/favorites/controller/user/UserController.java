@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller;
+package com.wxy.web.favorites.controller.user;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
@@ -23,6 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Api(tags = "用户")
+@Secured("USER")
 public class UserController {
 
     @Autowired
@@ -162,7 +164,7 @@ public class UserController {
             user.setLastOnlineTime(now);
             userService.save(user);
         }
-        long between = DateUtil.between(user.getLastOnlineTime(), now, DateUnit.HOUR);
+        long between = DateUtil.between(Optional.ofNullable(user.getLastOnlineTime()).orElse(now), now, DateUnit.HOUR);
         if (between > 0) {
             user.setOnlineHour(Optional.ofNullable(user.getOnlineHour()).orElse(0) + 1);
             user.setLastOnlineTime(now);

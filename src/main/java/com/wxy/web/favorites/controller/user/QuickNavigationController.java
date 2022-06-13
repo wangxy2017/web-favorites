@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller;
+package com.wxy.web.favorites.controller.user;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 @RequestMapping("/quick-navigation")
 @Slf4j
 @Api(tags = "快捷导航")
+@Secured("USER")
 public class QuickNavigationController {
 
     @Autowired

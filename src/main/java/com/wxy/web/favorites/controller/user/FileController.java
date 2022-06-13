@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller;
+package com.wxy.web.favorites.controller.user;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +43,7 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/file")
 @Slf4j
 @Api(tags = "文件管理")
+@Secured("USER")
 public class FileController {
 
     @Autowired

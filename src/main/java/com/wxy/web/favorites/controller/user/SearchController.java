@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller;
+package com.wxy.web.favorites.controller.user;
 
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
@@ -27,6 +28,7 @@ import java.net.URL;
 @RequestMapping("/search")
 @Slf4j
 @Api(tags = "搜索引擎管理")
+@Secured("USER")
 public class SearchController {
 
     @Autowired

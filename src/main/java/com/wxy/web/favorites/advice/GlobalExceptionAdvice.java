@@ -3,6 +3,7 @@ package com.wxy.web.favorites.advice;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.ErrorId;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -26,15 +27,17 @@ public class GlobalExceptionAdvice {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ApiResponse IllegalArgumentException(IllegalArgumentException e) {
-        e.printStackTrace();
-        ErrorId errorId = ErrorId.get();
-        return ApiResponse.error(e.getMessage(), errorId);
+        return ApiResponse.error(e.getMessage());
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ApiResponse AccessDeniedException(AccessDeniedException e) {
+        return ApiResponse.error(403, "权限不足！");
     }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ApiResponse HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        ErrorId errorId = ErrorId.get();
-        return ApiResponse.error("不支持当前请求方法", errorId);
+        return ApiResponse.error("不支持当前请求方法");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,11 +47,9 @@ public class GlobalExceptionAdvice {
             List<ObjectError> errors = exceptions.getAllErrors();
             if (!errors.isEmpty()) {
                 FieldError fieldError = (FieldError) errors.get(0);
-                ErrorId errorId = ErrorId.get();
-                return ApiResponse.error(fieldError.getDefaultMessage(), errorId);
+                return ApiResponse.error(fieldError.getDefaultMessage());
             }
         }
-        ErrorId errorId = ErrorId.get();
-        return ApiResponse.error("参数验证失败", errorId);
+        return ApiResponse.error("参数验证失败");
     }
 }
