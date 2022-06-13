@@ -749,8 +749,9 @@
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
+                            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
                             layer.open({
-                                area:['800px','600px'],
+                                area:[width,'600px'],
                                 type: 1,
                                 title: '文件内容',
                                 content: '<xmp style="padding: 10px;margin: 0">' + result.data + '</xmp>'

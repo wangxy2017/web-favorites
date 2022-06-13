@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "t_category", indexes = {@Index(columnList = "user_id")})
 @org.hibernate.annotations.Table(appliesTo = "t_category",comment="分类表")
-@AllArgsConstructor
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Category {

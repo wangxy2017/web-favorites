@@ -61,7 +61,6 @@ public class LoginController {
     @Autowired
     private EmailUtils emailUtils;
 
-    
 
     @Autowired
     private AppConfig recommendsConfig;
@@ -81,7 +80,7 @@ public class LoginController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_LOGIN), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_LOGIN, new Date());
+        Verification verification = new Verification().setAccount(email).setCode(code).setExpiredTime(expTime).setAction(PublicConstants.VERIFICATION_EMAIL_LOGIN).setSendTime(new Date());
         verificationService.save(verification);
         log.info("登录邮箱：{}，登录验证码：{}", email, code);
         emailUtils.sendSimpleMail(email, EmailConstants.LOGIN_TITLE, String.format(EmailConstants.LOGIN_CONTENT, code, appConfig.getVerificationExpiredMinutes()));
@@ -109,17 +108,11 @@ public class LoginController {
                 user.setLastOnlineTime(now);
                 user = userService.save(user);
                 // 创建默认分类
-                Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, user.getId(), PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, PinYinUtils.toPinyin(PublicConstants.DEFAULT_CATEGORY_NAME), PinYinUtils.toPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME), null, null);
+                Category category = new Category().setName(PublicConstants.DEFAULT_CATEGORY_NAME).setUserId(user.getId()).setIsSystem(PublicConstants.SYSTEM_CATEGORY_CODE).setSort(PublicConstants.MAX_SORT_NUMBER).setPinyin(PinYinUtils.toPinyin(PublicConstants.DEFAULT_CATEGORY_NAME)).setPinyinS(PinYinUtils.toPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME));
                 categoryService.save(category);
                 // 推荐收藏
                 Integer userId = user.getId();
-                List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {
-                    return new Favorites(null, dto.getName(), dto.getUrl() + "/favicon.ico"
-                            , dto.getUrl(), category.getId(), userId,
-                            PinYinUtils.toPinyin(dto.getName()),
-                            PinYinUtils.toPinyinS(dto.getName()),
-                            null, null, null, null, null, null, null, null, null, null, null);
-                }).collect(Collectors.toList());
+                List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> new Favorites().setName(dto.getName()).setIcon(dto.getUrl() + "/favicon.ico").setUrl(dto.getUrl()).setCategoryId(category.getId()).setUserId(userId).setPinyin(PinYinUtils.toPinyin(dto.getName())).setPinyinS(PinYinUtils.toPinyinS(dto.getName()))).collect(Collectors.toList());
                 favoritesService.saveAll(favorites);
                 // 发送邮件
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.EMAIL_REGISTER_TITLE, String.format(EmailConstants.EMAIL_REGISTER_CONTENT, user.getUsername(), tempPwd));
@@ -212,7 +205,7 @@ public class LoginController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_FORGOT), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_FORGOT, new Date());
+        Verification verification = new Verification().setAccount(email).setCode(code).setExpiredTime(expTime).setAction(PublicConstants.VERIFICATION_EMAIL_FORGOT).setSendTime(new Date());
         verificationService.save(verification);
         log.info("忘记密码邮箱：{}，忘记密码验证码：{}", email, code);
         emailUtils.sendSimpleMail(email, EmailConstants.FORGOT_TITLE, String.format(EmailConstants.FORGOT_CONTENT, code, appConfig.getVerificationExpiredMinutes()));

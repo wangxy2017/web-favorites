@@ -80,3 +80,10 @@ aes: #aes密钥
   secret-key: 4sn2UaVa96pj4n#V
 swagger:
   enable: false #开启swagger
+init: #初始化账号
+  user:
+    username: demo
+    password: demo
+  admin:
+    username: admin
+    password: admin

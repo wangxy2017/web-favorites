@@ -194,11 +194,12 @@ public class FileController {
                 totalSize += file.getSize();
             }
             long freeSize = Arrays.stream(File.listRoots()).mapToLong(File::getFreeSpace).sum();
+            Date now = new Date();
             if (restSize > totalSize && freeSize * PublicConstants.DISK_LIMIT_RATE > totalSize) {
                 for (MultipartFile file : files) {
                     String path = userFileService.saveFile(file.getInputStream());
                     String filename = Objects.requireNonNull(file.getOriginalFilename()).replaceAll(" ", "+");
-                    UserFile userFile = new UserFile(null, user.getId(), pid, new Date(), new Date(), getNoRepeatFilename(pid, filename), path, null, null, file.getSize(), null);
+                    UserFile userFile = new UserFile().setUserId(user.getId()).setPid(pid).setCreateTime(now).setUpdateTime(now).setFilename(getNoRepeatFilename(pid, filename)).setPath(path).setSize(file.getSize());
                     userFileService.save(userFile);
                     long newSize = Optional.ofNullable(user.getUsedSize()).orElse(0L) + file.getSize();
                     long capacity = Optional.ofNullable(user.getCapacity()).orElse(0L);
@@ -246,7 +247,8 @@ public class FileController {
         UserFile file = userFileService.findByPidAndFilename(pid, filename);
         Assert.isNull(file, "文件夹已存在");
         SecurityUser user = ContextUtils.getCurrentUser();
-        UserFile file1 = new UserFile(null, user.getId(), pid, new Date(), new Date(), filename, null, null, 1, 0L, null);
+        Date now = new Date();
+        UserFile file1 = new UserFile().setUserId(user.getId()).setPid(pid).setCreateTime(now).setUpdateTime(now).setFilename(filename).setIsDir(1).setSize(0L);
         userFileService.save(file1);
         return ApiResponse.success();
     }

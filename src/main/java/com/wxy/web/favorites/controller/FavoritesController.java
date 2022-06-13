@@ -67,7 +67,6 @@ public class FavoritesController {
     @Autowired
     private AppConfig appConfig;
 
-    
 
     @Autowired
     private QuickNavigationService quickNavigationService;
@@ -346,7 +345,7 @@ public class FavoritesController {
                         String text = m.elementText("TEXT");
                         String time = m.elementText("TIME");
                         if (StrUtil.isNotBlank(content) && StrUtil.isNotBlank(time)) {
-                            list.add(new Moment(null, content, text, userId, sdf.parse(time), null));
+                            list.add(new Moment().setContent(content).setText(text).setUserId(userId).setCreateTime(sdf.parse(time)));
                         }
                     } catch (ParseException ignored) {
                     }
@@ -373,7 +372,7 @@ public class FavoritesController {
                     try {
                         Date date = sdf.parse(t.elementText("DATE"));
                         if (date.getTime() >= today.getTime()) {
-                            list.add(new Task(null, t.elementText("CONTENT"), date, Boolean.parseBoolean(t.elementText("ALARM")) ? PublicConstants.TASK_ALARM_CODE : 0, sdf1.parse(t.elementText("TIME")), userId, null, Integer.valueOf(t.elementText("LEVEL"))));
+                            list.add(new Task().setContent(t.elementText("CONTENT")).setTaskDate(date).setIsAlarm(Boolean.parseBoolean(t.elementText("ALARM")) ? PublicConstants.TASK_ALARM_CODE : 0).setAlarmTime(sdf1.parse(t.elementText("TIME"))).setUserId(userId).setLevel(Integer.valueOf(t.elementText("LEVEL"))));
                         }
                     } catch (ParseException ignored) {
                     }
@@ -397,7 +396,7 @@ public class FavoritesController {
                 root.element("SEARCH_TYPES").elements("SEARCH_TYPE").forEach(s -> {
                     String name = s.elementText("NAME");
                     if (!names.contains(name)) {
-                        list.add(new SearchType(null, name, s.elementText("ICON"), s.elementText("URL"), userId));
+                        list.add(new SearchType().setName(name).setIcon(s.elementText("ICON")).setUrl(s.elementText("URL")).setUserId(userId));
                     }
                 });
             }
@@ -420,7 +419,7 @@ public class FavoritesController {
                     String url = n.elementText("URL");
                     int sort = isInteger(n.elementText("SORT")) ? Integer.parseInt(n.elementText("SORT")) : -1;
                     if (!urls.contains(url)) {
-                        list.add(new QuickNavigation(null, n.elementText("NAME"), n.elementText("ICON"), url, userId, sort > 0 ? sort : null));
+                        list.add(new QuickNavigation().setName(n.elementText("NAME")).setIcon(n.elementText("ICON")).setUrl(url).setUserId(userId).setSort(sort > 0 ? sort : null));
                     }
                 });
             }
@@ -451,7 +450,7 @@ public class FavoritesController {
                     String createTime = r.elementText("CREATE_TIME");
                     if (StrUtil.isNotBlank(content) && StrUtil.isNotBlank(createTime)) {
                         try {
-                            list.add(new Memorandum(null, content, userId, sdf.parse(createTime)));
+                            list.add(new Memorandum().setContent(content).setUserId(userId).setCreateTime(sdf.parse(createTime)));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -475,16 +474,16 @@ public class FavoritesController {
                     List<Favorites> list1 = new ArrayList<>();
                     c.element("LIST").elements("FAVORITES").forEach(f -> {
                         int sort = isInteger(f.elementText("SORT")) ? Integer.parseInt(f.elementText("SORT")) : -1;
-                        Favorites favorites = new Favorites(null, f.elementText("NAME"), f.elementText("ICON"), f.elementText("URL"), null, null, PinYinUtils.toPinyin(f.elementText("NAME")), PinYinUtils.toPinyinS(f.elementText("NAME")), StrUtil.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null, StrUtil.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null, null, null, null, Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null, null, null, null);
+                        Favorites favorites = new Favorites().setName(f.elementText("NAME")).setIcon(f.elementText("ICON")).setUrl(f.elementText("URL")).setPinyin(PinYinUtils.toPinyin(f.elementText("NAME"))).setPinyinS(PinYinUtils.toPinyinS(f.elementText("NAME"))).setShortcut(StrUtil.isNotBlank(f.elementText("SHORTCUT")) ? f.elementText("SHORTCUT") : null).setSchemaName(StrUtil.isNotBlank(f.elementText("SCHEMA_NAME")) ? f.elementText("SCHEMA_NAME") : null).setSort(sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null).setStar(Boolean.parseBoolean(f.elementText("STAR")) ? PublicConstants.FAVORITES_STAR_CODE : null).setIsShare(Boolean.parseBoolean(f.elementText("SHARE")) ? PublicConstants.SHARE_CODE : null);
                         Element pwd = f.element("USER");
                         if (pwd != null) {
-                            Password password = new Password(null, pwd.elementText("ACCOUNT"), pwd.elementText("PASSWORD"), null, null);
+                            Password password = new Password().setAccount(pwd.elementText("ACCOUNT")).setPassword(pwd.elementText("PASSWORD"));
                             favorites.setPassword(password);
                         }
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category(null, c.elementText("NAME"), null, null, sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null, Boolean.parseBoolean(c.elementText("BOOKMARK")) ? PublicConstants.BOOKMARK_STYLE_CODE : null, PinYinUtils.toPinyin(c.elementText("NAME")), PinYinUtils.toPinyinS(c.elementText("NAME")), list1, null));
+                    list.add(new Category().setName(c.elementText("NAME")).setSort(sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null).setBookmark(Boolean.parseBoolean(c.elementText("BOOKMARK")) ? PublicConstants.BOOKMARK_STYLE_CODE : null).setPinyin( PinYinUtils.toPinyin(c.elementText("NAME"))).setPinyinS(c.elementText("NAME")).setFavorites(list1));
                 });
             }
         } catch (Exception e) {

@@ -28,7 +28,7 @@ public class PasswordService {
     public Password findByFavoritesId(Integer favoritesId) {
         Password password = passwordRepository.findByFavoritesId(favoritesId);
         if (password != null) {
-            Password password1 = new Password(password.getId(), password.getAccount(), password.getPassword(), password.getFavoritesId(),null);
+            Password password1 = new Password().setId(password.getId()).setAccount(password.getAccount()).setPassword(password.getPassword()).setFavoritesId(password.getFavoritesId());
             Optional.ofNullable(password1.getAccount()).ifPresent(a -> password1.setAccount(aes.decryptStr(a)));
             Optional.ofNullable(password1.getPassword()).ifPresent(p -> password1.setPassword(aes.decryptStr(p)));
             return password1;

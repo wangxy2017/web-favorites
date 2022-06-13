@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,7 +18,7 @@ import java.util.Date;
 @Entity
 @Table(name = "t_verification", indexes = {@Index(columnList = "account")})
 @org.hibernate.annotations.Table(appliesTo = "t_verification",comment="验证码表")
-@AllArgsConstructor
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Verification {

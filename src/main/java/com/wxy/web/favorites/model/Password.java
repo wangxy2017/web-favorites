@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "t_password",indexes = {@Index(columnList = "favorites_id")})
 @org.hibernate.annotations.Table(appliesTo = "t_password",comment="密码表")
-@AllArgsConstructor
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Password {

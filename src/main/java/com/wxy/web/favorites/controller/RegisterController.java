@@ -108,7 +108,7 @@ public class RegisterController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_REGISTER), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_REGISTER, new Date());
+        Verification verification = new Verification().setAccount(email).setCode(code).setExpiredTime(expTime).setAction(PublicConstants.VERIFICATION_REGISTER).setSendTime(new Date());
         verificationService.save(verification);
         log.info("注册邮箱：{}，注册验证码：{}", email, code);
         emailUtils.sendSimpleMail(email, EmailConstants.REGISTER_TITLE, String.format(EmailConstants.REGISTER_CONTENT, code, appConfig.getVerificationExpiredMinutes()));

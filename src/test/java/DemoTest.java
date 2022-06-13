@@ -70,31 +70,31 @@ public class DemoTest {
                 long id = Thread.currentThread().getId();
                 // 批量创建用户
                 for (int k = 0; k < userCount; k++) {
-                    User user = userRepository.save(new User(null, id + "test" + k, passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8))), id + "test" + k + "@qq.com", null, null, null, null, null, null, null, null, null, null, null, null));
+                    User user = userRepository.save(new User().setUsername(id + "test" + k).setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex((id + "test" + k).getBytes(StandardCharsets.UTF_8)))).setEmail(id + "test" + k + "@qq.com"));
                     log.info("创建用户：{}", user);
                     // 批量创建分类
                     for (int i = 0; i < categoryCount; i++) {
-                        Category category = categoryRepository.save(new Category(null, "test" + i, user.getId(), null, null, null, null, null, null, null));
+                        Category category = categoryRepository.save(new Category().setName("test" + i).setUserId(user.getId()));
                         // 批量创建收藏
                         for (int j = 0; j < favoritesCount; j++) {
-                            favoritesRepository.save(new Favorites(null, "百度一下" + j, "http://www.baidu.com/favicon.ico", "http://www.baidu.com/", category.getId(), user.getId(), PinYinUtils.toPinyin("百度一下" + j), PinYinUtils.toPinyinS("百度一下" + j), null, null, null, null, null, null, null, null, null, null, null));
+                            favoritesRepository.save(new Favorites().setName("百度一下" + j).setIcon("http://www.baidu.com/favicon.ico").setUrl("http://www.baidu.com/").setCategoryId(category.getId()).setUserId(user.getId()).setPinyin( PinYinUtils.toPinyin("百度一下" + j)).setPinyinS( PinYinUtils.toPinyinS("百度一下" + j)));
                         }
                     }
                     // 批量创建瞬间
                     for (int i = 0; i < momentCount; i++) {
-                        momentRepository.save(new Moment(null, "测试" + i, "测试" + i, user.getId(), new Date(), null));
+                        momentRepository.save(new Moment().setContent("测试" + i).setText("测试" + i).setUserId(user.getId()).setCreateTime(new Date()));
                     }
                     // 批量创建搜索
                     for (int i = 0; i < searchTypeCount; i++) {
-                        searchTypeRepository.save(new SearchType(null, "百度搜索" + i, "https://www.baidu.com/favicon.ico", "https://www.bing.com/search?q=", user.getId()));
+                        searchTypeRepository.save(new SearchType().setName("百度搜索" + i).setIcon("https://www.baidu.com/favicon.ico").setUrl("https://www.bing.com/search?q=").setUserId(user.getId()));
                     }
                     // 批量创建文件
                     for (int i = 0; i < userFileCount; i++) {
-                        userFileRepository.save(new UserFile(null, user.getId(), null, new Date(), new Date(), "测试" + i, null, null, PublicConstants.DIR_CODE, null, null));
+                        userFileRepository.save(new UserFile().setUserId(user.getId()).setCreateTime(new Date()).setUpdateTime(new Date()).setFilename("测试" + i).setIsDir(PublicConstants.DIR_CODE));
                     }
                     // 批量创建任务
                     for (int i = 0; i < taskCount; i++) {
-                        taskRepository.save(new Task(null, "测试" + i, new Date(), null, null, user.getId(), new Date(), PublicConstants.TASK_LEVEL_0));
+                        taskRepository.save(new Task().setContent("测试" + i).setTaskDate(new Date()).setUserId(user.getId()).setCreateTime(new Date()).setLevel(PublicConstants.TASK_LEVEL_0));
                     }
                 }
             });

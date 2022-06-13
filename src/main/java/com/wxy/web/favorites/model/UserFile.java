@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,7 +17,7 @@ import java.util.List;
         @Index(name = "idx_user_id_pid_filename", columnList = "user_id"),
         @Index(name = "idx_user_id_pid_filename", columnList = "pid")})
 @org.hibernate.annotations.Table(appliesTo = "t_user_file",comment="文件表")
-@AllArgsConstructor
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class UserFile {

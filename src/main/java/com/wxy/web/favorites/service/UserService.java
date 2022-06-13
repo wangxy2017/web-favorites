@@ -127,16 +127,10 @@ public class UserService {
 
     public void initData(Integer userId) {
         // 创建默认分类
-        Category category = new Category(null, PublicConstants.DEFAULT_CATEGORY_NAME, userId, PublicConstants.SYSTEM_CATEGORY_CODE, PublicConstants.MAX_SORT_NUMBER, null, PinYinUtils.toPinyin(PublicConstants.DEFAULT_CATEGORY_NAME), PinYinUtils.toPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME), null, null);
+        Category category = new Category().setName(PublicConstants.DEFAULT_CATEGORY_NAME).setUserId(userId).setIsSystem(PublicConstants.SYSTEM_CATEGORY_CODE).setSort(PublicConstants.MAX_SORT_NUMBER).setPinyin(PublicConstants.DEFAULT_CATEGORY_NAME).setPinyinS(PublicConstants.DEFAULT_CATEGORY_NAME);
         categoryRepository.save(category);
         // 推荐收藏
-        List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> {
-            return new Favorites(null, dto.getName(), dto.getUrl() + "/favicon.ico"
-                    , dto.getUrl(), category.getId(), userId,
-                    PinYinUtils.toPinyin(dto.getUrl()),
-                    PinYinUtils.toPinyinS(dto.getUrl()),
-                    null, null, null, null, null, null, null, null, null, null, null);
-        }).collect(Collectors.toList());
+        List<Favorites> favorites = DataConstants.RECOMMEND_LIST.stream().map(dto -> new Favorites().setName(dto.getName()).setIcon(dto.getUrl() + "/favicon.ico").setUrl(dto.getUrl()).setCategoryId(category.getId()).setUserId(userId).setPinyin(dto.getName()).setPinyinS(dto.getName())).collect(Collectors.toList());
         favoritesRepository.saveAll(favorites);
     }
 

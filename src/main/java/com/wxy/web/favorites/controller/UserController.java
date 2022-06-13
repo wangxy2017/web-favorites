@@ -114,7 +114,7 @@ public class UserController {
         Assert.isTrue(verificationService.sendEnable(email, PublicConstants.VERIFICATION_EMAIL_UPDATE), "发送验证码太频繁");
         String code = RandomUtil.randomNumbers(PublicConstants.RANDOM_CODE_LENGTH);
         Date expTime = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(appConfig.getVerificationExpiredMinutes()));
-        Verification verification = new Verification(null, email, code, expTime, PublicConstants.VERIFICATION_EMAIL_UPDATE, new Date());
+        Verification verification = new Verification().setAccount(email).setCode(code).setExpiredTime(expTime).setAction(PublicConstants.VERIFICATION_EMAIL_UPDATE).setSendTime(new Date());
         verificationService.save(verification);
         emailUtils.sendSimpleMail(email, EmailConstants.BINDING_EMAIL_TITLE, String.format(EmailConstants.BINDING_EMAIL_CONTENT, code, appConfig.getVerificationExpiredMinutes()));
         return ApiResponse.success();

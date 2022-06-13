@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.Date;
         @Index(columnList = "user_id"),
         @Index(columnList = "alarm_time")})
 @org.hibernate.annotations.Table(appliesTo = "t_task",comment="日程表")
-@AllArgsConstructor
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Task {

@@ -2,9 +2,9 @@ package com.wxy.web.favorites.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,8 +15,8 @@ import java.util.Date;
         @Index(name = "idx_user_id_shortcut", columnList = "user_id"),
         @Index(name = "idx_user_id_shortcut", columnList = "shortcut"),
         @Index(columnList = "category_id")})
-@org.hibernate.annotations.Table(appliesTo = "t_favorites",comment="收藏表")
-@AllArgsConstructor
+@org.hibernate.annotations.Table(appliesTo = "t_favorites", comment = "收藏表")
+@Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Favorites {
@@ -53,10 +53,10 @@ public class Favorites {
     @Column(name = "schema_name", columnDefinition = "varchar(100) comment '快捷指令'")
     private String schemaName;
 
-    @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
+    @Column(name = "sort", columnDefinition = "int(4) default 0 comment '排序'")
     private Integer sort;
 
-    @Column(name = "star", columnDefinition = "int(1) comment '是否标记：1-是 0-否'")
+    @Column(name = "star", columnDefinition = "int(1) default 0 comment '是否标记：1-是 0-否'")
     private Integer star;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -70,11 +70,14 @@ public class Favorites {
     @Column(name = "delete_time", columnDefinition = "datetime comment '逻辑删除时间'")
     private Date deleteTime;
 
-    @Column(name = "is_share", columnDefinition = "int(1) comment '是否分享：0-否 1-是'")
+    @Column(name = "is_share", columnDefinition = "int(1) default 0 comment '是否分享：0-否 1-是'")
     private Integer isShare;
 
-    @Column(name = "support", columnDefinition = "int(10) comment '关注量'")
+    @Column(name = "support", columnDefinition = "int(10) default 0 comment '关注量'")
     private Integer support;
+
+    @Column(name = "click_count", columnDefinition = "int(10) default 0 comment '点击次数'")
+    private Integer clickCount;
 
     @Transient
     private Password password;
