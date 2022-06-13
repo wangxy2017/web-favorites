@@ -47,7 +47,7 @@ public class FavoritesService {
     }
 
     public List<Favorites> findByCategoryId(Integer categoryId) {
-        return favoritesRepository.findByCategoryIdAndDeleteFlagIsNull(categoryId);
+        return favoritesRepository.findByCategoryIdAndDeleteFlag(categoryId, 0);
     }
 
     public Favorites save(Favorites favorites) {
@@ -69,7 +69,7 @@ public class FavoritesService {
     public List<Favorites> findLimitByCategoryId(Integer categoryId) {
         Sort sort = Sort.by(Sort.Order.desc("sort"), Sort.Order.asc("id"));
         Pageable pageable = PageRequest.of(0, appConfig.getFavoritesLimit(), sort);
-        return favoritesRepository.findLimitByCategoryIdAndDeleteFlagIsNull(categoryId, pageable);
+        return favoritesRepository.findLimitByCategoryIdAndDeleteFlag(categoryId, 0, pageable);
     }
 
     public void deleteById(Integer id) {
@@ -81,7 +81,7 @@ public class FavoritesService {
     }
 
     public Favorites findByShortcut(String shortcut, Integer userId) {
-        return favoritesRepository.findByShortcutAndUserIdAndDeleteFlagIsNull(shortcut, userId);
+        return favoritesRepository.findByShortcutAndUserIdAndDeleteFlag(shortcut, userId, 0);
     }
 
     public List<Favorites> findFavorites(Integer userId, String searchName) {
@@ -91,7 +91,7 @@ public class FavoritesService {
         Specification<Favorites> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("userId"), userId));
-            predicateList.add(criteriaBuilder.isNull(root.get("deleteFlag")));
+            predicateList.add(criteriaBuilder.equal(root.get("deleteFlag"), 0));
             if (StrUtil.isNotBlank(text)) {
                 predicateList.add(criteriaBuilder.or(criteriaBuilder.like(root.get("name"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyin"), "%" + text + "%"), criteriaBuilder.like(root.get("pinyinS"), "%" + text + "%")));
             }

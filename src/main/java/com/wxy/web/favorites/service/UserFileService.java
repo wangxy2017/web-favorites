@@ -62,7 +62,7 @@ public class UserFileService {
     }
 
     public List<UserFile> findRootList(Integer userId) {
-        return userFileRepository.findByUserIdAndPidIsNull(userId);
+        return userFileRepository.findByUserIdAndPid(userId, 0);
     }
 
     /**
@@ -75,7 +75,7 @@ public class UserFileService {
      */
     public Path packageFile(Integer userId, String tempPath) throws IOException {
         // 查询用户文件
-        List<UserFile> rootList = userFileRepository.findByUserIdAndPidIsNull(userId);
+        List<UserFile> rootList = userFileRepository.findByUserIdAndPid(userId, 0);
         if (!CollectionUtils.isEmpty(rootList)) {
             Path root = Paths.get(tempPath, String.valueOf(userId));
             // 打包前，删除历史打包

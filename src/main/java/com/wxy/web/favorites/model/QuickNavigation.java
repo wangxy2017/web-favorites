@@ -34,7 +34,7 @@ public class QuickNavigation {
     @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
+    @Column(name = "sort", columnDefinition = "int(4) default 0 comment '排序'")
     private Integer sort;
 
 }

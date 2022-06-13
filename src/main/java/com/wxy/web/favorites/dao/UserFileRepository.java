@@ -14,7 +14,7 @@ public interface UserFileRepository extends JpaRepository<UserFile, Integer> {
 
     List<UserFile> findByPid(Integer pid);
 
-    List<UserFile> findByUserIdAndPidIsNull(Integer userId);
+    List<UserFile> findByUserIdAndPid(Integer userId,Integer pid);
 
     Page<UserFile> findByUserIdAndFilenameLike(Integer userId, String name, Pageable pageable);
 
@@ -24,5 +24,5 @@ public interface UserFileRepository extends JpaRepository<UserFile, Integer> {
 
     UserFile findByPidAndFilename(Integer pid, String filename);
 
-    Long countByUserIdAndIsDirIsNull(Integer userId);
+    Long countByUserIdAndIsDir(Integer userId,Integer isDir);
 }

@@ -37,6 +37,6 @@ public class Moment {
     @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
     private Date createTime;
 
-    @Column(name = "is_top", columnDefinition = "int(1) comment '置顶: 0-否 1-是'")
+    @Column(name = "is_top", columnDefinition = "int(1) default 0 comment '置顶: 0-否 1-是'")
     private Integer isTop;
 }

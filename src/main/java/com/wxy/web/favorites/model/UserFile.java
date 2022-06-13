@@ -30,7 +30,7 @@ public class UserFile {
     @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "pid", columnDefinition = "int(10) comment '父id'")
+    @Column(name = "pid", columnDefinition = "int(10) default 0 comment '父id'")
     private Integer pid;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -50,10 +50,10 @@ public class UserFile {
     @Column(name = "share_id", unique = true, columnDefinition = "varchar(64) comment '分享id'")
     private String shareId;
 
-    @Column(name = "is_dir", columnDefinition = "int(1) comment '置顶: 0-否 1-是'")
+    @Column(name = "is_dir", columnDefinition = "int(1) default 0 comment '置顶: 0-否 1-是'")
     private Integer isDir;
 
-    @Column(name = "size", columnDefinition = "bigint(20) comment '大小(byte)'")
+    @Column(name = "size", columnDefinition = "bigint(20) default 0 comment '大小(byte)'")
     private Long size;
 
     @Transient

@@ -29,13 +29,13 @@ public class Category {
     @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "is_system", columnDefinition = "int(1) comment '是否系统分类'")
+    @Column(name = "is_system", columnDefinition = "int(1) default 0 comment '是否系统分类'")
     private Integer isSystem;
 
-    @Column(name = "sort", columnDefinition = "int(4) comment '排序'")
+    @Column(name = "sort", columnDefinition = "int(4) default 0 comment '排序'")
     private Integer sort;
 
-    @Column(name = "bookmark", columnDefinition = "int(1) comment '强制书签模式'")
+    @Column(name = "bookmark", columnDefinition = "int(1) default 0 comment '强制书签模式'")
     private Integer bookmark;
 
     @Column(name = "pinyin", columnDefinition = "varchar(3000) comment '拼音'")
