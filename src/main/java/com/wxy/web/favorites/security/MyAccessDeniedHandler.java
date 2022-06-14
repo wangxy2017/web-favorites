@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.security;
 
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.ResponseUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +22,6 @@ import java.io.IOException;
 public class MyAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        ResponseUtils.writeJson(response, ApiResponse.error(403, "权限不足！"));
+        ResponseUtils.writeJson(response, ApiResponse.error(ErrorConstants.NO_PERMISSION_CODE, ErrorConstants.NO_PERMISSION_MSG));
     }
 }

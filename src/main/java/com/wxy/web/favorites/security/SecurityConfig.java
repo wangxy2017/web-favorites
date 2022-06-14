@@ -66,7 +66,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(myAccessDeniedHandler)// 认证通过，但是没权限处理器
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 禁用session，JWT校验不需要session
                 .and().addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)// 将TOKEN校验过滤器配置到过滤器链中，否则不生效，放到UsernamePasswordAuthenticationFilter之前
-                .csrf().disable();// 关闭csrf
+                .csrf().disable()// 关闭csrf
+                .headers().frameOptions().disable();
     }
 
     /**
@@ -90,6 +91,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html",
                         "/moment.html", "/calendar.html", "/moment_edit.html", "/file.html", "/recycle.html",
                         "/report.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                        "/css/**", "/js/**", "/plugin/**", "/favicon.ico");
+                        "/css/**", "/js/**", "/plugin/**", "/favicon.ico","/admin.html");
     }
 }

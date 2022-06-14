@@ -7,7 +7,10 @@ package com.wxy.web.favorites.constant;
 public interface ErrorConstants {
 
      int NO_LOGIN_CODE = 401;
-     String NO_LOGIN_MSG = "token过期，请重新登录";
+     String NO_LOGIN_MSG = "token过期，请重新登录！";
+
+     int NO_PERMISSION_CODE = 403;
+     String NO_PERMISSION_MSG = "权限不足！";
 
      String SYSTEM_CATEGORY_NO_DELETE_MSG = "系统分类无法删除";
 
@@ -26,8 +29,9 @@ public interface ErrorConstants {
      String USERNAME_OR_EMAIL_EXISTED_MSG = "用户名或邮箱已存在";
 
      String QRCODE_INVALID_MSG = "二维码已失效";
-     String SID_NOT_FOUND = "缺少必要参数：sid";
+     String SID_NOT_FOUND_MSG = "缺少必要参数：sid";
 
-     String RESOURCE_NOT_FOUND = "资源不存在";
-     String FILE_IS_DELETED = "文件被物理删除";
+     String RESOURCE_NOT_FOUND_MSG = "资源不存在";
+     String FILE_IS_DELETED_MSG = "文件被物理删除";
+     String USER_DISABLED_MSG = "账号已被禁止登录";
 }

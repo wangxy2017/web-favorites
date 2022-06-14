@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.advice;
 
+import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.ErrorId;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class GlobalExceptionAdvice {
 
     @ExceptionHandler(value = AccessDeniedException.class)
     public ApiResponse AccessDeniedException(AccessDeniedException e) {
-        return ApiResponse.error(403, "权限不足！");
+        return ApiResponse.error(ErrorConstants.NO_PERMISSION_CODE, ErrorConstants.NO_PERMISSION_MSG);
     }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)

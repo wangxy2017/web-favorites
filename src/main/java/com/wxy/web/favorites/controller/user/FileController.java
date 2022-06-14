@@ -130,7 +130,7 @@ public class FileController {
     @ApiOperation(value = "下载分享文件")
     public void shareDownload(HttpServletResponse response, @PathVariable String shareId) throws IOException {
         UserFile userFile = userFileService.findByShareId(shareId);
-        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
+        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND_MSG);
         download(response, userFile.getId());
     }
 
@@ -145,10 +145,10 @@ public class FileController {
     @ApiOperation(value = "下载文件")
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         UserFile userFile = userFileService.findById(id);
-        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND);
+        Assert.notNull(userFile, ErrorConstants.RESOURCE_NOT_FOUND_MSG);
         Assert.isTrue(!PublicConstants.DIR_CODE.equals(userFile.getIsDir()) && StrUtil.isNotBlank(userFile.getPath()), "数据异常");
         Path file = Paths.get(userFile.getPath());
-        Assert.isTrue(Files.exists(file), ErrorConstants.FILE_IS_DELETED);
+        Assert.isTrue(Files.exists(file), ErrorConstants.FILE_IS_DELETED_MSG);
         response.setContentType(ContentType.OCTET_STREAM.getValue());
         response.addHeader("Content-Disposition", "attachment;fileName=" + new String(userFile.getFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
         try (ServletOutputStream out = response.getOutputStream()) {
@@ -162,7 +162,7 @@ public class FileController {
         SecurityUser user = ContextUtils.getCurrentUser();
         String tempPath = ContextUtils.getRequest().getServletContext().getRealPath("/");
         Path packageFile = userFileService.packageFile(user.getId(), tempPath);
-        Assert.notNull(packageFile, ErrorConstants.RESOURCE_NOT_FOUND);
+        Assert.notNull(packageFile, ErrorConstants.RESOURCE_NOT_FOUND_MSG);
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream())) {
             out.setMethod(ZipEntry.DEFLATED);
             out.setLevel(appConfig.getFileCompressLevel());

@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.*;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
@@ -139,5 +140,9 @@ public class UserService {
             userFile.setShareId(null);
             userFileRepository.save(userFile);
         }
+    }
+
+    public PageInfo<User> findAdminPageList(String name, Integer pageNum, Integer pageSize) {
+        return null;
     }
 }

@@ -29,7 +29,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user != null) {
+        if (user != null && !Objects.equals(user.getStatus(), 2)) {
             /*
              * 此处查询用户权限，方便后续接口权限校验
              * 若接口需要开启权限验证，则在对应接口上配置 @Secured("xxx")注解

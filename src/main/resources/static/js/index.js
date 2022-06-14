@@ -1881,7 +1881,7 @@
                 success: function (result) {
                     if (result.code == 0) {
                         var user = result.data;
-                        $("#username").text(user.username.substring(0, 4));
+                        $("#username").text(user.nickName.substring(0, 4));
                         form.val("styleSelect", {"viewStyle": user.viewStyle});
                         if(user.viewStyle == 1)$("#layuiBody").addClass("bookmark");
                     }

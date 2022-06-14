@@ -1,0 +1,4 @@
+/* 解决没有src属性时出现的边框 */
+img[src=""], img:not([src]){
+    opacity:0;
+}

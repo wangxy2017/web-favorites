@@ -1,5 +1,7 @@
 package com.wxy.web.favorites.security;
 
+import com.wxy.web.favorites.constant.ErrorConstants;
+import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.util.ResponseUtils;
 import org.springframework.security.core.AuthenticationException;
@@ -21,6 +23,6 @@ import java.io.IOException;
 public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        ResponseUtils.writeJson(response, ApiResponse.error(401, "无权限访问，请先登录！"));
+        ResponseUtils.writeJson(response, ApiResponse.error(ErrorConstants.NO_LOGIN_CODE, ErrorConstants.NO_LOGIN_MSG));
     }
 }

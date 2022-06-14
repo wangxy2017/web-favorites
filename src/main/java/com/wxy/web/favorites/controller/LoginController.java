@@ -34,9 +34,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -132,14 +130,21 @@ public class LoginController {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StrUtil.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
-                String token;
-                if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
-                    token = tokenUtils.createToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+                if (!Objects.equals(user1.getStatus(), 2)) {
+                    String token;
+                    if (PublicConstants.REMEMBER_ME_CODE.equals(remember)) {
+                        token = tokenUtils.createToken(user1.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+                    } else {
+                        token = tokenUtils.createToken(user1.getUsername());
+                    }
+                    updateErrorCount(user1, true);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("accessToken", token);
+                    map.put("admin", Objects.equals(user1.getAdmin(), 1));
+                    return ApiResponse.success(map);
                 } else {
-                    token = tokenUtils.createToken(user1.getUsername());
+                    return ApiResponse.error(ErrorConstants.USER_DISABLED_MSG);
                 }
-                updateErrorCount(user1, true);
-                return ApiResponse.success(token);
             } else {
                 // 记录失败次数
                 updateErrorCount(user1, false);
@@ -154,7 +159,7 @@ public class LoginController {
     @ApiOperation(value = "扫码登录")
     public ApiResponse qrLogin(@RequestBody User user) {
         if (StrUtil.isBlank(user.getSid())) {
-            return ApiResponse.error(ErrorConstants.SID_NOT_FOUND);
+            return ApiResponse.error(ErrorConstants.SID_NOT_FOUND_MSG);
         }
         Channel channel = ChannelSupervise.findChannel(user.getSid());
         if (channel == null) {

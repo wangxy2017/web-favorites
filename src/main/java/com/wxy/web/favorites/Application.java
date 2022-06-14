@@ -74,13 +74,13 @@ public class Application {
         }
         // 初始化用户账号
         if (appConfig.getDemoUserEnable() && userService.findByUsername("demo") == null) {
-            User user = userService.save(new User().setUsername("demo").setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex("demo".getBytes(StandardCharsets.UTF_8)))));
+            User user = userService.save(new User().setNickName("演示账号").setUsername("demo").setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex("demo".getBytes(StandardCharsets.UTF_8)))));
             log.info("初始化用户账号：{}", user);
             userService.initData(user.getId());
         }
         // 初始化管理员账号
         if (userService.findByUsername(adminUsername) == null) {
-            User user = userService.save(new User().setUsername(adminUsername).setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(adminPassword.getBytes(StandardCharsets.UTF_8)))).setAdmin(1));
+            User user = userService.save(new User().setNickName("超级管理员").setUsername(adminUsername).setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(adminPassword.getBytes(StandardCharsets.UTF_8)))).setAdmin(1));
             log.info("初始化管理员账号：{}", user);
         }
     }
