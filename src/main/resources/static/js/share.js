@@ -1,0 +1,251 @@
+layui.use(['layer','flow','util'], function() {
+        var layer = layui.layer;
+        var flow = layui.flow;
+        var util = layui.util;
+
+        // 加载动画
+        layer.load();
+
+        // 加载数据
+        window.loadList = function(name){
+            $("#favoritesList").empty();
+            layer.load();
+            $('#center').unbind();
+            flow.load({
+                elem: '#favoritesList'
+                ,scrollElem: '#center'
+                ,isLazyimg: true
+                ,mb: 400
+                ,end: ' '
+                ,done: function(page, next){
+                  var lis = [];
+                  $.ajax({
+                        type: "GET",
+                        url: "share/list",
+                        data: {"name": name, "pageNum": page,"pageSize": 100},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if(page == 1){
+                                layer.closeAll('loading');
+                                if (result.code == 0 && result.data.list.length > 0) {
+                                    $("#notFoundDiv").hide();
+                                }else{
+                                    $("#notFoundDiv").show();
+                                }
+                            }
+                            if (result.code == 0) {
+                                $.each(result.data.list, function(index, item){
+                                    var html = '';
+                                    html += '<div class="favorites layui-anim layui-anim-fadein">';
+                                    html += '   <div class="favorites-info">';
+                                    html += '       <div class="bg">';
+                                    html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
+                                    html += '       </div>';
+                                    html += '       <div class="title" lay-title="' + item.name + '" data-url="' + item.url + '" onclick="openUrl(this)">' + item.name + '</div>';
+                                    html += '   </div>';
+                                    html += '   <div class="other-info">';
+                                    html += '       <div class="user" lay-title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
+                                    html += '       <div class="support" data-id="' + item.id + '" data-support="' + item.support + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
+                                    html += '   </div>';
+                                    html += '</div>';
+                                    lis.push(html);
+                                });
+                                next(lis.join(''), page < result.data.pages);
+                            }
+                        }
+                  });
+                }
+            });
+        };
+
+        loadList();
+
+        // 固定块
+        util.fixbar({
+            top: true
+            ,scrollElem: '#center'
+            ,bgcolor: '#393D49'
+            ,css: {right: 50, bottom: 60}
+            ,mouseenter: function(type,ele){
+                if(type === 'top'){
+                    layer.tips('回到顶部', ele, {tips: 4});
+                }
+            }
+            ,mouseleave: function(ele,type){
+                layer.closeAll('tips');
+            }
+        });
+
+        // 点击空白关闭
+        $(document).on("click", function(e) {
+            var _conss = $('.search-input');//点击的容器范围
+            if (!_conss.is(e.target) && _conss.has(e.target).length === 0) {
+                $("#search_close").hide();
+            }
+        });
+
+        $(document).on("keydown", function(event){
+            if(event.ctrlKey && event.key === "f"){
+                $("#search_text").focus();
+                // 阻止默认浏览器动作(W3C)
+                var e = event;
+                if ( e && e.preventDefault )
+                    e.preventDefault();
+                // IE中阻止函数器默认动作的方式
+                else
+                    window.event.returnValue = false;
+                return false;
+            }
+        });
+
+        window.openUrl = function (obj) {
+            var url = $(obj).attr("data-url");
+            if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
+                newWin(url);
+                // 记录访问次数
+                $.ajax({
+                    type: "GET",
+                    url: "user/visit",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
+            }else{
+                layer.msg('此链接无效', {icon: 7});
+            }
+        };
+
+        window.newWin = function(url) {
+          var a = document.createElement('a');
+          a.setAttribute('href', url);
+          a.setAttribute('target', '_blank');
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        };
+
+        window.support = function(obj){
+            layer.confirm('确认收藏书签吗？', function(index){
+                layer.close(index);
+
+                var id = $(obj).attr("data-id");
+                var support = $(obj).attr("data-support");
+                if(support == null || isNaN(support)){
+                    support = 0;
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "share/support/" + id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        layer.msg('收藏成功', {icon: 6});
+                        if (result.code == 0) {
+                            $(obj).find("em").text(transform(++support));
+                        }
+                    }
+                });
+            });
+        };
+
+        window.transform = function(value) {
+            if(value == null || isNaN(value)){
+                return 0;
+            }
+            let newValue = ['', '', ''];
+            let fr = 1000;
+            const ad = 1;
+            let num = 3;
+            const fm = 1;
+            while (value / fr >= 1) {
+              fr *= 10;
+              num += 1;
+            }
+            if (num <= 4) { // 千
+              newValue[1] = '千';
+              newValue[0] = parseInt(value / 1000) + '';
+            } else if (num <= 8) { // 万
+              const text1 = parseInt(num - 4) / 3 > 1 ? '千万' : '万';
+              // tslint:disable-next-line:no-shadowed-variable
+              const fm = '万' === text1 ? 10000 : 10000000;
+              newValue[1] = text1;
+              newValue[0] = (value / fm) + '';
+            } else if (num <= 16) {// 亿
+              let text1 = (num - 8) / 3 > 1 ? '千亿' : '亿';
+              text1 = (num - 8) / 4 > 1 ? '万亿' : text1;
+              text1 = (num - 8) / 7 > 1 ? '千万亿' : text1;
+              // tslint:disable-next-line:no-shadowed-variable
+              let fm = 1;
+              if ('亿' === text1) {
+                fm = 100000000;
+              } else if ('千亿' === text1) {
+                fm = 100000000000;
+              } else if ('万亿' === text1) {
+                fm = 1000000000000;
+              } else if ('千万亿' === text1) {
+                fm = 1000000000000000;
+              }
+              newValue[1] = text1;
+              newValue[0] = parseInt(value / fm) + '';
+            }
+            if (value < 1000) {
+              newValue[1] = '';
+              newValue[0] = value + '';
+            }
+            return newValue.join('');
+        };
+
+        // 初始化title
+        $(document).on('mouseenter','[lay-title]',function(e){
+            var that = $(e.currentTarget);
+            layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
+        }).on('mouseleave','[lay-title]',function(e){
+            layer.closeAll('tips');
+        });
+
+        // 登出
+        $("#logout").click(function () {
+            layer.confirm('确认退出系统吗？', function(index){
+                layer.close(index);
+
+                localStorage.clear();
+                window.location.href = "login.html";
+            });
+        });
+
+        window.searchCount = function(){
+            // 记录搜索次数
+            $.ajax({
+                type: "GET",
+                url: "user/search",
+                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+            });
+        };
+
+        $("#search_text").on("keydown", function(event){
+            if(event.key === "Enter"){
+                searchText();
+            }
+        }).on("focus", function () {
+           $("#search_close").show();
+        });
+
+        $("#search_icon").click(function(){
+            searchText();
+        });
+
+        window.searchText = function(){
+            var text = $("#search_text").val().trim();
+            loadList(text);
+            if(text != ""){
+                searchCount();
+            }
+        };
+
+        // 关闭搜索
+        $("#search_close").click(function () {
+            $(this).hide();
+            $("#search_text").val("");
+            loadList();
+        });
+
+    });

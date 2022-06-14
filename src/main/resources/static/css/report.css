@@ -1,0 +1,38 @@
+.report {
+            padding: 15px;
+        }
+
+        .report .title {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #4b4b4b
+        }
+
+        .report .content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .content .content-item {
+            width: 110px;
+            border-right: 1px solid #e6e6e6;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .content .content-item:last-child {
+            border-right: none;
+        }
+
+        .content-item .content-label {
+            font-size: 12px;
+            height: 30px;
+        }
+
+        .content-item .content-data {
+            font-size: 24px;
+            font-weight: 600;
+            word-wrap:break-word;
+            color: #4b4b4b;
+        }

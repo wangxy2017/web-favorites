@@ -1,0 +1,99 @@
+ .layui-breadcrumb a {
+            color: #333!important;
+        }
+
+        .bg{
+            position: fixed;
+            top: 100px;
+            left: 0;
+            right: 0;
+            bottom: 100px;
+            background: #009688;
+        }
+
+        .loginTitle{
+            margin-top: 20px;
+            margin-left: 15px;
+            background: #fff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .loginDiv{
+            z-index: 999;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px -5px rgba(0,0,0,.5);
+        }
+
+        .loginFooter{
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            height: 44px;
+            line-height: 44px;
+        }
+
+        #qrcode {
+            padding: 15px;
+            border: 1px solid #e5e5e5;
+            width: 180px;
+            height: 180px;
+            margin: 15px auto;
+        }
+
+        #refreshCode {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #refreshCode:hover {
+            color: #5fb878;
+        }
+
+        .pwdValid{
+            display: none;
+            align-items: baseline;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .pwdValid span{
+            display: inline-block;
+            height: 5px;
+            width: 40px;
+            background: #e2e2e2;
+            margin-right: 5px;
+        }
+
+        .pwdValid span.active{
+            background: #5fb878;
+        }
+
+        .pwdValid em {
+            font-style: normal;
+        }
+
+        .pwdValid em.prev{
+            margin-right: 10px;
+        }
+
+        .pwdValid em.name{
+            margin-left: 10px;
+        }
+
+        img.verifyCode{
+            position: absolute;
+            right: 6px;
+            top: 2px;
+            height: 34px;
+            cursor: pointer;
+        }

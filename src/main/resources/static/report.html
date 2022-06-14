@@ -8,46 +8,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
-    <style>
-        .report {
-            padding: 15px;
-        }
-
-        .report .title {
-            margin-bottom: 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #4b4b4b
-        }
-
-        .report .content {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .content .content-item {
-            width: 110px;
-            border-right: 1px solid #e6e6e6;
-            padding: 0 20px;
-            margin-bottom: 20px;
-        }
-
-        .content .content-item:last-child {
-            border-right: none;
-        }
-        
-        .content-item .content-label {
-            font-size: 12px;
-            height: 30px;
-        }
-        
-        .content-item .content-data {
-            font-size: 24px;
-            font-weight: 600;
-            word-wrap:break-word;
-            color: #4b4b4b;
-        }
-    </style>
+    <link rel="stylesheet" href="css/report.css">
 </head>
 <body>
 <div class="report">
@@ -117,41 +78,10 @@
         </div>
     </div>
 </div>
-<script src="layui/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="layui/config.js"></script>
+<script src="js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/config.js"></script>
 <script src="layui/layui.js"></script>
-<script src="layui/count.js"></script>
-<script>
-    layui.use(['element'], function() {
-       var element = layui.element;
-
-       $.ajax({
-            type: "GET",
-            url: "user/data",
-            dataType: "json",
-            headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-            success: function (result) {
-                if (result.code == 0) {
-                    var data = result.data;
-                    $("#clickCount").numberRock({speed:1,count:data.clickCount});
-                    $("#searchCount").numberRock({speed:1,count:data.searchCount});
-                    $("#registerDay").numberRock({speed:1,count:data.registerDay});
-                    $("#onlineHour").numberRock({speed:1,count:data.onlineHour});
-                    $("#categoryCount").numberRock({speed:1,count:data.categoryCount});
-                    $("#favoriteCount").numberRock({speed:1,count:data.favoriteCount});
-                    $("#momentCount").numberRock({speed:1,count:data.momentCount});
-                    $("#taskCount").numberRock({speed:1,count:data.taskCount});
-                    $("#navigationCount").numberRock({speed:1,count:data.navigationCount});
-                    $("#memorandumCount").numberRock({speed:1,count:data.memorandumCount});
-                    $("#searchTypeCount").numberRock({speed:1,count:data.searchTypeCount});
-                    $("#fileCount").numberRock({speed:1,count:data.fileCount});
-                    $("#shareCount").numberRock({speed:1,count:data.shareCount});
-                    $("#recycleCount").numberRock({speed:1,count:data.recycleCount});
-                }
-            }
-        });
-    });
-
-</script>
+<script src="plugin/count.js"></script>
+<script src="js/report.js"></script>
 </body>
 </html>

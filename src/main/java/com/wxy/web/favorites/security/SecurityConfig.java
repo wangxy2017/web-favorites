@@ -87,8 +87,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // h2控制台
                 .antMatchers("/h2-console/**")
                 // 其他静态资源
-                .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html", "/moment.html",
-                        "/calendar.html", "/moment_edit.html", "/file.html", "/recycle.html", "/report.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                        "/favicon.ico");
+                .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html",
+                        "/moment.html", "/calendar.html", "/moment_edit.html", "/file.html", "/recycle.html",
+                        "/report.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
+                        "/css/**", "/js/**", "/plugin/**", "/favicon.ico");
     }
 }

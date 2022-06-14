@@ -1,0 +1,76 @@
+.layui-laypage-prev i, .layui-laypage-next i{
+                font-size: 12px;
+			}
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 20px;
+				cursor: pointer;
+			}
+
+			.header {
+			    position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                background-color: #0A0E11;
+			}
+
+			.center {
+			    position: fixed;
+                width: 100%;
+                top: 60px;
+                bottom: 44px;
+                overflow: auto;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                height: 44px;
+                line-height: 44px;
+                background-color: #f5f7fa;
+			}
+
+			#logout {
+                margin-top: 20px;
+                margin-right: 20px;
+                float: right;
+			}
+
+			.main {
+			    padding: 15px;
+			}
+
+			.layui-table-link {
+                cursor: pointer;
+            }
+            .file-info .file-icon {
+                margin-right: 10px;
+                width: 16px;
+                height: 16px;
+                border: none;
+                vertical-align: sub;
+            }
+
+            .file-info .file-share {
+                cursor: pointer;
+                margin-right: 10px;
+                margin-left: 10px;
+                font-size: 14px;
+                display: none;
+                float: right;
+            }
+
+            .file-info:hover .file-share {
+                display: block;
+            }
+
+            .layui-breadcrumb a {
+                color: #303133!important;
+            }

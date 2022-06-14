@@ -1,0 +1,301 @@
+/* 解决弹出框中select显示难看 */
+            .to-fix-select .layui-layer-content {
+                overflow: visible !important;
+            }
+
+			.home-icon {
+				width: 30px;
+				height: 30px;
+				margin-top: 16px;
+				margin-left: 20px;
+				cursor: pointer;
+			}
+
+			.header {
+			    position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                background-color: #0A0E11;
+			}
+
+			.center {
+			    position: fixed;
+                width: 100%;
+                top: 60px;
+                bottom: 44px;
+                overflow: auto;
+			}
+
+			.footer {
+			    position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                height: 44px;
+                line-height: 44px;
+                background-color: #f5f7fa;
+			}
+
+			#logout {
+                margin-top: 20px;
+                margin-right: 20px;
+                float: right;
+			}
+
+			.week-list {
+				display: flex;
+			}
+
+			.week-item {
+				width: calc(100% / 7);
+				height: 38px;
+				line-height: 38px;
+				text-align: center;
+				border-bottom: 1px solid #ebeef5;
+				border-right: 1px solid #ebeef5;
+			}
+
+			.week-item:last-child {
+                border-right: none;
+			}
+
+			.main {
+				margin: 30px auto;
+                width: 98%;
+                max-width: 1680px;
+			}
+
+			.day-list {
+				display: flex;
+			}
+
+			.day-item {
+				position: relative;
+				width: calc(100% / 7);
+				height: 140px;
+				line-height: 140px;
+				text-align: center;
+				border-bottom: 1px solid #ebeef5;
+				border-right: 1px solid #ebeef5;
+				cursor: pointer;
+			}
+
+			.day-item:last-child {
+                border-right: none;
+			}
+
+			.day-item .task-count {
+				position: absolute;
+				bottom: 4px;
+                left: 4px;
+                line-height: initial;
+			}
+
+			.day-list:last-child .day-item {
+			    border-bottom: none;
+			}
+
+			.task-count .layui-badge {
+			    margin-right: 2px;
+			}
+
+			.task-view {
+				position: absolute;
+				width: 300px;
+				background-color: #fff;
+				line-height: 30px;
+				display: none;
+				z-index: 9999;
+				border: 1px solid #EBEEF5;
+                padding: 0 10px;
+                border-radius: 4px;
+                box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+			}
+
+			.task-item {
+				display: flex;
+				padding: 10px;
+				position: relative;
+			}
+
+			.task-item .clock {
+				margin-right: 10px;
+				color: #ccc;
+			}
+
+			.task-item .time {
+				margin-right: 10px;
+			}
+
+			.task-item .content {
+				text-align: left;
+                word-break: break-all;
+                white-space: pre-line;
+                flex: 1;
+			}
+
+			.task-item .task-action {
+			    position: absolute;
+                bottom: 4px;
+                right: 0;
+			}
+
+			.task-item .task-action .layui-btn {
+			    height: 18px;
+                line-height: 18px;
+			}
+
+			.calendar-header {
+				margin-bottom: 20px;
+                margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+			}
+
+			.calendar-header .layui-icon {
+				color: #009688;
+				cursor: pointer;
+			}
+
+			.calendar-header .left,
+			.calendar-header .right {
+				display: inline-block;
+				padding: 4px 6px;
+				vertical-align: middle;
+				font-size: 1.3rem;
+			}
+
+			.date-input {
+				background-color: #009688;
+				border-radius: 4px;
+				height: 30px;
+				width: 200px;
+				margin: 0 10px;
+				transition: all .3s;
+			}
+
+			.date-input:hover {
+			    opacity: .8;
+			}
+
+			.date-input input {
+				background: transparent;
+				border: none;
+				text-align: center;
+				color: #fff;
+				padding: 0;
+				height: 30px;
+				line-height: 30px;
+				cursor: pointer;
+			}
+
+			.date-input span {
+				position: absolute;
+				top: 6px;
+				right: 10px;
+				color: #fff !important;
+			}
+
+			.task-new-mask {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: #fff;
+				top: 0;
+				left: 0;
+				display: none;
+				z-index: 1;
+			}
+
+			.day-item:hover .task-new-mask {
+				display: block;
+			}
+
+			.task-header {
+				color: #1e9fff;
+				font-weight: bold;
+				margin-top: 10px;
+				border-bottom: 1px solid #1e9fff;
+			}
+
+			.task-level {
+				top: 6px;
+				margin-right: 6px;
+				flex: 0 0 auto;
+			}
+
+			.task-list {
+				max-height: 300px;
+				overflow: auto;
+				margin: 10px 0;
+			}
+
+			#taskForm {
+				padding: 10px 30px 10px 10px;
+			}
+
+			.day-today .date {
+				border-radius: 50%;
+                background-color: #009688;
+                color: #fff;
+                width: 3em;
+                height: 3em;
+                display: inline-block;
+                line-height: 3em;
+			}
+
+			.date {
+				font-size: 1.2em;
+				font-weight: bold;
+			}
+
+			.lunar {
+				position: absolute;
+				right: 8px;
+				bottom: 4px;
+				display: block;
+				line-height: initial;
+				color: #ccc;
+			}
+
+			.calendar-table {
+			    margin-bottom: 70px;
+			    border-radius: 4px;
+			    border: 1px solid #ebeef5;
+			}
+
+			.last-month,.next-month {
+			    color: #ccc;
+			}
+
+			.task-history {
+			    position: absolute;
+                top: 8px;
+                right: 4px;
+			}
+
+			.holiday {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                height: 18px;
+                line-height: 18px;
+                color: #5fb878;
+            }
+
+			.alarm-icon {
+			    width: 16px;
+                height: 16px;
+                margin-right: 10px;
+                vertical-align: top;
+                margin-top: 3px;
+			}
+
+			#levelTips {
+			    margin-left: 5px;
+                font-size: 14px;
+                cursor: pointer;
+			}

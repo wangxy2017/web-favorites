@@ -8,78 +8,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
-    <style>
-        .loginFooter{
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            height: 44px;
-            line-height: 44px;
-        }
-
-        .loginBox{
-            max-width: 260px;
-            width: 80%;
-            z-index: 999;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 10px;
-        }
-
-        .loginBox .title{
-            text-align: center;
-            margin-bottom: 15px;
-            color: #2f4050;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .loginDone{
-            display: none;
-            text-align: center;
-            z-index: 999;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .loginDone .info{
-            margin-bottom: 80px;
-        }
-
-        .loginDone .info i{
-            color: #009688;
-            font-size: 50px;
-        }
-
-        .loginDone .info p{
-            font-size: 24px;
-            font-weight: 200;
-            margin-top: 10px;
-        }
-
-        .loginDone button{
-            width: 120px;
-        }
-
-        .layui-form-label{
-            padding: 9px 0px;
-            text-align: left;
-        }
-
-        .layui-input-block{
-            margin-left: 0;
-        }
-
-        .layui-form-checkbox[lay-skin=primary] i{
-            top: 1px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="css/qrLogin.css">
 </head>
 <body style="background-color: #f3f3f4;">
 <div id="loginBox" class="loginBox">
@@ -119,79 +48,10 @@
 <div class="loginFooter">
     © 2020 网络收藏夹 || 网络收藏夹版权所有
 </div>
-<script src="layui/jquery-3.1.1.min.js"></script>
-<script src="layui/config.js"></script>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/config.js"></script>
 <script src="layui/layui.js"></script>
-<script src="layui/md5.min.js"></script>
-<script>
-    layui.use(['form','layer'], function(){
-        var form = layui.form;
-        var layer = layui.layer;
-
-        layer.ready(function(){
-            var username = localStorage.getItem("qr_login_username");
-            var password = localStorage.getItem("qr_login_password");
-            var url = window.location.href;
-            var sid = url.lastIndexOf("sid=") == -1 ? null : url.substring(url.lastIndexOf("sid=") + 4);
-            if(username&&password&&sid){
-                $.ajax({
-                    type: "POST",
-                    url: "login/qrLogin",
-                    data: JSON.stringify({"username":username,"password":password,"sid":sid}),
-                    contentType: 'application/json;charset=utf-8',
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.code == 0) {
-                            $("#loginBox").hide();
-                            $("#loginDone").show();
-                        }
-                    }
-                });
-            }
-        });
-
-        //监听提交
-        form.on('submit(login)', function (data) {
-            var url = window.location.href;
-            if(url.lastIndexOf("sid=") == -1){
-                layer.msg("缺少必要参数：sid");
-                return false;
-            }
-            layer.load();
-            // sid
-            var sid = url.substring(url.lastIndexOf("sid=") + 4);
-            data.field.sid = sid;
-            // md5加密
-            data.field.password = md5(data.field.password);
-            // 记住密码
-            if(data.field.remember){
-                localStorage.setItem("qr_login_username", data.field.username);
-                localStorage.setItem("qr_login_password", data.field.password);
-            }
-            $.ajax({
-                type: "POST",
-                url: "login/qrLogin",
-                data: JSON.stringify(data.field),
-                contentType: 'application/json;charset=utf-8',
-                dataType: "json",
-                success: function (result) {
-                    layer.closeAll('loading');
-                    if (result.code == 0) {
-                        $("#loginBox").hide();
-                        $("#loginDone").show();
-                    } else {
-                        layer.msg(result.msg, {icon: 5});
-                    }
-                },
-                error: function () {
-                    layer.closeAll('loading');
-                    layer.msg("服务器异常", {icon: 2});
-                }
-            });
-            return false;
-        });
-    });
-
-</script>
+<script src="plugin/md5.min.js"></script>
+<script src="js/qrLogin.js"></script>
 </body>
 </html>
