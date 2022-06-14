@@ -33,8 +33,8 @@ layui.use(['element', 'layer', 'table'], function() {
             , {
                 field: 'status', title: '状态', templet: function (d) {
                     var text = d.status == 2 ? '禁用' : '正常';
-                    var class = d.status == 2 ? 'layui-bg-orange' : 'layui-bg-green';
-                    return '<span class="layui-badge '+ class +''">'+ text +'</span>'
+                    var class_ = d.status == 2 ? 'layui-bg-orange' : 'layui-bg-green';
+                    return '<span class="layui-badge '+ class_ +'">'+ text +'</span>'
                 }
             }
             , {title: '操作', width: 220, toolbar: '#operates', fixed: 'right'}
@@ -45,16 +45,16 @@ layui.use(['element', 'layer', 'table'], function() {
     table.on('tool(userList)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
-        if (layEvent === 'recover') { //还原
+        if (layEvent === 'disable') { //还原
             $.ajax({
                 type: "GET",
-                url: "favorites/recover/" + data.id,
+                url: "admin/disable/" + data.id,
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        obj.del(); //移除当前行
                         layer.msg('操作成功', {icon: 6});
+                        table.reload('userList');
                     } else {
                         layer.msg('操作失败', {icon: 5});
                     }
@@ -63,7 +63,7 @@ layui.use(['element', 'layer', 'table'], function() {
         } else if (layEvent === 'del') { //删除
             $.ajax({
                 type: "POST",
-                url: "favorites/recycle/delete/" + data.id,
+                url: "admin/delete/" + data.id,
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {

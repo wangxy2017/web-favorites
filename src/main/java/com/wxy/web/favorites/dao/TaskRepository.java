@@ -4,6 +4,7 @@ import com.wxy.web.favorites.model.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Integer> {
+public interface TaskRepository  extends JpaRepository<Task, Integer>, JpaSpecificationExecutor<Task> {
 
     List<Task> findAllByUserIdAndTaskDateBetween( Integer userId,Date startDate, Date endDate);
 

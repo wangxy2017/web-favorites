@@ -2,6 +2,7 @@ package com.wxy.web.favorites.service;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -11,10 +12,16 @@ import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.UserFile;
+import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +114,7 @@ public class UserService {
         data.put("navigationCount", quickNavigationRepository.countByUserId(userId));
         data.put("memorandumCount", memorandumRepository.countByUserId(userId));
         data.put("searchTypeCount", searchTypeRepository.countByUserId(userId));
-        data.put("fileCount", userFileRepository.countByUserIdAndIsDir(userId,0));
+        data.put("fileCount", userFileRepository.countByUserIdAndIsDir(userId, 0));
         data.put("shareCount", favoritesRepository.countByUserIdAndIsShare(userId, PublicConstants.SHARE_CODE));
         data.put("recycleCount", favoritesRepository.countByUserIdAndDeleteFlag(userId, PublicConstants.DELETE_CODE));
         return data;
@@ -143,6 +150,44 @@ public class UserService {
     }
 
     public PageInfo<User> findAdminPageList(String name, Integer pageNum, Integer pageSize) {
-        return null;
+        String text = SqlUtils.trimAndEscape(name);
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        // 构造自定义查询条件
+        Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicateList = new ArrayList<>();
+            predicateList.add(criteriaBuilder.equal(root.get("admin"), 1));
+            if (StrUtil.isNotBlank(text)) {
+                predicateList.add(criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + text + "%"),
+                        criteriaBuilder.like(root.get("nickName"), "%" + text + "%")
+                ));
+            }
+            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+        };
+        Page<User> page = userRepository.findAll(queryCondition, pageable);
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+    }
+
+    public PageInfo<User> findUserPageList(String name, Integer pageNum, Integer pageSize) {
+        String text = SqlUtils.trimAndEscape(name);
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        // 构造自定义查询条件
+        Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicateList = new ArrayList<>();
+            predicateList.add(criteriaBuilder.notEqual(root.get("admin"), 1));
+            if (StrUtil.isNotBlank(text)) {
+                predicateList.add(criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + text + "%"),
+                        criteriaBuilder.like(root.get("nickName"), "%" + text + "%")
+                ));
+            }
+            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+        };
+        Page<User> page = userRepository.findAll(queryCondition, pageable);
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
+    }
+
+    public void deleteById(Integer id) {
+        userRepository.deleteById(id);
     }
 }
