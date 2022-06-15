@@ -27,10 +27,10 @@ import java.util.Objects;
  * @since 2022/6/15 14:07
  */
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/admin-index")
 @Api(tags = "首页")
 @Secured("ADMIN")
-public class IndexController {
+public class AdminIndexController {
 
     @Autowired
     private UserService userService;

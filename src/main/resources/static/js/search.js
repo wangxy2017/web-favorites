@@ -85,14 +85,6 @@ layui.use(['layer', 'form', 'flow'], function(){
                 }
             });
 
-            // 根据数组的下标，删除该下标的元素
-            Array.prototype.remove = function(val) {
-                var index = this.indexOf(val);
-                if (index > -1) {
-                    this.splice(index, 1);
-                }
-            };
-
             // 登出
             $("#logout").click(function () {
                 layer.confirm('确认退出系统吗？', function(index){

@@ -14,13 +14,13 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo layui-hide-xs layui-bg-black" style="cursor: pointer;" onclick="window.location.reload();">
+        <div class="layui-logo layui-bg-black" style="cursor: pointer;" onclick="window.location.reload();">
             <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹后台管理
         </div>
         <ul class="layui-nav layui-layout-left">
             <!-- 移动端显示 -->
-            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm">
-                <i class="layui-icon layui-icon-spread-left"></i>
+            <li class="layui-nav-item">
+                <i class="layui-icon layui-icon-spread-left" id="slideBar" style="cursor:pointer"></i>
             </li>
         </ul>
         <ul class="layui-nav layui-layout-right">
@@ -35,23 +35,19 @@
             </li>
         </ul>
     </div>
-    <div class="layui-side layui-bg-black">
+    <div class="layui-side layui-bg-black" id="adminMenu">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="admin-menu">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">操作</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">账号管理</a></dd>
-                        <dd><a href="javascript:;">用户管理</a></dd>
-                        <dd><a href="javascript:;">系统设置</a></dd>
-                        <dd><a href="javascript:;">公告设置</a></dd>
-                    </dl>
-                </li>
+                <li class="layui-nav-item"><a href="javascript:;" data-href="admin_report.html">首页</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-href="admin.html">账号管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-href="admin_user.html">用户管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-href="system_config.html">系统设置</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-href="system_notice.html">公告设置</a></li>
             </ul>
         </div>
     </div>
-    <div class="layui-body" id="layuiBody" style="padding: 15px 0;">
+    <div class="layui-body" id="layuiBody" style="padding: 15px">
         <!-- 内容主体区域 -->
         <iframe scrolling="auto" allowtransparency="true" id="iframe" frameborder="0" src="admin_report.html" width="100%" height="100%"></iframe>
     </div>
@@ -66,7 +62,7 @@
     </div>
 </div>
 <script src="js/jquery-3.1.1.min.js"></script>
-<script src="js/config.js"></script>
+<script src="js/common.js"></script>
 <script src="layui/layui.js"></script>
 <script src="js/admin_index.js"></script>
 </body>

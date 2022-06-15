@@ -93,7 +93,7 @@ layui.use(['element', 'layer', 'table'], function() {
                    $.ajax({
                      type: "POST",
                      url: "admin-user/sendMail",
-                     data: {"content":value,"id":data.id}),
+                     data: {"content":value,"id":data.id},
                      contentType: 'application/json;charset=utf-8',
                      dataType: "json",
                      headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},

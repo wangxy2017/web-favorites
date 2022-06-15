@@ -1,7 +1,3 @@
-.layui-header {
-    background-color: #0A0E11 !important;
-}
-
 #userImg {
     font-size: 18px;
     font-weight: bold;
@@ -20,3 +16,22 @@
     margin: 0 4px;
 }
 
+.layui-side,.layui-body,.layui-footer,.layui-logo,.layui-nav.layui-layout-left {
+    transition: .3s all;
+}
+
+.layui-side.layui-mobile {
+    left: -200px;
+}
+.layui-body.layui-mobile {
+    left: 0;
+}
+.layui-footer.layui-mobile {
+    left: 0;
+}
+.layui-logo.layui-mobile {
+    left: -200px;
+}
+.layui-nav.layui-layout-left.layui-mobile {
+    left: 0px;
+}

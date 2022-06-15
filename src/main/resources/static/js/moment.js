@@ -169,7 +169,7 @@ layui.use(['layer','flow','util'], function() {
                         layer.open({
                           id:"wangEditor",
                           type: 2,
-                          content: 'moment_edit.html?t=' + new Date().getTime() + '#' + id,
+                          content: 'moment_edit.html?' + timeSuffix() + '#' + id,
                           area: [width, '500px'],
                           btn: ['确认', '取消'],
                           yes: function(index, layero){
@@ -289,7 +289,7 @@ layui.use(['layer','flow','util'], function() {
               id:"wangEditor",
               type: 2,
               title: "发布瞬间",
-              content: 'moment_edit.html?t=' + new Date().getTime(),
+              content: 'moment_edit.html?' + timeSuffix(),
               area: [width,'500px'],
               btn: ['确认', '取消'],
               yes: function(index, layero){

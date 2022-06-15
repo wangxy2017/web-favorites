@@ -24,14 +24,6 @@
             }
         });
 
-        // 根据数组的下标，删除该下标的元素
-        Array.prototype.remove = function(val) {
-            var index = this.indexOf(val);
-            if (index > -1) {
-                this.splice(index, 1);
-            }
-        };
-
         $('#layuiBody').unbind();
         flow.load({
             elem: '#categoryList'
@@ -1926,7 +1918,7 @@
                 title: false,
                 closeBtn: 0,
                 scrollbar: false,
-                content: ['recycle.html?t=' + new Date().getTime(),'no']
+                content: ['recycle.html?' + timeSuffix(),'no']
             });
             indexMap.set('#importOrExport',index);
         });
@@ -1939,7 +1931,7 @@
                 area: [width,'530px'],
                 title: false,
                 closeBtn: 0,
-                content: 'report.html?t=' + new Date().getTime()
+                content: 'report.html?' + timeSuffix()
             });
             indexMap.set('#report',index);
         });

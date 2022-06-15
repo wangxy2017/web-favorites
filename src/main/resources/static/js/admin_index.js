@@ -3,21 +3,45 @@ layui.use(['element', 'layer'], function () {
     var element = layui.element;
     var layer = layui.layer;
 
+    $("#slideBar").click(function(){
+        if(!$(this).parent().parent().hasClass("layui-mobile")){
+            $(".layui-side").addClass("layui-mobile");
+            $(".layui-body").addClass("layui-mobile");
+            $(".layui-footer").addClass("layui-mobile");
+            $(".layui-logo").addClass("layui-mobile");
+            $(".layui-nav.layui-layout-left").addClass("layui-mobile");
+        }else{
+            $(".layui-side").removeClass("layui-mobile");
+            $(".layui-body").removeClass("layui-mobile");
+            $(".layui-footer").removeClass("layui-mobile");
+            $(".layui-logo").removeClass("layui-mobile");
+            $(".layui-nav.layui-layout-left").removeClass("layui-mobile");
+        }
+    });
+
+    if(windowWidth < 800){
+        $("#slideBar").click();
+    };
+
     $.ajax({
         type: "GET",
-        url: "index/info",
+        url: "admin-index/info",
         dataType: "json",
         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
         success: function (result) {
             if (result.code == 0) {
                 var user = result.data;
                 $("#username").text(user.nickName.substring(0, 4));
+                if(!user.permissions.contains("SUPER_ADMIN")){
+                    $("#adminMenu").find("[data-href='admin.html',data-href='admin_user.html']").hide();
+                }
             }
         }
     });
 
     element.on('nav(admin-menu)', function(elem){
-      console.log(elem); //得到当前点击的DOM对象
+        var url = $(elem).attr("data-href") + '?' + timeSuffix();
+        $("#iframe").attr("src",url);
     });
 
     // 登出
