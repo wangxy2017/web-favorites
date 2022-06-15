@@ -27,7 +27,7 @@ import java.net.URL;
 @RestController
 @RequestMapping("/search")
 @Slf4j
-@Api(tags = "搜索引擎管理")
+@Api(tags = "搜索引擎")
 @Secured("USER")
 public class SearchController {
 

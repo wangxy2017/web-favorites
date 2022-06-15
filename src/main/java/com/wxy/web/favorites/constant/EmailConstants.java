@@ -25,4 +25,5 @@ public interface EmailConstants {
     String SAFE_NOTICE_TITLE = "网络收藏夹|安全告警";
     String SAFE_NOTICE_CONTENT = "系统检测到您的账号(%s)被非法程序暴力破解，请及时修改密码，如已修改，请忽略。";
 
+    String ADMIN_NOTICE_TITLE = "网络收藏夹|管理员通知";
 }

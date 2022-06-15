@@ -11,6 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -25,7 +26,7 @@ public class User {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "username", unique = true, columnDefinition = "varchar(100) comment '用户名'")
@@ -84,4 +85,7 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "feedback_time", columnDefinition = "datetime comment '反馈时间'")
     private Date feedbackTime;
+
+    @Transient
+    private List<String> permissions;
 }

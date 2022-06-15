@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/task")
-@Api(tags = "日程管理")
+@Api(tags = "日程")
 @Secured("USER")
 public class TaskController {
 

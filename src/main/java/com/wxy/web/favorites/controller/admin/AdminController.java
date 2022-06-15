@@ -2,6 +2,7 @@ package com.wxy.web.favorites.controller.admin;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.User;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
-@Api(tags = "管理员")
-@Secured("ADMIN")
+@Api(tags = "账号管理")
+@Secured("SUPPER_ADMIN")
 public class AdminController {
 
     @Autowired
@@ -45,6 +46,7 @@ public class AdminController {
         User user = userService.findById(securityUser.getId());
         User user1 = JpaUtils.evictSession(user, User.class);
         user1.setPassword(null);
+        user1.setPermissions(DataConstants.SUPER_ADMIN_ROLE_LIST);
         return ApiResponse.success(user1);
     }
 
@@ -95,21 +97,6 @@ public class AdminController {
                             @RequestParam(required = false) Integer pageNum,
                             @RequestParam(required = false) Integer pageSize) {
         PageInfo<User> page = userService.findAdminPageList(name, pageNum, pageSize);
-        List<User> list = page.getList().stream().map(user -> {
-            User user1 = JpaUtils.evictSession(user, User.class);
-            user1.setPassword(null);
-            return user1;
-        }).collect(Collectors.toList());
-        page.setList(list);
-        return ApiResponse.success(page);
-    }
-
-    @GetMapping("/user/list")
-    @ApiOperation(value = "获取用户列表")
-    public ApiResponse userList(@RequestParam(required = false) String name,
-                                @RequestParam(required = false) Integer pageNum,
-                                @RequestParam(required = false) Integer pageSize) {
-        PageInfo<User> page = userService.findUserPageList(name, pageNum, pageSize);
         List<User> list = page.getList().stream().map(user -> {
             User user1 = JpaUtils.evictSession(user, User.class);
             user1.setPassword(null);

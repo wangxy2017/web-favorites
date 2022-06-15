@@ -44,7 +44,6 @@ public class UserController {
     @Autowired
     private EmailUtils emailUtils;
 
-    
 
     @Autowired
     private VerificationService verificationService;
@@ -65,6 +64,7 @@ public class UserController {
         User user = userService.findById(securityUser.getId());
         User user1 = JpaUtils.evictSession(user, User.class);
         user1.setPassword(null);
+        user1.setPermissions(DataConstants.USER_ROLE_LIST);
         return ApiResponse.success(user1);
     }
 

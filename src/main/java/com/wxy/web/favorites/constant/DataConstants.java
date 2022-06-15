@@ -22,6 +22,9 @@ public class DataConstants {
     public static final List<RecommendDto> RECOMMEND_LIST;
     public static final List<SearchDto> SEARCH_LIST;
     public static final NoticeDto SYSTEM_NOTICE;
+    public static final List<String> USER_ROLE_LIST = List.of("USER");
+    public static final List<String> ADMIN_ROLE_LIST = List.of("ADMIN");
+    public static final List<String> SUPER_ADMIN_ROLE_LIST = List.of("ADMIN", "SUPER_ADMIN");
 
     static {
         RECOMMEND_LIST = JSONUtil.toList(JSONUtil.parseArray(ResourceUtil.readStr("data/recommend.json", StandardCharsets.UTF_8)), RecommendDto.class);

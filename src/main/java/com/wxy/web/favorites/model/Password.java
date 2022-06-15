@@ -23,7 +23,7 @@ public class Password {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "account", columnDefinition = "varchar(100) comment '账号'")

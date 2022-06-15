@@ -4,68 +4,22 @@
     <meta charset="utf-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>网络收藏夹|后台管理</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>网络收藏夹|账号管理</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo layui-hide-xs layui-bg-black" style="cursor: pointer;" onclick="window.location.reload();">
-            <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹后台管理
-        </div>
-        <ul class="layui-nav layui-layout-left">
-            <!-- 移动端显示 -->
-            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm">
-                <i class="layui-icon layui-icon-spread-left"></i>
-            </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <i class="layui-icon layui-icon-user" id="userImg"></i>
-                    <span id="username">管理员</span>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" id="logout">安全退出</a></dd>
-                </dl>
-            </li>
-        </ul>
-    </div>
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree" lay-filter="admin-menu">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">操作</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">账号管理</a></dd>
-                        <dd><a href="javascript:;">用户管理</a></dd>
-                        <dd><a href="javascript:;">系统设置</a></dd>
-                        <dd><a href="javascript:;">公告设置</a></dd>
-                    </dl>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="layui-body" id="layuiBody" style="padding: 15px 0;">
-        <!-- 内容主体区域 -->
-        <iframe scrolling="auto" allowtransparency="true" id="iframe" frameborder="0" src="admin_user.html" width="100%" height="100%"></iframe>
-    </div>
-    <div class="layui-footer">
-        <ul class="open-source">
-            <li class="open-source-item"><span>© 2020 网络收藏夹</span></li>
-            <li class="open-source-aux">|</li>
-            <li class="open-source-item"><a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">网站源码</a></li>
-            <li class="open-source-aux">|</li>
-            <li class="open-source-item">QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a></li>
-        </ul>
-    </div>
-</div>
-<script src="js/jquery-3.1.1.min.js"></script>
+<body>
+<!-- 数据表格 -->
+<table id="adminList" lay-filter="adminList"></table>
+<!-- 操作 -->
+<script type="text/html" id="operates">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="disable">禁用/启用</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="update">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script src="js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/config.js"></script>
 <script src="layui/layui.js"></script>
 <script src="js/admin.js"></script>

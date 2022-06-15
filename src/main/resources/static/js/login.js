@@ -182,7 +182,7 @@ layui.use(['element', 'form', 'layer'], function () {
                 if (result.code == 0) {
                     var data = result.data;
                     localStorage.setItem("login_user_token", data.accessToken);
-                    window.location.href = data.admin ? "admin.html" : "index.html";
+                    window.location.href = data.admin ? "admin_index.html" : "index.html";
                 } else {
                     layer.msg(result.msg, {icon: 5});
                     loadVerifyCode();

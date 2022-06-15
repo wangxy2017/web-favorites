@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/password")
-@Api(tags = "密码管理")
+@Api(tags = "密码")
 @Secured("USER")
 public class PasswordController {
 

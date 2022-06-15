@@ -42,7 +42,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/file")
 @Slf4j
-@Api(tags = "文件管理")
+@Api(tags = "文件")
 @Secured("USER")
 public class FileController {
 

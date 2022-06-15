@@ -2,7 +2,6 @@ package com.wxy.web.favorites.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -14,27 +13,23 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "t_memorandum", indexes = {@Index(columnList = "user_id")})
-@org.hibernate.annotations.Table(appliesTo = "t_memorandum",comment="备忘录")
+@Table(name = "t_system_config", indexes = {@Index(columnList = "key_code")})
+@org.hibernate.annotations.Table(appliesTo = "t_system_config", comment = "系统配置表")
 @Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @DynamicUpdate
 @DynamicInsert
-public class Memorandum {
+public class SystemConfig {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "content", columnDefinition = "text comment '内容'")
-    private String content;
+    @Column(name = "key_code", columnDefinition = "varchar(255) comment '键'")
+    private String keyCode;
 
-    @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
-    private Integer userId;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Column(name = "create_time", columnDefinition = "datetime comment '创建时间'")
-    private Date createTime;
+    @Column(name = "key_value", columnDefinition = "varchar(255) comment '键'")
+    private String keyValue;
 }

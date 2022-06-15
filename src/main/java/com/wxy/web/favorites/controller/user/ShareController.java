@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/share")
-@Api(tags = "书签库分享")
+@Api(tags = "书签库")
 @Secured("USER")
 public class ShareController {
 

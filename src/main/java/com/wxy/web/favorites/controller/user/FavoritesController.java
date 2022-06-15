@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/favorites")
-@Api(tags = "收藏管理")
+@Api(tags = "收藏")
 @Secured("USER")
 public class FavoritesController {
 

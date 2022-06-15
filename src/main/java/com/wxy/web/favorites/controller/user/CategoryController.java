@@ -24,7 +24,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/category")
-@Api(tags = "分类管理")
+@Api(tags = "分类")
 @Secured("USER")
 public class CategoryController {
 
