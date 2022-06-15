@@ -27,7 +27,7 @@ public class Task {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "content", columnDefinition = "varchar(500) comment '内容'")

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +67,17 @@ public class UserController {
         user1.setPassword(null);
         user1.setPermissions(DataConstants.USER_ROLE_LIST);
         return ApiResponse.success(user1);
+    }
+
+    @PostMapping("/save")
+    @ApiOperation(value = "修改信息")
+    public ApiResponse save(@RequestBody User user) {
+        SecurityUser securityUser = ContextUtils.getCurrentUser();
+        User user1 = userService.findById(securityUser.getId());
+        Assert.isTrue(!Objects.equals(user1.getUsername(), "demo"), "演示账号禁止修改");
+        user1.setNickName(user.getNickName());
+        userService.save(user1);
+        return ApiResponse.success();
     }
 
     @GetMapping("/notice")

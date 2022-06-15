@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网络收藏夹|个人资料设置</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="css/set_user_info.css">
+</head>
+<body>
+<div class="header">
+    <a href="index.html"><img class="home-icon" src="images/home.svg" alt=""></a>
+    <button class="layui-btn layui-btn-xs" type="button" id="logout">退出</button>
+</div>
+<div class="center" id="center">
+    <div class="main" id="main">
+        <div>设置个人信息</div>
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">昵称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="nickName" required  lay-verify="required" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="footer">
+    © 2020 网络收藏夹 || 网络收藏夹版权所有
+</div>
+<script src="js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/config.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/set_user_info.js"></script>
+</body>
+</html>

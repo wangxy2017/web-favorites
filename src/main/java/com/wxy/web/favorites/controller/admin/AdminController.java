@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/admin")
 @Api(tags = "账号管理")
-@Secured("SUPPER_ADMIN")
+@Secured("SUPER_ADMIN")
 public class AdminController {
 
     @Autowired
@@ -38,17 +38,6 @@ public class AdminController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @GetMapping("/info")
-    @ApiOperation(value = "查询登录信息")
-    public ApiResponse info() {
-        SecurityUser securityUser = ContextUtils.getCurrentUser();
-        User user = userService.findById(securityUser.getId());
-        User user1 = JpaUtils.evictSession(user, User.class);
-        user1.setPassword(null);
-        user1.setPermissions(DataConstants.SUPER_ADMIN_ROLE_LIST);
-        return ApiResponse.success(user1);
-    }
 
     @GetMapping("/enable/{id}")
     @ApiOperation(value = "启用禁用")

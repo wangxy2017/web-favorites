@@ -24,12 +24,12 @@ public class SystemConfig {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "key_code", columnDefinition = "varchar(255) comment '键'")
     private String keyCode;
 
-    @Column(name = "key_value", columnDefinition = "varchar(255) comment '键'")
+    @Column(name = "key_value", columnDefinition = "varchar(255) comment '值'")
     private String keyValue;
 }

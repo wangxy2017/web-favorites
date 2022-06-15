@@ -28,7 +28,7 @@ public class UserFile {
 
     @Id
     @Column(name = "id", columnDefinition = "int(10) comment '主键ID(自增)'")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")

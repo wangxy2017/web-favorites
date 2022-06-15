@@ -5,7 +5,7 @@ layui.use(['element', 'layer'], function () {
 
     $.ajax({
         type: "GET",
-        url: "admin/info",
+        url: "index/info",
         dataType: "json",
         headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
         success: function (result) {

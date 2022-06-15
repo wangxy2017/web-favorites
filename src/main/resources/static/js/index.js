@@ -1881,6 +1881,9 @@
                 success: function (result) {
                     if (result.code == 0) {
                         var user = result.data;
+                        if(!user.nickName){
+                            window.location.href = "set_user_info.html";
+                        }
                         $("#username").text(user.nickName.substring(0, 4));
                         form.val("styleSelect", {"viewStyle": user.viewStyle});
                         if(user.viewStyle == 1)$("#layuiBody").addClass("bookmark");
