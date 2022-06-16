@@ -37,6 +37,10 @@ layui.use(['form','layer'], function(){
         layer.msg("内容不能为空");
         return false;
       }
+      if(text.length > 1000){
+        layer.msg('最多输入1000个字符');
+        return false;
+      }
       data.field.NOTICE_CONTENT = html;
       layer.load();
       $.ajax({

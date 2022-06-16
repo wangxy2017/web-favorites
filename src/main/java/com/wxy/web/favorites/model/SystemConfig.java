@@ -28,6 +28,6 @@ public class SystemConfig {
     @Column(name = "key_code", unique = true, columnDefinition = "varchar(255) comment '键'")
     private String keyCode;
 
-    @Column(name = "key_value", columnDefinition = "varchar(255) comment '值'")
+    @Column(name = "key_value", columnDefinition = "varchar(1000) comment '值'")
     private String keyValue;
 }

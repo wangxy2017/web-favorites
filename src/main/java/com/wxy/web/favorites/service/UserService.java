@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,7 +152,10 @@ public class UserService {
 
     public PageInfo<User> findAdminPageList(String name, Integer pageNum, Integer pageSize) {
         String text = SqlUtils.trimAndEscape(name);
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "registerTime"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         // 构造自定义查询条件
         Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
@@ -170,7 +174,10 @@ public class UserService {
 
     public PageInfo<User> findUserPageList(String name, Integer pageNum, Integer pageSize) {
         String text = SqlUtils.trimAndEscape(name);
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "registerTime"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         // 构造自定义查询条件
         Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
