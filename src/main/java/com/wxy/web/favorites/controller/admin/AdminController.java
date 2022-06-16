@@ -20,6 +20,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,9 +40,9 @@ public class AdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/enable/{id}")
+    @GetMapping("/disable/{id}")
     @ApiOperation(value = "启用禁用")
-    public ApiResponse enable(@PathVariable Integer id) {
+    public ApiResponse disable(@PathVariable Integer id) {
         User user = userService.findById(id);
         Assert.notNull(user, "用户不存在");
         Assert.isTrue(!Objects.equals(user.getUsername(), adminUsername), "超级管理员不可禁用");
@@ -62,21 +63,24 @@ public class AdminController {
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "保存")
+    @ApiOperation(value = "新增")
     public ApiResponse save(@RequestBody User user) {
-        if (user.getId() == null) {
-            Assert.isNull(userService.findByUsername(user.getUsername()), "账号已存在");
-            user.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8))));
-            user.setAdmin(1);
-            userService.save(user);
-        } else {
-            User user1 = userService.findById(user.getId());
-            user1.setNickName(user.getNickName());
-            if (StrUtil.isNotBlank(user.getPassword())) {
-                user1.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8))));
-            }
-            userService.save(user1);
-        }
+        Assert.isNull(userService.findByUsername(user.getUsername()), "账号已存在");
+        user.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8))));
+        user.setAdmin(1);
+        user.setRegisterTime(new Date());
+        userService.save(user);
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/updatePwd")
+    @ApiOperation(value = "修改密码")
+    public ApiResponse updatePwd(@RequestBody User user) {
+        User user1 = userService.findById(user.getId());
+        Assert.notNull(user1, "账号不存在");
+        Assert.isTrue(!Objects.equals(user1.getUsername(), adminUsername), "超级管理员不可修改密码");
+        user1.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8))));
+        userService.save(user1);
         return ApiResponse.success();
     }
 

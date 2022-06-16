@@ -115,6 +115,7 @@ public class LoginController {
                 // 发送邮件
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.EMAIL_REGISTER_TITLE, String.format(EmailConstants.EMAIL_REGISTER_CONTENT, user.getUsername(), tempPwd));
             }
+            updateUser(user, true);
             // 生成token
             String token = tokenUtils.createToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
             return ApiResponse.success(token);
@@ -137,7 +138,7 @@ public class LoginController {
                     } else {
                         token = tokenUtils.createToken(user1.getUsername());
                     }
-                    updateErrorCount(user1, true);
+                    updateUser(user1, true);
                     Map<String, Object> map = new HashMap<>();
                     map.put("accessToken", token);
                     map.put("admin", Objects.equals(user1.getAdmin(), 1));
@@ -146,8 +147,7 @@ public class LoginController {
                     return ApiResponse.error(ErrorConstants.USER_DISABLED_MSG);
                 }
             } else {
-                // 记录失败次数
-                updateErrorCount(user1, false);
+                updateUser(user1, false);
                 return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
@@ -171,11 +171,11 @@ public class LoginController {
                 String token = tokenUtils.createToken(user1.getUsername());
                 TextWebSocketFrame tws = new TextWebSocketFrame(JSONUtil.toJsonStr(ApiResponse.success(token)));
                 channel.writeAndFlush(tws);
-                updateErrorCount(user1, true);
+                updateUser(user1, true);
                 return ApiResponse.success();
             } else {
                 // 记录失败次数
-                updateErrorCount(user1, false);
+                updateUser(user1, false);
                 return ApiResponse.error(ErrorConstants.INVALID_USERNAME_OR_PASSWORD_MSG);
             }
         } else {
@@ -183,19 +183,21 @@ public class LoginController {
         }
     }
 
-    private void updateErrorCount(User user, boolean success) {
+    private void updateUser(User user, boolean success) {
         int errorCount = Optional.ofNullable(user.getErrorCount()).orElse(0);
-        if (success && errorCount > 0) {
-            user.setErrorCount(0);
-            userService.save(user);
-        } else if (!success) {
+        if (success) {
+            if (errorCount > 0) {
+                user.setErrorCount(0);
+            }
+            user.setLastOnlineTime(new Date());
+        } else {
             user.setErrorCount(errorCount + 1);
             if (user.getErrorCount() > appConfig.getErrorCountLimit()) {
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.SAFE_NOTICE_TITLE, String.format(EmailConstants.SAFE_NOTICE_CONTENT, user.getUsername()));
                 user.setErrorCount(0);
             }
-            userService.save(user);
         }
+        userService.save(user);
     }
 
     @GetMapping("/captcha")
