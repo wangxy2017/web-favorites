@@ -88,4 +88,7 @@ public class User {
 
     @Transient
     private List<String> permissions;
+
+    @Transient
+    private Boolean superAdmin;
 }

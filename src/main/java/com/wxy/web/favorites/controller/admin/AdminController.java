@@ -93,6 +93,7 @@ public class AdminController {
         List<User> list = page.getList().stream().map(user -> {
             User user1 = JpaUtils.evictSession(user, User.class);
             user1.setPassword(null);
+            user1.setSuperAdmin(Objects.equals(user1.getUsername(), adminUsername));
             return user1;
         }).collect(Collectors.toList());
         page.setList(list);

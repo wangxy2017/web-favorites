@@ -27,9 +27,17 @@ layui.use(['element', 'layer', 'table', 'form'], function() {
                 "data": res.data.list //解析数据列表
             };
         }
+        , done: function (res, curr, count) {
+            $("#superAdmin").parent().parent().parent().find(".layui-btn").addClass("layui-btn-disabled");
+        }
         , cols: [[ //表头
             {type: 'numbers'}
-            , {field: 'username', title: '账号'}
+            , {
+                field: 'username', title: '账号', templet: function (d) {
+                    var id = d.superAdmin ? 'id="superAdmin"' : '';
+                    return '<span '+ id +'>'+ d.username +'</span>';
+                }
+            }
             , {field: 'nickName', title: '姓名'}
             , {field: 'registerTime', title: '创建时间'}
             , {field: 'lastOnlineTime', title: '上次登录时间'}
