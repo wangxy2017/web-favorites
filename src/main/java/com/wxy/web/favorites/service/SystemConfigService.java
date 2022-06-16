@@ -30,4 +30,8 @@ public class SystemConfigService {
     public void save(SystemConfig config) {
         systemConfigRepository.save(config);
     }
+
+    public List<SystemConfig> findByKeyCodeIn(List<String> list) {
+        return systemConfigRepository.findByKeyCodeIn(list);
+    }
 }

@@ -1930,20 +1930,20 @@
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     var data = result.data;
-                    if (data.isShow) {
+                    if (data.NOTICE_SHOW == 1) {
                         // 显示按钮
                         if(windowWidth >= 550){
-                            $("#notice cite").text(data.title);
+                            $("#notice cite").text(data.NOTICE_TITLE);
                             $("#notice").show();
                         }
                         if(type == "ready" && localStorage.getItem("notShowNotice")){
                             return false;
                         }
                         // 弹出公告
-                        var width = (windowWidth >= 970 ? 970 : windowWidth) + 'px';
+                        var width = (windowWidth > 800 ? 800 : windowWidth) + 'px';
                         var index = layer.open({
-                            title: data.title
-                            ,content: data.content
+                            title: data.NOTICE_TITLE
+                            ,content: data.NOTICE_CONTENT
                             ,area: [width, '375px']
                             ,btn: ['知道了']
                             ,yes: function(index, layero){

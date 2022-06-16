@@ -1,10 +1,15 @@
 package com.wxy.web.favorites.constant;
 
+import java.util.List;
+
 /**
  * @author wangxiaoyuan
  * 2021/5/7 16:15
  **/
 public interface PublicConstants {
+
+    List<String> NOTICE_CONFIG = List.of("NOTICE_TITLE", "NOTICE_CONTENT", "NOTICE_SHOW");
+
     String DEFAULT_CATEGORY_NAME = "默认分类";
 
     Integer TASK_LEVEL_0 = 0;

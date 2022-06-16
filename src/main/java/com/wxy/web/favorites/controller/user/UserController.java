@@ -11,10 +11,13 @@ import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.core.ApiResponse;
+import com.wxy.web.favorites.dto.NoticeDto;
+import com.wxy.web.favorites.model.SystemConfig;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.model.Verification;
 import com.wxy.web.favorites.security.ContextUtils;
 import com.wxy.web.favorites.security.SecurityUser;
+import com.wxy.web.favorites.service.SystemConfigService;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.service.VerificationService;
 import com.wxy.web.favorites.util.EmailUtils;
@@ -27,11 +30,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -45,6 +46,8 @@ public class UserController {
     @Autowired
     private EmailUtils emailUtils;
 
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     @Autowired
     private VerificationService verificationService;
@@ -83,7 +86,9 @@ public class UserController {
     @GetMapping("/notice")
     @ApiOperation(value = "查询系统公告")
     public ApiResponse notice() {
-        return ApiResponse.success(DataConstants.SYSTEM_NOTICE);
+        List<SystemConfig> list = systemConfigService.findByKeyCodeIn(PublicConstants.NOTICE_CONFIG);
+        Map<String, String> map = list.stream().collect(Collectors.toMap(SystemConfig::getKeyCode, SystemConfig::getKeyValue));
+        return ApiResponse.success(map);
     }
 
     @PostMapping("/cleanData")

@@ -4,9 +4,12 @@ import com.wxy.web.favorites.model.SystemConfig;
 import com.wxy.web.favorites.model.Verification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author wangxiaoyuan
@@ -16,4 +19,6 @@ import java.util.Date;
 public interface SystemConfigRepository extends JpaRepository<SystemConfig, Integer>, JpaSpecificationExecutor<SystemConfig> {
 
     SystemConfig findByKeyCode(String keyCode);
+
+    List<SystemConfig> findByKeyCodeIn(List<String> list);
 }
