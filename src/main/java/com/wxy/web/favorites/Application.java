@@ -1,6 +1,5 @@
 package com.wxy.web.favorites;
 
-import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.service.UserService;
 import com.wxy.web.favorites.websocket.NioWebSocketServer;
@@ -42,11 +41,14 @@ public class Application {
                 environment.getProperty("server.port"), path);
     }
 
-    @Autowired
-    private AppConfig appConfig;
-
     @Value("${netty.port}")
     private Integer nettyPort;
+
+    @Value("${user.demo-enable}")
+    private Boolean demoEnable;
+
+    @Value("${app.file-repository}")
+    private String fileRepository;
 
     @Value("${netty.enable}")
     private Boolean nettyEnable;
@@ -65,7 +67,7 @@ public class Application {
 
     @PostConstruct
     public void run() throws Exception {
-        Path repository = Paths.get(appConfig.getFileRepository());
+        Path repository = Paths.get(fileRepository);
         if (!Files.exists(repository) && Files.exists(Files.createDirectory(repository))) {
             log.info("创建文件仓库：[{}]", repository.toAbsolutePath());
         }
@@ -74,7 +76,7 @@ public class Application {
             new NioWebSocketServer(nettyPort).init();
         }
         // 初始化用户账号
-        if (appConfig.getDemoUserEnable() && userService.findByUsername("demo") == null) {
+        if (demoEnable && userService.findByUsername("demo") == null) {
             User user = userService.save(new User().setNickName("演示账号").setUsername("demo")
                     .setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex("demo".getBytes(StandardCharsets.UTF_8))))
                     .setRegisterTime(new Date()));
