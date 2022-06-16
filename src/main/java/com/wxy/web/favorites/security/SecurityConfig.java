@@ -93,6 +93,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/report.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
                         "/css/**", "/js/**", "/plugin/**", "/favicon.ico", "/admin_index.html", "/admin.html",
                         "/admin_user.html", "/admin_report.html", "/system_notice.html", "/system_config.html",
-                        "/set_user_info.html");
+                        "/set_user_info.html", "/operation_log.html");
     }
 }

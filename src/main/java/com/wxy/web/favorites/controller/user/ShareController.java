@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/share")
 @Api(tags = "书签库")
-@Secured("USER")
+@Secured("share")
 public class ShareController {
 
     @Autowired

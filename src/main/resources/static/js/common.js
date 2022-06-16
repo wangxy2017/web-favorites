@@ -8,6 +8,7 @@ $(document).ajaxSuccess(function(event,xhr,options){
 // 全局变量
 var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
 var indexMap = new Map();// 弹出层索引容器
+var debug = true // 调试模式
 
 //数组扩展contains适用于数组判断
 Array.prototype.contains = function(a) {
@@ -24,5 +25,5 @@ Array.prototype.remove = function(val) {
 };
 
 window.timeSuffix = function(){
-    return "_t=" + new Date().getTime();
+    return debug ? "_t=" + new Date().getTime() : "";
 };

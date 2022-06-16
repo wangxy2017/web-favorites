@@ -39,11 +39,12 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="admin-menu">
-                <li class="layui-nav-item"><a href="javascript:;" data-href="admin_report.html">首页</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" data-href="admin.html">账号管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" data-href="admin_user.html">用户管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" data-href="system_config.html">系统设置</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" data-href="system_notice.html">公告设置</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="admin_index" data-href="admin_report.html">首页</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="admin" data-href="admin.html">账号管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="admin_user" data-href="admin_user.html">用户管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="system_config" data-href="system_config.html">系统设置</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="system_notice" data-href="system_notice.html">公告设置</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" data-permission="operation_log" data-href="operation_log.html">操作日志</a></li>
             </ul>
         </div>
     </div>

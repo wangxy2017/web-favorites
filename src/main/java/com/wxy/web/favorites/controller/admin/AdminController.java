@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/admin")
 @Api(tags = "账号管理")
-@Secured("SUPER_ADMIN")
+@Secured("admin")
 public class AdminController {
 
     @Autowired

@@ -1,6 +1,5 @@
 package com.wxy.web.favorites.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +8,10 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "t_system_config", indexes = {@Index(columnList = "key_code")})
+@Table(name = "t_system_config")
 @org.hibernate.annotations.Table(appliesTo = "t_system_config", comment = "系统配置表")
 @Accessors(chain = true)
 @NoArgsConstructor
@@ -27,7 +25,7 @@ public class SystemConfig {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "key_code", columnDefinition = "varchar(255) comment '键'")
+    @Column(name = "key_code", unique = true, columnDefinition = "varchar(255) comment '键'")
     private String keyCode;
 
     @Column(name = "key_value", columnDefinition = "varchar(255) comment '值'")

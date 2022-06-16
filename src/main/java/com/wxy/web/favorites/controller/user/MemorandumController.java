@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/memorandum")
 @Api(tags = "备忘录")
-@Secured("USER")
+@Secured("memorandum")
 public class MemorandumController {
 
     @Autowired

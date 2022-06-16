@@ -31,7 +31,7 @@ import java.util.List;
 @RequestMapping("/quick-navigation")
 @Slf4j
 @Api(tags = "快捷导航")
-@Secured("USER")
+@Secured("navigation")
 public class QuickNavigationController {
 
     @Autowired

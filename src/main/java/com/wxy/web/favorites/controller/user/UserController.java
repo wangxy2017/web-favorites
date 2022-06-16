@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Api(tags = "用户")
-@Secured("USER")
+@Secured("user")
 public class UserController {
 
     @Autowired
@@ -65,7 +65,7 @@ public class UserController {
         User user = userService.findById(securityUser.getId());
         User user1 = JpaUtils.evictSession(user, User.class);
         user1.setPassword(null);
-        user1.setPermissions(DataConstants.USER_ROLE_LIST);
+        user1.setPermissions(DataConstants.USER_PERMISSION_LIST);
         return ApiResponse.success(user1);
     }
 

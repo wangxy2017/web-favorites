@@ -32,9 +32,14 @@ layui.use(['element', 'layer'], function () {
             if (result.code == 0) {
                 var user = result.data;
                 $("#username").text(user.nickName.substring(0, 4));
-                if(!user.permissions.contains("SUPER_ADMIN")){
-                    $("#adminMenu").find("[data-href='admin.html',data-href='admin_user.html']").hide();
-                }
+                var permissions = user.permissions;
+                $("#adminMenu").find("[data-permission]").each(function(i){
+                    if(permissions.contains($(this).attr("data-permission"))){
+                        $(this).parent().show();
+                    }else{
+                        $(this).parent().hide();
+                    }
+                });
             }
         }
     });

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/favorites")
 @Api(tags = "收藏")
-@Secured("USER")
+@Secured("favorites")
 public class FavoritesController {
 
     @Autowired

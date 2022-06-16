@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/task")
 @Api(tags = "日程")
-@Secured("USER")
+@Secured("task")
 public class TaskController {
 
     @Autowired

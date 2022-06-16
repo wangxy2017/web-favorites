@@ -29,7 +29,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/admin-index")
 @Api(tags = "首页")
-@Secured("ADMIN")
+@Secured("admin_index")
 public class AdminIndexController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class AdminIndexController {
         User user1 = JpaUtils.evictSession(user, User.class);
         user1.setPassword(null);
         user1.setPermissions(Objects.equals(user.getUsername(), adminUsername) ?
-                DataConstants.SUPER_ADMIN_ROLE_LIST : DataConstants.ADMIN_ROLE_LIST);
+                DataConstants.SUPER_ADMIN_PERMISSION_LIST : DataConstants.ADMIN_PERMISSION_LIST);
         return ApiResponse.success(user1);
     }
 }

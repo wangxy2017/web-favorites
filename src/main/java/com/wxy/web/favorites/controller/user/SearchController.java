@@ -28,7 +28,7 @@ import java.net.URL;
 @RequestMapping("/search")
 @Slf4j
 @Api(tags = "搜索引擎")
-@Secured("USER")
+@Secured("search")
 public class SearchController {
 
     @Autowired

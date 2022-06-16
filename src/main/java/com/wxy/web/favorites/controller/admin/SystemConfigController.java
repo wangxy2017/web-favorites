@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/system-config")
 @Api(tags = "系统配置")
-@Secured("ADMIN")
+@Secured("system_config")
 public class SystemConfigController {
 
     @Autowired

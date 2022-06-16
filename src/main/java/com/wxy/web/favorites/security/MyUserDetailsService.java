@@ -42,11 +42,11 @@ public class MyUserDetailsService implements UserDetailsService {
              * */
             List<GrantedAuthority> authorities;
             if (Objects.equals(adminUsername, user.getUsername())) {
-                authorities = DataConstants.SUPER_ADMIN_ROLE_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                authorities = DataConstants.SUPER_ADMIN_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             } else if (Objects.equals(user.getAdmin(), 1)) {
-                authorities = DataConstants.ADMIN_ROLE_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                authorities = DataConstants.ADMIN_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             } else {
-                authorities = DataConstants.USER_ROLE_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                authorities = DataConstants.USER_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             }
             return new SecurityUser(user.getId(), user.getUsername(), user.getPassword(), authorities);
         }
