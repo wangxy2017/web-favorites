@@ -1,6 +1,7 @@
 package com.wxy.web.favorites.controller.admin;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.constant.EmailConstants;
 import com.wxy.web.favorites.core.ApiResponse;
 import com.wxy.web.favorites.core.PageInfo;
@@ -30,9 +31,9 @@ public class AdminUserController {
     @Autowired
     private EmailUtils emailUtils;
 
-    @GetMapping("/enable/{id}")
+    @GetMapping("/disable/{id}")
     @ApiOperation(value = "启用禁用")
-    public ApiResponse enable(@PathVariable Integer id) {
+    public ApiResponse disable(@PathVariable Integer id) {
         User user = userService.findById(id);
         Assert.notNull(user, "用户不存在");
         Assert.isTrue(!Objects.equals(user.getAdmin(), 1), "用户角色不正确");
@@ -51,12 +52,13 @@ public class AdminUserController {
         return ApiResponse.success();
     }
 
-    @PostMapping("/sendMail/")
+    @PostMapping("/sendMail")
     @ApiOperation(value = "发送邮件")
     public ApiResponse sendMail(@RequestParam Integer id, @RequestParam String content) {
         User user = userService.findById(id);
         Assert.notNull(user, "用户不存在");
-        Assert.isTrue(!Objects.equals(user.getAdmin(), 1), "用户角色不正确");
+        Assert.isTrue(!Objects.equals(user.getAdmin(), 1), "只能向注册用户发送邮件");
+        Assert.isTrue(StrUtil.isNotBlank(user.getEmail()), "邮箱不存在");
         emailUtils.sendHtmlMail(user.getEmail(), EmailConstants.ADMIN_NOTICE_TITLE, content);
         return ApiResponse.success();
     }

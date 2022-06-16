@@ -30,15 +30,17 @@ layui.use(['element', 'layer', 'table'], function() {
             {type: 'numbers'}
             , {field: 'username', title: '账号'}
             , {field: 'nickName', title: '昵称'}
+            , {field: 'email', title: '邮箱'}
             , {field: 'registerTime', title: '注册时间'}
+            , {field: 'lastOnlineTime', title: '上次在线时间'}
             , {
-                field: 'status', title: '状态', templet: function (d) {
+                field: 'status', title: '状态', width: 80, templet: function (d) {
                     var text = d.status == 2 ? '禁用' : '正常';
                     var class_ = d.status == 2 ? 'layui-bg-orange' : 'layui-bg-green';
                     return '<span class="layui-badge '+ class_ +'">'+ text +'</span>'
                 }
             }
-            , {title: '操作', width: 220, toolbar: '#operates', fixed: 'right'}
+            , {title: '操作', width: 240, toolbar: '#operates', fixed: 'right'}
         ]]
     });
 
@@ -46,7 +48,7 @@ layui.use(['element', 'layer', 'table'], function() {
     table.on('tool(userList)', function (obj) {
         var data = obj.data;
         var layEvent = obj.event;
-        if (layEvent === 'disable') { //还原
+        if (layEvent === 'disable') {
             $.ajax({
                 type: "GET",
                 url: "admin-user/disable/" + data.id,
@@ -61,52 +63,87 @@ layui.use(['element', 'layer', 'table'], function() {
                     }
                 }
             });
-        } else if (layEvent === 'clean') { //删除
+        } else if (layEvent === 'clean') {
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url: "admin-user/clean/" + data.id,
                 dataType: "json",
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        obj.del(); //移除当前行
-                        layer.msg('删除成功', {icon: 6});
+                        layer.msg('清除成功', {icon: 6});
                     } else {
-                        layer.msg('删除失败', {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
-        } else if (layEvent === 'clean') { //删除
+        } else if (layEvent === 'sendMail') {
              var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
-             layer.prompt({
-               formType: 2,
-               placeholder: "请输入内容...",
-               title: '发送邮件',
-               area: [width, '350px'] //自定义文本域宽高
-             }, function(value, index, elem){
-                 if(value.trim() == ""){
-                     layer.msg("请输入有效字符");
-                     return false;
-                 }
-                 layer.close(index);
-                 layer.load();
-                   $.ajax({
-                     type: "POST",
-                     url: "admin-user/sendMail",
-                     data: {"content":value,"id":data.id},
-                     contentType: 'application/json;charset=utf-8',
-                     dataType: "json",
-                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                     success: function (result) {
-                         layer.closeAll('loading');
-                         if (result.code == 0) {
-                             layer.msg("发送成功", {icon: 6});
-                         } else {
-                             layer.msg(result.msg, {icon: 5});
-                         }
-                     }
-                 });
-             });
+             layer.open({
+               id:"wangEditor",
+               type: 2,
+               title: "发送邮件",
+               content: 'send_mail_edit.html?' + timeSuffix(),
+               area: [width,'500px'],
+               btn: ['发送', '取消'],
+               yes: function(index, layero){
+                 var frameId = $(layero).find("iframe").attr('id');
+                 var subWindow = document.getElementById(frameId).contentWindow;
+                 var html = subWindow.editor.txt.html();
+                 var text = subWindow.editor.txt.text();
+                 if(html && text){
+                      if(text.length > 20000){
+                          layer.msg('最多输入20000个字符');
+                          return false;
+                      }
+                      // 保存数据
+                      layer.load();
+                      $.ajax({
+                          type: "POST",
+                          url: "admin-user/sendMail",
+                          data: {"content": html, "id": data.id},
+                          dataType: "json",
+                          headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                          success: function (result) {
+                              layer.closeAll('loading');
+                              if (result.code == 0) {
+                                  layer.msg('发送成功', {icon: 6});
+                              } else {
+                                  layer.msg(result.msg, {icon: 5});
+                              }
+                          }
+                      });
+                  }else{
+                      layer.msg("内容不能为空");
+                  }
+               }
+               });
         }
+    });
+
+    $(document).on("keydown", function(event){
+        if(event.ctrlKey && event.key === "f"){
+            $("#searchName").focus();
+            // 阻止默认浏览器动作(W3C)
+            var e = event;
+            if ( e && e.preventDefault )
+                e.preventDefault();
+            // IE中阻止函数器默认动作的方式
+            else
+                window.event.returnValue = false;
+            return false;
+        }
+    });
+
+    // 搜索
+    $('#searchName').bind('keypress', function (event) {
+        if (event.key === "Enter") {
+            $("#search").click();
+        }
+    });
+
+    $("#search").click(function(){
+        var name = $("#searchName").val();
+        table.reload('userList', {page: {curr: 1}, where: {"name": name}});
     });
 });

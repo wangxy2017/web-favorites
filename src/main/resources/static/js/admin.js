@@ -40,7 +40,7 @@ layui.use(['element', 'layer', 'table', 'form'], function() {
             }
             , {field: 'nickName', title: '姓名'}
             , {field: 'registerTime', title: '创建时间'}
-            , {field: 'lastOnlineTime', title: '上次登录时间'}
+            , {field: 'lastOnlineTime', title: '上次在线时间'}
             , {
                 field: 'status', title: '状态', width: 80, templet: function (d) {
                     var text = d.status == 2 ? '禁用' : '正常';

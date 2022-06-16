@@ -11,14 +11,24 @@
     <link rel="stylesheet" href="css/admin_user.css">
 </head>
 <body>
-<!-- 数据表格 -->
-<table id="userList" lay-filter="userList"></table>
-<!-- 操作 -->
-<script type="text/html" id="operates">
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="disable">禁用/启用</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="clean">清空数据</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="sendMail">发送邮件</a>
-</script>
+<div id="main" style="padding: 15px;">
+    <div style="margin-top: 10px;color:#303133">
+        <div class="layui-inline" style="margin-right: 15px;">
+            <label for="searchName">搜索名称：</label>
+            <input class="layui-input" id="searchName" placeholder="请输入名称" autocomplete="off"
+                   style="display: inline-block;width: 180px;height: 30px;line-height: 30px;margin-right: 10px;font-size: 12px;">
+            <button type="button" class="layui-btn layui-btn-sm" id="search">查询</button>
+        </div>
+    </div>
+    <!-- 数据表格 -->
+    <table id="userList" lay-filter="userList"></table>
+    <!-- 操作 -->
+    <script type="text/html" id="operates">
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="disable">禁用/启用</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="sendMail">发送邮件</a>
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="clean">清空数据</a>
+    </script>
+</div>
 <script src="js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/common.js"></script>
 <script src="layui/layui.js"></script>
