@@ -154,19 +154,7 @@ layui.use(['element', 'layer', 'table', 'form'], function() {
         return false;
     });
 
-    $(document).on("keydown", function(event){
-        if(event.ctrlKey && event.key === "f"){
-            $("#searchName").focus();
-            // 阻止默认浏览器动作(W3C)
-            var e = event;
-            if ( e && e.preventDefault )
-                e.preventDefault();
-            // IE中阻止函数器默认动作的方式
-            else
-                window.event.returnValue = false;
-            return false;
-        }
-    });
+    initSearch("#searchName");
 
     // 搜索
     $('#searchName').bind('keypress', function (event) {

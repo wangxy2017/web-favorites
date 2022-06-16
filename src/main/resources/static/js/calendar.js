@@ -590,13 +590,6 @@
         });
 
         // 登出
-        $("#logout").click(function () {
-            layer.confirm('确认退出系统吗？', function(index){
-                layer.close(index);
-
-                localStorage.clear();
-                window.location.href = "login.html";
-            });
-        });
+        logout("#logout");
 
     });

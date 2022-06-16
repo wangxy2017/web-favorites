@@ -71,29 +71,10 @@ layui.use(['layer', 'form', 'flow'], function(){
                 layer.closeAll('tips');
             });
 
-            $(document).on("keydown", function(event){
-                if(event.ctrlKey && event.key === "f"){
-                    $("#search_content").focus();
-                    // 阻止默认浏览器动作(W3C)
-                    var e = event;
-                    if ( e && e.preventDefault )
-                        e.preventDefault();
-                    // IE中阻止函数器默认动作的方式
-                    else
-                        window.event.returnValue = false;
-                    return false;
-                }
-            });
+            initSearch("#search_content");
 
             // 登出
-            $("#logout").click(function () {
-                layer.confirm('确认退出系统吗？', function(index){
-                    layer.close(index);
-
-                    localStorage.clear();
-                    window.location.href = "login.html";
-                });
-            });
+            logout("#logout");
 
             // 删除搜索引擎
 			window.deleteSearchType = function(event){
