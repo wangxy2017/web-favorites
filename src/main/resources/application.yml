@@ -80,8 +80,5 @@ aes: #aes密钥
   secret-key: 4sn2UaVa96pj4n#V
 swagger:
   enable: false #开启swagger
-admin:
-  username: admin
-  password: admin
 user:
-  demo-enable: true
+  demo-enable: true #开启演示账号

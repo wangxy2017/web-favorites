@@ -45,7 +45,7 @@ layui.use(['layer','flow','util'], function() {
                                     html += '       <div class="title" lay-title="' + item.name + '" data-url="' + item.url + '" onclick="openUrl(this)">' + item.name + '</div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
-                                    html += '       <div class="user" lay-title="'+ item.username +'"><i class="layui-icon layui-icon-username"></i><em>' + item.username + '</em></div>';
+                                    html += '       <div class="user" lay-title="'+ item.nickName +'"><i class="layui-icon layui-icon-username"></i><em>' + item.nickName + '</em></div>';
                                     html += '       <div class="support" data-id="' + item.id + '" data-support="' + item.support + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';

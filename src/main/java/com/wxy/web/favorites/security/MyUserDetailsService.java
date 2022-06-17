@@ -40,14 +40,8 @@ public class MyUserDetailsService implements UserDetailsService {
              * 此处查询用户权限，方便后续接口权限校验
              * 若接口需要开启权限验证，则在对应接口上配置 @Secured("xxx")注解
              * */
-            List<GrantedAuthority> authorities;
-            if (Objects.equals(adminUsername, user.getUsername())) {
-                authorities = DataConstants.SUPER_ADMIN_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            } else if (Objects.equals(user.getAdmin(), 1)) {
-                authorities = DataConstants.ADMIN_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            } else {
-                authorities = DataConstants.USER_PERMISSION_LIST.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            }
+            List<GrantedAuthority> authorities = DataConstants.USER_PERMISSION_LIST.stream()
+                    .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             return new SecurityUser(user.getId(), user.getUsername(), user.getPassword(), authorities);
         }
         throw new UsernameNotFoundException("用户不存在");

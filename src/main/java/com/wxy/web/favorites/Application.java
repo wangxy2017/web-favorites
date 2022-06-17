@@ -53,12 +53,6 @@ public class Application {
     @Value("${netty.enable}")
     private Boolean nettyEnable;
 
-    @Value("${admin.username}")
-    private String adminUsername;
-
-    @Value("${admin.password}")
-    private String adminPassword;
-
     @Autowired
     private UserService userService;
 
@@ -82,13 +76,6 @@ public class Application {
                     .setRegisterTime(new Date()));
             log.info("初始化用户账号：{}", user);
             userService.initData(user.getId());
-        }
-        // 初始化管理员账号
-        if (userService.findByUsername(adminUsername) == null) {
-            User user = userService.save(new User().setNickName("超级管理员").setUsername(adminUsername)
-                    .setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(adminPassword.getBytes(StandardCharsets.UTF_8))))
-                    .setAdmin(1).setRegisterTime(new Date()));
-            log.info("初始化管理员账号：{}", user);
         }
     }
 }

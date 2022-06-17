@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -25,8 +25,6 @@ public class MemorandumController {
 
     @Autowired
     private MemorandumService memorandumService;
-
-    
 
     /**
      * 新增

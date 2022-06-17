@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.constant.PublicConstants;
 import com.wxy.web.favorites.model.Task;
@@ -28,8 +28,6 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
-
-    
 
     @PostMapping
     @ApiOperation(value = "新增日程")

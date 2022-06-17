@@ -44,9 +44,6 @@ public class User {
     @Column(name = "view_style", columnDefinition = "int(1) default 0 comment '模式：0-常规模式 1-书签模式'")
     private Integer viewStyle;
 
-    @Column(name = "admin", columnDefinition = "int(1) default 0 comment '管理员：0-否 1-是'")
-    private Integer admin;
-
     @Column(name = "capacity", columnDefinition = "bigint(20) default 0 comment '容量'")
     private Long capacity;
 
@@ -89,6 +86,4 @@ public class User {
     @Transient
     private List<String> permissions;
 
-    @Transient
-    private Boolean superAdmin;
 }

@@ -147,7 +147,7 @@ layui.use(['layer','flow','util','form'], function() {
         });
 
         window.escapeHtml = function(str){
-             return str.replace(/[<>&"\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
+             return str.replace(/[<>&"\\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
         };
 
         window.htmlEscape = function(html){

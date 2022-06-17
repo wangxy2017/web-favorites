@@ -47,8 +47,6 @@ public class RegisterController {
     @Autowired
     private EmailUtils emailUtils;
 
-    
-
     @Autowired
     private VerificationService verificationService;
 

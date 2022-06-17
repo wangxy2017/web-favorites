@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.DataConstants;
@@ -39,8 +39,6 @@ public class SearchController {
 
     @Autowired
     private UserService userService;
-
-    
 
     @GetMapping("/data")
     @ApiOperation(value = "查询搜索引擎")

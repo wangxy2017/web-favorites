@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -25,8 +25,6 @@ public class PasswordController {
 
     @Autowired
     private FavoritesService favoritesService;
-
-    
 
     @PostMapping
     @ApiOperation(value = "保存密码")

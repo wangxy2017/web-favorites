@@ -87,14 +87,14 @@ public class Favorites {
     private Password password;
 
     @Transient
-    private String username;
+    private String nickName;
 
-    public Favorites(Integer id, String name, String icon, String url, Integer support, String username) {
+    public Favorites(Integer id, String name, String icon, String url, Integer support, String nickName) {
         this.id = id;
         this.name = name;
         this.icon = icon;
         this.url = url;
         this.support = support;
-        this.username = username;
+        this.nickName = nickName;
     }
 }

@@ -1918,7 +1918,7 @@
         });
 
         window.escapeHtml = function(str){
-             return str.replace(/[<>&"\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
+             return str.replace(/[<>&"\\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
         };
 
         window.showNotice = function(type){
@@ -1930,10 +1930,10 @@
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     var data = result.data;
-                    if (data.NOTICE_SHOW == 1) {
+                    if (data.isShow) {
                         // 显示按钮
                         if(windowWidth >= 550){
-                            $("#notice cite").text(data.NOTICE_TITLE);
+                            $("#notice cite").text(data.title);
                             $("#notice").show();
                         }
                         if(type == "ready" && localStorage.getItem("notShowNotice")){
@@ -1942,8 +1942,8 @@
                         // 弹出公告
                         var width = (windowWidth > 800 ? 800 : windowWidth) + 'px';
                         var index = layer.open({
-                            title: data.NOTICE_TITLE
-                            ,content: data.NOTICE_CONTENT
+                            title: data.title
+                            ,content: data.content
                             ,area: [width, '375px']
                             ,btn: ['知道了']
                             ,yes: function(index, layero){

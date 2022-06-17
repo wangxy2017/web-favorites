@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -19,9 +19,6 @@ public class ShareController {
 
     @Autowired
     private FavoritesService favoritesService;
-
-    
-
 
     @GetMapping("/list")
     @ApiOperation(value = "查询书签库")

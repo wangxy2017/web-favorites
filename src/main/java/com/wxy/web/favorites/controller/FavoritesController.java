@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;

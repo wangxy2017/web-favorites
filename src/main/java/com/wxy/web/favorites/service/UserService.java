@@ -150,50 +150,6 @@ public class UserService {
         }
     }
 
-    public PageInfo<User> findAdminPageList(String name, Integer pageNum, Integer pageSize) {
-        String text = SqlUtils.trimAndEscape(name);
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.DESC, "registerTime"));
-        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
-        // 构造自定义查询条件
-        Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicateList = new ArrayList<>();
-            predicateList.add(criteriaBuilder.equal(root.get("admin"), 1));
-            if (StrUtil.isNotBlank(text)) {
-                predicateList.add(criteriaBuilder.or(
-                        criteriaBuilder.like(root.get("username"), "%" + text + "%"),
-                        criteriaBuilder.like(root.get("nickName"), "%" + text + "%")
-                ));
-            }
-            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
-        };
-        Page<User> page = userRepository.findAll(queryCondition, pageable);
-        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
-    }
-
-    public PageInfo<User> findUserPageList(String name, Integer pageNum, Integer pageSize) {
-        String text = SqlUtils.trimAndEscape(name);
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.DESC, "registerTime"));
-        orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
-        // 构造自定义查询条件
-        Specification<User> queryCondition = (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicateList = new ArrayList<>();
-            predicateList.add(criteriaBuilder.notEqual(root.get("admin"), 1));
-            if (StrUtil.isNotBlank(text)) {
-                predicateList.add(criteriaBuilder.or(
-                        criteriaBuilder.like(root.get("username"), "%" + text + "%"),
-                        criteriaBuilder.like(root.get("nickName"), "%" + text + "%")
-                ));
-            }
-            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
-        };
-        Page<User> page = userRepository.findAll(queryCondition, pageable);
-        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
-    }
-
     public void deleteById(Integer id) {
         userRepository.deleteById(id);
     }

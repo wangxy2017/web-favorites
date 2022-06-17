@@ -59,7 +59,6 @@ public class LoginController {
     @Autowired
     private EmailUtils emailUtils;
 
-
     @Autowired
     private AppConfig recommendsConfig;
 
@@ -141,7 +140,6 @@ public class LoginController {
                     updateUser(user1, true);
                     Map<String, Object> map = new HashMap<>();
                     map.put("accessToken", token);
-                    map.put("admin", Objects.equals(user1.getAdmin(), 1));
                     return ApiResponse.success(map);
                 } else {
                     return ApiResponse.error(ErrorConstants.USER_DISABLED_MSG);

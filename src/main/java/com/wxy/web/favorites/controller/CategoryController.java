@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.constant.ErrorConstants;
@@ -33,8 +33,6 @@ public class CategoryController {
 
     @Autowired
     private FavoritesService favoritesService;
-
-    
 
     @PostMapping
     @ApiOperation(value = "保存分类")

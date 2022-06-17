@@ -1,4 +1,4 @@
-package com.wxy.web.favorites.controller.user;
+package com.wxy.web.favorites.controller;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
@@ -51,7 +51,6 @@ public class FileController {
 
     @Autowired
     private UserService userService;
-
 
     @Autowired
     private AppConfig appConfig;
