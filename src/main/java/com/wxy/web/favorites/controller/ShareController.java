@@ -1,5 +1,6 @@
 package com.wxy.web.favorites.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.model.Favorites;
 import com.wxy.web.favorites.service.FavoritesService;
 import com.wxy.web.favorites.core.ApiResponse;
@@ -33,5 +34,15 @@ public class ShareController {
     public ApiResponse support(@PathVariable Integer id) {
         boolean success = favoritesService.saveSupport(ContextUtils.getCurrentUser().getId(), id);
         return success ? ApiResponse.success() : ApiResponse.error();
+    }
+
+    @GetMapping("/click/{id}")
+    @ApiOperation(value = "点击书签")
+    public ApiResponse click(@PathVariable Integer id) {
+        Favorites favorites = favoritesService.findById(id);
+        Assert.notNull(favorites, "书签不存在");
+        favorites.setClickCount(favorites.getClickCount() + 1);
+        favoritesService.save(favorites);
+        return ApiResponse.success();
     }
 }

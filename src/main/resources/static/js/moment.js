@@ -165,7 +165,7 @@ layui.use(['layer','flow','util'], function() {
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+                        var width = (windowWidth > 800? 800 : windowWidth) + 'px';
                         layer.open({
                           id:"wangEditor",
                           type: 2,
@@ -272,7 +272,7 @@ layui.use(['layer','flow','util'], function() {
 
         // 发布
         $("#addMoment").click(function() {
-            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
             layer.open({
               id:"wangEditor",
               type: 2,

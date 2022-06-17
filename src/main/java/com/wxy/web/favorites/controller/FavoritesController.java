@@ -291,6 +291,7 @@ public class FavoritesController {
         Favorites favorites = favoritesService.findById(id);
         if (favorites != null) {
             favorites.setVisitTime(new Date());
+            favorites.setClickCount(favorites.getClickCount() + 1);
             favoritesService.save(favorites);
             SecurityUser securityUser = ContextUtils.getCurrentUser();
             User user = userService.findById(securityUser.getId());
@@ -485,7 +486,7 @@ public class FavoritesController {
                         list1.add(favorites);
                     });
                     int sort = isInteger(c.elementText("SORT")) ? Integer.parseInt(c.elementText("SORT")) : -1;
-                    list.add(new Category().setName(c.elementText("NAME")).setSort(sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null).setBookmark(Boolean.parseBoolean(c.elementText("BOOKMARK")) ? PublicConstants.BOOKMARK_STYLE_CODE : null).setPinyin( PinYinUtils.toPinyin(c.elementText("NAME"))).setPinyinS(c.elementText("NAME")).setFavorites(list1));
+                    list.add(new Category().setName(c.elementText("NAME")).setSort(sort >= 0 && sort < PublicConstants.MAX_SORT_NUMBER ? sort : null).setBookmark(Boolean.parseBoolean(c.elementText("BOOKMARK")) ? PublicConstants.BOOKMARK_STYLE_CODE : null).setPinyin(PinYinUtils.toPinyin(c.elementText("NAME"))).setPinyinS(c.elementText("NAME")).setFavorites(list1));
                 });
             }
         } catch (Exception e) {

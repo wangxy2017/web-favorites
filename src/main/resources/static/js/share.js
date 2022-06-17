@@ -97,6 +97,13 @@ layui.use(['layer','flow','util'], function() {
                     url: "user/visit",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
                 });
+                // 记录点击率
+                $.ajax({
+                    type: "GET",
+                    url: "share/click/" + id,
+                    dataType: "json",
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                });
             }else{
                 layer.msg('此链接无效', {icon: 7});
             }

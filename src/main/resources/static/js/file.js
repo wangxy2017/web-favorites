@@ -121,7 +121,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
         };
 
         $("#upload").click(function(){
-            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
             var index = layer.open({
                 type: 1,
                 title: "上传文件",
@@ -551,7 +551,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
-                            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+                            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
                             layer.open({
                                 area:[width,'600px'],
                                 type: 1,

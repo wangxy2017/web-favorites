@@ -157,7 +157,7 @@ public class FavoritesService {
         name = Optional.ofNullable(name).orElse("").toLowerCase();
         name = SqlUtils.trimAndEscape(name);
         List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.DESC, "support"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "clickCount"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
         Page<Favorites> page = favoritesRepository.findShareList("%" + name + "%", pageable);

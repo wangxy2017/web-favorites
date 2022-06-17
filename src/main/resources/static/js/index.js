@@ -1804,7 +1804,7 @@
                         if(!user.nickName){
                             window.location.href = "set_user_info.html";
                         }
-                        $("#username").text(user.nickName.substring(0, 4));
+                        $("#username").text(user.nickName);
                         form.val("styleSelect", {"viewStyle": user.viewStyle});
                         if(user.viewStyle == 1)$("#layuiBody").addClass("bookmark");
                     }
@@ -1839,7 +1839,7 @@
 
         // 回收站
         $("#recycle").click(function() {
-            var width = (windowWidth >= 800? 800 : windowWidth) + 'px';
+            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
             var index = layer.open({
                 type: 2,
                 area: [width,'530px'],

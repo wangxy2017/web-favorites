@@ -11,7 +11,15 @@
     font-size: 18px;
     font-weight: bold;
     margin-right: 5px;
-    vertical-align: middle;
+}
+
+#username {
+    width: 60px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: initial;
 }
 
 .search-input {
