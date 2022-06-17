@@ -3,11 +3,6 @@
     text-decoration: underline;
 }
 
-/* 解决弹出框中select显示难看 */
-.to-fix-select .layui-layer-content {
-    overflow: visible !important;
-}
-
 .layui-header {
     background-color: #0A0E11 !important;
 }

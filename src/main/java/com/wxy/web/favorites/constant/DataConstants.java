@@ -28,7 +28,7 @@ public interface DataConstants {
     NoticeDto SYSTEM_NOTICE = JSONUtil.toBean(JSONUtil.parseObj(
             ResourceUtil.readStr("data/notice.json", StandardCharsets.UTF_8)), NoticeDto.class);
 
-    List<String> USER_PERMISSION_LIST = List.of("user", "task", "share", "navigation", "password",
+    List<String> USER_PERMISSION_LIST = List.of("user", "task", "share","search", "navigation", "password",
             "moment", "memorandum", "file", "favorites", "category");
 
 }
