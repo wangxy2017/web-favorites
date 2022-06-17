@@ -42,3 +42,16 @@
 .main {
     padding: 15px;
 }
+
+.user-info {
+    width: 270px;
+    margin: 0 auto;
+    margin-top: 100px;
+    text-align: center;
+}
+
+.title {
+    color: #009688;
+    margin-bottom: 20px;
+    font-size: 20px;
+}

@@ -14,7 +14,7 @@ layui.use('form', function(){
             if (result.code == 0) {
                 window.location.href = "index.html";
             } else {
-                layer.msg("保存失败", {icon: 5});
+                layer.msg(result.msg, {icon: 5});
             }
         }
     });
