@@ -33,5 +33,5 @@ public interface ErrorConstants {
 
      String RESOURCE_NOT_FOUND_MSG = "资源不存在";
      String FILE_IS_DELETED_MSG = "文件被物理删除";
-     String USER_DISABLED_MSG = "账号已被禁止登录";
+     String USER_DISABLED_MSG = "您的账号已锁定，可通过忘记密码解锁";
 }

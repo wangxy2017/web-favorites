@@ -108,7 +108,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                                                 table.reload('fileList');
                                                 layer.close(indexMap.get('#folderTree'));
                                             } else {
-                                                layer.msg('操作失败', {icon: 5});
+                                                layer.msg(result.msg, {icon: 5});
                                             }
                                         }
                                     });
@@ -243,7 +243,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                             table.reload('fileList');
                             loadCapacity();
                         } else {
-                            layer.msg('删除失败', {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -344,7 +344,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                                 //同步更新缓存对应的值
                                 obj.update({filename: value});
                             } else {
-                                layer.msg('修改失败', {icon: 5});
+                                layer.msg(result.msg, {icon: 5});
                             }
                         }
                     });
@@ -364,7 +364,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                                 layer.msg('删除成功', {icon: 6});
                                 loadCapacity();
                             } else {
-                                layer.msg('删除失败', {icon: 5});
+                                layer.msg(result.msg, {icon: 5});
                             }
                         }
                     });
@@ -472,29 +472,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
             }
           });
 
-        window.downloadFile = function(filename, url){
-            // 此处不加载动画，只关闭动画，加载动画交给前面的函数执行
-            $.ajax({
-                url: url,
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                xhrFields: { responseType: "arraybuffer" },
-                success: function(result){
-                    layer.closeAll('loading');
-                    var a = document.createElement('a');
-                    a.download = filename;
-                    a.style.display = 'none';
-                    var blob = new Blob([result]);
-                    a.href = URL.createObjectURL(blob);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                },
-                error: function(){
-                    layer.closeAll('loading');
-                    layer.msg('下载失败', {icon: 5});
-                }
-            });
-        };
+
 
         window.copyText = function(value){
             var input = document.createElement('input');

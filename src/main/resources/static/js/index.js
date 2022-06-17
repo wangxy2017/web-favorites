@@ -96,7 +96,7 @@
                     }
                 },
                 error: function(){
-                    layer.msg("服务器异常", {icon: 2});
+
                 }
               });
             }
@@ -340,14 +340,7 @@
             }
         });
 
-        window.isMobile = function(){
-            let info = navigator.userAgent;
-            let agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPod", "iPad"];
-            for(let i = 0; i < agents.length; i++){
-                if(info.indexOf(agents[i]) >= 0) return true;
-            }
-            return false;
-        };
+
 
         $("#settingPwd").click(function () {
             layer.open({
@@ -411,26 +404,6 @@
             layer.close(indexMap.get('#add-fastNav'));
         });
 
-        window.downloadFile = function(filename, url){
-            $.ajax({
-                url: url,
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                xhrFields: { responseType: "arraybuffer" },
-                success: function(result){
-                    var a = document.createElement('a');
-                    a.download = filename;
-                    a.style.display = 'none';
-                    var blob = new Blob([result]);
-                    a.href = URL.createObjectURL(blob);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                },
-                error: function(){
-                    layer.msg('下载失败', {icon: 5});
-                }
-            });
-        };
 
         // 搜索项绑定点击事件
         $(document).on('click', '.search-items li', function() {
@@ -496,26 +469,7 @@
             });
         };
 
-        // 图片懒加载
-        window.loadImg =  function loadImg(ele) {
-            $(ele).find("img[lay-src]").each(function(i,item){
-                var originUrl = item.getAttribute("src");
-                var url = item.getAttribute("lay-src");
-                var img = new Image();
-                img.src = url;
-                if(img.complete){
-                  item.setAttribute('src', url);
-                }
-                img.onload = function(){
-                  img.onload = null;
-                  item.setAttribute('src', url);
-                };
-                img.onerror = function(e){
-                  img.onerror = null;
-                  item.setAttribute('src', originUrl);
-                };
-            });
-        };
+
 
         // 快捷导航
         $("#fastNavBtn").click(function () {
@@ -581,7 +535,7 @@
                                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                                 success: function (result) {
                                     if (result.code != 0) {
-                                        layer.msg("操作失败", {icon: 5});
+                                        layer.msg(result.msg, {icon: 5});
                                     }
                                 }
                             });
@@ -590,7 +544,7 @@
                     }
                 },
                 error: function(){
-                    layer.msg("服务器异常", {icon: 2});
+
                 }
               });
         });
@@ -707,7 +661,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                 }
             });
         };
@@ -753,7 +707,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                 }
             });
         };
@@ -998,14 +952,7 @@
             }
         };
 
-        window.newWin = function(url) {
-          var a = document.createElement('a');
-          a.setAttribute('href', url);
-          a.setAttribute('target', '_blank');
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        };
+
 
         // 编辑分类
         window.editCategory = function (obj, e) {
@@ -1282,7 +1229,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                 }
             });
         };
@@ -1532,7 +1479,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                     // 回退
                     $(data.elem).removeAttr("checked");
                     $(data.othis).removeClass("layui-form-onswitch");
@@ -1562,7 +1509,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                     // 回退
                     $(data.elem).removeAttr("checked");
                     $(data.othis).removeClass("layui-form-onswitch");
@@ -1598,7 +1545,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg('服务器异常', {icon: 2});
+
                     // 回退
                     $(data.elem).removeAttr("checked");
                     $(data.othis).removeClass("layui-form-onswitch");
@@ -1840,7 +1787,7 @@
                 },
                 error: function(){
                     layer.closeAll('loading');
-                    layer.msg("服务器异常", {icon: 2});
+
                 }
             });
         };
@@ -1917,9 +1864,7 @@
             indexMap.set('#report',index);
         });
 
-        window.escapeHtml = function(str){
-             return str.replace(/[<>&"\\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
-        };
+
 
         window.showNotice = function(type){
             // 查询公告

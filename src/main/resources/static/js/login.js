@@ -160,7 +160,7 @@ layui.use(['element', 'form', 'layer'], function () {
             },
             error: function () {
                 layer.closeAll('loading');
-                layer.msg("服务器异常", {icon: 2});
+
             }
         });
         return false;
@@ -190,7 +190,7 @@ layui.use(['element', 'form', 'layer'], function () {
             },
             error: function () {
                 layer.closeAll('loading');
-                layer.msg("服务器异常", {icon: 2});
+
             }
         });
         return false;
@@ -214,7 +214,7 @@ layui.use(['element', 'form', 'layer'], function () {
             },
             error: function () {
                 layer.closeAll('loading');
-                layer.msg("服务器异常", {icon: 2});
+
             }
         });
         return false;
@@ -241,7 +241,7 @@ layui.use(['element', 'form', 'layer'], function () {
             },
              error: function () {
                 layer.closeAll('loading');
-                layer.msg("服务器异常", {icon: 2});
+
             }
         });
         return false;

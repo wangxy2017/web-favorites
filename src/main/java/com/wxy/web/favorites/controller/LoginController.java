@@ -114,10 +114,14 @@ public class LoginController {
                 // 发送邮件
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.EMAIL_REGISTER_TITLE, String.format(EmailConstants.EMAIL_REGISTER_CONTENT, user.getUsername(), tempPwd));
             }
-            updateUser(user, true);
-            // 生成token
-            String token = tokenUtils.createToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
-            return ApiResponse.success(token);
+            if (Objects.equals(user.getStatus(), 2)) {
+                updateUser(user, true);
+                // 生成token
+                String token = tokenUtils.createToken(user.getUsername(), TimeUnit.DAYS.toMillis(PublicConstants.REMEMBER_ME_DAYS));
+                return ApiResponse.success(token);
+            } else {
+                return ApiResponse.error(ErrorConstants.USER_DISABLED_MSG);
+            }
         } else {
             return ApiResponse.error(ErrorConstants.INVALID_VERIFICATION_MSG);
         }
@@ -166,11 +170,15 @@ public class LoginController {
         User user1 = userService.findByUsername(user.getUsername());
         if (user1 != null) {
             if (StrUtil.isNotBlank(user.getPassword()) && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
-                String token = tokenUtils.createToken(user1.getUsername());
-                TextWebSocketFrame tws = new TextWebSocketFrame(JSONUtil.toJsonStr(ApiResponse.success(token)));
-                channel.writeAndFlush(tws);
-                updateUser(user1, true);
-                return ApiResponse.success();
+                if (!Objects.equals(user1.getStatus(), 2)) {
+                    String token = tokenUtils.createToken(user1.getUsername());
+                    TextWebSocketFrame tws = new TextWebSocketFrame(JSONUtil.toJsonStr(ApiResponse.success(token)));
+                    channel.writeAndFlush(tws);
+                    updateUser(user1, true);
+                    return ApiResponse.success();
+                } else {
+                    return ApiResponse.error(ErrorConstants.USER_DISABLED_MSG);
+                }
             } else {
                 // 记录失败次数
                 updateUser(user1, false);
@@ -193,6 +201,7 @@ public class LoginController {
             if (user.getErrorCount() > appConfig.getErrorCountLimit()) {
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.SAFE_NOTICE_TITLE, String.format(EmailConstants.SAFE_NOTICE_CONTENT, user.getUsername()));
                 user.setErrorCount(0);
+                user.setStatus(2);
             }
         }
         userService.save(user);
@@ -226,6 +235,7 @@ public class LoginController {
         if (forgotEmailCode != null && user1 != null) {
             String tempPwd = RandomUtil.randomString(PublicConstants.TEMP_PASSWORD_LENGTH);
             // 重置用户密码
+            user1.setStatus(1);
             user1.setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(tempPwd.getBytes(StandardCharsets.UTF_8))));
             userService.save(user1);
             // 将临时密码发送至用户邮箱

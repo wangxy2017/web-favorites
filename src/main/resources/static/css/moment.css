@@ -1,143 +1,143 @@
 .home-icon {
-				width: 30px;
-				height: 30px;
-				margin-top: 16px;
-				margin-left: 20px;
-				cursor: pointer;
-			}
+    width: 30px;
+    height: 30px;
+    margin-top: 16px;
+    margin-left: 20px;
+    cursor: pointer;
+}
 
-			.header {
-			    position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 60px;
-                background-color: #0A0E11;
-			}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #0A0E11;
+}
 
-			.center {
-			    position: fixed;
-                width: 100%;
-                top: 60px;
-                bottom: 44px;
-                overflow: auto;
-			}
+.center {
+    position: fixed;
+    width: 100%;
+    top: 60px;
+    bottom: 44px;
+    overflow: auto;
+}
 
-			.footer {
-			    position: fixed;
-                bottom: 0;
-                width: 100%;
-                text-align: center;
-                height: 44px;
-                line-height: 44px;
-                background-color: #f5f7fa;
-			}
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    height: 44px;
+    line-height: 44px;
+    background-color: #f5f7fa;
+}
 
-			#logout {
-                margin-top: 20px;
-                margin-right: 20px;
-                float: right;
-			}
+#logout {
+    margin-top: 20px;
+    margin-right: 20px;
+    float: right;
+}
 
-			#addMoment {
-			    margin-top: 16px;
-                margin-left: 30px;
-			}
+#addMoment {
+    margin-top: 16px;
+    margin-left: 30px;
+}
 
-			.main {
-                padding: 15px;
-			}
+.main {
+    padding: 15px;
+}
 
-			.time {
-				font-size: 14px !important;
-				color: #999 !important;
-			}
+.time {
+    font-size: 14px !important;
+    color: #999 !important;
+}
 
-			.moment {
-			    cursor: pointer;
-			}
+.moment {
+    cursor: pointer;
+}
 
-			.content {
-			    max-height: 200px;
-			    overflow: hidden;
-			}
+.content {
+    max-height: 200px;
+    overflow: hidden;
+}
 
-			.content-mask {
-			    color: #1e9fff;
-			    cursor: pointer;
-			    display: none;
-			}
+.content-mask {
+    color: #1e9fff;
+    cursor: pointer;
+    display: none;
+}
 
-			.action {
-				margin-top: 6px;
-				line-height: 30px;
-			}
+.action {
+    margin-top: 6px;
+    line-height: 30px;
+}
 
-			.action .layui-icon {
-			    margin-right: 10px;
-			    font-size: 18px;
-			}
+.action .layui-icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
 
-			.action .layui-icon:hover {
-			    color: #1e9fff;
-			}
+.action .layui-icon:hover {
+    color: #1e9fff;
+}
 
-			.set-top {
-				height: 22px;
-				line-height: 22px;
-				margin-right: 4px;
-				font-size: 14px;
-				cursor: pointer;
-			}
+.set-top {
+    height: 22px;
+    line-height: 22px;
+    margin-right: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
 
-			.search-input {
-                z-index: 999;
-                position: absolute;
-                top: 16px;
-                right: 70px;
-                width: 100px;
-                height: 30px;
-                transition: width .3s ease;
-            }
+.search-input {
+    z-index: 999;
+    position: absolute;
+    top: 16px;
+    right: 70px;
+    width: 100px;
+    height: 30px;
+    transition: width .3s ease;
+}
 
-            .search-input input {
-                height: 100%;
-                font-size: 12px;
-                border: none;
-                background-color: #161a1d;
-                color: #b2b2b2;
-                padding-left: 26px;
-                padding-right: 26px;
-            }
+.search-input input {
+    height: 100%;
+    font-size: 12px;
+    border: none;
+    background-color: #161a1d;
+    color: #b2b2b2;
+    padding-left: 26px;
+    padding-right: 26px;
+}
 
-            .search-input .search-close {
-                position: absolute;
-                top: 4px;
-                right: 4px;
-                font-size: 20px;
-                color: #666;
-                display: none;
-                cursor: pointer;
-            }
+.search-input .search-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 20px;
+    color: #666;
+    display: none;
+    cursor: pointer;
+}
 
-            .search-input .search-icon {
-                position: absolute;
-                top: 8px;
-                left: 6px;
-                font-size: 14px;
-                color: #999;
-                cursor: pointer;
-            }
+.search-input .search-icon {
+    position: absolute;
+    top: 8px;
+    left: 6px;
+    font-size: 14px;
+    color: #999;
+    cursor: pointer;
+}
 
-            #noData {
-                text-align: center;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                display: none;
-            }
+#noData {
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
 
-            #noData img {
-                width: 130px;
-            }
+#noData img {
+    width: 130px;
+}

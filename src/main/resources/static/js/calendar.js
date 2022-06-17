@@ -171,7 +171,7 @@
                             alarmHover(day);
                         });
                     } else {
-                        layer.msg("数据加载失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -472,7 +472,7 @@
                     if (result.code == 0) {
                         window.location.reload();
                     } else {
-                        layer.msg("添加失败", {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -517,7 +517,7 @@
                             layer.msg('操作成功', {icon: 6});
                             $("#task"+text).empty();
                         } else {
-                            layer.msg('操作失败', {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -539,7 +539,7 @@
                         task_item.find('.task-level').replaceWith('<span class="layui-badge layui-bg-gray task-level">完成</span>');
                         task_item.find('.task-action').remove();
                     } else {
-                        layer.msg('操作失败', {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -560,7 +560,7 @@
                         task_item.find('.task-level').replaceWith('<span class="layui-badge-rim task-level">取消</span>');
                         task_item.find('.task-action').remove();
                     } else {
-                        layer.msg('操作失败', {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });
@@ -579,7 +579,7 @@
                         layer.msg('删除成功', {icon: 6});
                         $(obj).parent().parent().remove();
                     } else {
-                        layer.msg('删除失败', {icon: 5});
+                        layer.msg(result.msg, {icon: 5});
                     }
                 }
             });

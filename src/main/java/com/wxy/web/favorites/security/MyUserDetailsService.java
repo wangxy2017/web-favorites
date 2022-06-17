@@ -4,7 +4,6 @@ import com.wxy.web.favorites.constant.DataConstants;
 import com.wxy.web.favorites.dao.UserRepository;
 import com.wxy.web.favorites.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,9 +27,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Value("${admin.username}")
-    private String adminUsername;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

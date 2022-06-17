@@ -93,7 +93,7 @@ layui.use(['layer', 'form', 'flow'], function(){
                             if (result.code == 0) {
                                 window.location.reload();
                             } else {
-                                layer.msg("删除失败", {icon: 5});
+                                layer.msg(result.msg, {icon: 5});
                             }
                         }
                     });
@@ -131,7 +131,7 @@ layui.use(['layer', 'form', 'flow'], function(){
                         if (result.code == 0) {
                             window.location.reload();
                         } else {
-                            layer.msg("添加失败", {icon: 5});
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
@@ -269,12 +269,5 @@ layui.use(['layer', 'form', 'flow'], function(){
 				}
 			};
 
-			window.newWin = function(url) {
-              var a = document.createElement('a');
-              a.setAttribute('href', url);
-              a.setAttribute('target', '_blank');
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            };
+
         });

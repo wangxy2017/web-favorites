@@ -36,46 +36,7 @@ layui.use(['layer','flow','util','form'], function() {
             }
         });
 
-        // 计算函数方法
-        window.todo_time = function(time) {
-            if (!time) {
-              return '';
-            }
-            var oDate = new Date();
-            var newHaoMiao1 = oDate.getTime(); // 当前时间,含有时分秒
-            oDate.setHours(0);
-            oDate.setMinutes(0);
-            oDate.setSeconds(0);
-            oDate.setMilliseconds(0);
-            var newHaoMiao2 = oDate.getTime(); // 当前时间,不含有时分秒
-            var newTime = time.replace(new RegExp("-", "gm"), "/");
-            var arrTime = time.substring(0, 11).replace(new RegExp("-", "gm"), "/"); // 截取时间，不含有时分秒
-            var showTime = time.substring(0, 11);
-            var oldHaoMiao1 = new Date(newTime).getTime(); // 含有时分秒的转化成毫秒
-            var oldHaoMiao2 = new Date(arrTime).getTime(); // 不含有时分秒的转化成毫秒
-            var d1 = (newHaoMiao1 - oldHaoMiao1) / 1000;
-            var d2 = (newHaoMiao2 - oldHaoMiao2) / 1000;
-            var d_result = '';
-            if (d2 > 0) { // 是几天前
-              var d_days = parseInt(d2 / 86400);
-              if (d_days === 1) {
-                d_result = "昨天";
-              } else if (d_days >= 2) {
-                d_result = showTime;
-              }
-            } else { // 是今天
-              var d_hours = parseInt(d1 / 3600);
-              var d_minutes = parseInt(d1 / 60);
-              if (d_hours > 0) {
-                d_result = d_hours + "小时前";
-              } else if (d_hours <= 0 && d_minutes > 0) {
-                d_result = d_minutes + "分钟前";
-              } else {
-                d_result = "刚刚";
-              }
-            }
-            return d_result;
-        };
+
 
         // 加载数据
         window.loadList = function(){
@@ -146,13 +107,9 @@ layui.use(['layer','flow','util','form'], function() {
             }
         });
 
-        window.escapeHtml = function(str){
-             return str.replace(/[<>&"\\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
-        };
 
-        window.htmlEscape = function(html){
-             return html.replace(/&lt;|&gt;|&amp;|&quot;|&nbsp;|<br\/>/ig,function(c){return {'&lt;':'<','&gt;':'>','&amp;':'&','&quot;':'"','&nbsp;':' ','<br/>':'\n'}[c];});
-        };
+
+
 
         window.preSearch = function(){
             var highLight = $(".highLight");
@@ -180,17 +137,7 @@ layui.use(['layer','flow','util','form'], function() {
             }
         };
 
-        window.wrapSearch = function(content,keyword){
-            var text = '<span class="highLight">'+keyword+'</span>';
-            var reg = new RegExp(keyword,"gi");
-            return content.replace(reg,text);
-        };
 
-         window.unwrapSearch = function(content,keyword){
-            var text = '<span class="highLight">'+keyword+'</span>';
-            var reg = new RegExp(text,"gi");
-            return content.replace(reg,keyword);
-        };
 
         // 关闭搜索
         $("#search_close").click(function () {

@@ -199,7 +199,7 @@ layui.use(['layer','flow','util'], function() {
                                             layer.close(index);
                                             window.location.reload();
                                         } else {
-                                            layer.msg('保存失败', {icon: 5});
+                                            layer.msg(result.msg, {icon: 5});
                                         }
                                     }
                                 });
@@ -306,7 +306,7 @@ layui.use(['layer','flow','util'], function() {
                                 layer.close(index);
                                 window.location.reload();
                             } else {
-                                layer.msg('保存失败', {icon: 5});
+                                layer.msg(result.msg, {icon: 5});
                             }
                         }
                     });
