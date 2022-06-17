@@ -401,14 +401,6 @@
     margin-top: 6px;
 }
 
-.tips-icon {
-    margin-top: 8px;
-    display: inline-block;
-    font-size: 18px;
-    color: #5e6d82;
-    cursor: pointer;
-}
-
 #loadingDiv {
     z-index: 2147483647;
     position: fixed;

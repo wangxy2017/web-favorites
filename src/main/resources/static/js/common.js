@@ -228,3 +228,11 @@ window.unwrapSearch = function(content,keyword){
     var reg = new RegExp(text,"gi");
     return content.replace(reg,keyword);
 };
+
+// 初始化title
+$(document).on('mouseenter','[lay-title]',function(e){
+    var that = $(e.currentTarget);
+    layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
+}).on('mouseleave','[lay-title]',function(e){
+    layer.closeAll('tips');
+});

@@ -91,6 +91,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login.html", "/qrLogin.html", "/index.html", "/search.html",
                         "/moment.html", "/calendar.html", "/moment_edit.html", "/file.html", "/recycle.html",
                         "/report.html", "/memorandum.html", "/share.html", "/layui/**", "/images/**",
-                        "/css/**", "/js/**", "/plugin/**", "/favicon.ico", "/set_user_info.html");
+                        "/css/**", "/js/**", "/plugin/**", "/favicon.ico", "/set_user_info.html","/user_info.html");
     }
 }

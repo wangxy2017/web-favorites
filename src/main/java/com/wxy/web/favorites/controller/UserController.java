@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "修改信息")
+    @ApiOperation(value = "保存信息")
     public ApiResponse save(@RequestBody User user) {
         SecurityUser securityUser = ContextUtils.getCurrentUser();
         User user1 = userService.findById(securityUser.getId());
@@ -103,6 +103,7 @@ public class UserController {
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
         SecurityUser securityUser = ContextUtils.getCurrentUser();
         User user = userService.findById(securityUser.getId());
+        Assert.isTrue(!Objects.equals(user.getUsername(), "demo"), "演示账号禁止修改");
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
@@ -134,17 +135,19 @@ public class UserController {
         return ApiResponse.success();
     }
 
-    @PostMapping("/email")
-    @ApiOperation(value = "修改邮箱")
-    public ApiResponse updateEmail(@RequestParam String newEmail, @RequestParam String code) {
-        if (StrUtil.isNotBlank(newEmail) && StrUtil.isNotBlank(code)) {
-            User user1 = userService.findByEmail(newEmail);
-            Verification verification = verificationService.findCode(newEmail, PublicConstants.VERIFICATION_EMAIL_UPDATE);
+    @PostMapping("/update")
+    @ApiOperation(value = "修改信息")
+    public ApiResponse update(@RequestParam String nickName, @RequestParam String email, @RequestParam String code) {
+        if (StrUtil.isNotBlank(nickName) && StrUtil.isNotBlank(email) && StrUtil.isNotBlank(code)) {
+            SecurityUser securityUser = ContextUtils.getCurrentUser();
+            User user = userService.findById(securityUser.getId());
+            Assert.isTrue(!Objects.equals(user.getUsername(), "demo"), "演示账号禁止修改");
+            User user1 = userService.findByEmail(email);
+            Verification verification = verificationService.findCode(email, PublicConstants.VERIFICATION_EMAIL_UPDATE);
             String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;
-            if (user1 == null && code.equals(emailCode)) {
-                SecurityUser securityUser = ContextUtils.getCurrentUser();
-                User user = userService.findById(securityUser.getId());
-                user.setEmail(newEmail);
+            if ((user1 == null || Objects.equals(user.getEmail(), email)) && code.equals(emailCode)) {
+                user.setEmail(email);
+                user.setNickName(nickName);
                 userService.save(user);
                 // 移除验证码
                 verificationService.deleteById(verification.getId());

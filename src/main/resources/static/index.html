@@ -41,8 +41,7 @@
                     <span id="username">默认</span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" id="changePwd">修改密码</a></dd>
-                    <dd><a href="javascript:;" id="changeEmail">修改邮箱</a></dd>
+                    <dd><a href="javascript:;" id="info">个人信息</a></dd>
                     <dd><a href="javascript:;" id="recycle">管理收藏</a></dd>
                     <dd><a href="javascript:;" id="importOrExportBtn">导入与备份</a></dd>
                     <dd><a href="javascript:;" id="report">我的报告</a></dd>
@@ -302,61 +301,6 @@
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="savePwd">立即提交</button>
             <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="unsetPwd">清除密码</button>
-        </div>
-    </div>
-</form>
-<!-- 修改密码表单 -->
-<form class="layui-form" action="" id="passwordForm" lay-filter="passwordForm" style="display: none;padding: 10px 20px 10px 10px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">旧密码</label>
-        <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="oldPassword" required lay-verify="required" placeholder="请输入旧密码"
-                   autocomplete="off" class="layui-input">
-        </div>
-        <i class="layui-icon layui-icon-tips tips-icon" lay-title="忘记密码可在登录页面找回密码"></i>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">新密码</label>
-        <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="newPassword" id="newPassword" required lay-verify="required" placeholder="请输入新密码"
-                   autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">确认密码</label>
-        <div class="layui-input-inline" style="width: 210px;">
-            <input type="password" name="confirmPassword" required lay-verify="required|confirmPassword" placeholder="再次确认新密码"
-                   autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="updatePassword">立即提交</button>
-            <button type="button" class="layui-btn layui-btn-primary" id="cancelPwd">取消</button>
-        </div>
-    </div>
-</form>
-<!-- 修改邮箱表单 -->
-<form class="layui-form" action="" id="emailForm" lay-filter="emailForm" style="display: none;padding: 10px 20px 10px 10px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">新邮箱</label>
-        <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="newEmail" id="newEmail" required lay-verify="required|email|exitEmail" placeholder="请输入邮箱"
-                   autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">验证码</label>
-        <div class="layui-input-inline" style="width:132px;">
-            <input type="text" name="code" required lay-verify="required" placeholder="请输入验证码"
-                   autocomplete="off" class="layui-input">
-        </div>
-        <input type="button" class="layui-btn layui-btn-sm layui-btn-danger" style="margin-top:4px;width: 68px;" onclick="sendEmailCode(this)" value="点击获取">
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="updateEmail">立即提交</button>
-            <button type="button" class="layui-btn layui-btn-primary" id="cancelEmail">取消</button>
         </div>
     </div>
 </form>

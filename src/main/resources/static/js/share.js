@@ -137,13 +137,7 @@ layui.use(['layer','flow','util'], function() {
 
 
 
-        // 初始化title
-        $(document).on('mouseenter','[lay-title]',function(e){
-            var that = $(e.currentTarget);
-            layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
-        }).on('mouseleave','[lay-title]',function(e){
-            layer.closeAll('tips');
-        });
+
 
         // 登出
         logout("#logout");

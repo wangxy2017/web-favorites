@@ -855,39 +855,7 @@
                 "categoryId": categoryId
             });
         }
-        // 发送验证码
-        window.sendEmailCode = function (obj) {
-            var email = $("#newEmail").val();
-            var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            if(email.match(reg)){
-                obj.setAttribute("disabled", true);
-                obj.value="重试(60)";
-                // 倒计时
-                var countdown = 59;
-                var interval = setInterval(function() {
-                    if (countdown == 0) {
-                        obj.removeAttribute("disabled");
-                        obj.value="点击获取";
-                        countdown = 59;
-                        clearInterval(interval);
-                    } else {
-                        obj.setAttribute("disabled", true);
-                        obj.value="重试(" + countdown + ")";
-                        countdown--;
-                    }
-                }, 1000);
-                // 请求后台
-                $.ajax({
-                    type: "GET",
-                    url: "user/email/code",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    data: {"email": email}
-                });
-            }else{
-                $("#newEmail").focus().addClass("layui-form-danger");
-                layer.msg('邮箱格式不正确', {icon: 5, anim: 6});
-            }
-        };
+
 
         // 弹性滚动
         window.elasticScroll = function(height){
@@ -1104,37 +1072,6 @@
                     });
                   layer.close(index);
                 });
-            });
-        });
-
-        // 修改密码
-        $("#changePwd").click(function () {
-            var index = layer.open({
-                type: 1,
-                title: "修改密码",
-                content: $('#passwordForm')
-            });
-            indexMap.set('#changePwd',index);
-            // 表单赋值
-            form.val("passwordForm", {
-                "oldPassword": ""
-                , "newPassword": ""
-                , "confirmPassword": ""
-            });
-        });
-
-        // 修改邮箱
-        $("#changeEmail").click(function () {
-            var index = layer.open({
-                type: 1,
-                title: "修改邮箱",
-                content: $('#emailForm')
-            });
-            indexMap.set('#changeEmail',index);
-            // 表单赋值
-            form.val("emailForm", {
-                "newEmail": ""
-                , "code": ""
             });
         });
 
@@ -1368,11 +1305,6 @@
         };
 
         form.verify({
-            confirmPassword: function (value, item) {
-                if($("#newPassword").val() !== value){
-                    return "两次输入密码不一致";
-                }
-            },
             sortNum: function (value, item) {
                 if(value != ""){
                     if(isNaN(value)){
@@ -1383,22 +1315,6 @@
                         return "请输入0~9999之间的整数";
                     }
                 }
-            },
-            exitEmail: function (value, item) {
-                var msg;
-                $.ajax({
-                    type: "GET",
-                    url: 'register/email/' + value,
-                    async: false,
-                    dataType: 'json',
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                    success: function (result) {
-                        if (result.code != 0) {
-                            msg = "邮箱已存在";
-                        }
-                    }
-                });
-                return msg;
             },
             shortcut: function (value, item) {
                 if(value !== ""){
@@ -1629,27 +1545,7 @@
             return false;
         });
 
-        // 修改邮箱
-        form.on('submit(updateEmail)', function (data) {
-            layer.load();
-            $.ajax({
-                type: "POST",
-                url: "user/email",
-                data: data.field,
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    layer.closeAll('loading');
-                    layer.close(indexMap.get('#editEmail'));
-                    if (result.code == 0) {
-                        layer.msg("修改成功", {icon: 6});
-                    } else {
-                        layer.msg(result.msg, {icon: 5});
-                    }
-                }
-            });
-            return false;
-        });
+
 
         // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
@@ -1699,30 +1595,6 @@
             return false;
         });
 
-        // 修改密码
-        form.on('submit(updatePassword)', function (data) {
-            layer.load();
-            $.ajax({
-                type: "POST",
-                url: "user/password",
-                data: {"oldPassword":md5(data.field.oldPassword),"newPassword":md5(data.field.newPassword)},
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    layer.closeAll('loading');
-                    layer.close(indexMap.get('#changePwd'));
-                    if (result.code == 0) {
-                        layer.msg('修改成功', {icon: 6, time: 1000}, function(){
-                            localStorage.clear();
-                            window.location.href = "login.html";
-                        });
-                    } else {
-                        layer.msg(result.msg, {icon: 5});
-                    }
-                }
-            });
-            return false;
-        });
 
         // 搜索项绑定hover事件
         $(document).on('mouseenter', '.search-items li', function() {
@@ -1848,7 +1720,21 @@
                 scrollbar: false,
                 content: ['recycle.html?' + timeSuffix(),'no']
             });
-            indexMap.set('#importOrExport',index);
+            indexMap.set('#recycle',index);
+        });
+
+        // 个人信息
+        $("#info").click(function() {
+            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
+            var index = layer.open({
+                type: 2,
+                area: [width,'530px'],
+                title: false,
+                closeBtn: 0,
+                scrollbar: false,
+                content: 'user_info.html?' + timeSuffix()
+            });
+            indexMap.set('#info',index);
         });
 
         // 报告
@@ -1908,13 +1794,7 @@
             });
         };
 
-        // 初始化title
-        $(document).on('mouseenter','[lay-title]',function(e){
-            var that = $(e.currentTarget);
-            layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
-        }).on('mouseleave','[lay-title]',function(e){
-            layer.closeAll('tips');
-        });
+
 
         // 定时器
         window.onlineCount = function(){
