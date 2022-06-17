@@ -34,7 +34,7 @@ public class UserFile {
     @Column(name = "user_id", columnDefinition = "int(10) comment '用户ID'")
     private Integer userId;
 
-    @Column(name = "pid", columnDefinition = "int(10) default 0 comment '父id'")
+    @Column(name = "pid", columnDefinition = "int(10) comment '父id'")
     private Integer pid;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
