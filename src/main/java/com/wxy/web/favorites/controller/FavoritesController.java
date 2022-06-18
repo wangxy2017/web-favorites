@@ -426,13 +426,9 @@ public class FavoritesController {
                     }
                 });
             }
-            int count = appConfig.getNavigationLimit() - urls.size();
-            for (int i = 0; i < count - 1; i++) {
-                if (i < list.size()) {
-                    quickNavigationService.save(list.get(i));
-                } else {
-                    break;
-                }
+            int max = Math.min(appConfig.getNavigationLimit() - urls.size(), list.size());
+            for (int i = 0; i < max - 1; i++) {
+                quickNavigationService.save(list.get(i));
             }
         } catch (Exception e) {
             log.error("快捷导航导入失败：userId = {}", userId, e);
