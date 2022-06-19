@@ -427,7 +427,7 @@ public class FavoritesController {
                 });
             }
             int max = Math.min(appConfig.getNavigationLimit() - urls.size(), list.size());
-            for (int i = 0; i < max - 1; i++) {
+            for (int i = 0; i < max; i++) {
                 quickNavigationService.save(list.get(i));
             }
         } catch (Exception e) {
@@ -577,7 +577,7 @@ public class FavoritesController {
                 String url = element.attr("href");
                 String name = element.text();
                 if (StrUtil.isNotBlank(name) && !existsUrls.contains(url)) {
-                    String icon = HtmlUtils.getIcon(url);
+                    String icon = HtmlUtils.getRootIcon(url);
                     Favorites f = new Favorites();
                     f.setName(name);
                     f.setUrl(url);

@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -76,5 +77,14 @@ public class HtmlUtils {
             }
         }
         return iconUrl;
+    }
+
+    public static String getRootIcon(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return url.getProtocol() + "://" + url.getHost() + (url.getPort() > 0 ? ":" + url.getPort() : "") + "/favicon.ico";
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 }

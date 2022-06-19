@@ -451,6 +451,7 @@
             form.val("add-favorites", {
                 "name": ""
                 , "url": ""
+                , "isShare": 1
             });
         });
 
