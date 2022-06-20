@@ -112,7 +112,7 @@ layui.use(['element', 'layer', 'table'], function() {
             , done: function (res, curr, count) {
                 // 解决无数据table样式错乱
                 if(count == 0){
-                    $("th[data-key='1-0-4']").css("border-right", "0");
+                    $("th[data-key='2-0-4']").css("border-right", "0");
                 }
             }
             , cols: [[ //表头
