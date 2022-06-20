@@ -9,7 +9,7 @@ $(document).ajaxSuccess(function(event,xhr,options){
 // 全局变量
 var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
 var indexMap = new Map();// 弹出层索引容器
-var debug = true // 调试模式
+var debug = false // 调试模式
 
 //数组扩展contains适用于数组判断
 Array.prototype.contains = function(a) {
