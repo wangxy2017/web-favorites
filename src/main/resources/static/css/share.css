@@ -23,7 +23,6 @@
 
 .favorites-info .bg {
     width: 40px;
-    height: 40px;
     margin-right: 10px;
 }
 
@@ -35,7 +34,6 @@
 
 .favorites-info .title {
     width: 160px;
-    height: 40px;
     line-clamp: 2;
     text-overflow: -o-ellipsis-lastline;
     overflow: hidden;

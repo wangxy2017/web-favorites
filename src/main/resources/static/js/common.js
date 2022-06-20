@@ -186,7 +186,7 @@ window.todo_time = function(time) {
 };
 // html反转义
 window.escapeHtml = function(str){
-     return str.replace(/[<>&"\\s\n]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
+     return str.replace(/[<>&\s\n"]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
 };
 // html转义
 window.htmlEscape = function(html){
