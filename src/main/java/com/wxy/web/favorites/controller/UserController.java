@@ -73,7 +73,7 @@ public class UserController {
     public ApiResponse save(@RequestBody User user) {
         SecurityUser securityUser = ContextUtils.getCurrentUser();
         User user1 = userService.findById(securityUser.getId());
-        Assert.isTrue(!Objects.equals(user1.getUsername(), "demo"), "演示账号禁止修改");
+        Assert.isTrue(!Objects.equals(user1.getUsername(), PublicConstants.DEMO_USER), "演示账号禁止修改");
         Assert.isTrue(StrUtil.isNotBlank(user.getNickName()), "昵称不能为空");
         user1.setNickName(user.getNickName());
         userService.save(user1);
@@ -103,7 +103,7 @@ public class UserController {
     public ApiResponse password(@RequestParam String oldPassword, @RequestParam String newPassword) {
         SecurityUser securityUser = ContextUtils.getCurrentUser();
         User user = userService.findById(securityUser.getId());
-        Assert.isTrue(!Objects.equals(user.getUsername(), "demo"), "演示账号禁止修改");
+        Assert.isTrue(!Objects.equals(user.getUsername(), PublicConstants.DEMO_USER), "演示账号禁止修改");
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
@@ -141,7 +141,7 @@ public class UserController {
         if (StrUtil.isNotBlank(nickName) && StrUtil.isNotBlank(email) && StrUtil.isNotBlank(code)) {
             SecurityUser securityUser = ContextUtils.getCurrentUser();
             User user = userService.findById(securityUser.getId());
-            Assert.isTrue(!Objects.equals(user.getUsername(), "demo"), "演示账号禁止修改");
+            Assert.isTrue(!Objects.equals(user.getUsername(), PublicConstants.DEMO_USER), "演示账号禁止修改");
             User user1 = userService.findByEmail(email);
             Verification verification = verificationService.findCode(email, PublicConstants.VERIFICATION_EMAIL_UPDATE);
             String emailCode = verification != null && verification.getExpiredTime().getTime() > System.currentTimeMillis() ? verification.getCode() : null;

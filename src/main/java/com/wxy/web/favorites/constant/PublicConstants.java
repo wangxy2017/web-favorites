@@ -72,5 +72,7 @@ public interface PublicConstants {
     Integer SHARE_CODE = 1;
     String EXPORT_QUICK_NAVIGATION = "1";
     Double DISK_LIMIT_RATE = 0.9;
+    
+    String DEMO_USER = "demo";
 
 }

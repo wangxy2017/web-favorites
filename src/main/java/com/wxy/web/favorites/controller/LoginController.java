@@ -198,7 +198,7 @@ public class LoginController {
             user.setLastOnlineTime(new Date());
         } else {
             user.setErrorCount(errorCount + 1);
-            if (user.getErrorCount() > appConfig.getErrorCountLimit()) {
+            if (user.getErrorCount() > appConfig.getErrorCountLimit() && !Objects.equals(user.getUsername(), PublicConstants.DEMO_USER)) {
                 emailUtils.sendSimpleMail(user.getEmail(), EmailConstants.SAFE_NOTICE_TITLE, String.format(EmailConstants.SAFE_NOTICE_CONTENT, user.getUsername()));
                 user.setErrorCount(0);
                 user.setStatus(2);
