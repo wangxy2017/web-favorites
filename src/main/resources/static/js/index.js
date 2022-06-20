@@ -443,6 +443,7 @@
             var index = layer.open({
                 type: 1,
                 title: "添加收藏",
+                area: windowWidth < 800 ? '360px' : '400px',
                 skin: 'to-fix-select',
                 content: $('#add-favorites')
             });
@@ -460,6 +461,7 @@
             var index = layer.open({
                 type: 1,
                 title: "添加快捷导航",
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#add-fastNav')
             });
             indexMap.set('#add-fastNav',index);
@@ -1275,6 +1277,7 @@
             var index = layer.open({
                 type: 1,
                 title: "修改收藏",
+                area: windowWidth < 800 ? '360px' : '400px',
                 skin: 'to-fix-select',
                 content: $('#update-favorites')
             });

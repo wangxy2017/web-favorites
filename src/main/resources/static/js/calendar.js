@@ -486,6 +486,7 @@
             var index = layer.open({
                 type: 1,
                 skin: 'to-fix-select',
+                area: windowWidth < 800 ? '360px' : '400px',
                 content: $('#taskForm')
             });
             indexMap.set('#taskForm',index);

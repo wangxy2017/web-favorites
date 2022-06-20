@@ -99,6 +99,7 @@ layui.use(['layer', 'form', 'flow'], function(){
 			    var index = layer.open({
                     type: 1,
                     title: "添加搜索引擎",
+                    area: windowWidth < 800 ? '360px' : '400px',
                     content: $('#searchTypeFrom')
                 });
                 indexMap.set('#searchTypeFrom',index);
