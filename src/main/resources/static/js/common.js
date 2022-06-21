@@ -184,13 +184,9 @@ window.todo_time = function(time) {
     }
     return d_result;
 };
-// html反转义
-window.escapeHtml = function(str){
-     return str.replace(/[<>&\s\n"]/ig,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',' ':'&nbsp;','\n':'<br/>'}[c];});
-};
 // html转义
-window.htmlEscape = function(html){
-     return html.replace(/&lt;|&gt;|&amp;|&quot;|&nbsp;|<br\/>/ig,function(c){return {'&lt;':'<','&gt;':'>','&amp;':'&','&quot;':'"','&nbsp;':' ','<br/>':'\n'}[c];});
+window.escape = function(str){
+     return String(str||"").replace(/&(?!#?[a-zA-Z0-9]+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;").replace(/"/g,"&quot;");
 };
 // 下载文件
 window.downloadFile = function(filename, url){
@@ -232,7 +228,7 @@ window.unwrapSearch = function(content,keyword){
 // 初始化title
 $(document).on('mouseenter','[lay-title]',function(e){
     var that = $(e.currentTarget);
-    layer.tips(that.attr("lay-title"), that, {tips: 3, time: 0});
+    layer.tips(escape(that.attr("lay-title")), that, {tips: 3, time: 0});
 }).on('mouseleave','[lay-title]',function(e){
     layer.closeAll('tips');
 });

@@ -36,7 +36,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                 $("#parent").val(res.parent);
                 var html = '';
                 $(res.floors).each(function(index,item){
-                    html += '<a href="javascript:position('+ item.id +')">'+ item.filename +'</a>';
+                    html += '<a href="javascript:position('+ item.id +')">'+ escape(item.filename) +'</a>';
                 });
                 $("#floors").empty().append('<a href="">根目录</a>').append(html);
                 element.render('breadcrumb','floors');
@@ -51,9 +51,9 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                     field: 'filename', title: '目录/文件', minWidth: 200, templet: function (d) {
                         var html = '<div class="file-info">';
                         if (d.isDir == 1) {
-                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="images/folder.svg"/>' + d.filename + '</a>';
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="images/folder.svg"/>' + escape(d.filename) + '</a>';
                         } else {
-                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="' + suffix(d.filename) + '"/>' + d.filename + '</a>';
+                            html += '<a class="layui-table-link" onclick="goto(this)" data-id="' + d.id + '" data-directory="' + (d.isDir == 1) + '"><img class="file-icon" src="' + suffix(d.filename) + '"/>' + escape(d.filename) + '</a>';
                             html += '<i class="file-share layui-icon layui-icon-release" onclick="share(this)" data-id="' + d.id + '" title="分享文件"></i>';
                         }
                         html += '</div>';
@@ -385,7 +385,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                             headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                             success: function (result) {
                                 if (result.code == 0) {
-                                    downloadFile(data.filename, "file/download/" + data.id);
+                                    downloadFile(escape(data.filename), "file/download/" + data.id);
                                 } else {
                                     layer.closeAll('loading');
                                     layer.msg('文件已损坏', {icon: 5});

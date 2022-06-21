@@ -59,7 +59,7 @@
                             var html = '';
                             var bookmarkClass = c.bookmark==1?"bookmark":"";
                             html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                            html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
+                            html += '   <div class="title" onclick="editCategory(this,event)">' + escape(c.name) + '</div>';
                             html += '   <ul class="favorites">';
                             if(c.favorites.length > 0) {
                                 $.each(c.favorites, function (j, f) {
@@ -67,7 +67,7 @@
                                     html += '       <div class="favorites-bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                     html += '       </div>';
-                                    html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                                    html += '       <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                                     html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                     html += '   </li>';
                                     if(j == favoritesLimit - 1){
@@ -491,7 +491,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                                 html += '       <i onclick="deleteFastNav(this,event)" class="deleteFastNav action-icon layui-icon layui-icon-delete"></i>';
                                 html += '   </li>';
                             });
@@ -632,11 +632,11 @@
                         html += '</div>';
                         html += '<ul class="favorites">';
                         $.each(result.data.categoryList, function (i, c) {
-                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" data-name="' + c.name + '" onclick="showFavorites(this)">';
+                            html += '<li class="favorites-li layui-anim layui-anim-fadein" data-id="' + c.id + '" onclick="showFavorites(this)">';
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/category.svg"/>';
                             html += '   </div>';
-                            html += '   <p  lay-title="' + c.name + '">' + c.name + '</p>';
+                            html += '   <p  lay-title="' + escape(c.name) + '">' + escape(c.name) + '</p>';
                             html += '   <i onclick="editCategory(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -645,7 +645,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -686,7 +686,7 @@
                         html += '<div class="positionNav">';
                         html += '   <span class="layui-breadcrumb" lay-separator="/" lay-filter="category-nav">';
                         html += '       <a href="javascript:window.location.reload();">首页</a>';
-                        html += '       <a><cite>' + c.name + '</cite></a>';
+                        html += '       <a><cite>' + escape(c.name) + '</cite></a>';
                         html += '   </span>';
                         html += '</div>';
                         html += '<ul class="favorites ' + bookmarkClass + '">';
@@ -695,7 +695,7 @@
                             html += '    <div class="favorites-bg">';
                             html += '        <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '    </div>';
-                            html += '    <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                            html += '    <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                             html += '    <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -972,7 +972,7 @@
                 var bool = true;
                 $.ajax({
                     type: "GET",
-                    url: 'category/check/' + escapeHtml(value),
+                    url: 'category/check/' + value,
                     async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -1013,7 +1013,7 @@
                 var bool = true;
                 $.ajax({
                     type: "GET",
-                    url: 'category/check/' + escapeHtml(value),
+                    url: 'category/check/' + value,
                     async: false,
                     dataType: 'json',
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -1094,8 +1094,8 @@
                         var lHtml = '';
                         $.each(result.data, function (i, c) {
                             c.page = parseInt(i / indexPageSize) + 1;
-                            oHtml += '<option value="' + c.id + '" ' + ((c.id == id||i == 0) ? 'selected' : '') +'>' + c.name + '</option>';
-                            lHtml += '<li onclick="position(' + c.id + ')">' + c.name + '</li>';
+                            oHtml += '<option value="' + c.id + '" ' + ((c.id == id||i == 0) ? 'selected' : '') +'>' + escape(c.name) + '</option>';
+                            lHtml += '<li onclick="position(' + c.id + ')">' + escape(c.name) + '</li>';
                         });
                         $("select[name='categoryId']").empty().append(oHtml);
                         $("#catalogList").empty().append(lHtml);
@@ -1125,7 +1125,7 @@
                             html += '       <div class="favorites-bg">';
                             html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '       </div>';
-                            html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                            html += '       <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                             html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '   </li>';
                         });
@@ -1157,7 +1157,7 @@
                             html += '   <div class="favorites-bg">';
                             html += '       <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                             html += '   </div>';
-                            html += '   <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                            html += '   <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                             html += '   <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                             html += '</li>';
                         });
@@ -1475,7 +1475,6 @@
 
         // 新增收藏
         form.on('submit(addFavorites)', function (data) {
-            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -1553,7 +1552,6 @@
 
         // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
-            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -1577,7 +1575,6 @@
 
         // 修改分类
         form.on('submit(updateCategory)', function (data) {
-            data.field.name = escapeHtml(data.field.name);
             layer.load();
             $.ajax({
                 type: "POST",
@@ -1626,7 +1623,7 @@
                         var html = '';
                         var bookmarkClass = c.bookmark==1?"bookmark":"";
                         html += '<div class="category ' + bookmarkClass + '" data-id="' + c.id + '">';
-                        html += '   <div class="title" onclick="editCategory(this,event)">' + c.name + '</div>';
+                        html += '   <div class="title" onclick="editCategory(this,event)">' + escape(c.name) + '</div>';
                         html += '   <ul class="favorites">';
                         if(c.favorites.length > 0) {
                             $.each(c.favorites, function (j, f) {
@@ -1634,7 +1631,7 @@
                                 html += '       <div class="favorites-bg">';
                                 html += '           <img src="images/book.svg" lay-src="' + f.icon + '"/>';
                                 html += '       </div>';
-                                html += '       <p  lay-title="' + f.name + '">' + f.name + '</p>';
+                                html += '       <p  lay-title="' + escape(f.name) + '">' + escape(f.name) + '</p>';
                                 html += '       <i onclick="editFavorites(this,event)" class="action-icon layui-icon layui-icon-more-vertical"></i>';
                                 html += '   </li>';
                                 if(j == favoritesLimit - 1){

@@ -42,10 +42,10 @@ layui.use(['layer','flow','util'], function() {
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
                                     html += '       </div>';
-                                    html += '       <div class="title" lay-title="' + item.name + '" data-url="' + item.url + '" onclick="openUrl(this)">' + item.name + '</div>';
+                                    html += '       <div class="title" lay-title="' + escape(item.name) + '" data-url="' + item.url + '" onclick="openUrl(this)">' + escape(item.name) + '</div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
-                                    html += '       <div class="user" lay-title="'+ item.nickName +'"><i class="layui-icon layui-icon-username"></i><em>' + item.nickName + '</em></div>';
+                                    html += '       <div class="user" lay-title="'+ escape(item.nickName) +'"><i class="layui-icon layui-icon-username"></i><em>' + escape(item.nickName) + '</em></div>';
                                     html += '       <div class="support" data-id="' + item.id + '" data-support="' + item.support + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';

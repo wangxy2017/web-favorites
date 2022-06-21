@@ -79,9 +79,9 @@ layui.use(['layer','flow','util','form'], function() {
                                     var html = '';
                                     html += '<div class="memorandum-item layui-anim layui-anim-fadein" data-id="' + item.id + '">';
                                     if(keyword){
-                                        html += '<div class="memorandum-content" data-keyword="'+ keyword +'" ondblclick="editContent(this,evnet)">'+ wrapSearch(item.content,keyword) +'</div>';
+                                        html += '<div class="memorandum-content" data-keyword="'+ keyword +'" ondblclick="editContent(this,evnet)">'+ escape(wrapSearch(item.content,keyword)) +'</div>';
                                     }else{
-                                        html += '<div class="memorandum-content" ondblclick="editContent(this)">'+ item.content +'</div>';
+                                        html += '<div class="memorandum-content" ondblclick="editContent(this)">'+ escape(item.content) +'</div>';
                                     }
                                     html += '</div>';
                                     lis.push(html);
@@ -213,7 +213,7 @@ layui.use(['layer','flow','util','form'], function() {
                   $.ajax({
                     type: "POST",
                     url: "memorandum",
-                    data: JSON.stringify({"content":escapeHtml(value)}),
+                    data: JSON.stringify({"content":value}),
                     contentType: 'application/json;charset=utf-8',
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
@@ -260,7 +260,7 @@ layui.use(['layer','flow','util','form'], function() {
                         var width = (windowWidth > 800? 800 : windowWidth) + 'px';
                         layer.prompt({
                           formType: 2,
-                          value: htmlEscape(result.data.content),
+                          value: result.data.content,
                           placeholder: "请输入内容...",
                           title: '编辑备忘录',
                           area: [width, '350px'],
@@ -277,7 +277,7 @@ layui.use(['layer','flow','util','form'], function() {
                               $.ajax({
                                 type: "POST",
                                 url: "memorandum",
-                                data: JSON.stringify({id: id, "content": escapeHtml(value)}),
+                                data: JSON.stringify({id: id, "content": value}),
                                 contentType: 'application/json;charset=utf-8',
                                 dataType: "json",
                                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},

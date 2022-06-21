@@ -35,7 +35,9 @@ layui.use(['element', 'layer', 'table'], function() {
             , cols: [[ //表头
                 {type: 'numbers'}
                 , {
-                    field: 'name', title: '名称', minWidth: 200
+                    field: 'name', title: '名称', minWidth: 200, templet: function (d) {
+                        return '<span>' + escape(d.name) + '</span>';
+                    }
                 }
                 , {
                     field: 'url', title: '地址', templet: function (d) {
@@ -118,7 +120,9 @@ layui.use(['element', 'layer', 'table'], function() {
             , cols: [[ //表头
                 {type: 'numbers'}
                 , {
-                    field: 'name', title: '名称', minWidth: 200
+                    field: 'name', title: '名称', minWidth: 200, templet: function (d) {
+                        return '<span>' + escape(d.name) + '</span>';
+                    }
                 }
                 , {
                     field: 'url', title: '地址', templet: function (d) {

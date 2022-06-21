@@ -308,7 +308,7 @@
                                         var html = '';
                                         html += '   <div class="task-item">';
                                         html += getLabel(t.level);
-                                        html += '	    <span class="content">' + t.content + '</span>';
+                                        html += '	    <span class="content">' + escape(t.content) + '</span>';
                                         if(t.level < 4){
                                             html += '   <div class="layui-btn-container task-action" data-id="' + t.id + '">';
                                             if(t.isAlarm && alarmTimeEffect(t.alarmTime)){

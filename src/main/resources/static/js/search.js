@@ -32,7 +32,7 @@ layui.use(['layer', 'form', 'flow'], function(){
                         success: function (result) {
                            $.each(result.data, function(i, item){
                                 var html = '';
-                                html += '<li class="search-type-li layui-anim layui-anim-fadein" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                html += '<li class="search-type-li layui-anim layui-anim-fadein" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + escape(item.name) +
                                     '</span></li>';
                                 lis.push(html);
                            });
@@ -49,7 +49,7 @@ layui.use(['layer', 'form', 'flow'], function(){
                             if(result.code == 0){
                                 $.each(result.data.list, function(index, item) {
                                     var html = '';
-                                    html += '<li class="search-type-li layui-anim layui-anim-fadein" data-id="' + item.id + '" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + item.name +
+                                    html += '<li class="search-type-li layui-anim layui-anim-fadein" data-id="' + item.id + '" data-search="' + item.url + '"><img src="images/web.svg" lay-src="' + item.icon + '"><span>' + escape(item.name) +
                                         '</span><i class="layui-icon layui-icon-close" onclick="deleteSearchType(event)"></i></li>';
                                     lis.push(html);
                                 });
