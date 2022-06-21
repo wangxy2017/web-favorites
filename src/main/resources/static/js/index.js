@@ -506,7 +506,7 @@
                         html += '       </li>';
                         html += '   </ul>';
                         // 弹出层
-                        var width = (windowWidth > 800 ? 800 : (windowWidth < 360 ? 360 : windowWidth)) + 'px';
+                        var width = (windowWidth > 800 ? 700 : (windowWidth < 360 ? 360 : windowWidth)) + 'px';
                         layer.open({
                             id: "fastNav",
                             type: 1,
