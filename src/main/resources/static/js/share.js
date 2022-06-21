@@ -8,8 +8,8 @@ layui.use(['layer','flow','util'], function() {
 
         // 加载数据
         window.loadList = function(name){
-            $("#favoritesList").empty();
             layer.load();
+            $("#favoritesList").empty().next(".layui-flow-more").remove();
             $('#center').unbind();
             flow.load({
                 elem: '#favoritesList'

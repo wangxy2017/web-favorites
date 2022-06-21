@@ -42,9 +42,9 @@ layui.use(['layer','flow','util','form'], function() {
         window.loadList = function(){
             // 加载动画
             layer.load();
-            $("#memorandumList").empty();
             var keyword = $("#search_text").val().trim();
             $("#search_text").attr("data-lastSearch",keyword);
+            $("#memorandumList").empty().next(".layui-flow-more").remove();
             $('#center').unbind();
             flow.load({
                 elem: '#memorandumList'

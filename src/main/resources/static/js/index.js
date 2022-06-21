@@ -24,6 +24,7 @@
             }
         });
 
+        $("#categoryList").empty().next(".layui-flow-more").remove();
         $('#layuiBody').unbind();
         flow.load({
             elem: '#categoryList'

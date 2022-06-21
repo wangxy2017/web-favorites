@@ -7,8 +7,8 @@ layui.use(['layer','flow','util'], function() {
         window.loadList = function(){
             // 加载动画
             layer.load();
-            $("#momentList").empty();
             var keyword = $("#search_text").val().trim();
+            $("#momentList").empty().next(".layui-flow-more").remove();
             $('#center').unbind();
             flow.load({
                 elem: '#momentList'

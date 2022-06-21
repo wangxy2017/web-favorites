@@ -288,6 +288,7 @@
                     html += '</div>';
                     taskView = $(this).append(html).find('.task-view');
                     // 初始化数据
+                    $('#task' + date).empty().next(".layui-flow-more").remove();
                     $('#task' + date).unbind();
                     flow.load({
                         elem: '#task' + date

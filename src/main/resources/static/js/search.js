@@ -13,6 +13,7 @@ layui.use(['layer', 'form', 'flow'], function(){
             });
 
             // 加载数据
+            $('#searchTypeList').empty().next(".layui-flow-more").remove();
             $('#searchTypeList').unbind();
             flow.load({
                 elem: '#searchTypeList'
