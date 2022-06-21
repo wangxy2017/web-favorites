@@ -186,7 +186,7 @@ window.todo_time = function(time) {
 };
 // html转义
 window.escape = function(str){
-     return String(str||"").replace(/&(?!#?[a-zA-Z0-9]+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+     return String(str||"").replace(/&(?!#?[a-zA-Z0-9]+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,'<br/>').replace(/'/g,"&#39;").replace(/"/g,"&quot;");
 };
 // 下载文件
 window.downloadFile = function(filename, url){
