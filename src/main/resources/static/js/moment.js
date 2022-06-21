@@ -40,7 +40,7 @@ layui.use(['layer','flow','util'], function() {
                                     html += '   <div class="layui-timeline-content layui-text">';
                                     html += '       <p class="layui-timeline-title time">' + item.createTime + '</p>';
                                     html += '       <div class="moment">';
-                                    html += '           <div class="content">'+ escape(item.content) +'</div>';
+                                    html += '           <div class="content">'+ item.content +'</div>';
                                     html += '           <div class="content-mask">点击查看全文</div>';
                                     html += '           <div class="layui-anim layui-anim-fadein action" data-id="' + item.id + '">';
                                     html += '               <i class="layui-icon layui-icon-flag"></i>';
