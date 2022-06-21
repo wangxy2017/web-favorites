@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
+import cn.hutool.http.HtmlUtil;
 import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
@@ -322,7 +323,7 @@ public class FileController {
         for (UserFile f : files) {
             if (PublicConstants.DIR_CODE.equals(f.getIsDir())) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("title", f.getFilename());
+                map.put("title", HtmlUtil.escape(f.getFilename()));
                 map.put("id", f.getId());
                 map.put("children", getFolderTreeData(f.getId()));
                 list.add(map);
