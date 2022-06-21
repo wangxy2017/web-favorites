@@ -79,7 +79,7 @@ layui.use(['layer','flow','util','form'], function() {
                                     var html = '';
                                     html += '<div class="memorandum-item layui-anim layui-anim-fadein" data-id="' + item.id + '">';
                                     if(keyword){
-                                        html += '<div class="memorandum-content" data-keyword="'+ keyword +'" ondblclick="editContent(this,evnet)">'+ escape(wrapSearch(item.content,keyword)).replace(/\n/g,'<br/>') +'</div>';
+                                        html += '<div class="memorandum-content" data-keyword="'+ keyword +'" ondblclick="editContent(this,evnet)">'+ wrapSearch(escape(item.content).replace(/\n/g,'<br/>'),keyword) +'</div>';
                                     }else{
                                         html += '<div class="memorandum-content" ondblclick="editContent(this)">'+ escape(item.content).replace(/\n/g,'<br/>') +'</div>';
                                     }
