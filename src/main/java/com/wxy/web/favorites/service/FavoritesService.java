@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -168,8 +169,7 @@ public class FavoritesService {
     public boolean saveSupport(Integer userId, Integer id) {
         Category defaultCategory = categoryRepository.findDefaultCategory(userId);
         Favorites favorites = favoritesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ErrorConstants.ILLEGAL_OPERATION_MSG));
-        Favorites favorites1 = favoritesRepository.findByUserIdAndUrl(userId, favorites.getUrl());
-        if (favorites1 == null || PublicConstants.DELETE_CODE.equals(favorites1.getDeleteFlag())) {
+        if (!Objects.equals(favorites.getUserId(), userId)) {
             Favorites favorites2 = new Favorites();
             favorites2.setName(favorites.getName());
             favorites2.setIcon(favorites.getIcon());

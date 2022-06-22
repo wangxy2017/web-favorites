@@ -32,8 +32,8 @@ public class ShareController {
     @GetMapping("/support/{id}")
     @ApiOperation(value = "搜藏书签")
     public ApiResponse support(@PathVariable Integer id) {
-        boolean success = favoritesService.saveSupport(ContextUtils.getCurrentUser().getId(), id);
-        return success ? ApiResponse.success(favoritesService.findById(id).getSupport()) : ApiResponse.error();
+        favoritesService.saveSupport(ContextUtils.getCurrentUser().getId(), id);
+        return ApiResponse.success(favoritesService.findById(id).getSupport());
     }
 
     @GetMapping("/click/{id}")

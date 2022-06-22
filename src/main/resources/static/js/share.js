@@ -43,7 +43,7 @@ layui.use(['layer','flow','util'], function() {
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
                                     html += '       </div>';
-                                    html += '       <div class="title" lay-title="' + escape(item.name) + '" data-url="' + item.url + '" onclick="openUrl(this)">' + escape(item.name) + '</div>';
+                                    html += '       <div class="title" lay-title="' + escape(item.name) + '" data-url="' + item.url + '" data-id="' + item.id + '" onclick="openUrl(this)">' + escape(item.name) + '</div>';
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
                                     html += '       <div class="user" lay-title="'+ escape(item.nickName) +'"><i class="layui-icon layui-icon-username"></i><em>' + escape(item.nickName) + '</em></div>';
@@ -90,6 +90,7 @@ layui.use(['layer','flow','util'], function() {
 
         window.openUrl = function (obj) {
             var url = $(obj).attr("data-url");
+            var id = $(obj).attr("data-id");
             if(url.indexOf("https://") == 0 || url.indexOf("http://") == 0){
                 newWin(url);
                 // 记录访问次数
@@ -106,7 +107,7 @@ layui.use(['layer','flow','util'], function() {
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
-                            $(obj).parent().prev(".click-count").text(transform(result.data));
+                            $(obj).parent().prev(".click-count").find("em").text(transform(result.data));
                         }
                     }
                 });
@@ -128,9 +129,11 @@ layui.use(['layer','flow','util'], function() {
                     dataType: "json",
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
-                        layer.msg('收藏成功', {icon: 6});
                         if (result.code == 0) {
+                            layer.msg('收藏成功', {icon: 6});
                             $(obj).find("em").text(transform(result.data));
+                        }else{
+                            layer.msg(result.msg, {icon: 5});
                         }
                     }
                 });
