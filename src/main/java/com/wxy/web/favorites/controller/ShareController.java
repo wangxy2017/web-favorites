@@ -33,7 +33,7 @@ public class ShareController {
     @ApiOperation(value = "搜藏书签")
     public ApiResponse support(@PathVariable Integer id) {
         boolean success = favoritesService.saveSupport(ContextUtils.getCurrentUser().getId(), id);
-        return success ? ApiResponse.success() : ApiResponse.error();
+        return success ? ApiResponse.success(favoritesService.findById(id).getSupport()) : ApiResponse.error();
     }
 
     @GetMapping("/click/{id}")
@@ -43,6 +43,6 @@ public class ShareController {
         Assert.notNull(favorites, "书签不存在");
         favorites.setClickCount(favorites.getClickCount() + 1);
         favoritesService.save(favorites);
-        return ApiResponse.success();
+        return ApiResponse.success(favoritesService.findById(id).getClickCount());
     }
 }

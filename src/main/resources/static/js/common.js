@@ -9,7 +9,7 @@ $(document).ajaxSuccess(function(event,xhr,options){
 // 全局变量
 var windowWidth = parseInt($(window).width()) * 0.9;// 窗口宽度
 var indexMap = new Map();// 弹出层索引容器
-var debug = false // 调试模式
+var debug = false; // 调试模式
 
 //数组扩展contains适用于数组判断
 Array.prototype.contains = function(a) {
@@ -57,6 +57,7 @@ window.logout = function(id){
         });
     });
 };
+
 // 打开新窗口
 window.newWin = function(url) {
   var a = document.createElement('a');
@@ -66,6 +67,7 @@ window.newWin = function(url) {
   a.click();
   a.remove();
 };
+
 // 判断移动端
 window.isMobile = function(){
     let info = navigator.userAgent;
@@ -96,6 +98,7 @@ window.loadImg =  function loadImg(ele) {
         };
     });
 };
+
 // 格式化数字
 window.transform = function(value) {
     if(value == null || isNaN(value)){
@@ -184,10 +187,12 @@ window.todo_time = function(time) {
     }
     return d_result;
 };
+
 // html转义
 window.escape = function(str){
      return String(str||"").replace(/&(?!#?[a-zA-Z0-9]+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;").replace(/"/g,"&quot;");
 };
+
 // 下载文件
 window.downloadFile = function(filename, url){
     // 此处不加载动画，只关闭动画，加载动画交给前面的函数执行
@@ -212,12 +217,14 @@ window.downloadFile = function(filename, url){
         }
     });
 };
+
 // 代码高亮
 window.wrapSearch = function(content,keyword){
     var text = '<span class="highLight">'+keyword+'</span>';
     var reg = new RegExp(keyword,"gi");
     return content.replace(reg,text);
 };
+
 // 取消高亮
 window.unwrapSearch = function(content,keyword){
     var text = '<span class="highLight">'+keyword+'</span>';
@@ -232,3 +239,19 @@ $(document).on('mouseenter','[lay-title]',function(e){
 }).on('mouseleave','[lay-title]',function(e){
     layer.closeAll('tips');
 });
+
+// 格式化文件大小
+window.change = function (limit) {
+    var size = "";
+    if (limit < 0.1 * 1024) {//小于0.1KB，则转化成B
+        size = limit.toFixed(2) + " B"
+    } else if (limit < 0.1 * 1024 * 1024) {//小于0.1MB，则转化成KB
+        size = (limit / 1024).toFixed(2) + " KB"
+    } else if (limit < 0.1 * 1024 * 1024 * 1024) {//小于0.1GB，则转化成MB
+        size = (limit / (1024 * 1024)).toFixed(2) + " MB"
+    } else {//其他转化成GB
+        size = (limit / (1024 * 1024 * 1024)).toFixed(2) + " GB"
+    }
+    size = size.replace(".00", "");
+    return size;
+};

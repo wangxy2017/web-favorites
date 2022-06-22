@@ -89,12 +89,13 @@ public class Favorites {
     @Transient
     private String nickName;
 
-    public Favorites(Integer id, String name, String icon, String url, Integer support, String nickName) {
+    public Favorites(Integer id, String name, String icon, String url, Integer support, String nickName,Integer clickCount) {
         this.id = id;
         this.name = name;
         this.icon = icon;
         this.url = url;
         this.support = support;
         this.nickName = nickName;
+        this.clickCount = clickCount;
     }
 }

@@ -130,8 +130,8 @@ layui.use(['element', 'layer', 'table'], function() {
                     }
                 }
                 , {
-                    field: 'support', title: '收藏数', align: 'center', templet: function (d) {
-                        return transform(d.support == null ?0 : d.support);
+                    field: 'support', title: '收藏数', align: 'center', width: 100, templet: function (d) {
+                        return transform(d.support);
                     }
                 }
                 , {title: '操作', width: 90, toolbar: '#shareOperates', fixed: 'right'}

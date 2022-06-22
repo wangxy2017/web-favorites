@@ -38,6 +38,7 @@ layui.use(['layer','flow','util'], function() {
                                 $.each(result.data.list, function(index, item){
                                     var html = '';
                                     html += '<div class="favorites layui-anim layui-anim-fadein">';
+                                    html += '   <div class="click-count">点击量：<em>' + transform(item.clickCount) + '</em></div>';
                                     html += '   <div class="favorites-info">';
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
@@ -46,7 +47,7 @@ layui.use(['layer','flow','util'], function() {
                                     html += '   </div>';
                                     html += '   <div class="other-info">';
                                     html += '       <div class="user" lay-title="'+ escape(item.nickName) +'"><i class="layui-icon layui-icon-username"></i><em>' + escape(item.nickName) + '</em></div>';
-                                    html += '       <div class="support" data-id="' + item.id + '" data-support="' + item.support + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
+                                    html += '       <div class="support" data-id="' + item.id + '" onclick="support(this)"><i class="layui-icon layui-icon-star-fill"></i><em>' + transform(item.support) + '</em></div>';
                                     html += '   </div>';
                                     html += '</div>';
                                     lis.push(html);
@@ -102,7 +103,12 @@ layui.use(['layer','flow','util'], function() {
                     type: "GET",
                     url: "share/click/" + id,
                     dataType: "json",
-                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")}
+                    headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                    success: function (result) {
+                        if (result.code == 0) {
+                            $(obj).parent().prev(".click-count").text(transform(result.data));
+                        }
+                    }
                 });
             }else{
                 layer.msg('此链接无效', {icon: 7});
@@ -116,10 +122,6 @@ layui.use(['layer','flow','util'], function() {
                 layer.close(index);
 
                 var id = $(obj).attr("data-id");
-                var support = $(obj).attr("data-support");
-                if(support == null || isNaN(support)){
-                    support = 0;
-                }
                 $.ajax({
                     type: "GET",
                     url: "share/support/" + id,
@@ -128,7 +130,7 @@ layui.use(['layer','flow','util'], function() {
                     success: function (result) {
                         layer.msg('收藏成功', {icon: 6});
                         if (result.code == 0) {
-                            $(obj).find("em").text(transform(++support));
+                            $(obj).find("em").text(transform(result.data));
                         }
                     }
                 });

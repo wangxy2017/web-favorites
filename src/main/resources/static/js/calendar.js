@@ -145,22 +145,22 @@
                             if(dateCompare(date,today) >= 0){// 未来任务，显示任务个数
                                 html += '<div class="task-count">';
                                 if(item.blueTasks && item.blueTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-blue">' + item.blueTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-blue">' + transform(item.blueTasks) + '</span>';
                                 }
                                 if(item.greenTasks && item.greenTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-green">' + item.greenTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-green">' + transform(item.greenTasks) + '</span>';
                                 }
                                 if(item.orangeTasks && item.orangeTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-orange">' + item.orangeTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-orange">' + transform(item.orangeTasks) + '</span>';
                                 }
                                 if(item.redTasks && item.redTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-red">' + item.redTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-red">' + transform(item.redTasks) + '</span>';
                                 }
                                 if(item.grayTasks && item.grayTasks > 0){
-                                    html += '<span class="layui-badge layui-bg-gray">' + item.grayTasks + '</span>';
+                                    html += '<span class="layui-badge layui-bg-gray">' + transform(item.grayTasks) + '</span>';
                                 }
                                 if(item.cancelTasks && item.cancelTasks > 0){
-                                    html += '<span class="layui-badge-rim">' + item.cancelTasks + '</span>';
+                                    html += '<span class="layui-badge-rim">' + transform(item.cancelTasks) + '</span>';
                                 }
                                 html += '</div>';
                             }else{// 历史任务，显示历史图标

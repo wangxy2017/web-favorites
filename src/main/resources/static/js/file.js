@@ -566,42 +566,6 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
             }
         };
 
-        /**
-         * 格式化文件大小
-         */
-        window.change = function (limit) {
-            var size = "";
-            if (limit < 0.1 * 1024) {//小于0.1KB，则转化成B
-                size = limit.toFixed(2) + " B"
-            } else if (limit < 0.1 * 1024 * 1024) {//小于0.1MB，则转化成KB
-                size = (limit / 1024).toFixed(2) + " KB"
-            } else if (limit < 0.1 * 1024 * 1024 * 1024) {//小于0.1GB，则转化成MB
-                size = (limit / (1024 * 1024)).toFixed(2) + " MB"
-            } else {//其他转化成GB
-                size = (limit / (1024 * 1024 * 1024)).toFixed(2) + " GB"
-            }
-            size = size.replace(".00", "");
-            return size;
-        };
-
-        /**
-         * 格式化时间
-         * @param time
-         * @returns {string}
-         */
-        window.format = function (time) {
-            // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
-            function addZero(num) {
-                if (num < 10)
-                    return "0" + num;
-                return num;
-            }
-
-            var date = new Date(time);
-            // 按自定义拼接格式返回
-            return date.getFullYear() + "/" + addZero(date.getMonth() + 1) + "/" + addZero(date.getDate()) + " " +
-                addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds());
-        };
         // 判断后缀
         window.suffix = function (url) {
             var suffix = url.substring(url.lastIndexOf("."));
