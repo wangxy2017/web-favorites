@@ -144,7 +144,38 @@ window.transform = function(value) {
       newValue[1] = '';
       newValue[0] = value + '';
     }
-    return newValue.join('');
+    return newValue.join(' ');
+};
+
+// 格式化数字（英文）
+window.transform1 = function(value) {
+    if(value == null || isNaN(value)){
+        return 0;
+    }
+    let newValue = ['', '', ''];
+    let fr = 1000;
+    const ad = 1;
+    let num = 3;
+    const fm = 1;
+    while (value / fr >= 1) {
+      fr *= 10;
+      num += 1;
+    }
+    if (num <= 4) { // 千
+      newValue[1] = 'k';
+      newValue[0] = parseInt(value / 1000) + '';
+    } else if (num <= 8) { // 万
+      const text1 = parseInt(num - 4) / 3 > 1 ? 'kw' : 'w';
+      // tslint:disable-next-line:no-shadowed-variable
+      const fm = 'w' === text1 ? 10000 : 10000000;
+      newValue[1] = text1;
+      newValue[0] = (value / fm) + '';
+    }
+    if (value < 1000) {
+      newValue[1] = '';
+      newValue[0] = value + '';
+    }
+    return newValue.join(' ');
 };
 
 // 计算最近

@@ -141,9 +141,14 @@ em {
     color: #fff;
     transform: rotate(45deg);
     position: absolute;
-    top: 18px;
-    right: -108px;
+    top: 12px;
+    right: -115px;
     font-size: 12px;
     width: 100%;
     text-align: center;
+    padding: 2px 0;
+}
+.click-count .layui-icon {
+    font-size: 12px !important;
+    margin-right: 4px;
 }

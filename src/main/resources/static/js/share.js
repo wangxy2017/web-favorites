@@ -38,7 +38,7 @@ layui.use(['layer','flow','util'], function() {
                                 $.each(result.data.list, function(index, item){
                                     var html = '';
                                     html += '<div class="favorites layui-anim layui-anim-fadein">';
-                                    html += '   <div class="click-count">点击量：<em>' + transform(item.clickCount) + '</em></div>';
+                                    html += '   <div class="click-count"><span class="layui-icon layui-icon-fire"></span><em>' + transform1(item.clickCount) + '</em></div>';
                                     html += '   <div class="favorites-info">';
                                     html += '       <div class="bg">';
                                     html += '           <img src="images/book.svg" lay-src="' + item.icon + '">';
@@ -107,7 +107,7 @@ layui.use(['layer','flow','util'], function() {
                     headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                     success: function (result) {
                         if (result.code == 0) {
-                            $(obj).parent().prev(".click-count").find("em").text(transform(result.data));
+                            $(obj).parent().prev(".click-count").find("em").text(transform1(result.data));
                         }
                     }
                 });
