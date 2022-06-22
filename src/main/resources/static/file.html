@@ -32,14 +32,13 @@
             <button type="button" class="layui-btn layui-btn-sm" id="move">移动到</button>
             <button type="button" class="layui-btn layui-btn-sm" id="downloadAll">备份</button>
         </div>
-        <div style="margin-top: 10px;color:#303133">
-            <div class="layui-inline" style="margin-right: 15px;">
+        <div class="search-div">
+            <div class="layui-inline">
                 <label for="searchName">搜索文件：</label>
-                <input class="layui-input" id="searchName" placeholder="请输入文件名称" autocomplete="off"
-                            style="display: inline-block;width: 180px;height: 30px;line-height: 30px;margin-right: 10px;font-size: 12px;">
+                <input class="layui-input" id="searchName" placeholder="请输入文件名称" autocomplete="off">
                 <button type="button" class="layui-btn layui-btn-sm" id="search">查询</button>
             </div>
-            <div class="layui-inline" style="height: 30px;line-height: 30px;">
+            <div class="layui-inline">
                 当前路径：<span class="layui-breadcrumb" lay-separator="/" lay-filter="floors" id="floors"></span>
             </div>
         </div>
@@ -51,7 +50,7 @@
             <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         </script>
-        <div style="color:#303133">已使用：<span id="used">0 M</span> / 剩余：<span id="rest">0 M</span></div>
+        <div>已使用：<span id="used">0 M</span> / 剩余：<span id="rest">0 M</span></div>
     </div>
 </div>
 <div class="footer">
