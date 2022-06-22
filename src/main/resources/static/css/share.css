@@ -142,8 +142,8 @@ em {
     transform: rotate(45deg);
     position: absolute;
     top: 18px;
-    right: -24px;
+    right: -108px;
     font-size: 12px;
-    padding-left: 20px;
-    width: 80px;
+    width: 100%;
+    text-align: center;
 }
