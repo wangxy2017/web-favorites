@@ -106,24 +106,21 @@
         // 固定块
         util.fixbar({
             top: true
-            ,bar1: '&#xe615;'// 搜索
-            ,bar2: '&#xe60a;'// 备忘录
-            ,bar3: '&#xe68d;'// 瞬间
-            ,bar4: '&#xe637;'// 日历
-            ,bar5: '&#xe681;'// 文件
+            ,bar1: '&#xe68d;'// 瞬间
+            ,bar2: '&#xe637;'// 日历
+            ,bar3: '&#xe60a;'// 备忘录
+            ,bar4: '&#xe681;'// 文件
             ,scrollElem: '#layuiBody'
             ,bgcolor: '#393D49'
             ,css: {right: windowWidth < 800 ? 30 : 50, bottom: windowWidth < 800 ? 54 : 80}
             ,click: function(type){
                 if(type === 'bar1'){
-                    window.location.href = "search.html";
-                }else if(type === 'bar2'){
-                    window.location.href = "memorandum.html";
-                }else if(type === 'bar3'){
                     window.location.href = "moment.html";
-                }else if(type === 'bar4'){
+                }else if(type === 'bar2'){
                     window.location.href = "calendar.html";
-                }else if(type === 'bar5'){
+                }else if(type === 'bar3'){
+                    window.location.href = "memorandum.html";
+                }else if(type === 'bar4'){
                     window.location.href = "file.html";
                 }
             }
@@ -131,14 +128,12 @@
                 if(type === 'top'){
                     layer.tips('回到顶部', ele, {tips: 4});
                 }else if(type === 'bar1'){
-                    layer.tips('搜索', ele, {tips: 4});
-                }else if(type === 'bar2'){
-                    layer.tips('备忘录', ele, {tips: 4});
-                }else if(type === 'bar3'){
                     layer.tips('瞬间', ele, {tips: 4});
-                }else if(type === 'bar4'){
+                }else if(type === 'bar2'){
                     layer.tips('日程', ele, {tips: 4});
-                }else if(type === 'bar5'){
+                }else if(type === 'bar3'){
+                    layer.tips('备忘录', ele, {tips: 4});
+                }else if(type === 'bar4'){
                     layer.tips('文件', ele, {tips: 4});
                 }
             }
@@ -1752,7 +1747,9 @@
             indexMap.set('#report',index);
         });
 
-
+        $("#searchTo").click(function(){
+            window.location.href = "search.html";
+        });
 
         window.showNotice = function(type){
             // 查询公告
@@ -1766,8 +1763,7 @@
                     if (data.isShow) {
                         // 显示按钮
                         if(windowWidth >= 550){
-                            $("#notice cite").text(data.title);
-                            $("#notice").show();
+                            $("#notice").text(data.title).show();
                         }
                         if(type == "ready" && localStorage.getItem("notShowNotice")){
                             return false;

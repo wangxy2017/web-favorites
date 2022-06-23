@@ -10,45 +10,56 @@
     <link rel="stylesheet" href="layui/css/layui.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/index.css">
+    <style>
+        /* 移动端 */
+        @media screen and (max-width: 768px) {
+          .layui-layout-admin .layui-layout-left,
+          .layui-layout-admin .layui-body,
+          .layui-layout-admin .layui-footer{left: 0;}
+          .layui-layout-admin .layui-side{left: -300px;}
+        }
+    </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="width: 150px;cursor: pointer;" onclick="window.location.reload();">
-            <img src="images/logo.svg" style="margin-right: 6px;width: 24px;vertical-align: text-top;">网络收藏夹
+        <div class="layui-logo layui-hide-xs" onclick="window.location.reload();">
+            <img src="images/logo.svg">网络收藏夹
         </div>
-        <div class="search-input">
-            <i id="searchMike" class="layui-icon layui-icon-mike search-mike"></i>
-            <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
-                   class="layui-input">
-            <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
-            <ul class="search-items layui-anim layui-anim-fadein"></ul>
-        </div>
-        <div id="notice" onclick="showNotice('click')">
-            <cite>公告</cite>
-            <span class="layui-badge-dot"></span>
-        </div>
-        <div class="layui-form style-select" lay-filter="styleSelect">
-            <div class="layui-input-inline">
-                <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="viewStyle">
+        <div class="layui-layout-left">
+            <div class="search-input">
+                <i id="searchMike" class="layui-icon layui-icon-mike search-mike"></i>
+                <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
+                       class="layui-input">
+                <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+                <ul class="search-items layui-anim layui-anim-fadein"></ul>
             </div>
+            <button id="searchTo" type="button" class="layui-btn layui-btn-sm">搜问题</button>
+            <button id="notice" type="button" class="layui-btn layui-btn-sm" onclick="showNotice('click')">公告<span class="layui-badge-dot"></span></button>
         </div>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item"><a href="share.html">书签库</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <i class="layui-icon layui-icon-user" id="userImg"></i>
-                    <span id="username">默认</span>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" id="info">个人信息</a></dd>
-                    <dd><a href="javascript:;" id="recycle">管理收藏</a></dd>
-                    <dd><a href="javascript:;" id="importOrExportBtn">导入与备份</a></dd>
-                    <dd><a href="javascript:;" id="report">我的报告</a></dd>
-                    <dd><a href="javascript:;" id="logout">安全退出</a></dd>
-                </dl>
-            </li>
-        </ul>
+        <div class="layui-layout-right">
+            <div class="layui-form style-select" lay-filter="styleSelect">
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="viewStyle">
+                </div>
+            </div>
+            <ul class="layui-nav ">
+                <li class="layui-nav-item"><a href="share.html">书签库</a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-user" id="userImg"></i>
+                        <span id="username">默认</span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="info">个人信息</a></dd>
+                        <dd><a href="javascript:;" id="recycle">管理收藏</a></dd>
+                        <dd><a href="javascript:;" id="importOrExportBtn">导入与备份</a></dd>
+                        <dd><a href="javascript:;" id="report">我的报告</a></dd>
+                        <dd><a href="javascript:;" id="logout">安全退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="layui-body" id="layuiBody" style="padding: 15px 0;left: 0;">

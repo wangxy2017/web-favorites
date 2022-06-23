@@ -1,5 +1,27 @@
-.layui-fixbar .layui-icon:nth-child(2) {
+.layui-fixbar .layui-icon:nth-child(3) {
     font-size: 30px;
+}
+
+.layui-layout-admin .layui-logo {
+    width: 150px;
+    cursor: pointer;
+}
+
+.layui-layout-left {
+    z-index: 999;
+    left: 150px;
+}
+
+.layui-logo img {
+    margin-right: 6px;
+    width: 25px;
+    vertical-align: text-top;
+}
+
+.layui-layout-left, .layui-layout-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .layui-blue {
@@ -18,21 +40,19 @@
 }
 
 #username {
-    width: 44px;
     display: inline-block;
+    width: 44px;
+    line-height: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: initial;
 }
 
 .search-input {
-    z-index: 999;
-    position: absolute;
-    top: 16px;
-    left: 150px;
+    position: relative;
     width: 160px;
     height: 30px;
+    margin-right: 20px;
 }
 
 .search-input input {
@@ -150,15 +170,10 @@
     margin: 0 4px;
 }
 
-.style-select{
-    position: absolute;
-    top: 12px;
-    right: 240px;
-}
-
 .style-select .layui-form-switch{
     border-color: #161a1d;
     background-color: #161a1d;
+    margin: 0;
 }
 
 /** 书签模式 **/
@@ -428,25 +443,12 @@
 }
 
 #notice {
-    display:none;
-    z-index: 999;
-    position: absolute;
-    top: 16px;
-    left: 320px;
-    min-width: 58px;
-    height: 30px;
-    color: #fff;
-    line-height: 30px;
-    font-size: 12px;
-    padding: 0 15px;
-    border-radius: 2px;
-    cursor: pointer;
-    overflow: hidden;
+    display: none;
     background-image: linear-gradient(to right,#359FD4,#36B5C8,#25D8AB);
 }
 
-#notice cite{
-    font-style: normal;
+#searchTo {
+    background-image: linear-gradient(to right,#359FD4,#36B5C8,#25D8AB);
 }
 
 /* 目录搜索 */
