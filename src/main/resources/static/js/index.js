@@ -12,9 +12,6 @@
         var indexPageSize = 10;// 分页大小
         var currentPage = 1;// 当前页
 
-        // 执行加载动画
-        $("#loadingDiv").fadeIn();
-
         // 点击空白关闭
         $(document).on("click", function(e) {
             var _conss = $('.search-input');//点击的容器范围
@@ -26,6 +23,7 @@
 
         $("#categoryList").empty().next(".layui-flow-more").remove();
         $('#layuiBody').unbind();
+        layer.load();
         flow.load({
             elem: '#categoryList'
             ,scrollElem: '#layuiBody'
@@ -47,7 +45,7 @@
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if(page == 1){
-                        $("#loadingDiv").fadeOut();
+                        layer.closeAll('loading');
                         if(result.code == 0 && result.data.list.length > 0){
                              $("#notFoundDiv").hide();
                         }else{
