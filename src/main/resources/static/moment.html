@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|瞬间</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/moment.css">
@@ -19,17 +19,22 @@
         <i id="search_icon" class="layui-icon layui-icon-search search-icon"></i>
         <input type="text" id="search_text" name="search_text" placeholder="快速搜索..." autocomplete="off"
                class="layui-input">
-        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+        <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
+           style="display:none;"></i>
     </div>
     <button class="layui-btn layui-btn-xs logout-btn" type="button" id="logout">退出</button>
 </div>
 <div class="center" id="center">
     <div class="main">
         <div class="layui-timeline" id="topMoment"></div>
-        <div id="momentDiv"><div class="layui-timeline" id="momentList"></div></div>
+        <div id="momentDiv">
+            <div class="layui-timeline" id="momentList"></div>
+        </div>
         <div id="noData">
             <img src="images/nodata-topic.svg" alt="">
-            <p style="color: #666;margin-top: 10px;">您还没有瞬间，<a href="javascript:document.getElementById('addMoment').click();" style="color: #009688;">立即发布</a> ...</p>
+            <p style="color: #666;margin-top: 10px;">您还没有瞬间，<a
+                    href="javascript:document.getElementById('addMoment').click();" style="color: #009688;">立即发布</a> ...
+            </p>
         </div>
     </div>
 </div>

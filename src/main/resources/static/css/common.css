@@ -1,3 +1,11 @@
+/* 公共样式 */
+* {
+   margin: 0;
+   padding: 0;
+   font-style: normal;
+   list-style: none;
+}
+
 /* 解决没有src属性时出现的边框 */
 img[src=""], img:not([src]){
     opacity:0;

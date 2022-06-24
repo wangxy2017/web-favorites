@@ -1761,7 +1761,7 @@
                     if (data.isShow) {
                         // 显示按钮
                         if(windowWidth >= 550){
-                            $("#notice").text(data.title).show();
+                            $("#notice").show().find("em").text(data.title);
                         }
                         if(type == "ready" && localStorage.getItem("notShowNotice")){
                             return false;

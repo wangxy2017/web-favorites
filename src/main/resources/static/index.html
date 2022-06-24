@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>网络收藏夹|首页</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="layui/css/layui.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/index.css">
@@ -18,6 +18,7 @@
           .layui-layout-admin .layui-footer{left: 0;}
           .layui-layout-admin .layui-side{left: -300px;}
         }
+
     </style>
 </head>
 <body class="layui-layout-body">
@@ -31,16 +32,19 @@
                 <i id="searchMike" class="layui-icon layui-icon-mike search-mike"></i>
                 <input type="text" id="search_name" name="search_name" placeholder="搜索/输入快捷指令" autocomplete="off"
                        class="layui-input">
-                <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+                <i id="search_close" class="layui-icon layui-icon-close-fill search-close layui-anim layui-anim-fadein"
+                   style="display:none;"></i>
                 <ul class="search-items layui-anim layui-anim-fadein"></ul>
             </div>
             <button id="searchTo" type="button" class="layui-btn layui-btn-sm">搜问题</button>
-            <button id="notice" type="button" class="layui-btn layui-btn-sm" onclick="showNotice('click')">公告<span class="layui-badge-dot"></span></button>
+            <button id="notice" type="button" class="layui-btn layui-btn-sm" onclick="showNotice('click')">
+                <em>公告</em><span class="layui-badge-dot"></span></button>
         </div>
         <div class="layui-layout-right">
             <div class="layui-form style-select" lay-filter="styleSelect">
                 <div class="layui-input-inline">
-                    <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式" lay-filter="viewStyle">
+                    <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式"
+                           lay-filter="viewStyle">
                 </div>
             </div>
             <ul class="layui-nav ">
@@ -65,7 +69,9 @@
     <div class="layui-body" id="layuiBody" style="padding: 15px 0;left: 0;">
         <!-- 内容主体区域 -->
         <div id="starDiv"></div>
-        <div id="main"><div id="categoryList"></div></div>
+        <div id="main">
+            <div id="categoryList"></div>
+        </div>
         <div id="searchDiv" style="display:none;"></div>
         <div id="positionDiv" style="display:none;">
             <div class="positionNav">
@@ -81,14 +87,17 @@
         <ul class="open-source">
             <li class="open-source-item"><span>© 2020 网络收藏夹</span></li>
             <li class="open-source-aux">|</li>
-            <li class="open-source-item"><a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git" target="_blank">网站源码</a></li>
+            <li class="open-source-item"><a href="https://gitee.com/wangxiaoyuan_2019/web-favorites.git"
+                                            target="_blank">网站源码</a></li>
             <li class="open-source-aux">|</li>
-            <li class="open-source-item">QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI" target="_blank">972265056</a></li>
+            <li class="open-source-item">QQ群：<a href="https://jq.qq.com/?_wv=1027&k=uMr09FnI"
+                                                target="_blank">972265056</a></li>
         </ul>
     </div>
 </div>
 <!-- 操作按钮 -->
-<div class="layui-btn-container layui-anim layui-anim-fadein" style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
+<div class="layui-btn-container layui-anim layui-anim-fadein"
+     style="position: fixed;left: 15px;bottom: 44px;z-index: 99999;">
     <span id="slideBtn" class="layui-icon layui-icon-right"></span>
     <button type="button" class="layui-btn layui-btn-sm" id="addCategoryBtn">添加分类</button>
     <button type="button" class="layui-btn layui-btn-sm" id="addFavoritesBtn">添加收藏</button>
@@ -109,10 +118,12 @@
         <div class="layui-tab-item layui-show">
             <div style="margin-top: 30px;">
                 <button type="button" class="layui-btn" id="import">导入收藏夹</button>
-                <button style="vertical-align: bottom;margin-left: 5px;" type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="importLocal">从浏览器导入</button>
-                <i class="layui-icon layui-icon-tips local-tip" lay-title="请将书签从其他浏览器导出，存至本地html文件，再将文件上传至服务器"></i>
+                <button style="vertical-align: bottom;margin-left: 5px;" type="button"
+                        class="layui-btn layui-btn-sm layui-btn-warm" id="importLocal">从浏览器导入
+                </button>
+                <i class="layui-icon layui-icon-tips local-tip" lay-title="请将其他浏览器的书签导出为html文件并存至本地，再将文件上传至服务器"></i>
             </div>
-            <div style="margin: 20px 0;color: #5e6d82;line-height: 32px;font-size: 12px;">请将 "export.xml" 文件上传至服务器</div>
+            <div style="margin: 20px 0;color: #5e6d82;line-height: 32px;font-size: 12px;">请将文件名为"export.xml"的文件上传至服务器</div>
         </div>
         <div class="layui-tab-item">
             <div style="margin-top: 30px;margin-bottom: 10px;">
@@ -136,7 +147,8 @@
     </div>
 </div>
 <!-- 添加收藏表单 -->
-<form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites" style="display: none;padding: 10px 20px 10px 10px">
+<form class="layui-form" action="" id="add-favorites" lay-filter="add-favorites"
+      style="display: none;padding: 10px 20px 10px 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
@@ -147,10 +159,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" id="name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="name_input" required lay-verify="required" placeholder="请输入名称"
+                   autocomplete="off"
                    class="layui-input">
         </div>
-        <i id="url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
+        <i id="url_loading"
+           class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading"
+           style="display:none;"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
@@ -175,7 +190,8 @@
     </div>
 </form>
 <!-- 添加快捷导航 -->
-<form class="layui-form" action="" id="add-fastNav" lay-filter="add-fastNav" style="display: none;padding: 10px 20px 10px 10px">
+<form class="layui-form" action="" id="add-fastNav" lay-filter="add-fastNav"
+      style="display: none;padding: 10px 20px 10px 10px">
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-inline" style="width: 210px;">
@@ -186,10 +202,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" id="nav_name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="nav_name_input" required lay-verify="required" placeholder="请输入名称"
+                   autocomplete="off"
                    class="layui-input">
         </div>
-        <i id="nav_url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
+        <i id="nav_url_loading"
+           class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading"
+           style="display:none;"></i>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -208,15 +227,20 @@
             <textarea name="url" id="edit_url_input" required lay-verify="required|url" placeholder="请输入地址"
                       class="layui-textarea"></textarea>
         </div>
-        <button type="button" id="edit_url_input_copy" class="layui-btn layui-btn-primary layui-btn-xs url-copy-btn" data-clipboard-target="#edit_url_input">复制</button>
+        <button type="button" id="edit_url_input_copy" class="layui-btn layui-btn-primary layui-btn-xs url-copy-btn"
+                data-clipboard-target="#edit_url_input">复制
+        </button>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-inline" style="width: 210px;">
-            <input type="text" name="name" id="edit_name_input" required lay-verify="required" placeholder="请输入名称" autocomplete="off"
+            <input type="text" name="name" id="edit_name_input" required lay-verify="required" placeholder="请输入名称"
+                   autocomplete="off"
                    class="layui-input">
         </div>
-        <i id="edit_url_loading" class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading" style="display:none;"></i>
+        <i id="edit_url_loading"
+           class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop url_loading"
+           style="display:none;"></i>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分类</label>
@@ -285,7 +309,9 @@
                    class="layui-input">
         </div>
         <div class="layui-inline">
-            <button type="button" id="accountCopy" class="layui-btn layui-btn-warm layui-btn-xs" style="margin-top:8px" data-clipboard-target="#account">复制</button>
+            <button type="button" id="accountCopy" class="layui-btn layui-btn-warm layui-btn-xs" style="margin-top:8px"
+                    data-clipboard-target="#account">复制
+            </button>
         </div>
     </div>
     <div class="layui-form-item">
@@ -295,7 +321,9 @@
                    class="layui-input">
         </div>
         <div class="layui-inline">
-            <button type="button" id="passwordCopy" class="layui-btn layui-btn-warm layui-btn-xs" style="margin-top:8px" data-clipboard-target="#password">复制</button>
+            <button type="button" id="passwordCopy" class="layui-btn layui-btn-warm layui-btn-xs" style="margin-top:8px"
+                    data-clipboard-target="#password">复制
+            </button>
         </div>
     </div>
     <div class="layui-form-item">
@@ -347,7 +375,9 @@
         <i id="catalog_search_icon" class="layui-icon layui-icon-search catalog-search-icon"></i>
         <input type="text" id="catalog_search_name" name="catalog_search_name" placeholder="请输入分类名称" autocomplete="off"
                class="layui-input">
-        <i id="catalog_search_close" class="layui-icon layui-icon-close-fill catalog-search-close layui-anim layui-anim-fadein" style="display:none;"></i>
+        <i id="catalog_search_close"
+           class="layui-icon layui-icon-close-fill catalog-search-close layui-anim layui-anim-fadein"
+           style="display:none;"></i>
     </div>
     <ul id="catalogList"></ul>
 </div>
