@@ -72,12 +72,16 @@ public class Application {
             new NioWebSocketServer(nettyPort).init();
         }
         // 初始化用户账号
-        if (demoEnable && userService.findByUsername(PublicConstants.DEMO_USER) == null) {
+        User demo = userService.findByUsername(PublicConstants.DEMO_USER);
+        if (demo == null) {
             User user = userService.save(new User().setNickName("演示账号").setUsername(PublicConstants.DEMO_USER)
                     .setPassword(passwordEncoder.encode(DigestUtils.md5DigestAsHex(PublicConstants.DEMO_USER.getBytes(StandardCharsets.UTF_8))))
                     .setCapacity(appConfig.getInitCapacity() * 1024 * 1024L).setRegisterTime(new Date()));
             log.info("初始化用户账号：{}", user);
             userService.initData(user.getId());
+        } else {
+            demo.setStatus(demoEnable ? 1 : 2);
+            userService.save(demo);
         }
     }
 }
