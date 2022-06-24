@@ -10,21 +10,11 @@
     <link rel="stylesheet" href="layui/css/layui.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/index.css">
-    <style>
-        /* 移动端 */
-        @media screen and (max-width: 768px) {
-          .layui-layout-admin .layui-layout-left,
-          .layui-layout-admin .layui-body,
-          .layui-layout-admin .layui-footer{left: 0;}
-          .layui-layout-admin .layui-side{left: -300px;}
-        }
-
-    </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo layui-hide-xs" onclick="window.location.reload();">
+        <div class="layui-logo" onclick="window.location.reload();">
             <img src="images/logo.svg">网络收藏夹
         </div>
         <div class="layui-layout-left">
@@ -40,7 +30,7 @@
             <button id="notice" type="button" class="layui-btn layui-btn-sm" onclick="showNotice('click')">
                 <em>公告</em><span class="layui-badge-dot"></span></button>
         </div>
-        <div class="layui-layout-right">
+        <div class="layui-layout-right layui-hide-xs">
             <div class="layui-form style-select" lay-filter="styleSelect">
                 <div class="layui-input-inline">
                     <input type="checkbox" name="viewStyle" lay-skin="switch" lay-text="书签模式|常规模式"
