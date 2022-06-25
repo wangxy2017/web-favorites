@@ -197,7 +197,7 @@ layui.use(['layer','flow','util','form'], function() {
         });
 
         window.addMemorandum = function(){
-            var width = (windowWidth > 800? 800 : windowWidth) + 'px';
+            var width = (windowWidth > 800? 800 : windowWidth) - 40 + 'px';
             layer.prompt({
               formType: 2,
               placeholder: "请输入内容...",
