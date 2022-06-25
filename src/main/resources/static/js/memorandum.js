@@ -257,7 +257,7 @@ layui.use(['layer','flow','util','form'], function() {
                 headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
                 success: function (result) {
                     if (result.code == 0) {
-                        var width = (windowWidth > 800? 800 : windowWidth) + 'px';
+                        var width = (windowWidth > 800? 800 : windowWidth) - 40 + 'px';
                         layer.prompt({
                           formType: 2,
                           value: result.data.content,
