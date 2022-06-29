@@ -5,6 +5,7 @@ import com.wxy.web.favorites.config.AppConfig;
 import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.dao.CategoryRepository;
 import com.wxy.web.favorites.model.Category;
+import com.wxy.web.favorites.model.Moment;
 import com.wxy.web.favorites.util.JpaUtils;
 import com.wxy.web.favorites.util.SqlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,15 @@ public class CategoryService {
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };
         return categoryRepository.findAll(queryCondition, pageable).getContent();
+    }
+
+    public PageInfo<Category> findPageByUserIdAndNameLike(Integer userId, String name, Integer pageNum, Integer pageSize) {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "sort"));
+        orders.add(new Sort.Order(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(orders));
+        Page<Category> page = categoryRepository.findPageByUserIdAndNameLike(userId,"%" + SqlUtils.trimAndEscape(name) + "%", pageable);
+        return new PageInfo<>(page.getContent(), page.getTotalPages(), page.getTotalElements());
     }
 }
 

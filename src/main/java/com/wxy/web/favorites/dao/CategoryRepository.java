@@ -50,4 +50,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>, Jp
     void deleteAllByUserId(Integer userId);
 
     Long countByUserId(Integer userId);
+
+    Page<Category> findPageByUserIdAndNameLike(Integer userId, String name, Pageable pageable);
 }

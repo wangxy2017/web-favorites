@@ -232,16 +232,13 @@
             });
         });
 
+        var searchTimer = null;
         $("#catalog_search_name").on('input',function(){
             $("#catalog_search_close").show();
-            var name = $(this).val();
-            $("#catalogList").children("li").each(function(i,item){
-                if($(item).text().indexOf(name) != -1){
-                    $(item).show();
-                }else{
-                    $(item).hide();
-                }
-            });
+            clearTimeout(searchTimer); //输入清除定时器
+            searchTimer = setTimeout(function () {
+                initCatalog();
+            },300);
         });
 
         // 关闭搜索
@@ -1075,8 +1072,40 @@
         // 登出
         logout("#logout");
 
+        window.initCatalog = function(){
+            var keyword = $("#catalog_search_name").val().trim();
+            $("#catalogList").empty().next(".layui-flow-more").remove();
+            $('#catalog').unbind();
+            flow.load({
+                elem: '#catalogList'
+                ,scrollElem: '#catalog'
+                ,mb: 400
+                ,end: ' '
+                ,done: function(page, next){
+                  var lis = [];
+                  $.ajax({
+                        type: "GET",
+                        url: "category/page",
+                        data: {"pageNum": page,"pageSize": 100,"name":keyword},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if (result.code == 0) {
+                                $.each(result.data.list, function(index, item){
+                                    var html = '<li onclick="position(' + item.id + ')">' + escape(item.name) + '</li>';
+                                    lis.push(html);
+                                });
+                                next(lis.join(''), page < result.data.pages);
+                            }
+                        }
+                  });
+                }
+            });
+        };
+
         // 加载分类
         window.loadCategoryList = function (id) {
+            initCatalog();
             $.ajax({
                 type: "GET",
                 url: "category/list",
@@ -1085,14 +1114,10 @@
                 success: function (result) {
                     if (result.code == 0) {
                         var oHtml = '';
-                        var lHtml = '';
                         $.each(result.data, function (i, c) {
-                            c.page = parseInt(i / indexPageSize) + 1;
                             oHtml += '<option value="' + c.id + '" ' + ((c.id == id||i == 0) ? 'selected' : '') +'>' + escape(c.name) + '</option>';
-                            lHtml += '<li onclick="position(' + c.id + ')">' + escape(c.name) + '</li>';
                         });
                         $("select[name='categoryId']").empty().append(oHtml);
-                        $("#catalogList").empty().append(lHtml);
 
                         form.render('select','update-favorites');
                         form.render('select','add-favorites');

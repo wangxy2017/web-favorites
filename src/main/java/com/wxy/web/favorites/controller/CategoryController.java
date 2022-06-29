@@ -3,9 +3,9 @@ package com.wxy.web.favorites.controller;
 import cn.hutool.core.lang.Assert;
 import com.wxy.web.favorites.constant.ErrorConstants;
 import com.wxy.web.favorites.constant.PublicConstants;
+import com.wxy.web.favorites.core.PageInfo;
 import com.wxy.web.favorites.model.Category;
 import com.wxy.web.favorites.model.Favorites;
-import com.wxy.web.favorites.model.User;
 import com.wxy.web.favorites.security.SecurityUser;
 import com.wxy.web.favorites.service.CategoryService;
 import com.wxy.web.favorites.service.FavoritesService;
@@ -154,5 +154,13 @@ public class CategoryController {
             return ApiResponse.success();
         }
         return ApiResponse.error(ErrorConstants.ILLEGAL_OPERATION_MSG);
+    }
+
+    @GetMapping("/page")
+    @ApiOperation(value = "分页查询")
+    public ApiResponse page(@RequestParam(required = false) String name,@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        SecurityUser user = ContextUtils.getCurrentUser();
+        PageInfo<Category> page = categoryService.findPageByUserIdAndNameLike(user.getId(),name, pageNum, pageSize);
+        return ApiResponse.success(page);
     }
 }
