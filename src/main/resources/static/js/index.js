@@ -234,17 +234,20 @@
 
         var searchTimer = null;
         $("#catalog_search_name").on('input',function(){
+            var that = $(this);
             $("#catalog_search_close").show();
             clearTimeout(searchTimer); //输入清除定时器
             searchTimer = setTimeout(function () {
+                that.attr("search",true);
                 initCatalog();
-            },300);
+            },250);
         });
 
         // 关闭搜索
         $("#catalog_search_close").click(function () {
-            $("#catalog_search_name").val("").trigger("input");
             $(this).hide();
+            $("#catalog_search_name").val("").removeAttr("search");
+            initCatalog();
         });
 
         $("#edit_url_input").on('input',function(){
@@ -1028,7 +1031,11 @@
                         success: function (result) {
                             layer.closeAll('loading');
                             if (result.code == 0) {
-                                loadCategoryList(result.data.id);
+                                var data = result.data;
+                                $("#categoryId").attr("data-value",data.id).attr("data-text",data.name).val(data.name);
+                                initCatalog();
+                                loadSelect("#categoryId");
+                                loadSelect("#editCategoryId");
                             } else {
                                 layer.msg(result.msg, {icon: 5});
                             }
@@ -1073,7 +1080,8 @@
         logout("#logout");
 
         window.initCatalog = function(){
-            var keyword = $("#catalog_search_name").val().trim();
+            var search = $("#catalog_search_name").attr("search");
+            var keyword = search ? $("#catalog_search_name").val().trim() : "";
             $("#catalogList").empty().next(".layui-flow-more").remove();
             $('#catalog').unbind();
             flow.load({
@@ -1103,27 +1111,113 @@
             });
         };
 
+        window.loadSelect = function(id){
+            var that = $(id);
+            var dlId = id + '-dl';
+            var search = that.attr("search");
+            // keyword只在搜索模式生效
+            var keyword = search ? that.val().trim() : "";
+            $(dlId).unbind().on('click','dd',function(){
+                $(this).addClass('layui-this').siblings().removeClass('layui-this');
+                var value = $(this).attr("lay-value");
+                var text = $(this).text();
+                debug&&console.log(value,text);
+                that.attr("data-value",value).attr("data-text",text).val(text);
+            }).next(".layui-flow-more").remove();
+            flow.load({
+                elem: dlId
+                ,scrollElem: dlId
+                ,mb: 400
+                ,end: ' '
+                ,done: function(page, next){
+                  var lis = [];
+                  $.ajax({
+                        type: "GET",
+                        url: "category/page",
+                        data: {"pageNum": page,"pageSize": 20,"name":keyword},
+                        dataType: "json",
+                        headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
+                        success: function (result) {
+                            if (result.code == 0) {
+                                if(page == 1){
+                                    $(dlId).empty();
+                                }
+                                if(page == 1 && result.data.list.length == 0){
+                                    lis.push('<p class="layui-select-none">无匹配项</p>');
+                                }
+                                var value = that.attr("data-value");
+                                $.each(result.data.list, function(index, item){
+                                    var text = escape(item.name);
+                                    var select = '';
+                                    if(!search){
+                                        if(!value){
+                                            if(page == 1 && index == 0){
+                                                select = 'class="layui-this"';
+                                                that.attr("data-value", item.id).attr("data-text", text).val(text);
+                                            }
+                                        }else if(value == item.id){
+                                            select = 'class="layui-this"';
+                                        }
+                                    }
+                                    var html = '<dd lay-value="'+ item.id +'" '+ select +'>'+ text +'</dd>';
+                                    lis.push(html);
+                                });
+                                next(lis.join(''), page < result.data.pages);
+                            }
+                        }
+                  });
+                }
+            });
+        }
+
+        window.initSelect = function(id){
+            // 创建下拉框
+            var that = $(id);
+            var dlId = id + '-dl';
+            var html = '';
+            html += '<div class="layui-form-select">';
+            html += '   <div class="layui-select-title">';
+            html += that.attr("placeholder","请选择").prop("outerHTML");
+            html += '       <i class="layui-edge"></i>';
+            html += '   </div>';
+            html += '   <dl id="' + dlId.replace("#","") + '" class="layui-anim layui-anim-upbit">';
+            html += '       <p class="layui-select-none">无匹配项</p>';
+            html += '   </dl>';
+            html += '</div>';
+            that.after(html).remove();
+            that = $(id);
+            // 绑定事件
+            var searchTimer = null;
+            that.on('focus',function(){
+                var elem = that.val("").parent().parent().addClass('layui-form-selected');
+                var top = elem.offset().top + elem.outerHeight() + 5 - $(window).scrollTop()
+                var dlHeight = $(dlId).outerHeight();
+                var wHeight = $(window).height();
+                debug&&console.log(top,dlHeight,wHeight);
+                if(top + dlHeight > wHeight && top >= dlHeight){
+                  elem.addClass('layui-form-selectup');
+                }
+            }).on('blur',function(){
+                setTimeout(function(){
+                    that.val(that.attr("data-text")).removeAttr("search").parent().parent().removeClass('layui-form-selected');
+                    loadSelect(id);
+                },250);
+            }).on('input',function(){
+                clearTimeout(searchTimer); //输入清除定时器
+                searchTimer = setTimeout(function () {
+                  that.attr("search",true);
+                  loadSelect(id);
+                },250);
+            });
+            // 加载数据
+            loadSelect(id);
+        };
+
         // 加载分类
         window.loadCategoryList = function (id) {
             initCatalog();
-            $.ajax({
-                type: "GET",
-                url: "category/list",
-                dataType: "json",
-                headers:{"Authorization": "Bearer "+ localStorage.getItem("login_user_token")},
-                success: function (result) {
-                    if (result.code == 0) {
-                        var oHtml = '';
-                        $.each(result.data, function (i, c) {
-                            oHtml += '<option value="' + c.id + '" ' + ((c.id == id||i == 0) ? 'selected' : '') +'>' + escape(c.name) + '</option>';
-                        });
-                        $("select[name='categoryId']").empty().append(oHtml);
-
-                        form.render('select','update-favorites');
-                        form.render('select','add-favorites');
-                    }
-                }
-            });
+            initSelect("#categoryId");
+            initSelect("#editCategoryId");
         };
 
         window.loadStarFavorites = function () {
@@ -1310,10 +1404,11 @@
                 success: function (result) {
                     if (result.code == 0) {
                         let data = result.data;
+                        $("#editCategoryId").attr("data-value",data.categoryId).attr("data-text",data.categoryName).val(data.categoryName);
+                        $("#editCategoryId-dl").find("dd[lay-value="+ data.categoryId +"]").addClass("layui-this").siblings().removeClass("layui-this");
                         //给表单赋值
                         form.val("update-favorites", {
                             "id": data.id
-                            , "categoryId": data.categoryId
                             , "name": data.name
                             , "url": data.url
                             , "sort": data.sort
@@ -1494,6 +1589,7 @@
 
         // 新增收藏
         form.on('submit(addFavorites)', function (data) {
+            data.field.categoryId = $("#categoryId").attr("data-value");
             layer.load();
             $.ajax({
                 type: "POST",
@@ -1571,6 +1667,7 @@
 
         // 修改收藏
         form.on('submit(updateFavorites)', function (data) {
+            data.field.categoryId = $("#editCategoryId").attr("data-value");
             layer.load();
             $.ajax({
                 type: "POST",

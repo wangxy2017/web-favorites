@@ -89,6 +89,9 @@ public class Favorites {
     @Transient
     private String nickName;
 
+    @Transient
+    private String categoryName;
+
     public Favorites(Integer id, String name, String icon, String url, Integer support, String nickName,Integer clickCount) {
         this.id = id;
         this.name = name;

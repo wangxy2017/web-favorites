@@ -293,7 +293,7 @@
                     flow.load({
                         elem: '#task' + date
                         ,scrollElem: '#task' + date
-                        ,mb: 50
+                        ,mb: 400
                         ,end: ' '
                         ,done: function(page, next){
                           var lis = [];

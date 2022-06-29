@@ -262,6 +262,9 @@ public class FavoritesController {
     @ApiOperation(value = "根据id查询")
     public ApiResponse query(@PathVariable Integer id) {
         Favorites favorites = favoritesService.findById(id);
+        Optional.ofNullable(favorites)
+                .ifPresent(f -> Optional.ofNullable(categoryService.findById(favorites.getCategoryId()))
+                        .ifPresent(c -> f.setCategoryName(c.getName())));
         return ApiResponse.success(favorites);
     }
 

@@ -6,6 +6,10 @@
    list-style: none;
 }
 
+.layui-form-select .layui-flow-more {
+    display: none !important;
+}
+
 /* 解决没有src属性时出现的边框 */
 img[src=""], img:not([src]){
     opacity:0;

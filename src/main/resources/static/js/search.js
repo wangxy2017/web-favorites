@@ -19,7 +19,7 @@ layui.use(['layer', 'form', 'flow'], function(){
                 elem: '#searchTypeList'
                 ,scrollElem: '#searchTypeList'
                 ,isLazyimg: true
-                ,mb: 50
+                ,mb: 400
                 ,end: ' '
                 ,done: function(page, next){
                   var lis = [];
