@@ -556,7 +556,7 @@ layui.use(['element', 'layer', 'table', 'upload', 'tree'], function() {
                                 area:[width,'600px'],
                                 type: 1,
                                 title: '文件内容',
-                                content: '<xmp style="padding: 10px;margin: 0">' + result.data + '</xmp>'
+                                content: '<pre style="padding: 10px;margin: 0">' + escape(result.data) + '</pre>'
                             });
                         } else {
                             layer.msg('暂不支持文件查看', {icon: 5});
